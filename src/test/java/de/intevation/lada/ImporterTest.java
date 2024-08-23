@@ -107,6 +107,7 @@ public class ImporterTest extends BaseTest {
         + "%%MESSUNG%%\n"
         + "MESSMETHODE_S \"A3\"\n"
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
+        + "%s"
         + "%%ENDE%%\n";
 
     @PersistenceContext
@@ -462,7 +463,7 @@ public class ImporterTest extends BaseTest {
     ) {
         final String laf = String.format(
             lafTemplate, randomProbeId(),
-            regulation, sampleSpecifId, "", measd, measUnit);
+            regulation, sampleSpecifId, "", measd, measUnit, "");
 
         /* Request synchronous import */
         Response importResponse = client.target(
@@ -493,7 +494,7 @@ public class ImporterTest extends BaseTest {
         final String lafSampleId = randomProbeId();
         final String laf = String.format(
             lafTemplate, lafSampleId,
-            regulation, sampleSpecifId, "", measd, measUnit);
+            regulation, sampleSpecifId, "", measd, measUnit, "");
         JsonObject report = testAsyncImportProbe(
             baseUrl, laf, lafSampleId, true);
         JsonObject expectedWarning = Json.createObjectBuilder()
@@ -517,7 +518,7 @@ public class ImporterTest extends BaseTest {
         final String lafSampleId = randomProbeId();
         final String lowerCaseLAF = String.format(
             lafTemplate, lafSampleId, regulation, sampleSpecifId,
-            "", measd, measUnit).lines().map(line -> {
+            "", measd, measUnit, "").lines().map(line -> {
                     if (line.matches("^\\w+ .*")) {
                         String[] words = line.split(" ");
                         words[0] = words[0].toLowerCase();
@@ -550,7 +551,7 @@ public class ImporterTest extends BaseTest {
         final String lafSampleId = randomProbeId();
         final String noOprModeLAF = String.format(
             lafTemplate, lafSampleId, regulation, sampleSpecifId,
-            "", measd, measUnit).lines().filter(
+            "", measd, measUnit, "").lines().filter(
                 line -> !line.startsWith("MESSPROGRAMM")).collect(
                     Collectors.joining("\n"));
 
@@ -569,7 +570,8 @@ public class ImporterTest extends BaseTest {
                 .add("value", "oprModeId")
                 .add("code", msgs.get(locale)).build();
             Assert.assertTrue(
-                "Missing error: " + expectedError.toString(),
+                "Missing error " + expectedError.toString()
+                + " in " + errors.toString(),
                 errors.contains(expectedError));
         }
     }
@@ -587,7 +589,7 @@ public class ImporterTest extends BaseTest {
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
-                "", measd, measUnit),
+                "", measd, measUnit, ""),
             lafSampleId,
             true);
     }
@@ -605,7 +607,7 @@ public class ImporterTest extends BaseTest {
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
-                "", "H 3", measUnit),
+                "", "H 3", measUnit, ""),
             lafSampleId,
             true);
     }
@@ -625,7 +627,7 @@ public class ImporterTest extends BaseTest {
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", "XX",
-                "", measd, measUnit),
+                "", measd, measUnit, ""),
             lafSampleId,
             true);
     }
@@ -640,21 +642,36 @@ public class ImporterTest extends BaseTest {
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
-        JsonObject response = testAsyncImportProbe(
+        testAsyncImportProbeNoWarnings(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId,
                 regulation, sampleSpecifId,
                 "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
-                measd, measUnit),
+                measd, measUnit, ""),
             lafSampleId,
             true);
-        final String warningsKey = "warnings";
-        if (response.containsKey(warningsKey)) {
-            Assert.fail("Unexpected warnings: "
-                + response.getJsonObject(warningsKey)
-                .getJsonArray(lafSampleId));
-        }
+    }
+
+    /**
+     * Test asynchronous import including status.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportStatus(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        testAsyncImportProbeNoWarnings(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId,
+                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                measd, measUnit,
+                "BEARBEITUNGSSTATUS 1000\n"),
+            lafSampleId,
+            true);
     }
 
     /**
@@ -689,7 +706,8 @@ public class ImporterTest extends BaseTest {
             sampleSpecifId,
             lafKey + " " + value + "\n",
             measd,
-            measUnit);
+            measUnit,
+            "");
         LOG.trace(lafZb);
 
         JsonArray warnings = testAsyncImportProbe(
@@ -714,6 +732,23 @@ public class ImporterTest extends BaseTest {
                     warning.getString(keyKey).startsWith("ZEITBASIS"));
             }
         }
+    }
+
+    private JsonObject testAsyncImportProbeNoWarnings(
+        URL baseUrl,
+        String lafData,
+        String lafSampleId,
+        boolean expectSuccess
+    ) throws InterruptedException, CharacterCodingException {
+        JsonObject response = testAsyncImportProbe(
+            baseUrl, lafData, lafSampleId, expectSuccess);
+        final String warningsKey = "warnings";
+        if (response.containsKey(warningsKey)) {
+            Assert.fail("Unexpected warnings: "
+                + response.getJsonObject(warningsKey)
+                .getJsonArray(lafSampleId));
+        }
+        return response;
     }
 
     private JsonObject testAsyncImportProbe(

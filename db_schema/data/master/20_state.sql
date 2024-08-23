@@ -226,11 +226,11 @@ COPY state (id, ctry, ctry_orig_id, iso_3166, int_veh_reg_code, is_eu_country, c
 259	Guinea-Bissau	259	GW	GUB	0	-15,65	11,91099	4
 268	Sao Tome und Principe	268	ST	STP	0	6,731389	0,336111	4
 271	Seychellen	271	SC	SY	0	55,461944	-4,630833	4
-684	Sudan	277	SD	SUD	0	\N	\N	\N
-685	Südsudan	278	SS	SSD	0	\N	\N	\N
+684	Sudan	277	SD	SUD	0	32,5	15,6	4
+685	Südsudan	278	SS	SSD	0	31,6	4,85	4
 299	übriges Afrika (Mayotte, Reunion)	299	\N	\N	0	0	0	4
 599	übriges Ozeanien	599	\N	\N	0	0	0	4
-683	Britische Überseegebiete	185	\N	\N	0	\N	\N	\N
+683	Britische Überseegebiete	185	\N	\N	0	-0,177998	51,487911	4
 276	Sudan bis 2011	276	\N	\N	0	32,529999	15,55	4
 \.
 

@@ -11,3 +11,4 @@ CREATE MATERIALIZED VIEW lada.mv_tags_array AS
  LEFT OUTER JOIN lada.tag_link_sample ON sample.id = tag_link_sample.sample_id
  JOIN master.tag ON (tag_link_sample.tag_id = tag.id OR tag_link_measm.tag_id = tag.id)
  GROUP BY sample.id, measm.id;
+CREATE UNIQUE INDEX mv_tags_array_idx ON lada.mv_tags_array (pid, mid);

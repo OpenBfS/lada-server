@@ -13,11 +13,15 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.InvocationContext;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import org.jboss.logging.Logger;
+
+import de.intevation.lada.context.ThreadLocale;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.Validator;
 
@@ -35,6 +39,8 @@ import de.intevation.lada.validation.Validator;
 @Consumes(MediaType.APPLICATION_JSON)
 public abstract class LadaService {
 
+    private static final Logger LOG = Logger.getLogger(LadaService.class);
+
     /**
      * Path prefix for REST services.
      */
@@ -46,7 +52,7 @@ public abstract class LadaService {
     public static final String PATH_DATA = "data/";
 
     @Inject
-    private Validator validator;
+    private HttpServletRequest request;
 
     /**
      * Validate return values of business methods returning (lists of) instances
@@ -59,6 +65,9 @@ public abstract class LadaService {
     @AroundInvoke
     @SuppressWarnings("unchecked")
     public Object intercept(InvocationContext ctx) throws Exception {
+        LOG.debug("Set locale from request");
+        ThreadLocale.set(request.getLocale());
+
         Object result = ctx.proceed();
         if (result != null) {
             if (result instanceof List) {
@@ -66,10 +75,10 @@ public abstract class LadaService {
                 if (!listResult.isEmpty()
                     && listResult.get(0) instanceof BaseModel
                 ) {
-                    validator.validate(listResult);
+                    new Validator().validate(listResult);
                 }
             } else if (result instanceof BaseModel) {
-                validator.validate((BaseModel) result);
+                new Validator().validate((BaseModel) result);
             }
         }
         return result;

@@ -21,6 +21,7 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
 import jakarta.json.JsonValue.ValueType;
 import jakarta.persistence.Query;
 import jakarta.ws.rs.GET;
@@ -208,7 +209,7 @@ public class AuditTrailService extends LadaService {
             //If audit entry shows a messwert, do not show if:
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
-            if (a.getTableName().equals("messwert")) {
+            if (a.getTableName().equals("meas_val")) {
                 Measm messung = repository.entityManager().find(
                     Measm.class, a.getMeasmId());
                 if (messung != null) {
@@ -496,30 +497,34 @@ public class AuditTrailService extends LadaService {
     private JsonObject translateValues(JsonObject node) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         node.forEach((key, val) -> {
-            if (mappings.containsKey(key)) {
-                TableMapper m = mappings.get(key);
-                if (m.getMappingTable().equals("date")) {
+            if (!mappings.containsKey(key)) {
+                builder.add(key, val);
+                return;
+            }
+            TableMapper m = mappings.get(key);
+            if (m.getMappingTable().equals("date")) {
+                if (node.isNull(key)) {
+                    builder.add(key, JsonValue.NULL);
+                } else {
                     Long value =
                         formatDate(m.getValueField(), node.getString(key));
                     builder.add(key, value);
-                } else {
-                    String id;
-                    if (node.containsKey(key) && node.get(key)
-                            .getValueType() == ValueType.NUMBER) {
-                        id = "" + node.getInt(key);
-                    } else {
-                        id = node.getString(key, null);
-                    }
-                    String value = translateId(
-                        m.getMappingTable(),
-                        m.getValueField(),
-                        id,
-                        "id",
-                        de.intevation.lada.model.master.SchemaName.NAME);
-                    builder.add(key, value);
                 }
             } else {
-                builder.add(key, val);
+                String id;
+                if (node.containsKey(key) && node.get(key)
+                        .getValueType() == ValueType.NUMBER) {
+                    id = "" + node.getInt(key);
+                } else {
+                    id = node.getString(key, null);
+                }
+                String value = translateId(
+                    m.getMappingTable(),
+                    m.getValueField(),
+                    id,
+                    "id",
+                    de.intevation.lada.model.master.SchemaName.NAME);
+                builder.add(key, value);
             }
         });
         return builder.build();

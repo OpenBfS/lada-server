@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -57,14 +56,12 @@ public class LafImporter {
      * @param userInfo The current user info
      * @param measFacilId Default measFacilId
      * @param config The import config to use
-     * @param locale Locale for validation messages
      */
     public void doImport(
         String lafString,
         UserInfo userInfo,
         String measFacilId,
-        List<ImportConf> config,
-        Locale locale
+        List<ImportConf> config
     ) {
         // Append newline to avoid parser errors.
         // Every line can be the last line, so it is easier to append a
@@ -117,7 +114,6 @@ public class LafImporter {
             mapper.setUserInfo(userInfo);
             mapper.setConfig(config);
             mapper.setMeasFacilId(measFacilId);
-            mapper.setLocale(locale);
             mapper.mapObjects(listener.getData());
             importProbeIds = mapper.getImportedProbeIds();
             for (Entry<String, List<ReportItem>> entry

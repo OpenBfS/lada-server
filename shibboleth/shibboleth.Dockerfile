@@ -1,19 +1,15 @@
-FROM centos:centos7
-
-EXPOSE 80 8080 443 8443 389
+FROM ubuntu:22.04
 
 ENV jetty_version=9.4.14.v20181114 \
     BASE_DIR=/usr/local/lada_shib \
     JETTY_HOME=/usr/local/lada_shib/jetty-home \
     JETTY_BASE=/usr/local/lada_shib/jetty-base \
     shib_idp_version=3.4.8 \
-    JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
+    JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64 \
+    DEBIAN_FRONTEND=noninteractive
 
-RUN yum -y update && \
-    yum -y install yum-plugin-ovl && \
-    yum -y install curl wget tar which java-1.8.0-openjdk-devel epel-release \
-                   389-ds-base 389-adminutil && \
-    yum -y clean all
+RUN apt -y update && \
+    apt -y install openjdk-8-jdk curl wget
 
 ADD . ${BASE_DIR}/sources
 
@@ -42,24 +38,6 @@ RUN wget https://shibboleth.net/downloads/identity-provider/$shib_idp_version/sh
 RUN cp ${BASE_DIR}/sources/web.xml ${BASE_DIR}/shibboleth-sources/webapp/WEB-INF/ \
     && cp ${JETTY_HOME}/lib/jetty-servlets-${jetty_version}.jar ${BASE_DIR}/shibboleth-sources/webapp/WEB-INF/lib \
     && cp ${JETTY_HOME}/lib/jetty-util-${jetty_version}.jar ${BASE_DIR}/shibboleth-sources/webapp/WEB-INF/lib
-
-#LDAP, see https://github.com/UniconLabs/dockerized-idp-testbed/tree/master/ldap
-RUN useradd ldapadmin \
-    && rm -fr /var/lock /usr/lib/systemd/system \
-    # The 389-ds setup will fail because the hostname can't reliable be determined, so we'll bypass it and then install. \
-    && sed -i 's/checkHostname {/checkHostname {\nreturn();/g' /usr/lib64/dirsrv/perl/DSUtil.pm \
-    # Not doing SELinux \
-    && sed -i 's/updateSelinuxPolicy($inf);//g' /usr/lib64/dirsrv/perl/* \
-    # Do not restart at the end \
-    && sed -i '/if (@errs = startServer($inf))/,/}/d' /usr/lib64/dirsrv/perl/* \
-    && setup-ds.pl --silent --file ${BASE_DIR}/sources/ds-setup.inf \
-    && /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir \
-    && while ! curl -s ldap://localhost:389 > /dev/null; do \
-           echo waiting for ldap to start; sleep 1; done; \
-    #enable memberOf plugin
-    ldapmodify -H ldap:/// -f ${BASE_DIR}/sources/memberOf.ldif -x -D "cn=Directory Manager" -w password \
-    #Add users and groups
-    && ldapadd -H ldap:/// -f ${BASE_DIR}/sources/users.ldif -x -D "cn=Directory Manager" -w password
 
 
 # Configure Jetty
@@ -115,8 +93,4 @@ RUN echo \
 
 RUN cp ${BASE_DIR}/sources/idp.xml ${JETTY_HOME}/webapps
 WORKDIR ${JETTY_HOME}
-CMD /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir && \
-    while ! curl -s ldap://localhost:389 > /dev/null; do \
-        echo waiting for ldap to start; sleep 1; done && \
-    sh /usr/local/lada_shib/sources/updateMembers.sh && \
-    java -jar ./start.jar
+CMD java -jar ./start.jar

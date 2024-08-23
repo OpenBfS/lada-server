@@ -74,9 +74,6 @@ public class SiteService extends LadaService {
     @Inject
     private OrtFactory ortFactory;
 
-    @Inject
-    private Validator validator;
-
     public static class Response {
         private List<Site> data;
         private int totalCount;
@@ -158,7 +155,7 @@ public class SiteService extends LadaService {
         }
 
         @SuppressWarnings("unchecked")
-        List<Site> orte = validator.validate(siteQuery.getResultList());
+        List<Site> orte = new Validator().validate(siteQuery.getResultList());
 
         int size = Math.toIntExact((Long) countQuery.getSingleResult());
 

@@ -33,3 +33,16 @@ services:
       - ../client:/usr/local/lada # Assumes client checkout in ../client
     ports:
       - 80-86
+  lada-ldap:
+    build:
+      context: ./shibboleth
+      dockerfile: ./ldap.Dockerfile
+    image: "koala/lada_ldap"
+  lada-idp:
+    build:
+      context: ./shibboleth
+      dockerfile: ./shibboleth.Dockerfile
+    depends_on:
+      - lada-ldap
+    ports:
+      - 28443:8443

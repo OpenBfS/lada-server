@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -54,12 +53,10 @@ public abstract class ValidDependenciesValidator {
             return true;
         }
 
-        // Get instances programmatically because dependency injection
+        // Get instance programmatically because dependency injection
         // is not guaranteed to work in ConstraintValidator implementations
-        Instance<Object> inst =
-            CDI.current().getBeanContainer().createInstance();
-        Repository repository = inst.select(Repository.class).get();
-        Validator validator = inst.select(Validator.class).get();
+        Repository repository = CDI.current().getBeanContainer()
+            .createInstance().select(Repository.class).get();
 
         StatusMp newKombi = repository.entityManager().find(
             StatusMp.class, status.getStatusMpId());
@@ -76,6 +73,8 @@ public abstract class ValidDependenciesValidator {
         ) {
             Sample probe = repository.getById(
                 Sample.class, messung.getSampleId());
+
+            Validator validator = new Validator();
 
             Map<String, Set<String>> errors = new HashMap<>();
             Map<String, Set<String>> warnings = new HashMap<>();

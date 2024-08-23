@@ -1,14 +1,17 @@
 #!/bin/bash -e
 # SYNOPSIS
-# ./update-db.sh [DB_NAME]
-#   DB_NAME    name of the databaes (default = lada)
+# ./update-db.sh [ROLE_NAME] [DB_NAME]
+#   ROLE_NAME  name of db user (default = lada)
+#   DB_NAME    name of the databaes (default = ROLE_NAME)
 #
 # There will be used a remote database server if there exists the
 # enviroment variable DB_SRV and optional DB_PORT
 
 DIR=$(readlink -f $(dirname $0))
 
-DB_NAME=${1:-lada}
+ROLE_NAME=${1:-lada}
+echo "ROLE_NAME = $ROLE_NAME"
+DB_NAME=${2:-$ROLE_NAME}
 echo "DB_NAME = $DB_NAME"
 
 # Stop on error any execution of SQL via psql
@@ -46,7 +49,9 @@ for d in "$DIR"/updates/* ; do
       file_args+=" -f $f"
     done
 
-    psql -1q $DB_CONNECT_STRING -d $DB_NAME $file_args \
+    psql -1q $DB_CONNECT_STRING -d $DB_NAME \
+      -c "SET role $ROLE_NAME;" \
+      $file_args \
       -c "INSERT INTO public.lada_schema_version(version) VALUES ($new_ver)"
 
   fi

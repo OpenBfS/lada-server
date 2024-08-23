@@ -109,8 +109,7 @@ public class LafImportService extends LadaService {
             config = (List<ImportConf>) repository.filter(
                 builder.getQuery());
         }
-        importer.doImport(
-            content, userInfo, mstId, config, request.getLocale());
+        importer.doImport(content, userInfo, mstId, config);
         Map<String, Object> respData = new HashMap<String, Object>();
         Boolean success = true;
         if (!importer.getErrors().isEmpty()) {

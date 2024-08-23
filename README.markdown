@@ -89,18 +89,11 @@ Verzeichnis "client" neben diesem Verzeichnis befindet):
  $ docker build -t koala/lada_client .
 
 Oder für Shibboleth-Unterstützung:
- $ docker build -f shibboleth/Dockerfile -t koala/lada_idp shibboleth
  $ cd ../client
  $ docker build -f Dockerfile.shibboleth -t koala/lada_client .
 
 Starten der Anwendung:
  $ docker-compose up -d
-
-Zusätzlich (optional) für Shibboleth-Unterstützung:
- $ docker run --name lada-idp --net=lada_network \
-             -p 20080:80 -p 28080:8080 -p 20443:443 -p 28443:8443 \
-             -v $PWD/shibboleth:/usr/local/lada_shib/sources \
-             -d koala/lada_idp
 
 Innerhalb des Client-Containers muss dann noch folgendes ausgeführt werden,
 wenn zum ersten mal your/repo/of/lada-client als Volume in einen Container
@@ -129,6 +122,16 @@ mittels Port-Forwarding erreichbar gemacht werden, z.B.:
 
 Die Shibboleth-authentifizierte Anwendung ist dann unter
 "http://localhost:8185" im lokalen Browser erreichbar.
+
+Bei der Nutzung von Shibboleth stehen folgende Nutzer zur Verfügung:
+
+testnull (keine Gruppen)
+testeins (mst_06010, mst_11010)
+testzwei (mst_06010, mst_12010)
+testdrei (mst_06060, mst_11010)
+testvier (mst_06060, mst_12010)
+
+Das Passwort für alle Nutzer ist im Entwicklungssetup: `password`.
 
 Tests und Debugging
 -------------------
