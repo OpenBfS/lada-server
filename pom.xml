@@ -496,7 +496,7 @@
             <artifactId>shrinkwrap-api</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-api-maven</artifactId>
             <scope>test</scope>
@@ -542,7 +542,7 @@
                         <configuration>
                             <skip>false</skip>
                             <systemPropertyVariables>
-                            
+                                <java.util.logging.manager>
                                     org.jboss.logmanager.LogManager
                                 </java.util.logging.manager>
                             </systemPropertyVariables>
