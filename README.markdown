@@ -86,6 +86,7 @@ durchgeführte Änderungen leicht innerhalb der Container getestet werden könne
 
 Bauen des Druckdienst-Images (es wird angenommen, dass der Quellcode sich im
 Verzeichnis "gis_print_templates" neben diesem Verzeichnis befindet):
+ $ cd ../gis_print_templates
  $ docker build -t koala/gis_print_templates .
 
 Bauen des Client-Images (es wird angenommen, dass der Client-Quellcode sich im
