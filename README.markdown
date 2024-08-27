@@ -79,9 +79,14 @@ Docker
 Um schnell und automatisiert ein Entwicklungs-Setup für LADA aufsetzen zu
 können, werden Dockerfiles mitgeliefert. Voraussetzung für die Anwendung ist
 eine Docker-Installation. Folgendes Vorgehen führt zu einem
-Vollständigen Setup inklusive LADA-Client, in dem jeweils der auf dem Host
+Vollständigen Setup inklusive LADA-Client und Druck-Dienst (MapFish Print),
+in dem jeweils der auf dem Host
 vorhandene Quellcode in die Container gemounted wird, so dass auf dem Host
 durchgeführte Änderungen leicht innerhalb der Container getestet werden können.
+
+Bauen des Druckdienst-Images (es wird angenommen, dass der Quellcode sich im
+Verzeichnis "gis_print_templates" neben diesem Verzeichnis befindet):
+ $ docker build -t koala/gis_print_templates .
 
 Bauen des Client-Images (es wird angenommen, dass der Client-Quellcode sich im
 Verzeichnis "client" neben diesem Verzeichnis befindet):
