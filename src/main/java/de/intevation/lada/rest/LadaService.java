@@ -24,6 +24,8 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.context.ThreadLocale;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.Validator;
+import de.intevation.lada.validation.groups.Warnings;
+import de.intevation.lada.validation.groups.Notifications;
 
 
 /**
@@ -58,6 +60,10 @@ public abstract class LadaService {
      * Validate return values of business methods returning (lists of) instances
      * of class BaseModel.
      *
+     * Only warnings and notifications are considered in validation. Validation
+     * errors are expected to be handled respectively prevented by parameter
+     * validation before method invocation.
+     *
      * @param ctx Invocation context
      * @return The (validated) return value of the business method
      * @throws Exception in case the business method throws an exception
@@ -75,10 +81,12 @@ public abstract class LadaService {
                 if (!listResult.isEmpty()
                     && listResult.get(0) instanceof BaseModel
                 ) {
-                    new Validator().validate(listResult);
+                    new Validator().validate(
+                        listResult, Warnings.class, Notifications.class);
                 }
             } else if (result instanceof BaseModel) {
-                new Validator().validate((BaseModel) result);
+                new Validator().validate(
+                    (BaseModel) result, Warnings.class, Notifications.class);
             }
         }
         return result;

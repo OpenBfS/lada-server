@@ -12,6 +12,7 @@ import java.util.Set;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
+import jakarta.validation.groups.Default;
 
 import org.hibernate.validator.HibernateValidator;
 
@@ -51,11 +52,16 @@ public class Validator {
      *
      * @param <T> Type of objects to be validated
      * @param objects The objects to be validated
+     * @param groups Restrict validation to given groups. Defaults to
+     * Default, Warnings and Notifications and only a subset of these
+     * should be given.
      * @return The validated objects
      */
-    public <T extends BaseModel> List<T> validate(List<T> objects) {
+    public <T extends BaseModel> List<T> validate(
+        List<T> objects, Class... groups
+    ) {
         for (T object: objects) {
-            validate(object);
+            validate(object, groups);
         }
         return objects;
     }
@@ -67,36 +73,36 @@ public class Validator {
      *
      * @param <T> Type of object to be validated
      * @param object The object to be validated
+     * @param groups Restrict validation to given groups. Defaults to
+     * Default, Warnings and Notifications and only a subset of these
+     * should be given.
      * @return The validated object
      */
-    public <T extends BaseModel> T validate(T object) {
-        // Bean Validation
-        Set<ConstraintViolation<T>> beanViolations =
-            beanValidator.validate(object);
-        if (!beanViolations.isEmpty()) {
-            for (ConstraintViolation<T> violation: beanViolations) {
-                object.addError(
-                    violation.getPropertyPath().toString(),
-                    violation.getMessage());
+    public <T extends BaseModel> T validate(T object, Class... groups) {
+        final Class[] defaultGroups =  {
+            Default.class, Warnings.class, Notifications.class };
+        for (Class group: groups.length == 0 ? defaultGroups : groups) {
+            Set<ConstraintViolation<T>> beanViolations =
+                beanValidator.validate(object, group);
+            if (group.equals(Default.class)) {
+                for (ConstraintViolation<T> violation: beanViolations) {
+                    object.addError(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage());
+                }
+            } else if (group.equals(Warnings.class)) {
+                for (ConstraintViolation<T> violation: beanViolations) {
+                    object.addWarning(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage());
+                }
+            } else if (group.equals(Notifications.class)) {
+                for (ConstraintViolation<T> violation: beanViolations) {
+                    object.addNotification(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage());
+                }
             }
-            // Do not expect other rules to work with invalid Beans
-            return object;
-        }
-
-        Set<ConstraintViolation<T>> beanViolationWarnings =
-            beanValidator.validate(object, Warnings.class);
-        for (ConstraintViolation<T> violation: beanViolationWarnings) {
-            object.addWarning(
-                violation.getPropertyPath().toString(),
-                violation.getMessage());
-        }
-
-        Set<ConstraintViolation<T>> beanViolationNotifications =
-            beanValidator.validate(object, Notifications.class);
-        for (ConstraintViolation<T> violation: beanViolationNotifications) {
-            object.addNotification(
-                violation.getPropertyPath().toString(),
-                violation.getMessage());
         }
 
         return object;
