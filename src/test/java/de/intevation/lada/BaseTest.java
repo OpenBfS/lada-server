@@ -96,7 +96,6 @@ public class BaseTest {
     @Before
     public void setup()
         throws DatabaseUnitException, SQLException, IOException {
-        this.client = ClientBuilder.newClient();
 
         // Set up database connection
         PGSimpleDataSource ds = new PGSimpleDataSource();
@@ -116,6 +115,8 @@ public class BaseTest {
 
         // Insert test data
         doDbOperation(DatabaseOperation.CLEAN_INSERT);
+
+        this.client = ClientBuilder.newClient();
     }
 
     /**
