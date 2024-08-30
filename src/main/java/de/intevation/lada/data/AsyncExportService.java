@@ -9,6 +9,7 @@ package de.intevation.lada.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -179,8 +180,7 @@ public class AsyncExportService extends LadaService {
     @POST
     @Path("laf")
     public Response createLafExportJob(
-        @Valid
-        LafExportParameters objects,
+        @Valid LafExportParameters objects,
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo();
@@ -248,7 +248,7 @@ public class AsyncExportService extends LadaService {
         String newJobId =
             exportJobManager.createExportJob(
                 "json",
-                "UTF-8",
+                StandardCharsets.UTF_8.name(),
                 objects,
                 i18n.getResourceBundle(),
                 userInfo);
