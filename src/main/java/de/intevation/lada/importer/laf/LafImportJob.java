@@ -92,7 +92,7 @@ public class LafImportJob extends Job {
         //Get file content strings from input object
         Map<String, String> filesMap = importParams.getFiles();
 
-        Charset charset = Charset.forName(importParams.getEncoding());
+        Charset charset = importParams.getEncoding();
 
         //Contains: fileName: fileContent as String
         Map<String, String> files = new HashMap<String, String>();

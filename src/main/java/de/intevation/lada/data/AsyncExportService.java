@@ -248,7 +248,7 @@ public class AsyncExportService extends LadaService {
         String newJobId =
             exportJobManager.createExportJob(
                 "json",
-                StandardCharsets.UTF_8.name(),
+                StandardCharsets.UTF_8,
                 objects,
                 i18n.getResourceBundle(),
                 userInfo);

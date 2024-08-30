@@ -7,11 +7,13 @@
  */
 package de.intevation.lada.data.requests;
 
-import de.intevation.lada.validation.constraints.requests.IsValidCharsetString;
+import java.nio.charset.Charset;
+
 
 public abstract class ExportParameters {
-    @IsValidCharsetString
-    private String encoding;
+
+    private Charset encoding = Charset.forName("iso-8859-15");
+
     private String filename;
 
     public String getFilename() {
@@ -22,11 +24,11 @@ public abstract class ExportParameters {
         this.filename = filename;
     }
 
-    public String getEncoding() {
+    public Charset getEncoding() {
         return encoding;
     }
 
-    public void setEncoding(String encoding) {
+    public void setEncoding(Charset encoding) {
         this.encoding = encoding;
     }
 }

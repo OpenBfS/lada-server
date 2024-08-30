@@ -57,7 +57,7 @@ public class ExportJobManager extends JobManager {
      */
     public String createExportJob(
         String format,
-        String encoding,
+        Charset encoding,
         ExportParameters params,
         ResourceBundle bundle,
         UserInfo userInfo
@@ -84,10 +84,8 @@ public class ExportJobManager extends JobManager {
             params.getFilename() != null && !params.getFilename().isBlank()
                 ? params.getFilename()
                 : String.format("export.%s", format);
-        Charset charset = Charset.forName(
-            encoding != null ? encoding : "iso-8859-15");
         newJob.setDownloadFileName(downloadFileName);
-        newJob.setEncoding(charset);
+        newJob.setEncoding(encoding);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
         return addJob(newJob);
@@ -104,20 +102,6 @@ public class ExportJobManager extends JobManager {
         String id
     ) throws JobNotFoundException {
         return (ExportJob) super.getJobById(id);
-    }
-
-    /**
-     * Get the encoding of an export job by id.
-     * @param id Id to check
-     * @return Encoding as String
-     * @throws JobNotFoundException Thrown if a job with the given can not
-     *                              be found
-     */
-    public String getJobEncoding(
-        String id
-    ) throws JobNotFoundException {
-        ExportJob job = getJobById(id);
-        return job.getEncoding().name();
     }
 
     /**

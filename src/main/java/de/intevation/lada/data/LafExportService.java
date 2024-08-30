@@ -91,9 +91,7 @@ public class LafExportService extends LadaService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        String encoding = objects.getEncoding();
-        encoding = encoding != null ? encoding : "iso-8859-15";
-        Charset charset = Charset.forName(encoding);
+        Charset charset = objects.getEncoding();
 
         UserInfo userInfo = authorization.getInfo();
         InputStream exported =
@@ -103,9 +101,10 @@ public class LafExportService extends LadaService {
         response.header(
             "Content-Disposition",
             "attachment; filename = \"export.laf\"");
-        response.encoding(encoding);
+        response.encoding(charset.name());
         response.header(
-            "Content-Type", "application/octet-stream; charset = " + encoding);
+            "Content-Type",
+            "application/octet-stream; charset = " + charset.name());
         return response.build();
     }
 }

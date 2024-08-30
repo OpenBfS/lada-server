@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.data.requests;
 
+import java.nio.charset.Charset;
 import java.util.Map;
 
 import de.intevation.lada.model.master.MeasFacil;
@@ -17,7 +18,8 @@ import jakarta.validation.constraints.Size;
 
 public class LafImportParameters {
 
-    private String encoding;
+    @NotNull
+    private Charset encoding;
 
     @NotNull
     private Map<String, String> files;
@@ -28,21 +30,26 @@ public class LafImportParameters {
     @IsValidPrimaryKey(clazz = MeasFacil.class)
     private String measFacilId;
 
-    public String getEncoding() {
+    public Charset getEncoding() {
         return encoding;
     }
-    public void setEncoding(String encoding) {
+
+    public void setEncoding(Charset encoding) {
         this.encoding = encoding;
     }
+
     public Map<String, String> getFiles() {
         return files;
     }
+
     public void setFiles(Map<String, String> files) {
         this.files = files;
     }
+
     public String getMeasFacilId() {
         return measFacilId;
     }
+
     public void setMeasFacilId(String measFacilId) {
         this.measFacilId = measFacilId;
     }

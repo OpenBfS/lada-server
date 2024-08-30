@@ -378,18 +378,9 @@ public class ExporterTest extends BaseTest {
         String sampleMessage = String.format(
             "'%s' is no valid primary key", sampleValue);
 
-        String encodingValue = "invalidEncoding";
-        String encodingPath = "createJsonExportJob.arg0.encoding";
-        String encodingMessage = String.format(
-            "'%s' is not a valid encoding", encodingValue
-        );
-
         /* Request asynchronous export */
         JsonObject lafJson = Json.createObjectBuilder()
             .add("proben", Json.createArrayBuilder().add(sampleValue))
-            .build();
-        JsonObject jsonExportJson = Json.createObjectBuilder()
-            .add("encoding", encodingValue)
             .build();
 
         assertJsonContainsValidationMessage(
@@ -398,12 +389,22 @@ public class ExporterTest extends BaseTest {
                 Response.Status.BAD_REQUEST)
                 .asJsonObject(),
             samplePath, sampleMessage);
-        assertJsonContainsValidationMessage(
-            parseResponse(
-                exportRequest(baseUrl, formatJson, jsonExportJson),
-                Response.Status.BAD_REQUEST)
-            .asJsonObject(),
-            encodingPath, encodingMessage);
+    }
+
+    /**
+     * Test failing asynchronous export with invalid encoding.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncExportInvalidCharset(
+        @ArquillianResource URL baseUrl
+    ) {
+        JsonObject jsonExportJson = Json.createObjectBuilder()
+            .add("encoding", "invalidEncoding")
+            .build();
+        parseResponse(
+            exportRequest(baseUrl, formatJson, jsonExportJson),
+            Response.Status.BAD_REQUEST);
     }
 
     private Response exportRequest(

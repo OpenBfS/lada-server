@@ -45,6 +45,7 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
@@ -146,6 +147,8 @@ public class BaseTest {
         final String threadContextProviderResource = "META-INF/services/"
             + "jakarta.enterprise.concurrent.spi.ThreadContextProvider";
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
+            .add(new FileAsset(new File("src/main/webapp/WEB-INF/web.xml")),
+                "WEB-INF/web.xml")
             .addPackages(true, ClassLoader.getSystemClassLoader()
                 .getDefinedPackage("de.intevation.lada"))
             .addAsResource("lada_en.properties", "lada_en.properties")
