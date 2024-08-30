@@ -378,22 +378,15 @@ public class ExporterTest extends BaseTest {
         String sampleMessage = String.format(
             "'%s' is no valid primary key", sampleValue);
 
-        String timezoneValue = "invalidTimezone";
-        String timezonePath = "createCsvExportJob.arg0.timezone";
-        String timezoneMessage = String.format(
-            "'%s' is not a valid time zone", timezoneValue);
-
         String encodingValue = "invalidEncoding";
         String encodingPath = "createJsonExportJob.arg0.encoding";
         String encodingMessage = String.format(
             "'%s' is not a valid encoding", encodingValue
         );
+
         /* Request asynchronous export */
         JsonObject lafJson = Json.createObjectBuilder()
             .add("proben", Json.createArrayBuilder().add(sampleValue))
-            .build();
-        JsonObject csvExportJson = Json.createObjectBuilder()
-            .add("timezone", timezoneValue)
             .build();
         JsonObject jsonExportJson = Json.createObjectBuilder()
             .add("encoding", encodingValue)
@@ -405,12 +398,6 @@ public class ExporterTest extends BaseTest {
                 Response.Status.BAD_REQUEST)
                 .asJsonObject(),
             samplePath, sampleMessage);
-        assertJsonContainsValidationMessage(
-            parseResponse(
-                exportRequest(baseUrl, formatCsv, csvExportJson),
-                Response.Status.BAD_REQUEST)
-                .asJsonObject(),
-            timezonePath, timezoneMessage);
         assertJsonContainsValidationMessage(
             parseResponse(
                 exportRequest(baseUrl, formatJson, jsonExportJson),

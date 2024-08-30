@@ -314,8 +314,7 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         this.idColumn = queryExportParameters.getIdField();
         //Get target timezone
         if (queryExportParameters.getTimezone() != null) {
-            this.dateFormat.setTimeZone(TimeZone.getTimeZone(
-                queryExportParameters.getTimezone()));
+            this.dateFormat.setTimeZone(queryExportParameters.getTimezone());
         }
 
         //Get sub data columns

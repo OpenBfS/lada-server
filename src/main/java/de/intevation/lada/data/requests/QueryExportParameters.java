@@ -8,9 +8,9 @@
 package de.intevation.lada.data.requests;
 
 import java.util.List;
+import java.util.TimeZone;
 
 import de.intevation.lada.model.master.GridColConf;
-import de.intevation.lada.validation.constraints.requests.IsValidTimeZone;
 
 import jakarta.validation.Valid;
 
@@ -18,8 +18,7 @@ public class QueryExportParameters extends ExportParameters {
     private String[] subDataColumns;
     private String idField;
     private List<String> idFilter;
-    @IsValidTimeZone
-    private String timezone;
+    private TimeZone timezone;
 
 
     private List<@Valid GridColConf> columns;
@@ -52,11 +51,11 @@ public class QueryExportParameters extends ExportParameters {
         this.idFilter = idFilter;
     }
 
-    public String getTimezone() {
+    public TimeZone getTimezone() {
         return timezone;
     }
 
-    public void setTimezone(String timezone) {
+    public void setTimezone(TimeZone timezone) {
         this.timezone = timezone;
     }
 
