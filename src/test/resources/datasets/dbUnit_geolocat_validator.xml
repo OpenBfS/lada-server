@@ -33,6 +33,7 @@
         iso_3166 = "DE"
         coord_x_ext = "123123"
         coord_y_ext = "312321"
+        spat_ref_sys_id = "5"
     />
     <master.site
         id = "1000"

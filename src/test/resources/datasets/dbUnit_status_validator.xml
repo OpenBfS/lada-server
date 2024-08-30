@@ -62,6 +62,7 @@
         iso_3166 = "DE"
         coord_x_ext = "123123"
         coord_y_ext = "312321"
+        spat_ref_sys_id = "4"
     />
     <master.site
         id = "1000"
@@ -80,6 +81,7 @@
     />
 
     <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
+    <master.status_ord_mp id = "2" from_id = "1" to_id = "4" />
 
     <!--Sample data-->
     <lada.sample
@@ -147,6 +149,55 @@
         is_completed = "false"
         is_scheduled = "true"
     />
+    <lada.status_prot
+        id = "1001"
+        meas_facil_id = "06010"
+        measm_id = "1201"
+        status_mp_id = "1"
+    />
+
+    <!-- measm with warning because of missing measmStartDate,
+         notification because of missing minSampleId -->
+    <lada.measm
+        id = "1202"
+        sample_id = "1000"
+        ext_id = "455"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.meas_val
+        id = "10002"
+        measm_id = "1202"
+        measd_id = "56"
+        meas_val = "42.0"
+        error = "3.3"
+        detect_lim = "2.4"
+        meas_unit_id = "207"
+    />
+
+    <!-- measm with notification because of missing minSampleId -->
+    <lada.measm
+        id = "1203"
+        sample_id = "1000"
+        ext_id = "456"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        is_completed = "false"
+        is_scheduled = "true"
+        measm_start_date = "2012-05-06 14:00:00"
+    />
+    <lada.meas_val
+        id = "10003"
+        measm_id = "1203"
+        measd_id = "56"
+        meas_val = "42.0"
+        error = "3.3"
+        detect_lim = "2.4"
+        meas_unit_id = "207"
+    />
+
 
     <!--Valid REI sample-->
     <lada.sample

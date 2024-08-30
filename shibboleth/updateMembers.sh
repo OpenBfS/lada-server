@@ -1,1 +1,0 @@
-ldapmodify -H ldap:/// -x -D "cn=Directory Manager" -w password -f $BASE_DIR/sources/updateMembers.ldif

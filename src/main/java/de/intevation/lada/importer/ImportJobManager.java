@@ -8,7 +8,6 @@
 
 package de.intevation.lada.importer;
 
-import java.util.Locale;
 import java.util.Map;
 
 import jakarta.inject.Inject;
@@ -41,20 +40,15 @@ public class ImportJobManager extends JobManager {
      * @param userInfo User info
      * @param params Parameters
      * @param mst MessStelle
-     * @param locale Locale to use for message localization
      * @return New job refId
      */
     public String createImportJob(
-        UserInfo userInfo, LafImportParameters params, MeasFacil mst,
-        Locale locale
+        UserInfo userInfo, LafImportParameters params, MeasFacil mst
     ) {
         LafImportJob newJob = lafImportJobProvider.get();
         newJob.setImportParameters(params);
         newJob.setUserInfo(userInfo);
         newJob.setMst(mst);
-        newJob.setLocale(locale);
-
-        newJob.setFuture(executor.submit(newJob));
         return addJob(newJob);
     }
 

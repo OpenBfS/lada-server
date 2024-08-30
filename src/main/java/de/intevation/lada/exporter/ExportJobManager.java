@@ -90,7 +90,6 @@ public class ExportJobManager extends JobManager {
         newJob.setEncoding(charset);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
-        newJob.setFuture(executor.submit(newJob));
         return addJob(newJob);
     }
 

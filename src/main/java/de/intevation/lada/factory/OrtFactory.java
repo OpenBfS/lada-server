@@ -211,10 +211,7 @@ public class OrtFactory {
             if (ort.getReiReportText() == null) {
                 ort.setReiReportText(v.getName());
             }
-            transformCoordinates(ort);
-            return;
-        }
-        if (!hasKoord && ort.getStateId() != null) {
+        } else if (!hasKoord && ort.getStateId() != null) {
             State staat = repository.getById(
                 State.class, ort.getStateId());
             ort.setSpatRefSysId(staat.getSpatRefSysId());
@@ -231,8 +228,9 @@ public class OrtFactory {
                 ort.setShortText(prefix + staat.getId());
             }
             ort.setReiReportText(staat.getCtry());
-            transformCoordinates(ort);
         }
+
+        transformCoordinates(ort);
 
         // Default values
         if (ort.getSiteClassId() == null) {

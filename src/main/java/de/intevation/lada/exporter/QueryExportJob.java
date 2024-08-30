@@ -178,7 +178,7 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         subDataColumns.forEach(subDataColumn -> {
                 Object fieldValue = null;
                 switch (subDataColumn) {
-                case "statusKombi":
+                case "statusMp":
                     StatusProt prot =
                         repository.getById(
                             StatusProt.class, measm.getStatus());

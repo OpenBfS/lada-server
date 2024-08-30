@@ -8,16 +8,15 @@
 package de.intevation.lada.validation;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
-import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
+import jakarta.validation.groups.Default;
 
 import org.hibernate.validator.HibernateValidator;
 
+import de.intevation.lada.context.ThreadLocale;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
@@ -32,21 +31,18 @@ public class Validator {
 
     private jakarta.validation.Validator beanValidator;
 
-    @Inject
-    Validator(HttpServletRequest request) {
-        Locale locale = request != null
-            ? request.getLocale()
-            : Locale.getDefault();
-        this.setLocale(locale);
-    }
-
     /**
-     * @param locale Set locale for message localization.
+     * Create Validator instance interpolating messages with locale
+     * provided by ThreadLocale.
+     *
+     * Attention should be paid to create instances after ThreadLocale
+     * has been set if a locale other than default should be used.
+     * This might not be the case e.g. for dependency injection.
      */
-    public void setLocale(Locale locale) {
+    public Validator() {
         this.beanValidator = Validation.byProvider(HibernateValidator.class)
             .configure()
-            .defaultLocale(locale)
+            .defaultLocale(ThreadLocale.get())
             .buildValidatorFactory()
             .getValidator();
     }
@@ -56,11 +52,16 @@ public class Validator {
      *
      * @param <T> Type of objects to be validated
      * @param objects The objects to be validated
+     * @param groups Restrict validation to given groups. Defaults to
+     * Default, Warnings and Notifications and only a subset of these
+     * should be given.
      * @return The validated objects
      */
-    public <T extends BaseModel> List<T> validate(List<T> objects) {
+    public <T extends BaseModel> List<T> validate(
+        List<T> objects, Class... groups
+    ) {
         for (T object: objects) {
-            validate(object);
+            validate(object, groups);
         }
         return objects;
     }
@@ -72,36 +73,36 @@ public class Validator {
      *
      * @param <T> Type of object to be validated
      * @param object The object to be validated
+     * @param groups Restrict validation to given groups. Defaults to
+     * Default, Warnings and Notifications and only a subset of these
+     * should be given.
      * @return The validated object
      */
-    public <T extends BaseModel> T validate(T object) {
-        // Bean Validation
-        Set<ConstraintViolation<T>> beanViolations =
-            beanValidator.validate(object);
-        if (!beanViolations.isEmpty()) {
-            for (ConstraintViolation<T> violation: beanViolations) {
-                object.addError(
-                    violation.getPropertyPath().toString(),
-                    violation.getMessage());
+    public <T extends BaseModel> T validate(T object, Class... groups) {
+        final Class[] defaultGroups =  {
+            Default.class, Warnings.class, Notifications.class };
+        for (Class group: groups.length == 0 ? defaultGroups : groups) {
+            Set<ConstraintViolation<T>> beanViolations =
+                beanValidator.validate(object, group);
+            if (group.equals(Default.class)) {
+                for (ConstraintViolation<T> violation: beanViolations) {
+                    object.addError(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage());
+                }
+            } else if (group.equals(Warnings.class)) {
+                for (ConstraintViolation<T> violation: beanViolations) {
+                    object.addWarning(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage());
+                }
+            } else if (group.equals(Notifications.class)) {
+                for (ConstraintViolation<T> violation: beanViolations) {
+                    object.addNotification(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage());
+                }
             }
-            // Do not expect other rules to work with invalid Beans
-            return object;
-        }
-
-        Set<ConstraintViolation<T>> beanViolationWarnings =
-            beanValidator.validate(object, Warnings.class);
-        for (ConstraintViolation<T> violation: beanViolationWarnings) {
-            object.addWarning(
-                violation.getPropertyPath().toString(),
-                violation.getMessage());
-        }
-
-        Set<ConstraintViolation<T>> beanViolationNotifications =
-            beanValidator.validate(object, Notifications.class);
-        for (ConstraintViolation<T> violation: beanViolationNotifications) {
-            object.addNotification(
-                violation.getPropertyPath().toString(),
-                violation.getMessage());
         }
 
         return object;

@@ -164,6 +164,15 @@ public abstract class BaseModel {
         return !this.notifications.isEmpty();
     }
 
+    /**
+     * Clears all validation messages of the instance.
+     */
+    public void clearMessages() {
+        this.errors.clear();
+        this.warnings.clear();
+        this.notifications.clear();
+    }
+
     public boolean isReadonly() {
         return readonly;
     }

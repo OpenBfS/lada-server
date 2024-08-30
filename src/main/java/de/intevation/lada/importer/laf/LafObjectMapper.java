@@ -16,8 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -37,6 +37,7 @@ import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.CommSample;
@@ -117,7 +118,6 @@ public class LafObjectMapper {
 
     private HeaderAuthorization authorizer;
 
-    @Inject
     private Validator validator;
 
     @Inject
@@ -145,9 +145,9 @@ public class LafObjectMapper {
     private Map<String, List<ReportItem>> errors;
     private Map<String, List<ReportItem>> warnings;
     private Map<String, List<ReportItem>> notifications;
-    private List<ReportItem> currentErrors;
-    private List<ReportItem> currentWarnings;
-    private List<ReportItem> currentNotifications;
+    private Set<ReportItem> currentErrors;
+    private Set<ReportItem> currentWarnings;
+    private Set<ReportItem> currentNotifications;
     private List<Integer> importProbeIds;
 
     private int currentZeitbasis;
@@ -164,6 +164,7 @@ public class LafObjectMapper {
      * @param data the raw data from laf parser
      */
     public void mapObjects(LafRawData data) {
+        validator = new Validator();
         errors = new HashMap<>();
         warnings = new HashMap<>();
         notifications = new HashMap<>();
@@ -174,9 +175,9 @@ public class LafObjectMapper {
     }
 
     private void create(LafRawData.Sample object) {
-        currentWarnings = new ArrayList<>();
-        currentErrors = new ArrayList<>();
-        currentNotifications = new ArrayList<>();
+        currentWarnings = new HashSet<>();
+        currentErrors = new HashSet<>();
+        currentNotifications = new HashSet<>();
         Sample probe = new Sample();
         String netzbetreiberId = null;
 
@@ -333,34 +334,11 @@ public class LafObjectMapper {
                 if (!probe.hasErrors()) {
                     repository.create(probe);
                     newProbe = probe;
+
+                    // Messages might be obsolete after importing other objects
+                    newProbe.clearMessages();
                 } else {
-                    for (Entry<String, Set<String>> err
-                             : probe.getErrors().entrySet()
-                    ) {
-                        for (String code : err.getValue()) {
-                            currentErrors.add(
-                                new ReportItem(
-                                    "validation#probe", err.getKey(), code));
-                        }
-                    }
-                    for (Entry<String, Set<String>> warn
-                             : probe.getWarnings().entrySet()
-                    ) {
-                        for (String code : warn.getValue()) {
-                            currentWarnings.add(
-                                new ReportItem(
-                                    "validation#probe", warn.getKey(), code));
-                        }
-                    }
-                    for (Entry<String, Set<String>> notes
-                             : probe.getNotifications().entrySet()
-                    ) {
-                        for (String code :notes.getValue()) {
-                            currentNotifications.add(
-                                new ReportItem(
-                                    "validation#probe", notes.getKey(), code));
-                        }
-                    }
+                    validate(probe, "validation#probe", false, true);
                 }
             }
             if (newProbe != null) {
@@ -611,32 +589,7 @@ public class LafObjectMapper {
             }
 
             // Validate probe object
-            validator.validate(newProbe);
-            for (Entry<String, Set<String>> err
-                     : newProbe.getErrors().entrySet()
-            ) {
-                for (String code : err.getValue()) {
-                    currentErrors.add(
-                        new ReportItem("validation#probe", err.getKey(), code));
-                }
-            }
-            for (Entry<String, Set<String>> warn
-                     : newProbe.getWarnings().entrySet()
-            ) {
-                for (String code : warn.getValue()) {
-                    currentWarnings.add(
-                        new ReportItem(
-                            "validation#probe", warn.getKey(), code));
-                }
-            }
-            for (Entry<String, Set<String>> notes
-                     : newProbe.getNotifications().entrySet()
-            ) {
-                for (String code: notes.getValue()) {
-                    currentNotifications.add(new ReportItem(
-                            "validation#probe", notes.getKey(), code));
-                }
-            }
+            validate(newProbe, "validation#probe");
 
             // Create measms
             for (LafRawData.Messung measmRaw: object.getMessungen()) {
@@ -803,60 +756,10 @@ public class LafObjectMapper {
         merger.mergeMesswerte(newMessung, messwerte);
 
         // Check for warnings and errors for messung ...
-        validator.validate(newMessung);
-        for (Entry<String, Set<String>> err
-                 : newMessung.getErrors().entrySet()
-        ) {
-            for (String code : err.getValue()) {
-                currentErrors.add(
-                    new ReportItem("validation#messung", err.getKey(), code));
-            }
-        }
-        for (Entry<String, Set<String>> warn
-                 : newMessung.getWarnings().entrySet()
-        ) {
-            for (String code : warn.getValue()) {
-                currentWarnings.add(
-                    new ReportItem("validation#messung", warn.getKey(), code));
-            }
-        }
-        for (Entry<String, Set<String>> notes
-                 : newMessung.getNotifications().entrySet()
-        ) {
-            for (String code : notes.getValue()) {
-                currentNotifications.add(
-                    new ReportItem("validation#messung", notes.getKey(), code));
-            }
-        }
+        validate(newMessung, "validation#messung");
         // ... and messwerte
         for (MeasVal messwert: messwerte) {
-            validator.validate(messwert);
-            if (messwert.hasWarnings()) {
-                messwert.getWarnings().forEach((k, v) -> {
-                    v.forEach((value) -> {
-                        currentWarnings.add(
-                            new ReportItem("validation#messwert", k, value));
-                    });
-                });
-            }
-
-            if (messwert.hasErrors()) {
-                messwert.getErrors().forEach((k, v) -> {
-                    v.forEach((value) -> {
-                        currentErrors.add(
-                            new ReportItem("validation#messwert", k, value));
-                    });
-                });
-            }
-
-            if (messwert.hasNotifications()) {
-                messwert.getNotifications().forEach((k, v) -> {
-                    v.forEach((value) -> {
-                        currentNotifications.add(
-                            new ReportItem("validation#messwert", k, value));
-                    });
-                });
-            }
+            validate(messwert, "validation#messwert");
         }
 
         // Validate / Create Status
@@ -929,22 +832,8 @@ public class LafObjectMapper {
             return;
         }
 
-        validator.validate(kommentar);
+        validate(kommentar, "Status ");
         if (kommentar.hasErrors() || kommentar.hasWarnings()) {
-            if (kommentar.hasErrors()) {
-                kommentar.getErrors().forEach((k, v) -> {
-                    v.forEach((value) -> {
-                        currentErrors.add(new ReportItem("Status ", k, value));
-                    });
-                });
-            } else if (kommentar.hasWarnings()) {
-                kommentar.getWarnings().forEach((k, v) -> {
-                    v.forEach((value) -> {
-                        currentWarnings.add(
-                            new ReportItem("Status ", k, value));
-                    });
-                });
-            }
             return;
         }
 
@@ -994,6 +883,8 @@ public class LafObjectMapper {
             return null;
         }
         zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
+
+        validate(zusatzwert, "validation#probe");
 
         return zusatzwert;
     }
@@ -1182,23 +1073,8 @@ public class LafObjectMapper {
             return;
         }
 
-        validator.validate(kommentar);
+        validate(kommentar, "Status ", true, false);
         if (kommentar.hasErrors() || kommentar.hasWarnings()) {
-            if (kommentar.hasErrors()) {
-                kommentar.getErrors().forEach((k, v) -> {
-                    v.forEach((value) -> {
-                        currentWarnings.add(
-                            new ReportItem("Status ", k, value));
-                    });
-                });
-            } else if (kommentar.hasWarnings()) {
-                kommentar.getWarnings().forEach((k, v) -> {
-                    v.forEach((value) -> {
-                        currentWarnings.add(
-                            new ReportItem("Status ", k, value));
-                    });
-                });
-            }
             return;
         }
         repository.create(kommentar);
@@ -1340,32 +1216,7 @@ public class LafObjectMapper {
         newStatus.setMeasFacilId(mstId);
         newStatus.setStatusMpId(newKombi);
 
-        validator.validate(newStatus);
-        if (newStatus.hasWarnings()) {
-            newStatus.getWarnings().forEach((k, v) -> {
-                v.forEach((value) -> {
-                    currentWarnings.add(new ReportItem("Status ", k, value));
-                });
-            });
-        }
-
-        if (newStatus.hasNotifications()) {
-            newStatus.getNotifications().forEach((k, v) -> {
-                v.forEach((value) -> {
-                    currentNotifications.add(
-                        new ReportItem("Status ", k, value));
-                });
-            });
-        }
-
-        if (newStatus.hasErrors()) {
-            newStatus.getErrors().forEach((k, v) -> {
-                v.forEach((value) -> {
-                    currentErrors.add(new ReportItem("Status ", k, value));
-                });
-            });
-        }
-
+        validate(newStatus, "Status ");
         if (newStatus.hasErrors() || newStatus.hasWarnings()) {
             return false;
         }
@@ -1689,24 +1540,8 @@ public class LafObjectMapper {
         MeasFacil mst = repository.getById(
             MeasFacil.class, probe.getMeasFacilId());
         o.setNetworkId(mst.getNetworkId());
-        validator.validate(o);
-        for (Entry<String, Set<String>> warn
-                 : o.getWarnings().entrySet()
-        ) {
-            for (String code : warn.getValue()) {
-                currentWarnings.add(
-                    new ReportItem("validation", warn.getKey(), code));
-            }
-        }
+        validate(o, "validation", true, false);
         if (o.hasErrors()) {
-            for (Entry<String, Set<String>> err
-                     : o.getErrors().entrySet()) {
-                for (String code : err.getValue()) {
-                    // Add to warnings because Sample object might be imported
-                    currentWarnings.add(
-                        new ReportItem("validation", err.getKey(), code));
-                }
-            }
             return null;
         }
         Site existing = ortFactory.findExistingSite(o);
@@ -2082,6 +1917,7 @@ public class LafObjectMapper {
             probe.setSampleMethId(probenart.get(0).getId());
         }
     }
+
     /**
      * Add an attribute to the given LMessung object.
      *
@@ -2089,7 +1925,7 @@ public class LafObjectMapper {
      * @param messung   The entity object.
      * @return The updated entity object.
      */
-    public Measm addMessungAttribute(
+    private Measm addMessungAttribute(
         Entry<String, String> attribute,
         Measm messung
     ) {
@@ -2137,6 +1973,43 @@ public class LafObjectMapper {
             }
         }
         return messung;
+    }
+
+    private void validate(BaseModel object, String key) {
+        validate(object, key, false, false);
+    }
+
+    private void validate(
+        BaseModel object,
+        String key,
+        boolean errorsToWarnings,
+        boolean validated
+    ) {
+        if (!validated) {
+            validator.validate(object);
+        }
+        object.getErrors().forEach((k, v) -> {
+                v.forEach((value) -> {
+                        ReportItem err = new ReportItem(key, k, value);
+                        if (errorsToWarnings) {
+                            currentWarnings.add(err);
+                        } else {
+                            currentErrors.add(err);
+                        }
+                    });
+            });
+        object.getWarnings().forEach((k, v) -> {
+                v.forEach((value) -> {
+                        currentWarnings.add(
+                            new ReportItem(key, k, value));
+                    });
+            });
+        object.getNotifications().forEach((k, v) -> {
+                v.forEach((value) -> {
+                        currentNotifications.add(
+                            new ReportItem(key, k, value));
+                    });
+            });
     }
 
     /**
@@ -2188,12 +2061,5 @@ public class LafObjectMapper {
      */
     public void setMeasFacilId(String measFacilId) {
         this.measFacilId = measFacilId;
-    }
-
-    /**
-     * @param locale Set locale for validation messages.
-     */
-    public void setLocale(Locale locale) {
-        this.validator.setLocale(locale);
     }
 }

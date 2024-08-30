@@ -68,8 +68,11 @@ CREATE OR REPLACE VIEW lada.query_measm_view
 --
 
 CREATE MATERIALIZED VIEW lada.mv_tags_array AS
- SELECT sample.id AS pid, measm.id as mid
- , array_agg(tag.name) AS tags
+ SELECT
+    sample.id AS pid,
+    measm.id as mid,
+    array_agg(tag.name) AS tags,
+    array_agg(tag.id) AS tagids
  FROM lada.sample
  INNER JOIN lada.measm ON sample.id = measm.sample_id
  LEFT OUTER JOIN lada.tag_link_measm ON measm.id = tag_link_measm.measm_id

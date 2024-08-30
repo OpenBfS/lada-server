@@ -7,14 +7,12 @@
  */
 package de.intevation.lada.test.validator;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.Geolocat_;
-import de.intevation.lada.validation.Validator;
+
 
 public class GeolocatTest extends ValidatorBaseTest {
 
@@ -34,9 +32,6 @@ public class GeolocatTest extends ValidatorBaseTest {
 
     private static final String MSG_UNIQUE_SAMPLING_LOCATION =
         "Sampling location (typeRegulation \"E\" or \"R\") must be unique";
-
-    @Inject
-    private Validator validator;
 
     /**
      * Constructor.
