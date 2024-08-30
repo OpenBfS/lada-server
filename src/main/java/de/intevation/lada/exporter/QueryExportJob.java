@@ -307,9 +307,9 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
                 || !(exportParameters instanceof QueryExportParameters)) {
             return;
         }
-        QueryExportParameters queryExportParameters = (QueryExportParameters) this.exportParameters;
-        //Check if subdata shall be exported
-        this.exportSubdata = queryExportParameters.isExportSubData();
+        QueryExportParameters queryExportParameters =
+            (QueryExportParameters) this.exportParameters;
+
         //Get identifier type
         this.idColumn = queryExportParameters.getIdField();
         //Get target timezone
@@ -317,10 +317,11 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
             this.dateFormat.setTimeZone(queryExportParameters.getTimezone());
         }
 
-        //Get sub data columns
+        //Get sub data columns if subdata shall be exported
+        String[] subDataCols = queryExportParameters.getSubDataColumns();
+        this.exportSubdata = subDataCols != null && subDataCols.length > 0;
         if (exportSubdata) {
-            subDataColumns = Arrays.asList(
-                queryExportParameters.getSubDataColumns());
+            subDataColumns = Arrays.asList(subDataCols);
         }
 
         queryExportParameters.getColumns().forEach(column -> {

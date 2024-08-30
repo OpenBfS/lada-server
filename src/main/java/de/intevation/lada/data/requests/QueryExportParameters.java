@@ -20,12 +20,7 @@ public class QueryExportParameters extends ExportParameters {
     private List<String> idFilter;
     private TimeZone timezone;
 
-
     private List<@Valid GridColConf> columns;
-
-    public boolean isExportSubData() {
-        return subDataColumns != null && subDataColumns.length > 0;
-    }
 
     public String[] getSubDataColumns() {
         return subDataColumns;
