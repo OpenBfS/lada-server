@@ -47,8 +47,8 @@ import de.intevation.lada.rest.LadaService;
  * Available actions are
  *
  * - Export probe objects with their child objects into .laf files.
- * - Export a query result into csv files
- * - Export a query result into json files
+ * - Export a query result into CSV files
+ * - Export a query result into JSON files
  *
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
@@ -72,58 +72,8 @@ public class AsyncExportService extends LadaService {
     I18n i18n;
 
     /**
-     * Export data into a csv file.
+     * Export data into a CSV file.
      *
-     * This service takes json formatted POST data containing:
-     * - Query parameters used for obtaining the data to.
-     *      The "export" set whether the field should be export or not.
-     *   Note: The column list must contain the record's id
-     *      column even if it will not be exported.
-     * - A boolean that sets if related subdata should be exported too
-     * - An optional list of subdata column names.
-     * - The gridColumnId that contains the record id
-     * - An optional id filter to limit the export data.
-     *      If not set, the complete query result will be exported
-     * - A timezone string to convert timestamps to
-     * - Key-value pairs matching sub data columns to readable names
-     * - CSV specific options
-     * - An optional filename used for download
-     * <p>
-     * Input format:
-     * <p>
-     * <
-     * {
-     *   "columns": [{
-     *     "gridColumnId": [number],
-     *     "sort": [string],
-     *     "sortIndex": [number],
-     *     "filterValue": [string],
-     *     "filterActive": [boolean],
-     *     "export": [boolean]
-     *   }],
-     *   "subDataColumns": [ [string] ]
-     *   "idField": [string],
-     *   idFilter: [ [number] ],
-     *   "timezone": [string],
-     *   "subDataColumnNames": {
-     *     [string]: [string]
-     *   }
-     *   csvOptions: {
-     *     decimalSeparator: "comma" | "period",
-     *     fieldSeparator: "comma" | "semicolon" | "period" | "space",
-     *     rowDelimiter: "windows" | "linux",
-     *     quoteType: "singlequote" | "doublequote"
-     *   },
-     *   filename: [string]
-     * }
-     * <p>
-     * Return format:
-     * <p>
-     * <pre>
-     * {
-     *   "refId": [String]
-     * }
-     * </pre>
      * @param objects Export parameters object
      * @param request Request object
      * @return Response containing the new export ref id

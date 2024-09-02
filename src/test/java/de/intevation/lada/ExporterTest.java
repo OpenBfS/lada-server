@@ -103,7 +103,8 @@ public class ExporterTest extends BaseTest {
                 .add("gridColMpId", 5)
                 .add("queryUserId", 1)));
 
-    private final JsonObject measmRequestJson = Json.createObjectBuilder()
+    private final JsonObjectBuilder measmRequestJsonBuilder = Json
+        .createObjectBuilder()
         .add("timezone", "UTC")
         .add("columns", Json.createArrayBuilder()
             .add(Json.createObjectBuilder()
@@ -121,9 +122,9 @@ public class ExporterTest extends BaseTest {
         .add("exportSubData", true)
         .add("subDataColumns", Json.createArrayBuilder()
             .add("id")
+            .add("measVal")
             .add("measUnitId")
-            .add("measdId"))
-        .build();
+            .add("measdId"));
 
     /**
      * Test asynchronous CSV export of a Sample object.
@@ -143,7 +144,7 @@ public class ExporterTest extends BaseTest {
             "Unexpected CSV content",
             "hauptprobenNr,umwId,isTest,probeId\r\n"
             + "120510002,L6,No,1000\r\n"
-            + "120510001,L6,Yes,1001\r\n",
+            + "\"12051,0001\",L6,Yes,1001\r\n",
             result);
     }
 
@@ -152,14 +153,13 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportOptions(
+    public final void testCsvExportFieldSeparator(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
-            .add("csvOptions", Json.createObjectBuilder()
-                .add("fieldSeparator", "semicolon"))
+            .add("fieldSeparator", ";")
             .build();
 
         String result = runExportTest(baseUrl, formatCsv, requestJson);
@@ -167,7 +167,72 @@ public class ExporterTest extends BaseTest {
             "Unexpected CSV content",
             "hauptprobenNr;umwId;isTest;probeId\r\n"
             + "120510002;L6;No;1000\r\n"
-            + "120510001;L6;Yes;1001\r\n",
+            + "12051,0001;L6;Yes;1001\r\n",
+            result);
+    }
+
+    /**
+     * Test asynchronous CSV export using CSV options.
+     */
+    @Test
+    @RunAsClient
+    public final void testCsvExportRowDelimiter(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", JsonValue.NULL)
+            .add("rowDelimiter", "\n")
+            .build();
+
+        String result = runExportTest(baseUrl, formatCsv, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr,umwId,isTest,probeId\n"
+            + "120510002,L6,No,1000\n"
+            + "\"12051,0001\",L6,Yes,1001\n",
+            result);
+    }
+
+    /**
+     * Test asynchronous CSV export using CSV options.
+     */
+    @Test
+    @RunAsClient
+    public final void testCsvExportQuote(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", JsonValue.NULL)
+            .add("quote", "'")
+            .build();
+
+        String result = runExportTest(baseUrl, formatCsv, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr,umwId,isTest,probeId\r\n"
+            + "120510002,L6,No,1000\r\n"
+            + "'12051,0001',L6,Yes,1001\r\n",
+            result);
+    }
+
+    /**
+     * Test asynchronous CSV export using CSV options.
+     */
+    @Test
+    @RunAsClient
+    public final void testCsvExportDecimalSeparator(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        String result = runExportTest(
+            baseUrl, formatCsv, measmRequestJsonBuilder
+            .add("decimalSeparator", ",").build());
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "messungId,id,measVal,measUnitId,measdId\r\n"
+            + "1200,1000,\"1,1E00\",Sv,test\r\n"
+            + "1200,1001,,Sv,test\r\n",
             result);
     }
 
@@ -216,7 +281,7 @@ public class ExporterTest extends BaseTest {
             CoreMatchers.hasItems(
                 "120510002,L6,No,1000,453,2",
                 "120510002,L6,No,1000,454,0",
-                "120510001,L6,Yes,1001,,"));
+                "\"12051,0001\",L6,Yes,1001,,"));
     }
 
     /**
@@ -228,12 +293,12 @@ public class ExporterTest extends BaseTest {
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         String result = runExportTest(
-            baseUrl, formatCsv, measmRequestJson);
+            baseUrl, formatCsv, measmRequestJsonBuilder.build());
         Assert.assertEquals(
             "Unexpected CSV content",
-            "messungId,id,measUnitId,measdId\r\n"
-            + "1200,1000,Sv,test\r\n"
-            + "1200,1001,Sv,test\r\n",
+            "messungId,id,measVal,measUnitId,measdId\r\n"
+            + "1200,1000,1.1E00,Sv,test\r\n"
+            + "1200,1001,,Sv,test\r\n",
             result);
     }
 
@@ -304,14 +369,20 @@ public class ExporterTest extends BaseTest {
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         String result = runExportTest(
-            baseUrl, formatJson, measmRequestJson);
+            baseUrl, formatJson, measmRequestJsonBuilder.build());
         Assert.assertEquals(
             "Unexpected JSON content",
             "{\"1200\":"
             + "{\"messungId\":1200,"
-            + "\"messwerte\":["
-            + "{\"measUnitId\":\"Sv\",\"measdId\":\"test\",\"id\":1000},"
-            + "{\"measUnitId\":\"Sv\",\"measdId\":\"test\",\"id\":1001}]}}",
+            + "\"messwerte\":[{"
+            + "\"measUnitId\":\"Sv\","
+            + "\"measdId\":\"test\","
+            + "\"measVal\":1.1,"
+            + "\"id\":1000},{"
+            + "\"measUnitId\":\"Sv\","
+            + "\"measdId\":\"test\","
+            + "\"measVal\":null,"
+            + "\"id\":1001}]}}",
             result);
     }
 
