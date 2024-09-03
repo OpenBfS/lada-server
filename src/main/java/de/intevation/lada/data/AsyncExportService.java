@@ -9,15 +9,13 @@ package de.intevation.lada.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -27,10 +25,12 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.data.requests.CsvExportParameters;
+import de.intevation.lada.data.requests.LafExportParameters;
+import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -47,8 +47,8 @@ import de.intevation.lada.rest.LadaService;
  * Available actions are
  *
  * - Export probe objects with their child objects into .laf files.
- * - Export a query result into csv files
- * - Export a query result into json files
+ * - Export a query result into CSV files
+ * - Export a query result into JSON files
  *
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
@@ -72,84 +72,23 @@ public class AsyncExportService extends LadaService {
     I18n i18n;
 
     /**
-     * Export data into a csv file.
+     * Export data into a CSV file.
      *
-     * This service takes json formatted POST data containing:
-     * - Query parameters used for obtaining the data to.
-     *      The "export" set whether the field should be export or not.
-     *   Note: The column list must contain the record's id
-     *      column even if it will not be exported.
-     * - A boolean that sets if related subdata should be exported too
-     * - An optional list of subdata column names.
-     *      May only be set if "subData" is true
-     * - The gridColumnId that contains the record id
-     * - An optional id filter to limit the export data.
-     *      If not set, the complete query result will be exported
-     * - A timezone string to convert timestamps to
-     * - Key-value pairs matching sub data columns to readable names
-     * - CSV specific options
-     * - An optional filename used for download
-     * <p>
-     * Input format:
-     * <p>
-     * <
-     * {
-     *   "columns": [{
-     *     "gridColumnId": [number],
-     *     "sort": [string],
-     *     "sortIndex": [number],
-     *     "filterValue": [string],
-     *     "filterActive": [boolean],
-     *     "export": [boolean]
-     *   }],
-     *   "exportSubData": [boolean],
-     *   "subDataColumns": [ [string] ]
-     *   "idField": [string],
-     *   idFilter: [ [number] ],
-     *   "timezone": [string],
-     *   "subDataColumnNames": {
-     *     [string]: [string]
-     *   }
-     *   csvOptions: {
-     *     decimalSeparator: "comma" | "period",
-     *     fieldSeparator: "comma" | "semicolon" | "period" | "space",
-     *     rowDelimiter: "windows" | "linux",
-     *     quoteType: "singlequote" | "doublequote"
-     *   },
-     *   filename: [string]
-     * }
-     * <p>
-     * Return format:
-     * <p>
-     * <pre>
-     * {
-     *   "refId": [String]
-     * }
-     * </pre>
-     * @param objects JSON Object containing the export parameters
+     * @param objects Export parameters object
      * @param request Request object
      * @return Response containing the new export ref id
      */
     @POST
     @Path("csv")
     public Response createCsvExportJob(
-        JsonObject objects,
+        @Valid CsvExportParameters objects,
         @Context HttpServletRequest request
     ) {
-        Charset encoding;
-        try {
-            encoding = getCharsetFromRequest(request);
-        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
-            return Response.status(Status.BAD_REQUEST)
-                .entity((Object) "Invalid or unknown encoding requested")
-                .type(MediaType.TEXT_PLAIN)
-                .build();
-        }
-
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "csv", encoding, objects, i18n.getResourceBundle(), userInfo);
+                "csv", objects.getEncoding(), objects,
+                i18n.getResourceBundle(), userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -184,36 +123,20 @@ public class AsyncExportService extends LadaService {
      * }
      * </pre>
      *
-     * @param objects    JSON object with an array of probe or messung ids.
+     * @param objects    Export parameters object
      * @param request    The HTTP header containing authorization information.
      * @return The job identifier.
      */
     @POST
     @Path("laf")
     public Response createLafExportJob(
-        JsonObject objects,
+        @Valid LafExportParameters objects,
         @Context HttpServletRequest request
     ) {
-        Charset encoding;
-        try {
-            encoding = getCharsetFromRequest(request);
-        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
-            return Response.status(Status.BAD_REQUEST)
-                .entity((Object) "Invalid or unknown encoding requested")
-                .type(MediaType.TEXT_PLAIN)
-                .build();
-        }
-
-        //Check if requests contains either messung or probe ids
-        if (objects.getJsonArray("proben") == null
-            && objects.getJsonArray("messungen") == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "laf", encoding, objects, i18n.getResourceBundle(), userInfo);
+                "laf", objects.getEncoding(), objects, i18n.getResourceBundle(), userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -228,9 +151,7 @@ public class AsyncExportService extends LadaService {
      * whether the field should be export or not.
      *   Note: The column list must contain the record's id column even
      * if it will not be exported.
-     * - A boolean that sets if related subdata should be exported too
-     * - An optional list of subdata column names. May only be set if
-     * "subData" is true
+     * - An optional list of subdata column names.
      * - The gridColumnId that contains the record id
      * - An optional id filter to limit the export data. If not set, the
      * complete query result will be exported
@@ -249,7 +170,6 @@ public class AsyncExportService extends LadaService {
      *     "filterActive": [boolean],
      *     "export": [boolean]
      *   }],
-     *   "exportSubData": [boolean],
      *   "subDataColumns": [ [string] ]
      *   "idField": [number]
      *   idFilter: [ [number] ],
@@ -264,14 +184,14 @@ public class AsyncExportService extends LadaService {
      *   "refId": [String]
      * }
      * </pre>
-     * @param objects JSON Object containing the export parameters
+     * @param objects Export parameters object
      * @param request Request object
      * @return Response containing the new export ref id
      */
     @POST
     @Path("json")
     public Response createJsonExportJob(
-        JsonObject objects,
+        @Valid QueryExportParameters objects,
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo();
@@ -387,13 +307,5 @@ public class AsyncExportService extends LadaService {
                 HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + filename + "\"")
             .build();
-    }
-
-    private Charset getCharsetFromRequest(HttpServletRequest request) {
-        String encoding = request.getHeader("X-FILE-ENCODING");
-        if (encoding == null || encoding.equals("")) {
-            encoding = "iso-8859-15";
-        }
-        return Charset.forName(encoding);
     }
 }

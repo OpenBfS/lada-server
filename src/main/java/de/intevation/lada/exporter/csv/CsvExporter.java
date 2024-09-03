@@ -11,7 +11,6 @@ package de.intevation.lada.exporter.csv;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -25,13 +24,13 @@ import java.util.Collection;
 import java.util.Date;
 
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
 import jakarta.persistence.NoResultException;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
@@ -49,35 +48,13 @@ import de.intevation.lada.util.data.Repository;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 @ExportConfig(format = ExportFormat.CSV)
-public class CsvExporter implements Exporter {
+public class CsvExporter implements Exporter<CsvExportParameters> {
 
     @Inject Logger logger;
 
     @Inject
     private Repository repository;
 
-    /**
-     * Enum storing all possible csv options.
-     */
-    private enum CsvOptions {
-        comma(","), period("."), semicolon(";"), space(" "),
-        singlequote("'"), doublequote("\""),
-        linux("\n"), windows("\r\n");
-
-        private final String value;
-
-        CsvOptions(String v) {
-            this.value = v;
-        }
-
-        public char getChar() {
-            return this.value.charAt(0);
-        }
-
-        public String getValue() {
-            return this.value;
-        }
-    }
 
     private String getStatusStringByid(Integer id) {
         StatusMp kombi =
@@ -100,7 +77,7 @@ public class CsvExporter implements Exporter {
      */
     private String[] getReadableColumnNames(
         Collection<String> keys,
-        JsonObject subDataColumnNames,
+        Map<String, String> subDataColumnNames,
         Integer qId
     ) {
         String[] names = new String[keys.size()];
@@ -119,7 +96,7 @@ public class CsvExporter implements Exporter {
             } catch (NoResultException e) {
                 name = subDataColumnNames != null
                     && subDataColumnNames.containsKey(key)
-                    ? subDataColumnNames.getString(key)
+                    ? subDataColumnNames.get(key)
                     : key;
             }
             names[index] = name;
@@ -134,20 +111,7 @@ public class CsvExporter implements Exporter {
      *                    Every list item represents a row,
      *                    while every map key represents a column
      * @param encoding Encoding to use
-     * @param options Optional export options as JSON Object.
-     *                Valid options are "csvOptions" with: <p>
-     *   <ul>
-     *     <li> decimalSeparator: "comma" | "period", defaults to "period" </li>
-     *     <li> fieldSeparator: "comma" | "semicolon" | "period" |
-     *          "space", defaults to "comma" </li>
-     *     <li> rowDelimiter: "windows" | "linux", defaults to "windows" </li>
-     *     <li> quoteType: "singlequote" |
-     *          "doublequote", defaults to "doublequote" </li>
-     *   </ul>
-     * and "subDataColumnNames": JsonObject containing dataIndex:
-     * ColumnName key-value-pairs used to get readable column names
-     * Invalid options will cause the export to fail.
-     *
+     * @param options CsvExportParameters
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
      * @param qId query id
@@ -158,57 +122,25 @@ public class CsvExporter implements Exporter {
     public InputStream export(
         Iterable<Map<String, Object>> queryResult,
         Charset encoding,
-        JsonObject options,
+        CsvExportParameters options,
         List<String> columnsToInclude,
         String subDataKey,
         Integer qId,
         DateFormat dateFormat,
         ResourceBundle i18n
     ) {
-        char decimalSeparator = CsvOptions.valueOf("period").getChar();
-        char fieldSeparator = CsvOptions.valueOf("comma").getChar();
-        String rowDelimiter = CsvOptions.valueOf("windows").getValue();
-        char quoteType = CsvOptions.valueOf("doublequote").getChar();
-        JsonObject subDataColumnNames = null;
-        //Parse options
+        Map<String, String> subDataColumnNames = null;
         if (options != null) {
-            try {
-                if (options.containsKey("csvOptions")) {
-                    JsonObject csvOptions = options.getJsonObject("csvOptions");
-                    decimalSeparator = CsvOptions.valueOf(
-                        csvOptions.containsKey("decimalSeparator")
-                        ? csvOptions.getString("decimalSeparator")
-                        : "period").getChar();
-                    fieldSeparator = CsvOptions.valueOf(
-                        csvOptions.containsKey("fieldSeparator")
-                        ? csvOptions.getString(
-                            "fieldSeparator") : "comma").getChar();
-                    rowDelimiter = CsvOptions.valueOf(
-                        csvOptions.containsKey("rowDelimiter")
-                        ? csvOptions.getString(
-                            "rowDelimiter") : "windows").getValue();
-                    quoteType = CsvOptions.valueOf(
-                        csvOptions.containsKey("quoteType")
-                        ? csvOptions.getString(
-                            "quoteType") : "doublequote").getChar();
-                }
-                final String subDataColumnNamesKey = "subDataColumnNames";
-                subDataColumnNames =
-                    options.containsKey(subDataColumnNamesKey)
-                    && !options.isNull(subDataColumnNamesKey)
-                    ? options.getJsonObject(subDataColumnNamesKey) : null;
-            } catch (IllegalArgumentException iae) {
-                logger.error(
-                    String.format(
-                        "Invalid CSV options: %s", options.toString()));
-                return null;
-            }
+            subDataColumnNames = options.getSubDataColumnNames();
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("0.###E00");
-        DecimalFormatSymbols symbols = decimalFormat.getDecimalFormatSymbols();
-        symbols.setDecimalSeparator(decimalSeparator);
-        decimalFormat.setDecimalFormatSymbols(symbols);
+        if (options.getDecimalSeparator() != null) {
+            DecimalFormatSymbols symbols = decimalFormat
+                .getDecimalFormatSymbols();
+            symbols.setDecimalSeparator(options.getDecimalSeparator());
+            decimalFormat.setDecimalFormatSymbols(symbols);
+        }
         decimalFormat.setGroupingUsed(false);
 
         //Get header fields
@@ -216,16 +148,22 @@ public class CsvExporter implements Exporter {
             columnsToInclude, subDataColumnNames, qId);
 
         //Create CSV format
-        CSVFormat format = CSVFormat.DEFAULT
-            .withDelimiter(fieldSeparator)
-            .withQuote(quoteType)
-            .withRecordSeparator(rowDelimiter)
-            .withHeader(header);
+        CSVFormat.Builder format = CSVFormat.DEFAULT.builder()
+            .setHeader(header);
+        if (options.getFieldSeparator() != null) {
+            format.setDelimiter(options.getFieldSeparator());
+        }
+        if (options.getRowDelimiter() != null) {
+            format.setRecordSeparator(options.getRowDelimiter());
+        }
+        if (options.getQuote() != null) {
+            format.setQuote(options.getQuote());
+        }
 
         StringBuffer result = new StringBuffer();
 
         try {
-            final CSVPrinter printer = new CSVPrinter(result, format);
+            final CSVPrinter printer = new CSVPrinter(result, format.build());
             //For every queryResult row
             queryResult.forEach(row -> {
                 ArrayList<String> rowItems = new ArrayList<String>();
@@ -269,10 +207,6 @@ public class CsvExporter implements Exporter {
             printer.close();
             return new ByteArrayInputStream(
                 result.toString().getBytes(encoding));
-        } catch (UnsupportedEncodingException uee) {
-            logger.error(
-                String.format("Unsupported encoding: %s", encoding.name()));
-            return null;
         } catch (IOException ioe) {
             logger.error(ioe.toString());
             return null;

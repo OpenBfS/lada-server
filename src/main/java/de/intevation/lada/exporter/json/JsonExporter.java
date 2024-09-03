@@ -24,7 +24,6 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 
@@ -39,6 +38,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
@@ -86,7 +86,7 @@ import de.intevation.lada.util.data.Repository;
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
 @ExportConfig(format = ExportFormat.JSON)
-public class JsonExporter implements Exporter {
+public class JsonExporter implements Exporter<QueryExportParameters> {
 
     private static final int ZEBS_COUNTER = 3;
     private static final String JSON_DATE_FORMAT
@@ -118,7 +118,7 @@ public class JsonExporter implements Exporter {
     public InputStream export(
         Iterable<Map<String, Object>> queryResult,
         Charset encoding,
-        JsonObject options,
+        QueryExportParameters options,
         List<String> columnsToInclude,
         String subDataKey,
         Integer qId,
@@ -126,7 +126,7 @@ public class JsonExporter implements Exporter {
         ResourceBundle i18n
     ) {
         final JsonObjectBuilder builder = Json.createObjectBuilder();
-        String idColumn = options.getString("idField");
+        String idColumn = options.getIdField();
 
         //For each result
         queryResult.forEach(item -> {

@@ -12,11 +12,11 @@ import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
-import jakarta.json.JsonObject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.laf.LafImportJob;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.auth.UserInfo;
@@ -43,10 +43,10 @@ public class ImportJobManager extends JobManager {
      * @return New job refId
      */
     public String createImportJob(
-        UserInfo userInfo, JsonObject params, MeasFacil mst
+        UserInfo userInfo, LafImportParameters params, MeasFacil mst
     ) {
         LafImportJob newJob = lafImportJobProvider.get();
-        newJob.setJsonInput(params);
+        newJob.setImportParameters(params);
         newJob.setUserInfo(userInfo);
         newJob.setMst(mst);
         return addJob(newJob);
