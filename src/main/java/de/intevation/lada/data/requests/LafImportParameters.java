@@ -10,18 +10,21 @@ package de.intevation.lada.data.requests;
 import java.nio.charset.Charset;
 import java.util.Map;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+
 
 public class LafImportParameters {
 
     @NotNull
     private Charset encoding;
 
-    @NotNull
+    @NotEmpty
     private Map<String, String> files;
 
     @NotNull

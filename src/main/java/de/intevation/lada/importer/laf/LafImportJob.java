@@ -129,10 +129,6 @@ public class LafImportJob extends Job {
             return;
         }
 
-        if (files.size() == 0) {
-            throw new IllegalArgumentException("No valid file given");
-        }
-
         logger.debug(
             String.format("Starting import of %d files", files.size()));
 
