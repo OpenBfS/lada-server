@@ -12,12 +12,10 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import de.intevation.lada.data.requests.LafExportParameters;
@@ -80,9 +78,7 @@ public class LafExportService extends LadaService {
     @Path("laf")
     @Produces("application/octet-stream")
     public Response download(
-        @Valid
-        LafExportParameters objects,
-        @Context HttpServletRequest request
+        @Valid LafExportParameters objects
     ) {
         List<Integer> pIds = objects.getProben();
         List<Integer> mIds = objects.getMessungen();

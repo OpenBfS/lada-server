@@ -14,14 +14,12 @@ import java.nio.charset.StandardCharsets;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -75,14 +73,12 @@ public class AsyncExportService extends LadaService {
      * Export data into a CSV file.
      *
      * @param objects Export parameters object
-     * @param request Request object
      * @return Response containing the new export ref id
      */
     @POST
     @Path("csv")
     public Response createCsvExportJob(
-        @Valid CsvExportParameters objects,
-        @Context HttpServletRequest request
+        @Valid CsvExportParameters objects
     ) {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
@@ -124,14 +120,12 @@ public class AsyncExportService extends LadaService {
      * </pre>
      *
      * @param objects    Export parameters object
-     * @param request    The HTTP header containing authorization information.
      * @return The job identifier.
      */
     @POST
     @Path("laf")
     public Response createLafExportJob(
-        @Valid LafExportParameters objects,
-        @Context HttpServletRequest request
+        @Valid LafExportParameters objects
     ) {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
@@ -185,14 +179,12 @@ public class AsyncExportService extends LadaService {
      * }
      * </pre>
      * @param objects Export parameters object
-     * @param request Request object
      * @return Response containing the new export ref id
      */
     @POST
     @Path("json")
     public Response createJsonExportJob(
-        @Valid QueryExportParameters objects,
-        @Context HttpServletRequest request
+        @Valid QueryExportParameters objects
     ) {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
