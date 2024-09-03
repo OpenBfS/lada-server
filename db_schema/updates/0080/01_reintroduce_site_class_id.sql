@@ -33,13 +33,19 @@ UPDATE master.site_class SET id = 4 WHERE ext_id = 'VE';
 UPDATE master.site_class SET id = 5 WHERE ext_id = 'ST';
 
 ALTER TABLE master.site DISABLE TRIGGER last_mod_site;
+ALTER TABLE master.site DISABLE TRIGGER audit_trigger_row;
+ALTER TABLE master.site DISABLE TRIGGER audit_trigger_stm;
+
 ALTER TABLE master.site ADD site_class_id_ smallint;
 UPDATE master.site SET site_class_id_ = (
     SELECT id FROM master.site_class WHERE ext_id = site_class_id);
 ALTER TABLE master.site DROP site_class_id;
 ALTER TABLE master.site RENAME site_class_id_ TO site_class_id;
 ALTER TABLE master.site ALTER site_class_id SET NOT NULL;
+
 ALTER TABLE master.site ENABLE TRIGGER last_mod_site;
+ALTER TABLE master.site ENABLE TRIGGER audit_trigger_row;
+ALTER TABLE master.site ENABLE TRIGGER audit_trigger_stm;
 
 ALTER TABLE master.site_class
     DROP CONSTRAINT site_class_pkey,
