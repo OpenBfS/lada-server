@@ -10,13 +10,11 @@ package de.intevation.lada.data;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -79,8 +77,7 @@ public class AsyncImportService extends LadaService {
     @POST
     @Path("laf")
     public Response createAsyncImport(
-        @Valid LafImportParameters jsonInput,
-        @Context HttpServletRequest request
+        @Valid LafImportParameters jsonInput
     ) {
         MeasFacil mst = repository.getById(
                 MeasFacil.class, jsonInput.getMeasFacilId());
