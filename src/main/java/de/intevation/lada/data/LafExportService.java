@@ -13,6 +13,7 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -66,20 +67,18 @@ public class LafExportService extends LadaService {
 
 
     /**
-     * Export Sample objects.
+     * Export objects as LAF 8.
      *
-     * The service takes JSON formatted  POST data containing probe ids and
-     * exports the Sample objects filtered by these ids.
-     *
-     * @param objects    JSON formatted string with an array of probe ids.
+     * @param objects LafExportParameters
      * @return The LAF file to export.
+     * @throws BadRequestException if any constraint violations are detected
      */
     @POST
     @Path("laf")
     @Produces("application/octet-stream")
     public Response download(
         @Valid LafExportParameters objects
-    ) {
+    ) throws BadRequestException {
         List<Integer> pIds = objects.getProben();
         List<Integer> mIds = objects.getMessungen();
 

@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -74,12 +75,13 @@ public class AsyncExportService extends LadaService {
      *
      * @param objects Export parameters object
      * @return Response containing the new export ref id
+     * @throws BadRequestException if any constraint violations are detected
      */
     @POST
     @Path("csv")
     public Response createCsvExportJob(
         @Valid CsvExportParameters objects
-    ) {
+    ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
@@ -92,41 +94,17 @@ public class AsyncExportService extends LadaService {
     }
 
     /**
-     * Export Sample objects into laf files.
-     *
-     * The service takes JSON formatted  POST data containing probe ids and
-     * creates a asynchronous export job for the Sample objects filtered by
-     * these ids.
-     * <p>
-     * To request the export post a JSON formatted string with an array of
-     * probe ids and an optional filename
-     * <pre>
-     * <code>
-     * {
-     *  "proben": [[number], [number], ...]
-     *  "filename": [string]
-     * }
-     * </code>
-     * </pre>
-     *
-     * The services returns a JSON object containing the id of the newly
-     * created export job,
-     * which can be used to get the job status or download the file:
-     * <p>
-     * <pre>
-     * {
-     *   "refId": [String]
-     * }
-     * </pre>
+     * Export Sample objects into LAF files.
      *
      * @param objects    Export parameters object
      * @return The job identifier.
+     * @throws BadRequestException if any constraint violations are detected
      */
     @POST
     @Path("laf")
     public Response createLafExportJob(
         @Valid LafExportParameters objects
-    ) {
+    ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
@@ -138,54 +116,17 @@ public class AsyncExportService extends LadaService {
     }
 
     /**
-     * Export data into a json file.
+     * Export data into a JSON file.
      *
-     * This service takes json formatted POST data containing:
-     * - Query parameters used for obtaining the data to. The "export" set
-     * whether the field should be export or not.
-     *   Note: The column list must contain the record's id column even
-     * if it will not be exported.
-     * - An optional list of subdata column names.
-     * - The gridColumnId that contains the record id
-     * - An optional id filter to limit the export data. If not set, the
-     * complete query result will be exported
-     * - A timezone string to convert timestamps to
-     * - An optional filename used for download
-     * <p>
-     * Input format:
-     * <p>
-     * <
-     * {
-     *   "columns": [{
-     *     "gridColumnId": [number],
-     *     "sort": [string],
-     *     "sortIndex": [number],
-     *     "filterValue": [string],
-     *     "filterActive": [boolean],
-     *     "export": [boolean]
-     *   }],
-     *   "subDataColumns": [ [string] ]
-     *   "idField": [number]
-     *   idFilter: [ [number] ],
-     *   "timezone": [string],
-     *   filename: [string]
-     * }
-     * <p>
-     * Return format:
-     * <p>
-     * <pre>
-     * {
-     *   "refId": [String]
-     * }
-     * </pre>
      * @param objects Export parameters object
      * @return Response containing the new export ref id
+     * @throws BadRequestException if any constraint violations are detected
      */
     @POST
     @Path("json")
     public Response createJsonExportJob(
         @Valid QueryExportParameters objects
-    ) {
+    ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
