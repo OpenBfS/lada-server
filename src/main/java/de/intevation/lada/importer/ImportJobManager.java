@@ -40,15 +40,20 @@ public class ImportJobManager extends JobManager {
      * @param userInfo User info
      * @param params Parameters
      * @param mst MessStelle
+     * @param files Decoded files
      * @return New job refId
      */
     public String createImportJob(
-        UserInfo userInfo, LafImportParameters params, MeasFacil mst
+        UserInfo userInfo,
+        LafImportParameters params,
+        MeasFacil mst,
+        Map<String, String> files
     ) {
         LafImportJob newJob = lafImportJobProvider.get();
         newJob.setImportParameters(params);
         newJob.setUserInfo(userInfo);
         newJob.setMst(mst);
+        newJob.setFiles(files);
         return addJob(newJob);
     }
 

@@ -7,10 +7,18 @@
  */
 package de.intevation.lada.data;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -58,33 +66,45 @@ public class AsyncImportService extends LadaService {
     ImportJobManager importJobManager;
 
     /**
-    ** Import a given list of files, generate a tag and set it to all
-    ** imported records.
-    ** Expected input format:
-    ** <pre>
-    ** <code>
-    ** {
-    **   "encoding": "UTF-8",
-    **   "files": {
-    **     "firstFileName.laf": "base64 encoded content",
-    **     "secondFilename.laf": "base64 encoded content",
-    **     //...
-    **   }
-    ** }
-    ** </code>
-    ** </pre>
-    **/
+     * Import a given list of files, generate a tag and set it to all
+     * imported records.
+     *
+     * @param lafImportParameters LafImportParameters
+     * @return Object containing ID of new job
+     * @throws BadRequestException if any constraint violations are detected,
+     * file content is not in valid Base64 scheme or decoding using the encoding
+     * given in lafImportParameters fails.
+     */
     @POST
     @Path("laf")
     public Response createAsyncImport(
-        @Valid LafImportParameters jsonInput
-    ) {
+        @Valid LafImportParameters lafImportParameters
+    ) throws BadRequestException {
         MeasFacil mst = repository.getById(
-                MeasFacil.class, jsonInput.getMeasFacilId());
+                MeasFacil.class, lafImportParameters.getMeasFacilId());
 
-        UserInfo userInfo = authorization.getInfo();
-        String newJobId =
-            importJobManager.createImportJob(userInfo, jsonInput, mst);
+        //Get file content strings from input object
+        Map<String, String> files = new HashMap<String, String>();
+        Charset charset = lafImportParameters.getEncoding();
+        try {
+            for (Map.Entry<String, String> e
+                     : lafImportParameters.getFiles().entrySet()
+            ) {
+                ByteBuffer decodedBytes = ByteBuffer.wrap(
+                    Base64.getDecoder().decode(e.getValue()));
+                String decodedContent = new String(
+                    new StringBuffer(charset.newDecoder()
+                        .decode(decodedBytes)));
+                files.put(e.getKey(), decodedContent);
+            }
+        } catch (IllegalArgumentException | CharacterCodingException e) {
+            throw new BadRequestException(
+                Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage()).build());
+        }
+
+        String newJobId = importJobManager.createImportJob(
+            authorization.getInfo(), lafImportParameters, mst, files);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();

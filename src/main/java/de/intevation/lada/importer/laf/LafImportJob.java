@@ -10,11 +10,7 @@ package de.intevation.lada.importer.laf;
 
 import static de.intevation.lada.data.LafImportService.logLAFFile;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +26,6 @@ import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 
 
@@ -49,6 +44,8 @@ public class LafImportJob extends Job {
     private LafImportParameters importParams;
 
     private MeasFacil mst;
+
+    private Map<String, String> files;
 
     private JsonObject result;
 
@@ -89,53 +86,17 @@ public class LafImportJob extends Job {
     public void runWithTx() {
         logger.debug("Starting LAF import");
 
-        //Get file content strings from input object
-        Map<String, String> filesMap = importParams.getFiles();
-
-        Charset charset = importParams.getEncoding();
-
-        //Contains: fileName: fileContent as String
-        Map<String, String> files = new HashMap<String, String>();
         //Ids of alle imported probe records
         List<Integer> importedProbeids = new ArrayList<Integer>();
+
         //Contains a response data object for every import
         Map<String, Map<String, Object>> importResponseData =
             new HashMap<String, Map<String, Object>>();
 
-        // TODO: Handle this upfront in the service
-        try {
-            for (Map.Entry<String, String> e : filesMap.entrySet()) {
-                String base64String = e.getValue();
-                ByteBuffer decodedBytes = ByteBuffer.wrap(
-                    Base64.getDecoder().decode(base64String));
-                String decodedContent = new String(
-                    new StringBuffer(charset.newDecoder()
-                        .decode(decodedBytes)));
-                files.put(e.getKey(), decodedContent);
-            }
-        } catch (IllegalArgumentException iae) {
-            String msg = "File content not in valid Base64 scheme";
-            result = createResult(
-                false,
-                StatusCodes.IMP_INVALID_VALUE,
-                msg);
-            return;
-        } catch (CharacterCodingException cce) {
-            String msg = "File content not in valid " + charset.name();
-            result = createResult(
-                false,
-                StatusCodes.IMP_INVALID_VALUE,
-                msg);
-            return;
-        }
-
-        logger.debug(
-            String.format("Starting import of %d files", files.size()));
-
         //Import each file
         String mstId = this.mst.getId();
-        files.forEach((fileName, content) -> {
-            logLAFFile(mstId, content, charset);
+        this.files.forEach((fileName, content) -> {
+            logLAFFile(mstId, content, importParams.getEncoding());
             List<ImportConf> config = new ArrayList<ImportConf>();
             if (!"".equals(mstId)) {
                 QueryBuilder<ImportConf> builder =
@@ -190,5 +151,9 @@ public class LafImportJob extends Job {
 
     public void setMst(MeasFacil mst) {
         this.mst = mst;
+    }
+
+    public void setFiles(Map<String, String> files) {
+        this.files = files;
     }
 }
