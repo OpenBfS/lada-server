@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.exporter.ExportFormat;
@@ -28,14 +29,14 @@ import de.intevation.lada.exporter.ExportFormat;
  *
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-public class CsvExportJob extends QueryExportJob {
+public class CsvExportJob extends QueryExportJob<CsvExportParameters> {
 
     /**
      * The csv exporter.
      */
     @Inject
     @ExportConfig(format = ExportFormat.CSV)
-    private Exporter exporter;
+    private Exporter<CsvExportParameters> exporter;
 
     public CsvExportJob() {
         super();
