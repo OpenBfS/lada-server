@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
-
+import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
@@ -29,7 +29,7 @@ import de.intevation.lada.util.data.Repository;
 * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
 */
 @ExportConfig(format = ExportFormat.LAF)
-public class LafExporter implements Exporter {
+public class LafExporter implements Exporter<LafExportParameters> {
 
     /**
      * The creator used to generate content.

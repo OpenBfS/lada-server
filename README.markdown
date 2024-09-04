@@ -99,7 +99,7 @@ Oder für Shibboleth-Unterstützung:
  $ docker build -f Dockerfile.shibboleth -t koala/lada_client .
 
 Starten der Anwendung:
- $ docker-compose up -d
+ $ docker compose up -d
 
 Innerhalb des Client-Containers muss dann noch folgendes ausgeführt werden,
 wenn zum ersten mal your/repo/of/lada-client als Volume in einen Container

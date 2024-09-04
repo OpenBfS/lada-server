@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import jakarta.json.JsonObject;
-
+import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.util.auth.UserInfo;
 
 /**
@@ -23,7 +22,7 @@ import de.intevation.lada.util.auth.UserInfo;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-public interface Exporter {
+public interface Exporter<T extends ExportParameters> {
     /**
      * Export proben and referenced messung records.
      *
@@ -85,7 +84,7 @@ public interface Exporter {
     default InputStream export(
         Iterable<Map<String, Object>> result,
         Charset encoding,
-        JsonObject options,
+        T options,
         List<String> columnsToInclude,
         String subDataKey,
         Integer qId,

@@ -167,12 +167,21 @@ UPDATE munic_div SET name = NULL where name = '';
 ALTER TABLE munic_div
     ADD CHECK (name <> '');
 
+ALTER TABLE site DISABLE TRIGGER last_mod_site;
+ALTER TABLE site DISABLE TRIGGER audit_trigger_row;
+ALTER TABLE site DISABLE TRIGGER audit_trigger_stm;
+
 UPDATE site SET rei_report_text = NULL WHERE rei_report_text = '';
 UPDATE site SET rei_zone = NULL WHERE rei_zone = '';
 UPDATE site SET rei_sector = NULL WHERE rei_sector = '';
 UPDATE site SET rei_competence = NULL WHERE rei_competence = '';
 UPDATE site SET rei_opr_mode = NULL WHERE rei_opr_mode = '';
 UPDATE site SET route = NULL WHERE route = '';
+
+ALTER TABLE site ENABLE TRIGGER last_mod_site;
+ALTER TABLE site ENABLE TRIGGER audit_trigger_row;
+ALTER TABLE site ENABLE TRIGGER audit_trigger_stm;
+
 ALTER TABLE site
     ADD CHECK (ext_id <> ''),
     ADD CHECK (long_text <> ''),
@@ -301,6 +310,11 @@ ALTER TABLE mpg
     ADD CHECK (comm_sample <> ''),
     ADD CHECK (sample_quant <> '');
 
+ALTER TABLE sample DISABLE TRIGGER last_mod_sample;
+ALTER TABLE sample DISABLE TRIGGER audit_trigger_row;
+ALTER TABLE sample DISABLE TRIGGER audit_trigger_stm;
+ALTER TABLE sample DISABLE TRIGGER tree_mod_sample;
+
 UPDATE sample SET ext_id=DEFAULT WHERE ext_id='';
 UPDATE sample SET main_sample_id = NULL WHERE main_sample_id = '';
 UPDATE sample SET env_descrip_name = NULL WHERE env_descrip_name = '';
@@ -309,33 +323,94 @@ ALTER TABLE sample
     ADD CHECK (main_sample_id <> ''),
     ADD CHECK (env_descrip_name <> '');
 
+ALTER TABLE sample ENABLE TRIGGER last_mod_sample;
+ALTER TABLE sample ENABLE TRIGGER audit_trigger_row;
+ALTER TABLE sample ENABLE TRIGGER audit_trigger_stm;
+ALTER TABLE sample ENABLE TRIGGER tree_mod_sample;
+
+ALTER TABLE comm_sample DISABLE TRIGGER audit_trigger_row;
+ALTER TABLE comm_sample DISABLE TRIGGER audit_trigger_stm;
+
 UPDATE comm_sample SET text = NULL WHERE text = '';
 ALTER TABLE comm_sample
     ADD CHECK (text <> '');
+
+ALTER TABLE comm_sample ENABLE TRIGGER audit_trigger_row;
+ALTER TABLE comm_sample ENABLE TRIGGER audit_trigger_stm;
+
+ALTER TABLE geolocat DISABLE TRIGGER last_mod_geolocat;
+ALTER TABLE geolocat DISABLE TRIGGER audit_trigger_row;
+ALTER TABLE geolocat DISABLE TRIGGER audit_trigger_stm;
+ALTER TABLE geolocat DISABLE TRIGGER tree_mod_geolocat;
 
 UPDATE geolocat SET add_site_text = NULL WHERE add_site_text = '';
 ALTER TABLE geolocat
     ADD CHECK (add_site_text <> '');
 
+ALTER TABLE geolocat ENABLE TRIGGER last_mod_geolocat;
+ALTER TABLE geolocat ENABLE TRIGGER audit_trigger_row;
+ALTER TABLE geolocat ENABLE TRIGGER audit_trigger_stm;
+ALTER TABLE geolocat ENABLE TRIGGER tree_mod_geolocat;
+
+ALTER TABLE geolocat_mpg DISABLE TRIGGER last_mod_geolocat_mpg;
+
 UPDATE geolocat_mpg SET add_site_text = NULL WHERE add_site_text = '';
 ALTER TABLE geolocat_mpg
     ADD CHECK (add_site_text <> '');
+
+ALTER TABLE geolocat_mpg ENABLE TRIGGER last_mod_geolocat_mpg;
+
+ALTER TABLE sample_specif_meas_val DISABLE TRIGGER last_mod_sample_specif;
+ALTER TABLE sample_specif_meas_val DISABLE TRIGGER audit_trigger_row;
+ALTER TABLE sample_specif_meas_val DISABLE TRIGGER audit_trigger_stm;
+ALTER TABLE sample_specif_meas_val DISABLE TRIGGER tree_mod_sample_specif;
 
 UPDATE sample_specif_meas_val SET smaller_than = NULL WHERE smaller_than = '';
 ALTER TABLE sample_specif_meas_val
     ADD CHECK (smaller_than <> '');
 
+ALTER TABLE sample_specif_meas_val ENABLE TRIGGER last_mod_sample_specif;
+ALTER TABLE sample_specif_meas_val ENABLE TRIGGER audit_trigger_row;
+ALTER TABLE sample_specif_meas_val ENABLE TRIGGER audit_trigger_stm;
+ALTER TABLE sample_specif_meas_val ENABLE TRIGGER tree_mod_sample_specif;
+
+ALTER TABLE measm DISABLE TRIGGER last_mod_measm;
+ALTER TABLE measm DISABLE TRIGGER audit_trigger_row;
+ALTER TABLE measm DISABLE TRIGGER audit_trigger_stm;
+ALTER TABLE measm DISABLE TRIGGER tree_mod_measm;
+
 UPDATE measm SET min_sample_id = NULL WHERE min_sample_id = '';
 ALTER TABLE measm
     ADD CHECK (min_sample_id <> '');
+
+ALTER TABLE measm ENABLE TRIGGER last_mod_measm;
+ALTER TABLE measm ENABLE TRIGGER audit_trigger_row;
+ALTER TABLE measm ENABLE TRIGGER audit_trigger_stm;
+ALTER TABLE measm ENABLE TRIGGER tree_mod_measm;
+
+ALTER TABLE comm_measm DISABLE TRIGGER audit_trigger_row;
+ALTER TABLE comm_measm DISABLE TRIGGER audit_trigger_stm;
 
 UPDATE comm_measm SET text = NULL WHERE text = '';
 ALTER TABLE comm_measm
     ADD CHECK (text <> '');
 
+ALTER TABLE comm_measm ENABLE TRIGGER audit_trigger_row;
+ALTER TABLE comm_measm ENABLE TRIGGER audit_trigger_stm;
+
+ALTER TABLE meas_val DISABLE TRIGGER last_mod_meas_val;
+ALTER TABLE meas_val DISABLE TRIGGER audit_trigger_row;
+ALTER TABLE meas_val DISABLE TRIGGER audit_trigger_stm;
+ALTER TABLE meas_val DISABLE TRIGGER tree_mod_meas_val;
+
 UPDATE meas_val SET less_than_lod = NULL WHERE less_than_lod = '';
 ALTER TABLE meas_val
     ADD CHECK (less_than_lod <> '');
+
+ALTER TABLE meas_val ENABLE TRIGGER last_mod_meas_val;
+ALTER TABLE meas_val ENABLE TRIGGER audit_trigger_row;
+ALTER TABLE meas_val ENABLE TRIGGER audit_trigger_stm;
+ALTER TABLE meas_val ENABLE TRIGGER tree_mod_meas_val;
 
 UPDATE status_prot SET text = NULL WHERE text = '';
 ALTER TABLE status_prot

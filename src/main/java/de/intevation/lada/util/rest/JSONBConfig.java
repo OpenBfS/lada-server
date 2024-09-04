@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.util.rest;
 
+import java.nio.charset.Charset;
+
+import jakarta.json.bind.adapter.JsonbAdapter;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
@@ -32,10 +35,29 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
         // de-/serializing any object
         return JsonbBuilder.create(new JsonbConfig()
             .withNullValues(true)
+
             // The API-doc says "Custom date format as specified in
             // DateTimeFormatter", but at least with Yasson the special
             // JsonbDateFormat.TIME_IN_MILLIS can be used here, too.
             .withDateFormat(DATE_FORMAT, null)
+
+            .withAdapters(
+                // De-/serialize Charset from/to String
+                new JsonbAdapter<Charset, String>() {
+                    @Override
+                    public Charset adaptFromJson(
+                        String serialized
+                    ) throws Exception {
+                        return Charset.forName(serialized);
+                    }
+
+                    @Override
+                    public String adaptToJson(
+                        Charset charset
+                    ) throws Exception {
+                        return charset.name();
+                    }
+                })
         );
     }
 }

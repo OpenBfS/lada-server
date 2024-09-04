@@ -77,7 +77,7 @@ public class UniversalServiceTest extends BaseTest {
         + "EXECUTE request%s;\nDEALLOCATE request;";
 
     // A 'main_sample_id' from lada.sample in dbUnit_query.json
-    private final String filterValue = "120510001";
+    private final String filterValue = "12051,0001";
 
     private JsonArray filteredRequestJson = Json.createArrayBuilder()
         .add(Json.createObjectBuilder()

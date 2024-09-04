@@ -61,6 +61,9 @@ public class GridColConf implements Serializable {
 
     private Integer width;
 
+    @Transient
+    private boolean export;
+
     //bi-directional one-to-one association to GridColumn
     @ManyToOne(fetch = FetchType.EAGER)
     private GridColMp gridColMp;
@@ -228,5 +231,13 @@ public class GridColConf implements Serializable {
 
     public void setIsFilterNull(boolean isFilterNull) {
         this.isFilterNull = isFilterNull;
+    }
+
+    public boolean isExport() {
+        return export;
+    }
+
+    public void setExport(boolean export) {
+        this.export = export;
     }
 }

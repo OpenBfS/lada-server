@@ -19,15 +19,14 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
-import jakarta.json.JsonObject;
-
+import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.util.data.Job;
 
 
 /**
  * Abstract class for an export job.
  */
-public abstract class ExportJob extends Job {
+public abstract class ExportJob<T extends ExportParameters> extends Job {
 
     private static final int LENGTH = 1024;
 
@@ -44,7 +43,7 @@ public abstract class ExportJob extends Job {
     /**
      * Parameters used for the export.
      */
-    protected JsonObject exportParameters;
+    protected T exportParameters;
 
     /**
      * The export format.
@@ -123,7 +122,7 @@ public abstract class ExportJob extends Job {
      * Set parameters used for the export.
      * @param exportParams Parameters as JsonObject
      */
-    public void setExportParameter(JsonObject exportParams) {
+    public void setExportParameter(T exportParams) {
         this.exportParameters = exportParams;
     }
 
