@@ -639,5 +639,5 @@
             <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
         </repository>
     </repositories>
-    <version>4.8.2</version>
+    <version>4.8.3</version>
 </project>
