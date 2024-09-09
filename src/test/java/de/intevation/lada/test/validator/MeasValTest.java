@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.validator;
 
-import jakarta.inject.Inject;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
@@ -16,7 +14,6 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
-import de.intevation.lada.validation.Validator;
 
 
 public class MeasValTest extends ValidatorBaseTest {
@@ -40,9 +37,6 @@ public class MeasValTest extends ValidatorBaseTest {
 
     private static final String VALUE_MISSING = "A value must be provided";
     private static final String VAL_SEC_UNIT = "Secondary unit selected";
-
-    @Inject
-    Validator validator;
 
     /**
      * Test measVal without error and lessThanLOD set.

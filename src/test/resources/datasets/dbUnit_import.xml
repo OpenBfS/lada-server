@@ -16,6 +16,7 @@
         meas_facil_id = "06010"
         auth_funct_id = "4"
     />
+
     <!--master data-->
     <master.meas_unit id = "207" />
     <master.meas_unit id = "208" />
@@ -67,6 +68,9 @@
         opr_mode_id = "1"
         regulation_id = "2"
     />
+
+    <master.spat_ref_sys id = "4"/>
+
     <master.state
         id = "0"
         ctry = "Deutschland"
@@ -74,6 +78,7 @@
         iso_3166 = "DE"
         coord_x_ext = "123123"
         coord_y_ext = "321321"
+        spat_ref_sys_id = "4"
     />
     <master.admin_unit
         id = "11000000"
@@ -86,7 +91,6 @@
         geom_center = "POINT(32487017 5519769)"
     />
 
-    <master.spat_ref_sys id = "4"/>
     <master.type_regulation id = "E"/>
 
     <master.sampler
@@ -123,6 +127,9 @@
         to_val = "2"
         action = "DEFAULT"
     />
+
+    <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
+
     <!-- Sample/Measm import data-->
     <lada.mpg
         id = "1000"

@@ -9,8 +9,6 @@ package de.intevation.lada.test.validator;
 
 import java.util.Set;
 
-import jakarta.inject.Inject;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -19,7 +17,6 @@ import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.util.data.EnvMedia;
-import de.intevation.lada.validation.Validator;
 
 
 /**
@@ -51,8 +48,6 @@ public class MpgTest extends ValidatorBaseTest {
     private static final String VALUE_OUTSIDE_RANGE =
         "Value outside range of validity";
 
-    @Inject
-    private Validator validator;
 
     /**
      * Test mpg objects with valid start and end date below minimum value.

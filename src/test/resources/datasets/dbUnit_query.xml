@@ -173,7 +173,7 @@
         sample_meth_id = "1"
         is_test = "true"
         env_medium_id = "L6"
-        main_sample_id = "120510001"
+        main_sample_id = "12051,0001"
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
         sched_end_date = "2012-05-05 16:00:00"
@@ -204,6 +204,7 @@
         id = "1000"
         measm_id = "1200"
         measd_id = "1"
+        meas_val = "1.1"
         meas_unit_id = "1"
     />
     <lada.meas_val

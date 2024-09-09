@@ -17,6 +17,7 @@ import jakarta.inject.Inject;
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.exporter.ExportFormat;
@@ -27,7 +28,7 @@ import de.intevation.lada.exporter.ExportFormat;
  *
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-public class JsonExportJob extends QueryExportJob {
+public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
 
     /**
      * Map of data types and the according sub data key.
@@ -41,7 +42,7 @@ public class JsonExportJob extends QueryExportJob {
      */
     @Inject
     @ExportConfig(format = ExportFormat.JSON)
-    private Exporter exporter;
+    private Exporter<QueryExportParameters> exporter;
 
     public JsonExportJob() {
         super();

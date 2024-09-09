@@ -70,7 +70,8 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 1))
+                .add("gridColMpId", 1)
+                .add("queryUserId", 1))
             .add(Json.createObjectBuilder()
                 .add("columnIndex", 1)
                 .add("export", true)
@@ -79,7 +80,8 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 2))
+                .add("gridColMpId", 2)
+                .add("queryUserId", 1))
             .add(Json.createObjectBuilder()
                 .add("columnIndex", 2)
                 .add("export", true)
@@ -88,7 +90,8 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 4))
+                .add("gridColMpId", 4)
+                .add("queryUserId", 1))
             .add(Json.createObjectBuilder()
                 .add("columnIndex", 3)
                 .add("export", true)
@@ -97,9 +100,11 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 5)));
+                .add("gridColMpId", 5)
+                .add("queryUserId", 1)));
 
-    private final JsonObject measmRequestJson = Json.createObjectBuilder()
+    private final JsonObjectBuilder measmRequestJsonBuilder = Json
+        .createObjectBuilder()
         .add("timezone", "UTC")
         .add("columns", Json.createArrayBuilder()
             .add(Json.createObjectBuilder()
@@ -110,15 +115,16 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 6)))
+                .add("gridColMpId", 6)
+                .add("queryUserId", 1)))
         .add("idField", "messungId")
         .add("idFilter", Json.createArrayBuilder().add("1200"))
         .add("exportSubData", true)
         .add("subDataColumns", Json.createArrayBuilder()
             .add("id")
+            .add("measVal")
             .add("measUnitId")
-            .add("measdId"))
-        .build();
+            .add("measdId"));
 
     /**
      * Test asynchronous CSV export of a Sample object.
@@ -138,7 +144,7 @@ public class ExporterTest extends BaseTest {
             "Unexpected CSV content",
             "hauptprobenNr,umwId,isTest,probeId\r\n"
             + "120510002,L6,No,1000\r\n"
-            + "120510001,L6,Yes,1001\r\n",
+            + "\"12051,0001\",L6,Yes,1001\r\n",
             result);
     }
 
@@ -147,14 +153,13 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportOptions(
+    public final void testCsvExportFieldSeparator(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
-            .add("csvOptions", Json.createObjectBuilder()
-                .add("fieldSeparator", "semicolon"))
+            .add("fieldSeparator", ";")
             .build();
 
         String result = runExportTest(baseUrl, formatCsv, requestJson);
@@ -162,7 +167,72 @@ public class ExporterTest extends BaseTest {
             "Unexpected CSV content",
             "hauptprobenNr;umwId;isTest;probeId\r\n"
             + "120510002;L6;No;1000\r\n"
-            + "120510001;L6;Yes;1001\r\n",
+            + "12051,0001;L6;Yes;1001\r\n",
+            result);
+    }
+
+    /**
+     * Test asynchronous CSV export using CSV options.
+     */
+    @Test
+    @RunAsClient
+    public final void testCsvExportRowDelimiter(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", JsonValue.NULL)
+            .add("rowDelimiter", "\n")
+            .build();
+
+        String result = runExportTest(baseUrl, formatCsv, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr,umwId,isTest,probeId\n"
+            + "120510002,L6,No,1000\n"
+            + "\"12051,0001\",L6,Yes,1001\n",
+            result);
+    }
+
+    /**
+     * Test asynchronous CSV export using CSV options.
+     */
+    @Test
+    @RunAsClient
+    public final void testCsvExportQuote(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", JsonValue.NULL)
+            .add("quote", "'")
+            .build();
+
+        String result = runExportTest(baseUrl, formatCsv, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr,umwId,isTest,probeId\r\n"
+            + "120510002,L6,No,1000\r\n"
+            + "'12051,0001',L6,Yes,1001\r\n",
+            result);
+    }
+
+    /**
+     * Test asynchronous CSV export using CSV options.
+     */
+    @Test
+    @RunAsClient
+    public final void testCsvExportDecimalSeparator(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        String result = runExportTest(
+            baseUrl, formatCsv, measmRequestJsonBuilder
+            .add("decimalSeparator", ",").build());
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "messungId,id,measVal,measUnitId,measdId\r\n"
+            + "1200,1000,\"1,1E00\",Sv,test\r\n"
+            + "1200,1001,,Sv,test\r\n",
             result);
     }
 
@@ -211,7 +281,7 @@ public class ExporterTest extends BaseTest {
             CoreMatchers.hasItems(
                 "120510002,L6,No,1000,453,2",
                 "120510002,L6,No,1000,454,0",
-                "120510001,L6,Yes,1001,,"));
+                "\"12051,0001\",L6,Yes,1001,,"));
     }
 
     /**
@@ -223,12 +293,12 @@ public class ExporterTest extends BaseTest {
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         String result = runExportTest(
-            baseUrl, formatCsv, measmRequestJson);
+            baseUrl, formatCsv, measmRequestJsonBuilder.build());
         Assert.assertEquals(
             "Unexpected CSV content",
-            "messungId,id,measUnitId,measdId\r\n"
-            + "1200,1000,Sv,test\r\n"
-            + "1200,1001,Sv,test\r\n",
+            "messungId,id,measVal,measUnitId,measdId\r\n"
+            + "1200,1000,1.1E00,Sv,test\r\n"
+            + "1200,1001,,Sv,test\r\n",
             result);
     }
 
@@ -299,14 +369,20 @@ public class ExporterTest extends BaseTest {
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         String result = runExportTest(
-            baseUrl, formatJson, measmRequestJson);
+            baseUrl, formatJson, measmRequestJsonBuilder.build());
         Assert.assertEquals(
             "Unexpected JSON content",
             "{\"1200\":"
             + "{\"messungId\":1200,"
-            + "\"messwerte\":["
-            + "{\"measUnitId\":\"Sv\",\"measdId\":\"test\",\"id\":1000},"
-            + "{\"measUnitId\":\"Sv\",\"measdId\":\"test\",\"id\":1001}]}}",
+            + "\"messwerte\":[{"
+            + "\"measUnitId\":\"Sv\","
+            + "\"measdId\":\"test\","
+            + "\"measVal\":1.1,"
+            + "\"id\":1000},{"
+            + "\"measUnitId\":\"Sv\","
+            + "\"measdId\":\"test\","
+            + "\"measVal\":null,"
+            + "\"id\":1001}]}}",
             result);
     }
 
@@ -367,16 +443,52 @@ public class ExporterTest extends BaseTest {
     public final void testAsyncExportFailure(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
+        /* Test values */
+        String sampleValue = "99999";
+        String samplePath = "createLafExportJob.arg0.proben[0].<list element>";
+        String sampleMessage = String.format(
+            "'%s' is no valid primary key", sampleValue);
+
         /* Request asynchronous export */
-        JsonObject requestJson = Json.createObjectBuilder()
-            // Add arbitrary array to avoid 404 being returned for LAF
-            .add("proben", Json.createArrayBuilder().add("xxx"))
-            .add("invalidField", "xxx")
+        JsonObject lafJson = Json.createObjectBuilder()
+            .add("proben", Json.createArrayBuilder().add(sampleValue))
             .build();
 
-        startExport(baseUrl, formatCsv, requestJson, Job.Status.ERROR);
-        startExport(baseUrl, formatJson, requestJson, Job.Status.ERROR);
-        startExport(baseUrl, formatLaf, requestJson, Job.Status.ERROR);
+        assertJsonContainsValidationMessage(
+            parseResponse(
+                exportRequest(baseUrl, formatLaf, lafJson),
+                Response.Status.BAD_REQUEST)
+                .asJsonObject(),
+            samplePath, sampleMessage);
+    }
+
+    /**
+     * Test failing asynchronous export with invalid encoding.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncExportInvalidCharset(
+        @ArquillianResource URL baseUrl
+    ) {
+        JsonObject jsonExportJson = Json.createObjectBuilder()
+            .add("encoding", "invalidEncoding")
+            .build();
+        parseResponse(
+            exportRequest(baseUrl, formatJson, jsonExportJson),
+            Response.Status.BAD_REQUEST);
+    }
+
+    private Response exportRequest(
+            URL baseUrl, String format, JsonObject requestJson) {
+        Response response = client.target(
+            baseUrl + "data/asyncexport/" + format)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header("Accept", MediaType.APPLICATION_JSON)
+            .post(Entity.entity(requestJson.toString(),
+                    MediaType.APPLICATION_JSON));
+        return response;
     }
 
     private String startExport(
@@ -385,13 +497,7 @@ public class ExporterTest extends BaseTest {
         JsonObject requestJson,
         Job.Status expectedStatus
     ) throws InterruptedException {
-        Response exportCreated = client.target(
-            baseUrl + "data/asyncexport/" + format)
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(requestJson.toString(),
-                    MediaType.APPLICATION_JSON));
+        Response exportCreated = exportRequest(baseUrl, format, requestJson);
         JsonObject exportCreatedObject =
             parseResponse(exportCreated).asJsonObject();
 

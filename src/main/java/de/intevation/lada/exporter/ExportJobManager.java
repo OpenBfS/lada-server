@@ -19,8 +19,7 @@ import java.util.ResourceBundle;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
-import jakarta.json.JsonObject;
-
+import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.exporter.csv.CsvExportJob;
 import de.intevation.lada.exporter.json.JsonExportJob;
 import de.intevation.lada.exporter.laf.LafExportJob;
@@ -59,7 +58,7 @@ public class ExportJobManager extends JobManager {
     public String createExportJob(
         String format,
         Charset encoding,
-        JsonObject params,
+        ExportParameters params,
         ResourceBundle bundle,
         UserInfo userInfo
     ) throws IllegalArgumentException {
@@ -82,15 +81,13 @@ public class ExportJobManager extends JobManager {
         }
 
         String downloadFileName =
-            params.containsKey("filename")
-                ? params.getString("filename")
+            params.getFilename() != null && !params.getFilename().isBlank()
+                ? params.getFilename()
                 : String.format("export.%s", format);
-
         newJob.setDownloadFileName(downloadFileName);
         newJob.setEncoding(encoding);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
-        newJob.setFuture(executor.submit(newJob));
         return addJob(newJob);
     }
 
@@ -105,20 +102,6 @@ public class ExportJobManager extends JobManager {
         String id
     ) throws JobNotFoundException {
         return (ExportJob) super.getJobById(id);
-    }
-
-    /**
-     * Get the encoding of an export job by id.
-     * @param id Id to check
-     * @return Encoding as String
-     * @throws JobNotFoundException Thrown if a job with the given can not
-     *                              be found
-     */
-    public String getJobEncoding(
-        String id
-    ) throws JobNotFoundException {
-        ExportJob job = getJobById(id);
-        return job.getEncoding().name();
     }
 
     /**

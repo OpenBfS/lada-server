@@ -9,14 +9,21 @@ package de.intevation.lada;
 
 import java.io.StringReader;
 import java.sql.SQLException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
@@ -38,6 +45,7 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
@@ -96,7 +104,6 @@ public class BaseTest {
     @Before
     public void setup()
         throws DatabaseUnitException, SQLException, IOException {
-        this.client = ClientBuilder.newClient();
 
         // Set up database connection
         PGSimpleDataSource ds = new PGSimpleDataSource();
@@ -116,6 +123,8 @@ public class BaseTest {
 
         // Insert test data
         doDbOperation(DatabaseOperation.CLEAN_INSERT);
+
+        this.client = ClientBuilder.newClient();
     }
 
     /**
@@ -134,7 +143,12 @@ public class BaseTest {
             .importCompileAndRuntimeDependencies().resolve()
             .withTransitivity().asFile();
 
+        final String beansXmlResource = "META-INF/beans.xml";
+        final String threadContextProviderResource = "META-INF/services/"
+            + "jakarta.enterprise.concurrent.spi.ThreadContextProvider";
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
+            .add(new FileAsset(new File("src/main/webapp/WEB-INF/web.xml")),
+                "WEB-INF/web.xml")
             .addPackages(true, ClassLoader.getSystemClassLoader()
                 .getDefinedPackage("de.intevation.lada"))
             .addAsResource("lada_en.properties", "lada_en.properties")
@@ -143,8 +157,9 @@ public class BaseTest {
             .addAsLibraries(compileAndRuntimeDeps)
             .addAsResource("META-INF/test-persistence.xml",
                 "META-INF/persistence.xml")
-            .addAsResource("META-INF/test-beans.xml",
-                "META-INF/beans.xml")
+            .addAsResource(beansXmlResource, beansXmlResource)
+            .addAsResource(threadContextProviderResource,
+                threadContextProviderResource)
             //Add cleanup script and datasets for container mode tests
             .addAsResource(DATASETS_DIR, DATASETS_DIR);
         //Add additional test dependencies
@@ -304,6 +319,26 @@ public class BaseTest {
             "Response does not contain expected key '" + key + "': "
             + json.toString(),
             json.containsKey(key));
+    }
+
+    protected static void assertJsonContainsValidationMessage(JsonObject json,
+            String expectedPath, String expectedMessage) {
+        assertNotNull("JSON must not be null", json);
+        JsonArray violations = json.getJsonArray("parameterViolations");
+        AtomicBoolean containsPath = new AtomicBoolean(false);
+        violations.forEach(violation -> {
+            String path = violation.asJsonObject().getString("path", null);
+            String message = violation.asJsonObject()
+                .getString("message", null);
+            if (path.equals(expectedPath)) {
+                containsPath.set(true);
+                assertEquals(
+                    "Validation messages do not match",
+                    expectedMessage, message);
+            }
+        });
+        assertTrue("Found no validation message for the given path",
+            containsPath.get());
     }
 
     private void doDbOperation(
