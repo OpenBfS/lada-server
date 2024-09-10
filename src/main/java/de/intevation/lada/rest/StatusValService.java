@@ -16,7 +16,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusAccessMpView;
 import de.intevation.lada.model.master.StatusAccessMpView_;
 import de.intevation.lada.model.master.StatusMp;
@@ -87,10 +86,8 @@ public class StatusValService extends LadaService {
     private List<StatusVal> getReachable(Integer messungsId) {
         Measm messung = repository.getById(Measm.class, messungsId);
 
-        StatusProt status = repository.getById(
-            StatusProt.class, messung.getStatus());
         StatusMp kombi = repository.getById(
-            StatusMp.class, status.getStatusMpId());
+            StatusMp.class, messung.getStatusProt().getStatusMpId());
 
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)

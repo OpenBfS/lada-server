@@ -105,14 +105,9 @@ public class Measm extends BaseModel implements Serializable {
     @JoinColumn(insertable = false, updatable = false)
     private Sample sample;
 
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = StatusProt.class)
-    @NotNull(groups = Warnings.class)
-    private Integer status;
-
     @OneToOne
     @JoinColumn(name = "status", insertable = false, updatable = false)
-    private StatusProt statusProtocol;
+    private StatusProt statusProt;
 
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
@@ -224,14 +219,6 @@ public class Measm extends BaseModel implements Serializable {
         this.sampleId = sampleId;
     }
 
-    public Integer getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
     public Date getTreeMod() {
         return this.treeMod;
     }
@@ -303,12 +290,7 @@ public class Measm extends BaseModel implements Serializable {
         this.owner = owner;
     }
 
-    public StatusProt getStatusProtocol() {
-        return this.statusProtocol;
+    public StatusProt getStatusProt() {
+        return this.statusProt;
     }
-
-    public void setStatusProtocol(StatusProt statusProtocol) {
-        this.statusProtocol = statusProtocol;
-    }
-
 }

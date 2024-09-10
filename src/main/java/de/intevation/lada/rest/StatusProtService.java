@@ -126,8 +126,7 @@ public class StatusProtService extends LadaService {
             throw new ForbiddenException();
         }
 
-        StatusProt oldStatus = repository.getById(
-            StatusProt.class, messung.getStatus());
+        StatusProt oldStatus = messung.getStatusProt();
         StatusMp newKombi = repository.getById(
             StatusMp.class, status.getStatusMpId());
 

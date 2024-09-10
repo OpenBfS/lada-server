@@ -12,7 +12,6 @@ import java.util.List;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp;
 import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp_;
 import de.intevation.lada.model.master.MeasFacil;
@@ -49,13 +48,9 @@ public class MessungAuthorizer extends BaseAuthorizer {
             return getAuthorization(userInfo, probe)
                 ? null : I18N_KEY_FORBIDDEN;
         }
-        StatusProt status = repository.getById(
-            StatusProt.class,
-            messung.getStatus()
-        );
         StatusMp kombi = repository.getById(
             StatusMp.class,
-            status.getStatusMpId()
+            messung.getStatusProt().getStatusMpId()
         );
         return kombi.getStatusVal().getId() > 0
             || getAuthorization(userInfo, probe)
@@ -119,12 +114,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
             return;
         }
 
-        StatusProt status = repository.getById(
-            StatusProt.class,
-            messung.getStatus()
-        );
         StatusMp kombi = repository.getById(
-            StatusMp.class, status.getStatusMpId());
+            StatusMp.class, messung.getStatusProt().getStatusMpId());
         int stufe = kombi.getStatusLev().getId();
         int wert  = kombi.getStatusVal().getId();
 

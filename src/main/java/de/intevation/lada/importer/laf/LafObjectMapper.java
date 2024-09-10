@@ -1149,10 +1149,8 @@ public class LafObjectMapper {
             return false;
         }
         // get current status kombi
-        StatusProt currentStatus = repository.getById(
-            StatusProt.class, messung.getStatus());
         StatusMp currentKombi = repository.getById(
-            StatusMp.class, currentStatus.getStatusMpId());
+            StatusMp.class, messung.getStatusProt().getStatusMpId());
         // check if erreichbar
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)
@@ -1241,7 +1239,6 @@ public class LafObjectMapper {
             } else {
                 messung.setIsCompleted(true);
             }
-            messung.setStatus(newStatus.getId());
             repository.update(messung);
             return true;
         } else {

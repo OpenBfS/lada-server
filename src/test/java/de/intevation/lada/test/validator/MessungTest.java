@@ -33,7 +33,6 @@ public class MessungTest extends ValidatorBaseTest {
     private static final int EXISTING_SAMPLE_ID_SAMPLE_METH_CONT = 2000;
     private static final int EXISTING_SAMPLE_ID_REGULATION_161 = 3000;
     private static final int EXISTING_MEASM_ID = 1200;
-    private static final int EXISTING_STATUS_PROT_ID = 1000;
     private static final String EXISTING_MIN_SAMPLE_ID = "T100";
     private static final String EXISTING_MMT_ID = "A3";
     private static final String EXISTING_SAMPLE_START_DATE
@@ -339,7 +338,6 @@ public class MessungTest extends ValidatorBaseTest {
         measm.setMinSampleId(MIN_SAMPLE_ID_00G2);
         measm.setMeasPd(1);
         measm.setMeasmStartDate(new Date());
-        measm.setStatus(EXISTING_STATUS_PROT_ID);
         return measm;
     }
 }

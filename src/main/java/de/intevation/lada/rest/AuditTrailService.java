@@ -39,7 +39,6 @@ import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -213,9 +212,7 @@ public class AuditTrailService extends LadaService {
                 Measm messung = repository.entityManager().find(
                     Measm.class, a.getMeasmId());
                 if (messung != null) {
-                    StatusProt status = repository.getById(
-                        StatusProt.class, messung.getStatus());
-                    if (status.getStatusMpId() == 1
+                    if (messung.getStatusProt().getStatusMpId() == 1
                         && !userInfo.getMessstellen().contains(
                             probe.getMeasFacilId())
                     ) {
@@ -316,8 +313,6 @@ public class AuditTrailService extends LadaService {
     ) {
         Measm messung = repository.getById(Measm.class, mId);
 
-        StatusProt status =
-            repository.getById(StatusProt.class, messung.getStatus());
         Sample probe =
             repository.getById(Sample.class, messung.getSampleId());
         UserInfo userInfo = authorization.getInfo();
@@ -339,9 +334,9 @@ public class AuditTrailService extends LadaService {
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
             if (a.getTableName().equals("meas_val")
-                    && status.getStatusMpId() == 1
-                    && !userInfo.getMessstellen().contains(
-                        probe.getMeasFacilId())) {
+                && messung.getStatusProt().getStatusMpId() == 1
+                && !userInfo.getMessstellen().contains(
+                    probe.getMeasFacilId())) {
                 continue;
             }
             entries.add(createEntry(a));
