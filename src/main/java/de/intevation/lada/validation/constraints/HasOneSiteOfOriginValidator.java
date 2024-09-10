@@ -31,12 +31,12 @@ public class HasOneSiteOfOriginValidator
 
     private String message;
 
-    @Transactional
     @Override
     public void initialize(HasOneSiteOfOrigin constraintAnnotation) {
         this.message = constraintAnnotation.message();
     }
 
+    @Transactional
     @Override
     public boolean isValid(Sample probe, ConstraintValidatorContext ctx) {
         Integer id = probe.getId();
