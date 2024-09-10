@@ -5,7 +5,7 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.constraints.requests;
+package de.intevation.lada.validation.constraints;
 
 import de.intevation.lada.data.requests.LafExportParameters;
 import jakarta.validation.ConstraintValidator;
