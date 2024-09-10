@@ -15,9 +15,12 @@ public class HasEitherSamplesOrMeasmValidator
     implements ConstraintValidator<HasEitherSamplesOrMeasm, LafExportParameters> {
 
     @Override
-    public boolean isValid(LafExportParameters value, ConstraintValidatorContext context) {
+    public boolean isValid(
+        LafExportParameters value,
+        ConstraintValidatorContext context
+    ) {
         return value == null
-            || value.getMessungen() != null
-            || value.getProben() != null;
+            || value.getMessungen() != null && !value.getMessungen().isEmpty()
+            || value.getProben() != null && !value.getProben().isEmpty();
     }
 }

@@ -82,10 +82,6 @@ public class LafExportService extends LadaService {
         List<Integer> pIds = objects.getProben();
         List<Integer> mIds = objects.getMessungen();
 
-        if (pIds.isEmpty() && mIds.isEmpty()) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
         Charset charset = objects.getEncoding();
 
         UserInfo userInfo = authorization.getInfo();
