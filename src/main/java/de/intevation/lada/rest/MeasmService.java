@@ -73,19 +73,9 @@ public class MeasmService extends LadaService {
     ) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
             .and(Measm_.sampleId, sampleId);
-        List<Measm> messungs = authorization.filter(
+        return authorization.filter(
             repository.filter(builder.getQuery()),
             Measm.class);
-        for (Measm messung: messungs) {
-            // TODO: Should have been set by authorization.filter() already,
-            // but that's unfortunately not the same as authorizing PUT.
-            messung.setReadonly(
-                !authorization.isAuthorized(
-                    messung,
-                    RequestMethod.PUT,
-                    Measm.class));
-        }
-        return messungs;
     }
 
     /**

@@ -80,32 +80,16 @@ public class MessungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        if (data instanceof Measm) {
-            setAuthData(userInfo, (Measm) data);
-        }
-    }
+        // Set readonly flag
+        super.setAuthAttrs(data, userInfo, clazz);
 
-    /**
-     * Authorize a single messung object.
-     *
-     * @param userInfo  The user information.
-     * @param messung     The messung object.
-     */
-    private void setAuthData(
-        UserInfo userInfo,
-        Measm messung
-    ) {
+        Measm messung = (Measm) data;
         Sample probe = repository.getById(Sample.class, messung.getSampleId());
         MeasFacil mst = repository.getById(
             MeasFacil.class, probe.getMeasFacilId());
 
-        if (userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId())) {
-            messung.setOwner(true);
-            messung.setReadonly(false);
-        } else {
-            messung.setOwner(false);
-            messung.setReadonly(true);
-        }
+        messung.setOwner(userInfo.belongsTo(
+                probe.getMeasFacilId(), probe.getApprLabId()));
 
         messung.setStatusEdit(false);
         messung.setStatusEditMst(false);
@@ -128,7 +112,6 @@ public class MessungAuthorizer extends BaseAuthorizer {
         int stufe = kombi.getStatusLev().getId();
         int wert  = kombi.getStatusVal().getId();
 
-        messung.setReadonly(wert != 0 && wert != 4);
         if ((stufe == 1 && wert == 00) || wert == 4) {
             stufe = 0;
         }
