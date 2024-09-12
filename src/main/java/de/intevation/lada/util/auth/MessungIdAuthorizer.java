@@ -69,6 +69,9 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
+        // Set readonly flag
+        super.setAuthAttrs(data, userInfo, clazz);
+
         try {
             Method getMessungsId = clazz.getMethod("getMeasmId");
             Integer id = (Integer) getMessungsId.invoke(data);
@@ -76,31 +79,16 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
                 Measm.class, id);
             Sample probe = repository.getById(
                 Sample.class, messung.getSampleId());
+            MeasFacil mst = repository.getById(
+                MeasFacil.class, probe.getMeasFacilId());
 
-            boolean readOnly = true;
-            boolean owner = false;
-            MeasFacil mst =
-                repository.getById(
-                    MeasFacil.class, probe.getMeasFacilId());
-            if (!userInfo.getNetzbetreiber().contains(
-                    mst.getNetworkId())) {
-                owner = false;
-                readOnly = true;
-            } else {
-                if (userInfo.belongsTo(
-                    probe.getMeasFacilId(), probe.getApprLabId())
-                ) {
-                    owner = true;
-                } else {
-                    owner = false;
-                }
-                readOnly = this.isMessungReadOnly(messung.getId());
-            }
+            boolean owner =
+                userInfo.getNetzbetreiber().contains(mst.getNetworkId())
+                && userInfo.belongsTo(
+                    probe.getMeasFacilId(), probe.getApprLabId());
 
             Method setOwner = clazz.getMethod("setOwner", boolean.class);
-            Method setReadonly = clazz.getMethod("setReadonly", boolean.class);
             setOwner.invoke(data, owner);
-            setReadonly.invoke(data, readOnly);
         } catch (NoSuchMethodException
             | IllegalAccessException
             | InvocationTargetException e
