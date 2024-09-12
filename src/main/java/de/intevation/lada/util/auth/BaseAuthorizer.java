@@ -69,12 +69,8 @@ public abstract class BaseAuthorizer implements Authorizer {
 
     @Override
     public boolean isMessungReadOnly(Integer messungsId) {
-        Measm messung =
-            repository.getById(Measm.class, messungsId);
-        StatusProt status = messung.getStatusProt();
-        if (status == null) {
-            return false;
-        }
+        StatusProt status = repository.getById(Measm.class, messungsId)
+            .getStatusProt();
         StatusMp kombi = repository.getById(
             StatusMp.class, status.getStatusMpId());
         return (kombi.getStatusVal().getId() != 0
