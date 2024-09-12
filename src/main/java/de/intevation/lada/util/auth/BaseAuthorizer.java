@@ -33,14 +33,14 @@ public abstract class BaseAuthorizer implements Authorizer {
     }
 
     /**
-     * Get the authorization of a single probe.
+     * Get the authorization of a single sample.
      *
      * @param userInfo  The user information.
-     * @param probe     The probe to authorize.
+     * @param sample    The sample to authorize.
+     * @return true if user's measFacils contain measFacil of the sample
      */
-    protected boolean getAuthorization(UserInfo userInfo, Sample probe) {
-        return (probe.getMeasFacilId() != null
-            && userInfo.getMessstellen().contains(probe.getMeasFacilId()));
+    protected boolean getAuthorization(UserInfo userInfo, Sample sample) {
+        return userInfo.getMessstellen().contains(sample.getMeasFacilId());
     }
 
     /**
