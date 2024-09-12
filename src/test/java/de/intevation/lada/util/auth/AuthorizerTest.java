@@ -20,7 +20,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.logging.Logger;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -323,7 +322,6 @@ public class AuthorizerTest extends BaseTest {
          * @throws IllegalAccessException
          */
         @Test
-        @Ignore // TODO: Fix behavior of authorization
         @SuppressWarnings("unchecked")
         public void testFilter() throws
                 IllegalAccessException, IllegalArgumentException,
