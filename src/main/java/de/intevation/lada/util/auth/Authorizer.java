@@ -47,9 +47,4 @@ public interface Authorizer {
         data.setReadonly(
             !isAuthorized(data, RequestMethod.PUT, userInfo, clazz));
     }
-
-    boolean isProbeReadOnly(Integer probeId);
-
-    boolean isMessungReadOnly(Integer messungsId);
-
 }

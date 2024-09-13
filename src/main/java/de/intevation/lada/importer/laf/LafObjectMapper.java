@@ -279,12 +279,14 @@ public class LafObjectMapper {
             Sample old = (Sample) probeIdentifier.getExisting();
             // Matching probe was found in the db. Update it!
             if (i == Identified.UPDATE) {
-                oldProbeIsReadonly = authorizer.isProbeReadOnly(old.getId());
                 if (
-                    // TODO: Should use RequestMethod.PUT?
+                    // Check if user belongs to matching measFacil
                     authorizer.isAuthorized(
-                        old, RequestMethod.GET, Sample.class)
+                        old, RequestMethod.POST, Sample.class)
                 ) {
+                    // Check if sample is read-only due to status
+                    oldProbeIsReadonly = authorizer.isAuthorized(
+                        old, RequestMethod.PUT, Sample.class);
                     if (oldProbeIsReadonly) {
                         newProbe = old;
                         currentNotifications.add(
@@ -677,13 +679,10 @@ public class LafObjectMapper {
             return;
         }
         Measm newMessung;
-        boolean oldMessungIsReadonly = false;
         Measm old = (Measm) messungIdentifier.getExisting();
         switch (ident) {
         case UPDATE:
-            oldMessungIsReadonly =
-                authorizer.isMessungReadOnly(old.getId());
-            if (oldMessungIsReadonly) {
+            if (!authorizer.isAuthorized(old, RequestMethod.PUT, Measm.class)) {
                 currentNotifications.add(
                     new ReportItem(
                         "messung",

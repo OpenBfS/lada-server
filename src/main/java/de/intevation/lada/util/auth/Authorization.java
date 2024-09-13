@@ -40,8 +40,4 @@ public interface Authorization {
         Object data,
         RequestMethod method,
         Class<T> clazz);
-
-    boolean isProbeReadOnly(Integer probeId);
-
-    boolean isMessungReadOnly(Integer messungId);
 }

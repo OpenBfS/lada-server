@@ -236,28 +236,4 @@ public class HeaderAuthorization implements Authorization {
         }
         return authorizer.isAuthorized(data, method, userInfo, clazz);
     }
-
-    /**
-     * Test whether a probe is readonly.
-     *
-     * @param probeId   The probe Id.
-     * @return True if the probe is readonly.
-     */
-    @Override
-    public boolean isProbeReadOnly(Integer probeId) {
-        Authorizer a = authorizers.get(Sample.class);
-        return a.isProbeReadOnly(probeId);
-    }
-
-    /**
-     * Test whether a Messung object is readonly.
-     *
-     * @param messungId   The ID of the Messung object.
-     * @return True if the Messung object is readonly.
-     */
-    @Override
-    public boolean isMessungReadOnly(Integer messungId) {
-        Authorizer a = authorizers.get(Measm.class);
-        return a.isMessungReadOnly(messungId);
-    }
 }
