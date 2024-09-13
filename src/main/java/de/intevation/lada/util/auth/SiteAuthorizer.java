@@ -42,15 +42,4 @@ public class SiteAuthorizer extends BaseAuthorizer {
         }
         return null;
     }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        return isAuthorized(
-            repository.getById(Site.class, id), method, userInfo, clazz);
-    }
 }

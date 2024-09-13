@@ -63,18 +63,6 @@ public class MessungAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        Measm messung;
-        messung = repository.getById(Measm.class, id);
-        return isAuthorized(messung, method, userInfo, clazz);
-    }
-
-    @Override
     public <T extends BaseModel> void setAuthAttrs(
         BaseModel data,
         UserInfo userInfo,

@@ -57,11 +57,4 @@ public class TagAuthorizer extends BaseAuthorizer {
             return I18N_KEY_FORBIDDEN;
         }
     }
-
-    @Override
-    public <T> boolean isAuthorizedById(Object id, RequestMethod method,
-        UserInfo userInfo, Class<T> clazz) {
-        Tag tag = repository.getById(Tag.class, id);
-        return isAuthorized(tag, method, userInfo, clazz);
-    }
 }

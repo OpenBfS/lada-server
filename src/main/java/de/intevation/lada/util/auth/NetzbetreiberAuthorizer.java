@@ -29,8 +29,8 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
     ) {
         try {
             Method m = clazz.getMethod("getNetworkId");
-            String id = (String) m.invoke(data);
-            return isAuthorizedById(id, method, userInfo, clazz)
+            return userInfo.getFunktionenForNetzbetreiber(
+                (String) m.invoke(data)).contains(4)
                 ? null : I18N_KEY_FORBIDDEN;
         } catch (NoSuchMethodException
             | IllegalAccessException
@@ -38,15 +38,5 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
         ) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        return userInfo.getFunktionenForNetzbetreiber((String) id).contains(4);
     }
 }

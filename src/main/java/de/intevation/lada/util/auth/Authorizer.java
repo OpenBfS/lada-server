@@ -29,12 +29,6 @@ public interface Authorizer {
         return isAuthorizedReason(data, method, userInfo, clazz) == null;
     }
 
-    <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz);
-
     default <T extends BaseModel> void setAuthAttrs(
         List<BaseModel> data,
         UserInfo userInfo,

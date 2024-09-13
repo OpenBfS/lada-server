@@ -59,16 +59,4 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
 
         return null;
     }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        Mpg mp =
-            repository.getById(Mpg.class, id);
-        return isAuthorized(mp, method, userInfo, Mpg.class);
-    }
 }

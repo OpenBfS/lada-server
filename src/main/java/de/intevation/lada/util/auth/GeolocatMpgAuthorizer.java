@@ -41,17 +41,6 @@ public class GeolocatMpgAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        //TODO implement
-        return false;
-    }
-
-    @Override
     public <T extends BaseModel> void setAuthAttrs(
         BaseModel data,
         UserInfo userInfo,

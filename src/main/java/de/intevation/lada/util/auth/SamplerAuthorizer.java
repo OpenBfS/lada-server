@@ -38,15 +38,4 @@ public class SamplerAuthorizer extends BaseAuthorizer {
         }
         return null;
     }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        return isAuthorized(repository.getById(
-                Sampler.class, id), method, userInfo, clazz);
-    }
 }

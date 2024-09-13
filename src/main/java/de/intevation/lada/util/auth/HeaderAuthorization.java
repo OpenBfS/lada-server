@@ -238,29 +238,6 @@ public class HeaderAuthorization implements Authorization {
     }
 
     /**
-     * Check whether a user is authorized to operate on the given data
-     * by the given object id.
-     *
-     * @param id        The data's id to test.
-     * @param method    The Http request type.
-     * @param clazz     The data object class.
-     * @return True if the user is authorized else returns false.
-     */
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        Class<T> clazz
-    ) {
-        Authorizer authorizer = authorizers.get(clazz);
-        // Do not authorize anything unknown
-        if (authorizer == null) {
-            return false;
-        }
-        return authorizer.isAuthorizedById(id, method, userInfo, clazz);
-    }
-
-    /**
      * Test whether a probe is readonly.
      *
      * @param probeId   The probe Id.

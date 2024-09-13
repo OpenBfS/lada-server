@@ -33,8 +33,9 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
     ) {
         try {
             Method m = clazz.getMethod("getMeasmId");
-            Integer id = (Integer) m.invoke(data);
-            return isAuthorizedById(id, method, userInfo, clazz)
+            return getAuthorization(
+                userInfo,
+                repository.getById(Measm.class, m.invoke(data)).getSample())
                 ? null : I18N_KEY_FORBIDDEN;
         } catch (NoSuchMethodException
             | IllegalAccessException
@@ -42,17 +43,6 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         ) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        return getAuthorization(
-            userInfo, repository.getById(Measm.class, id).getSample());
     }
 
     @Override

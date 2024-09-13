@@ -33,7 +33,8 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         try {
             Method m = clazz.getMethod("getSampleId");
             Integer id = (Integer) m.invoke(data);
-            return isAuthorizedById(id, method, userInfo, clazz)
+            Sample probe = repository.getById(Sample.class, id);
+            return !isProbeReadOnly(id) && getAuthorization(userInfo, probe)
                 ? null : I18N_KEY_FORBIDDEN;
         } catch (NoSuchMethodException
             | IllegalAccessException
@@ -41,19 +42,6 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         ) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        Sample probe =
-            repository.getById(Sample.class, id);
-        return !isProbeReadOnly((Integer) id)
-            && getAuthorization(userInfo, probe);
     }
 
     @Override

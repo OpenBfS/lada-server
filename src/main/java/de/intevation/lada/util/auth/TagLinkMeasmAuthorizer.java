@@ -63,18 +63,6 @@ public class TagLinkMeasmAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        TagLinkMeasm zuordnung = repository.getById(
-            TagLinkMeasm.class, id);
-        return isAuthorized(zuordnung, method, userInfo, clazz);
-    }
-
-    @Override
     public <T extends BaseModel> void setAuthAttrs(
         BaseModel data,
         UserInfo userInfo,
