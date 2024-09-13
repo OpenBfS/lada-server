@@ -50,38 +50,22 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        if (data == null) {
-            return;
-        }
+        // Set readonly flag
+        super.setAuthAttrs(data, userInfo, clazz);
+
         try {
             Method getProbeId = clazz.getMethod("getSampleId");
-            Integer id = (Integer) getProbeId.invoke(data);
-            Sample probe = repository.getById(Sample.class, id);
+            Sample sample = repository.getById(
+                Sample.class, getProbeId.invoke(data));
 
-            boolean readOnly = true;
-            boolean owner = false;
-            MeasFacil mst =
-                repository.getById(
-                    MeasFacil.class, probe.getMeasFacilId());
-            if (!userInfo.getNetzbetreiber().contains(
-                    mst.getNetworkId())) {
-                owner = false;
-                readOnly = true;
-            } else {
-                if (userInfo.belongsTo(
-                    probe.getMeasFacilId(), probe.getApprLabId())
-                ) {
-                    owner = true;
-                } else {
-                    owner = false;
-                }
-                readOnly = this.isProbeReadOnly(id);
-            }
+            String mfId = sample.getMeasFacilId();
+            MeasFacil mst = repository.getById(MeasFacil.class, mfId);
 
             Method setOwner = clazz.getMethod("setOwner", boolean.class);
-            Method setReadonly = clazz.getMethod("setReadonly", boolean.class);
-            setOwner.invoke(data, owner);
-            setReadonly.invoke(data, readOnly);
+            setOwner.invoke(
+                data,
+                userInfo.getNetzbetreiber().contains(mst.getNetworkId())
+                && userInfo.belongsTo(mfId, sample.getApprLabId()));
         } catch (NoSuchMethodException
             | IllegalAccessException
             | InvocationTargetException e
