@@ -426,11 +426,11 @@ public class AuthorizerTest extends BaseTest {
         lockedBySample.setMeasmId(MEASM_ID_LOCKED_BY_SAMPLE);
 
         return Map.of(
-            noStatus, new TestConfig(false, true, true, true,
+            noStatus, new TestConfig(true, true, true, true,
                 "measmIdNoStatus"),
-            editableStatus, new TestConfig(false, true, true, true,
+            editableStatus, new TestConfig(true, true, true, true,
                 "measmIdEditableStatus"),
-            lockedByStatus, new TestConfig(false, true, true, true,
+            lockedByStatus, new TestConfig(true, true, true, true,
                 "measmIdLockedByStatus"),
             lockedBySample, new TestConfig(false, false, false, false,
                 "measmIDLockedBySample")
@@ -459,7 +459,7 @@ public class AuthorizerTest extends BaseTest {
         unauthSite.setNetworkId(NETWORK_ID_UNAUTHORIZED);
 
         return Map.of(
-            authorized, new TestConfig(false, true, true, true,
+            authorized, new TestConfig(true, true, true, true,
                  "networkAuthorizer"),
             unauth, new TestConfig(false, false, false, false,
                 "networkUnauthorized"),

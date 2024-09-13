@@ -47,10 +47,6 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        String netId = (String) id;
-        return (method == RequestMethod.PUT
-            || method == RequestMethod.POST
-            || method == RequestMethod.DELETE
-            ) && userInfo.getFunktionenForNetzbetreiber(netId).contains(4);
+        return userInfo.getFunktionenForNetzbetreiber((String) id).contains(4);
     }
 }

@@ -51,16 +51,8 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Measm messung = repository.getById(Measm.class, id);
-        Sample probe = repository.getById(
-            Sample.class, messung.getSampleId());
-        if (messung.getStatus() == null) {
-            return false;
-        }
-        return ((method == RequestMethod.POST
-            || method == RequestMethod.PUT
-            || method == RequestMethod.DELETE)
-            && getAuthorization(userInfo, probe));
+        return getAuthorization(
+            userInfo, repository.getById(Measm.class, id).getSample());
     }
 
     @Override
