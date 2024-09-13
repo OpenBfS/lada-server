@@ -125,8 +125,8 @@ public class HeaderAuthorization implements Authorization {
             new NetzbetreiberAuthorizer(repository);
         MessprogrammAuthorizer messprogrammAuthorizer =
             new MessprogrammAuthorizer(repository);
-        MessprogrammIdAuthorizer mpIdAuthorizer =
-            new MessprogrammIdAuthorizer(repository);
+        GeolocatMpgAuthorizer geolocatMpgAuthorizer =
+            new GeolocatMpgAuthorizer(repository);
         TagAuthorizer tagAuthorizer =
             new TagAuthorizer(repository);
         TagLinkSampleAuthorizer tagZuordnungAuthorizer =
@@ -154,7 +154,7 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(Site.class, siteAuthorizer),
             Map.entry(Mpg.class, messprogrammAuthorizer),
             Map.entry(MpgMmtMp.class, messprogrammAuthorizer),
-            Map.entry(GeolocatMpg.class, mpIdAuthorizer),
+            Map.entry(GeolocatMpg.class, geolocatMpgAuthorizer),
             Map.entry(Tag.class, tagAuthorizer),
             Map.entry(TagLinkMeasm.class, tagLinkMeasmAuthorizer),
             Map.entry(TagLinkSample.class, tagZuordnungAuthorizer)
