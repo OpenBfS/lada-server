@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.master.MeasFacil;
@@ -51,7 +50,10 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
             return I18N_KEY_FORBIDDEN;
         }
 
-        if (data instanceof Mpg && messprogramm.getReferenceCount() > 0) {
+        if (method == RequestMethod.DELETE
+            && data instanceof Mpg
+            && messprogramm.getReferenceCount() > 0
+        ) {
             return I18N_KEY_CANNOTDELETE;
         }
 
@@ -68,34 +70,5 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         Mpg mp =
             repository.getById(Mpg.class, id);
         return isAuthorized(mp, method, userInfo, Mpg.class);
-    }
-
-    @Override
-    public <T extends BaseModel> void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        if (data instanceof Mpg) {
-            setAuthData(userInfo, (Mpg) data);
-        }
-    }
-
-    /**
-     * Set authorization attributes.
-     *
-     * @param userInfo  The user information.
-     * @param messprogramm     The Mpg object.
-     */
-    private void setAuthData(
-        UserInfo userInfo,
-        Mpg messprogramm
-    ) {
-        MeasFacil mst =
-            repository.getById(
-                MeasFacil.class, messprogramm.getMeasFacilId());
-        messprogramm.setReadonly(
-            !userInfo.getFunktionenForNetzbetreiber(
-                mst.getNetworkId()).contains(4));
     }
 }
