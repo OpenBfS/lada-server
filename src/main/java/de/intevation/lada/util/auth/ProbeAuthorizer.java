@@ -44,28 +44,14 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        if (data instanceof Sample) {
-            setAuthData(userInfo, (Sample) data);
-        }
-    }
+        // Set readonly flag
+        super.setAuthAttrs(data, userInfo, clazz);
 
-    /**
-     * Set authorization data for the current probe object.
-     *
-     * @param userInfo  The user information.
-     * @param probe     The probe object.
-     */
-    private void setAuthData(UserInfo userInfo, Sample probe) {
-        MeasFacil mst =
-            repository.getById(
-                MeasFacil.class, probe.getMeasFacilId());
-        if (!userInfo.getNetzbetreiber().contains(mst.getNetworkId())) {
-            probe.setOwner(false);
-            probe.setReadonly(true);
-            return;
-        }
-        probe.setOwner(
-            userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId()));
-        probe.setReadonly(this.isProbeReadOnly(probe.getId()));
+        Sample sample = (Sample) data;
+        String mstId = sample.getMeasFacilId();
+        MeasFacil mst = repository.getById(MeasFacil.class, mstId);
+        sample.setOwner(
+            userInfo.getNetzbetreiber().contains(mst.getNetworkId())
+            && userInfo.belongsTo(mstId, sample.getApprLabId()));
     }
 }
