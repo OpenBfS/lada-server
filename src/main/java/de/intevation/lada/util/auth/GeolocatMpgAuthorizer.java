@@ -57,15 +57,10 @@ public class GeolocatMpgAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        GeolocatMpg loc = (GeolocatMpg) data;
-        MeasFacil mst = repository.getById(
-            MeasFacil.class,
-            repository.getById(Mpg.class, loc.getMpgId()).getMeasFacilId());
-        boolean owner = userInfo.getFunktionenForNetzbetreiber(
-            mst.getNetworkId()).contains(4);
-        boolean readOnly = !owner;
+        // Set readonly flag
+        super.setAuthAttrs(data, userInfo, clazz);
 
-        loc.setOwner(owner);
-        loc.setReadonly(readOnly);
+        GeolocatMpg loc = (GeolocatMpg) data;
+        loc.setOwner(!loc.isReadonly());
     }
 }
