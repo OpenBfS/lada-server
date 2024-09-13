@@ -55,20 +55,8 @@ public abstract class BaseAuthorizer implements Authorizer {
             .queryBuilder(Measm.class)
             .and(Measm_.sampleId, probeId);
         List<Measm> messungen = repository.filter(builder.getQuery());
-        for (int i = 0; i < messungen.size(); i++) {
-            if (messungen.get(i).getStatus() == null) {
-                continue;
-            }
-            StatusProt status =
-                repository.getById(
-                    StatusProt.class,
-                    messungen.get(i).getStatus()
-                );
-            StatusMp kombi = repository.getById(
-                StatusMp.class, status.getStatusMpId());
-            if (kombi.getStatusVal().getId() != 0
-                && kombi.getStatusVal().getId() != 4
-            ) {
+        for (Measm measm: messungen) {
+            if (isMessungReadOnly(measm.getId())) {
                 return true;
             }
         }
