@@ -17,8 +17,12 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 public class ProbeIdAuthorizer extends BaseAuthorizer {
 
+    ProbeAuthorizer probeAuthorizer;
+
     public ProbeIdAuthorizer(Repository repository) {
         super(repository);
+
+        this.probeAuthorizer = new ProbeAuthorizer(repository);
     }
 
     @Override
@@ -28,10 +32,13 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Integer id = ((BelongsToSample) data).getSampleId();
-        Sample probe = repository.getById(Sample.class, id);
-        return !isProbeReadOnly(id) && getAuthorization(userInfo, probe)
-            ? null : I18N_KEY_FORBIDDEN;
+        // Authorized if editing associated sample is authorized
+        return probeAuthorizer.isAuthorizedReason(
+            repository.getById(
+                Sample.class, ((BelongsToSample) data).getSampleId()),
+            RequestMethod.PUT,
+            userInfo,
+            Sample.class);
     }
 
     @Override
