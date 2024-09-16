@@ -42,7 +42,9 @@ import de.intevation.lada.validation.groups.Warnings;
 @Unique(fields = {"sampleSpecifId", "sampleId"},
     groups = DatabaseConstraints.class, clazz = SampleSpecifMeasVal.class)
 @SampleSpecifMatchesEnvMedium(groups = Warnings.class)
-public class SampleSpecifMeasVal extends BaseModel implements Serializable {
+public class SampleSpecifMeasVal extends BaseModel
+    implements BelongsToSample, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -121,6 +123,7 @@ public class SampleSpecifMeasVal extends BaseModel implements Serializable {
         this.measVal = measVal;
     }
 
+    @Override
     public Integer getSampleId() {
         return this.sampleId;
     }
@@ -153,16 +156,12 @@ public class SampleSpecifMeasVal extends BaseModel implements Serializable {
         this.treeMod = treeMod;
     }
 
-    /**
-     * @return the owner
-     */
+    @Override
     public boolean isOwner() {
         return owner;
     }
 
-    /**
-     * @param owner the owner to set
-     */
+    @Override
     public void setOwner(boolean owner) {
         this.owner = owner;
     }

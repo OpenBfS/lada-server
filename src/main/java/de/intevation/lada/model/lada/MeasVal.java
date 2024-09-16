@@ -59,7 +59,9 @@ import de.intevation.lada.validation.groups.Warnings;
 @MeasdMatchesMmt(groups = Warnings.class)
 @IsNormalized(groups = Warnings.class)
 @IsMeasdPrimaryOrConvertibleTo(groups = Notifications.class)
-public class MeasVal extends BaseModel implements Serializable {
+public class MeasVal extends BaseModel
+    implements BelongsToMeasm, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -168,6 +170,7 @@ public class MeasVal extends BaseModel implements Serializable {
         return this.measm;
     }
 
+    @Override
     public Integer getMeasmId() {
         return this.measmId;
     }
@@ -208,16 +211,12 @@ public class MeasVal extends BaseModel implements Serializable {
         this.treeMod = treeMod;
     }
 
-    /**
-     * @return the owner
-     */
+    @Override
     public boolean isOwner() {
         return owner;
     }
 
-    /**
-     * @param owner the owner to set
-     */
+    @Override
     public void setOwner(boolean owner) {
         this.owner = owner;
     }

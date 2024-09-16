@@ -34,7 +34,9 @@ import jakarta.validation.constraints.Size;
 @GroupSequence({ MunicDiv.class, DatabaseConstraints.class })
 @Unique(fields = {"networkId", "siteId"},
     groups = DatabaseConstraints.class, clazz = MunicDiv.class)
-public class MunicDiv extends BaseModel implements Serializable {
+public class MunicDiv extends BaseModel
+    implements BelongsToNetwork, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -77,6 +79,7 @@ public class MunicDiv extends BaseModel implements Serializable {
         this.id = id;
     }
 
+    @Override
     public String getNetworkId() {
         return this.networkId;
     }

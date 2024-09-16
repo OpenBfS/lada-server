@@ -47,7 +47,9 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     propertyNodeName = "typeRegulation",
     message = "{de.intevation.lada.validation.GeolocatUniqueSamplingLocation}",
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
-public class Geolocat extends BaseModel implements Serializable {
+public class Geolocat extends BaseModel
+    implements BelongsToSample, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -140,6 +142,7 @@ public class Geolocat extends BaseModel implements Serializable {
         this.addSiteText = addSiteText;
     }
 
+    @Override
     public Integer getSampleId() {
         return this.sampleId;
     }
@@ -164,16 +167,12 @@ public class Geolocat extends BaseModel implements Serializable {
         this.treeMod = treeMod;
     }
 
-    /**
-     * @return the owner
-     */
+    @Override
     public boolean isOwner() {
         return owner;
     }
 
-    /**
-     * @param owner the owner to set
-     */
+    @Override
     public void setOwner(boolean owner) {
         this.owner = owner;
     }

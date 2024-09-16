@@ -34,7 +34,9 @@ import de.intevation.lada.model.BaseModel;
 @Unique(fields = {"text", "measmId"},
     groups = DatabaseConstraints.class, clazz = CommMeasm.class)
 @GroupSequence({ CommMeasm.class, DatabaseConstraints.class })
-public class CommMeasm extends BaseModel implements Serializable {
+public class CommMeasm extends BaseModel
+    implements BelongsToMeasm, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -81,6 +83,7 @@ public class CommMeasm extends BaseModel implements Serializable {
         this.date = datum;
     }
 
+    @Override
     public Integer getMeasmId() {
         return this.measmId;
     }
@@ -105,16 +108,12 @@ public class CommMeasm extends BaseModel implements Serializable {
         this.text = text;
     }
 
-    /**
-     * @return the owner
-     */
+    @Override
     public boolean isOwner() {
         return owner;
     }
 
-    /**
-     * @param owner the owner to set
-     */
+    @Override
     public void setOwner(boolean owner) {
         this.owner = owner;
     }

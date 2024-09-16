@@ -34,7 +34,9 @@ import jakarta.validation.constraints.Size;
 @Unique(groups = DatabaseConstraints.class,
     clazz = DatasetCreator.class,
     fields = { "extId", "networkId", "measFacilId" })
-public class DatasetCreator extends BaseModel implements Serializable {
+public class DatasetCreator extends BaseModel
+    implements BelongsToNetwork, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -108,6 +110,7 @@ public class DatasetCreator extends BaseModel implements Serializable {
         this.measFacilId = measFacilId;
     }
 
+    @Override
     public String getNetworkId() {
         return this.networkId;
     }

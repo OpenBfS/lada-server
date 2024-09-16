@@ -37,7 +37,9 @@ import jakarta.validation.constraints.Size;
 @GroupSequence({ MpgCateg.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = MpgCateg.class, fields = { "extId", "networkId" })
-public class MpgCateg extends BaseModel implements Serializable {
+public class MpgCateg extends BaseModel
+    implements BelongsToNetwork, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -96,6 +98,7 @@ public class MpgCateg extends BaseModel implements Serializable {
         this.lastMod = lastMod;
     }
 
+    @Override
     public String getNetworkId() {
         return this.networkId;
     }

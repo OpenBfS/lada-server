@@ -7,10 +7,8 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
@@ -30,18 +28,10 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        try {
-            Method m = clazz.getMethod("getSampleId");
-            Integer id = (Integer) m.invoke(data);
-            Sample probe = repository.getById(Sample.class, id);
-            return !isProbeReadOnly(id) && getAuthorization(userInfo, probe)
-                ? null : I18N_KEY_FORBIDDEN;
-        } catch (NoSuchMethodException
-            | IllegalAccessException
-            | InvocationTargetException e
-        ) {
-            throw new RuntimeException(e);
-        }
+        Integer id = ((BelongsToSample) data).getSampleId();
+        Sample probe = repository.getById(Sample.class, id);
+        return !isProbeReadOnly(id) && getAuthorization(userInfo, probe)
+            ? null : I18N_KEY_FORBIDDEN;
     }
 
     @Override
@@ -53,24 +43,14 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         // Set readonly flag
         super.setAuthAttrs(data, userInfo, clazz);
 
-        try {
-            Method getProbeId = clazz.getMethod("getSampleId");
-            Sample sample = repository.getById(
-                Sample.class, getProbeId.invoke(data));
+        BelongsToSample object = (BelongsToSample) data;
+        Sample sample = repository.getById(Sample.class, object.getSampleId());
 
-            String mfId = sample.getMeasFacilId();
-            MeasFacil mst = repository.getById(MeasFacil.class, mfId);
+        String mfId = sample.getMeasFacilId();
+        MeasFacil mst = repository.getById(MeasFacil.class, mfId);
 
-            Method setOwner = clazz.getMethod("setOwner", boolean.class);
-            setOwner.invoke(
-                data,
-                userInfo.getNetzbetreiber().contains(mst.getNetworkId())
-                && userInfo.belongsTo(mfId, sample.getApprLabId()));
-        } catch (NoSuchMethodException
-            | IllegalAccessException
-            | InvocationTargetException e
-        ) {
-            throw new RuntimeException(e);
-        }
+        object.setOwner(
+            userInfo.getNetzbetreiber().contains(mst.getNetworkId())
+            && userInfo.belongsTo(mfId, sample.getApprLabId()));
     }
 }
