@@ -41,7 +41,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> String isAuthorizedReason(
+    public String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo
@@ -76,7 +76,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T extends BaseModel> void setAuthAttrs(
+    public void setAuthAttrs(
         BaseModel data,
         UserInfo userInfo
     ) {

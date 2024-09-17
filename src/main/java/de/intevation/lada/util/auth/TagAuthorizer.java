@@ -25,7 +25,7 @@ public class TagAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> String isAuthorizedReason(
+    public String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo

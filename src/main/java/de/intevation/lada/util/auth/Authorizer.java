@@ -14,12 +14,12 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 public interface Authorizer {
 
-    <T> String isAuthorizedReason(
+    String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo);
 
-    default <T> boolean isAuthorized(
+    default boolean isAuthorized(
         Object data,
         RequestMethod method,
         UserInfo userInfo
@@ -27,7 +27,7 @@ public interface Authorizer {
         return isAuthorizedReason(data, method, userInfo) == null;
     }
 
-    default <T extends BaseModel> void setAuthAttrs(
+    default void setAuthAttrs(
         List<BaseModel> data,
         UserInfo userInfo
     ) {
@@ -36,7 +36,7 @@ public interface Authorizer {
         }
     }
 
-    default <T extends BaseModel> void setAuthAttrs(
+    default void setAuthAttrs(
         BaseModel data,
         UserInfo userInfo
     ) {
