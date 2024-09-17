@@ -24,8 +24,12 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 public class MessungAuthorizer extends BaseAuthorizer {
 
+    private ProbeAuthorizer probeAuthorizer;
+
     public MessungAuthorizer(Repository repository) {
         super(repository);
+
+        this.probeAuthorizer = new ProbeAuthorizer(repository);
     }
 
     @Override
@@ -41,11 +45,13 @@ public class MessungAuthorizer extends BaseAuthorizer {
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
             return !this.isMessungReadOnly(messung.getId())
-                && getAuthorization(userInfo, probe)
+                && probeAuthorizer.isAuthorized(
+                    probe, RequestMethod.POST, userInfo)
                 ? null : I18N_KEY_FORBIDDEN;
         }
         if (method == RequestMethod.POST) {
-            return getAuthorization(userInfo, probe)
+            return probeAuthorizer.isAuthorized(
+                probe, RequestMethod.POST, userInfo)
                 ? null : I18N_KEY_FORBIDDEN;
         }
         StatusProt status = repository.getById(
@@ -57,7 +63,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
             status.getStatusMpId()
         );
         return kombi.getStatusVal().getId() > 0
-            || getAuthorization(userInfo, probe)
+            || probeAuthorizer.isAuthorized(probe, RequestMethod.POST, userInfo)
             ? null : I18N_KEY_FORBIDDEN;
     }
 

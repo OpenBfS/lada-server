@@ -7,9 +7,14 @@
  */
 package de.intevation.lada.util.auth;
 
+import java.util.List;
+
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -29,7 +34,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         Sample probe = (Sample) data;
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
-            return !isProbeReadOnly(probe.getId())
+            return !anyMeasmReadOnly(probe.getId())
                 && getAuthorization(userInfo, probe)
                 ? null : I18N_KEY_FORBIDDEN;
         }
@@ -51,5 +56,22 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         sample.setOwner(
             userInfo.getNetzbetreiber().contains(mst.getNetworkId())
             && userInfo.belongsTo(mstId, sample.getApprLabId()));
+    }
+
+    private boolean anyMeasmReadOnly(Integer sampleId) {
+        QueryBuilder<Measm> builder = repository
+            .queryBuilder(Measm.class)
+            .and(Measm_.sampleId, sampleId);
+        List<Measm> measms = repository.filter(builder.getQuery());
+        for (Measm measm: measms) {
+            if (isMessungReadOnly(measm.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean getAuthorization(UserInfo userInfo, Sample sample) {
+        return userInfo.getMessstellen().contains(sample.getMeasFacilId());
     }
 }

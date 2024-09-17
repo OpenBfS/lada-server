@@ -114,35 +114,6 @@ public class AuthorizerTest extends BaseTest {
     }
 
     /**
-     * Test base authorizer with authorized sample.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerAuthorizedSample() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test authorized sample
-        assertEquals(
-            baseAuthorizer.isProbeReadOnly(
-                SAMPLE_ID_AUTHORIZED),
-            false);
-    }
-
-    /**
-     * Test base authorizer with unauthorized sample.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerUnauthorizedSample() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test locked sample
-        assertEquals(
-            "Unauthorized sample",
-            baseAuthorizer.isProbeReadOnly(
-                SAMPLE_ID_LOCKED_BY_STATUS),
-            true);
-    }
-
-    /**
      * Test base authorizer with authorized measm.
      */
     @Test
