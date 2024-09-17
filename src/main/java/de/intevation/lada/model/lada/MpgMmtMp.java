@@ -43,7 +43,9 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ MpgMmtMp.class, DatabaseConstraints.class })
 @Unique(fields = {"mmtId", "mpgId"},
     groups = DatabaseConstraints.class, clazz = MpgMmtMp.class)
-public class MpgMmtMp extends BaseModel implements Serializable {
+public class MpgMmtMp extends BaseModel
+    implements BelongsToMpg, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -117,6 +119,7 @@ public class MpgMmtMp extends BaseModel implements Serializable {
         this.measds = measds;
     }
 
+    @Override
     public Integer getMpgId() {
         return this.mpgId;
     }

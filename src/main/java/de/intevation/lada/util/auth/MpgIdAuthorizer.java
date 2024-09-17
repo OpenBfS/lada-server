@@ -8,16 +8,16 @@
 package de.intevation.lada.util.auth;
 
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.model.lada.BelongsToMpg;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class GeolocatMpgAuthorizer extends BaseAuthorizer {
+public class MpgIdAuthorizer extends BaseAuthorizer {
 
-    public GeolocatMpgAuthorizer(Repository repository) {
+    public MpgIdAuthorizer(Repository repository) {
         super(repository);
     }
 
@@ -27,10 +27,10 @@ public class GeolocatMpgAuthorizer extends BaseAuthorizer {
         RequestMethod method,
         UserInfo userInfo
     ) {
-        GeolocatMpg loc = (GeolocatMpg) data;
+        BelongsToMpg object = (BelongsToMpg) data;
         MeasFacil mst = repository.getById(
             MeasFacil.class,
-            repository.getById(Mpg.class, loc.getMpgId()).getMeasFacilId());
+            repository.getById(Mpg.class, object.getMpgId()).getMeasFacilId());
         if (userInfo.getFunktionenForNetzbetreiber(
                 mst.getNetworkId()).contains(4)
         ) {
@@ -47,7 +47,7 @@ public class GeolocatMpgAuthorizer extends BaseAuthorizer {
         // Set readonly flag
         super.setAuthAttrs(data, userInfo);
 
-        GeolocatMpg loc = (GeolocatMpg) data;
-        loc.setOwner(!loc.isReadonly());
+        BelongsToMpg object = (BelongsToMpg) data;
+        object.setOwner(!data.isReadonly());
     }
 }

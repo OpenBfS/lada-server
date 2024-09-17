@@ -8,7 +8,6 @@
 package de.intevation.lada.util.auth;
 
 import de.intevation.lada.model.lada.Mpg;
-import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -30,18 +29,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
             // Allow read access to everybody
             return null;
         }
-        Mpg messprogramm;
-        if (data instanceof Mpg) {
-            messprogramm = (Mpg) data;
-        } else if (data instanceof MpgMmtMp) {
-            messprogramm = repository.getById(
-                Mpg.class,
-                ((MpgMmtMp) data).getMpgId()
-            );
-        } else {
-            return I18N_KEY_FORBIDDEN;
-        }
-
+        Mpg messprogramm = (Mpg) data;
         MeasFacil mst = repository.getById(
             MeasFacil.class, messprogramm.getMeasFacilId());
         if (!userInfo.getFunktionenForNetzbetreiber(
@@ -50,7 +38,6 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         }
 
         if (method == RequestMethod.DELETE
-            && data instanceof Mpg
             && messprogramm.getReferenceCount() > 0
         ) {
             return I18N_KEY_CANNOTDELETE;

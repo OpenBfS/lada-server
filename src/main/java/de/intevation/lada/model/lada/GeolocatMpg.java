@@ -45,8 +45,11 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     propertyNodeName = "typeRegulation",
     message = "{de.intevation.lada.validation.GeolocatUniqueSamplingLocation}",
     groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
-public class GeolocatMpg extends BaseModel implements Serializable {
+public class GeolocatMpg extends BaseModel
+    implements BelongsToMpg, Serializable {
+
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -106,6 +109,7 @@ public class GeolocatMpg extends BaseModel implements Serializable {
         this.lastMod = lastMod;
     }
 
+    @Override
     public Integer getMpgId() {
         return this.mpgId;
     }
@@ -154,16 +158,12 @@ public class GeolocatMpg extends BaseModel implements Serializable {
         this.treeMod = treeModified;
     }
 
-    /**
-     * @return the owner
-     */
+    @Override
     public boolean isOwner() {
         return owner;
     }
 
-    /**
-     * @param owner the owner to set
-     */
+    @Override
     public void setOwner(boolean owner) {
         this.owner = owner;
     }

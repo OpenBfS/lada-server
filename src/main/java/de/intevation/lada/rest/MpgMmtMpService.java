@@ -23,7 +23,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
-import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.lada.MpgMmtMp_;
 import de.intevation.lada.model.master.Measd;
@@ -149,7 +148,7 @@ public class MpgMmtMpService extends LadaService {
         authorization.authorize(
                 messprogrammmmtObj,
                 RequestMethod.DELETE,
-                Mpg.class);
+                MpgMmtMp.class);
         repository.delete(messprogrammmmtObj);
     }
 
