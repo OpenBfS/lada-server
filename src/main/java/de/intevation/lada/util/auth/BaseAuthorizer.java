@@ -7,9 +7,6 @@
  */
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.Repository;
 
 
@@ -26,25 +23,4 @@ public abstract class BaseAuthorizer implements Authorizer {
     public BaseAuthorizer(Repository repository) {
         this.repository = repository;
     }
-
-    /**
-     * Check whether a Measm instance should be read-only due to its status.
-     *
-     * @param messungsId The ID of the Measm instance
-     * @return true if instance should be read-only
-     */
-    protected boolean isMessungReadOnly(Integer messungsId) {
-        Measm messung =
-            repository.getById(Measm.class, messungsId);
-        if (messung.getStatus() == null) {
-            return false;
-        }
-        StatusProt status = repository.getById(
-            StatusProt.class, messung.getStatus());
-        StatusMp kombi = repository.getById(
-            StatusMp.class, status.getStatusMpId());
-        return (kombi.getStatusVal().getId() != 0
-                && kombi.getStatusVal().getId() != 4);
-    }
-
 }

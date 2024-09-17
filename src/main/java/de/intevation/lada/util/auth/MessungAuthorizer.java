@@ -29,7 +29,15 @@ public class MessungAuthorizer extends BaseAuthorizer {
     public MessungAuthorizer(Repository repository) {
         super(repository);
 
-        this.probeAuthorizer = new ProbeAuthorizer(repository);
+        this.probeAuthorizer = new ProbeAuthorizer(repository, this);
+    }
+
+    public MessungAuthorizer(
+        Repository repository, ProbeAuthorizer probeAuthorizer
+    ) {
+        super(repository);
+
+        this.probeAuthorizer = probeAuthorizer;
     }
 
     @Override
@@ -44,7 +52,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
                 Sample.class, messung.getSampleId());
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
-            return !this.isMessungReadOnly(messung.getId())
+            return !this.isMeasmReadOnly(messung.getId())
                 && probeAuthorizer.isAuthorized(
                     probe, RequestMethod.POST, userInfo)
                 ? null : I18N_KEY_FORBIDDEN;
@@ -155,5 +163,14 @@ public class MessungAuthorizer extends BaseAuthorizer {
                 }
             }
         }
+    }
+
+    private boolean isMeasmReadOnly(Integer measmId) {
+        StatusProt status = repository.getById(
+            Measm.class, measmId).getStatusProtocol();
+        StatusMp kombi = repository.getById(
+            StatusMp.class, status.getStatusMpId());
+        return (kombi.getStatusVal().getId() != 0
+                && kombi.getStatusVal().getId() != 4);
     }
 }

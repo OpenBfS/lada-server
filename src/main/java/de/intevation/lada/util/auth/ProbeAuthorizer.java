@@ -21,8 +21,20 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 public class ProbeAuthorizer extends BaseAuthorizer {
 
+    private MessungAuthorizer messungAuthorizer;
+
     public ProbeAuthorizer(Repository repository) {
         super(repository);
+
+        this.messungAuthorizer = new MessungAuthorizer(repository, this);
+    }
+
+    public ProbeAuthorizer(
+        Repository repository, MessungAuthorizer messungAuthorizer
+    ) {
+        super(repository);
+
+        this.messungAuthorizer = messungAuthorizer;
     }
 
     @Override
@@ -34,7 +46,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         Sample probe = (Sample) data;
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
-            return !anyMeasmReadOnly(probe.getId())
+            return !anyMeasmReadOnly(probe.getId(), userInfo)
                 && getAuthorization(userInfo, probe)
                 ? null : I18N_KEY_FORBIDDEN;
         }
@@ -58,13 +70,15 @@ public class ProbeAuthorizer extends BaseAuthorizer {
             && userInfo.belongsTo(mstId, sample.getApprLabId()));
     }
 
-    private boolean anyMeasmReadOnly(Integer sampleId) {
+    private boolean anyMeasmReadOnly(Integer sampleId, UserInfo userInfo) {
         QueryBuilder<Measm> builder = repository
             .queryBuilder(Measm.class)
             .and(Measm_.sampleId, sampleId);
         List<Measm> measms = repository.filter(builder.getQuery());
         for (Measm measm: measms) {
-            if (isMessungReadOnly(measm.getId())) {
+            if (!messungAuthorizer.isAuthorized(
+                    measm, RequestMethod.PUT, userInfo)
+            ) {
                 return true;
             }
         }

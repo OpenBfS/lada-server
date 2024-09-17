@@ -114,36 +114,6 @@ public class AuthorizerTest extends BaseTest {
     }
 
     /**
-     * Test base authorizer with authorized measm.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerAuthorizedMeasm() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test unlocked measm
-        assertEquals(
-            "Unlocked measm",
-            baseAuthorizer.isMessungReadOnly(
-                MEASM_ID_STATUS_EDITABLE),
-            false);
-    }
-
-    /**
-     * Test base authorizer with locked sample.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerUnauthorizedMeasm() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test locked measm
-        assertEquals(
-            "Locked measm",
-            baseAuthorizer.isMessungReadOnly(
-                MEASM_ID_STATUS_LOCKED),
-            true);
-    }
-
-    /**
      * Run parameterized isAuthorized tests.
      * @throws Exception Exception that may occure during run
      */
