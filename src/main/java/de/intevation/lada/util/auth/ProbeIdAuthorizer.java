@@ -29,26 +29,23 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
     public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         // Authorized if editing associated sample is authorized
         return probeAuthorizer.isAuthorizedReason(
             repository.getById(
                 Sample.class, ((BelongsToSample) data).getSampleId()),
             RequestMethod.PUT,
-            userInfo,
-            Sample.class);
+            userInfo);
     }
 
     @Override
     public <T extends BaseModel> void setAuthAttrs(
         BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         // Set readonly flag
-        super.setAuthAttrs(data, userInfo, clazz);
+        super.setAuthAttrs(data, userInfo);
 
         BelongsToSample object = (BelongsToSample) data;
         Sample sample = repository.getById(Sample.class, object.getSampleId());

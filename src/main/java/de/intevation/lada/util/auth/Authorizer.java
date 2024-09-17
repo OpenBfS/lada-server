@@ -17,34 +17,29 @@ public interface Authorizer {
     <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz);
+        UserInfo userInfo);
 
     default <T> boolean isAuthorized(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
-        return isAuthorizedReason(data, method, userInfo, clazz) == null;
+        return isAuthorizedReason(data, method, userInfo) == null;
     }
 
     default <T extends BaseModel> void setAuthAttrs(
         List<BaseModel> data,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         for (BaseModel object: data) {
-            setAuthAttrs(object, userInfo, clazz);
+            setAuthAttrs(object, userInfo);
         }
     }
 
     default <T extends BaseModel> void setAuthAttrs(
         BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
-        data.setReadonly(
-            !isAuthorized(data, RequestMethod.PUT, userInfo, clazz));
+        data.setReadonly(!isAuthorized(data, RequestMethod.PUT, userInfo));
     }
 }

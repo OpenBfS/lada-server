@@ -22,8 +22,7 @@ public class SiteAuthorizer extends BaseAuthorizer {
     public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         Site site = (Site) data;
         String netId = site.getNetworkId();

@@ -22,8 +22,7 @@ public class SamplerAuthorizer extends BaseAuthorizer {
     public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         Sampler sampler = (Sampler) data;
         if (!userInfo.getFunktionenForNetzbetreiber(

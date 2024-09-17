@@ -185,7 +185,7 @@ public class HeaderAuthorization implements Authorization {
         T data,
         Class<T> clazz
     ) {
-        authorizers.get(clazz).setAuthAttrs(data, userInfo, clazz);
+        authorizers.get(clazz).setAuthAttrs(data, userInfo);
         return data;
     }
 
@@ -206,7 +206,7 @@ public class HeaderAuthorization implements Authorization {
     ) {
         Authorizer authorizer = authorizers.get(clazz);
         String reason = authorizer.isAuthorizedReason(
-            data, method, userInfo, clazz);
+            data, method, userInfo);
         if (reason == null) {
             return;
         }
@@ -234,6 +234,6 @@ public class HeaderAuthorization implements Authorization {
         if (authorizer == null || data == null) {
             return false;
         }
-        return authorizer.isAuthorized(data, method, userInfo, clazz);
+        return authorizer.isAuthorized(data, method, userInfo);
     }
 }

@@ -22,8 +22,7 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
     public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         return userInfo.getFunktionenForNetzbetreiber(
             ((BelongsToNetwork) data).getNetworkId()).contains(4)

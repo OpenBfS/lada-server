@@ -33,8 +33,7 @@ public class TagLinkMeasmAuthorizer extends BaseAuthorizer {
     public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         switch (method) {
         case POST:
@@ -47,8 +46,7 @@ public class TagLinkMeasmAuthorizer extends BaseAuthorizer {
                     repository.getById(
                         Measm.class, zuordnung.getMeasmId()),
                     RequestMethod.PUT,
-                    userInfo,
-                    Measm.class
+                    userInfo
                 );
             } else if (tag.getNetworkId() != null) {
                 return userInfo.getNetzbetreiber().contains(tag.getNetworkId())
@@ -65,8 +63,7 @@ public class TagLinkMeasmAuthorizer extends BaseAuthorizer {
     @Override
     public <T extends BaseModel> void setAuthAttrs(
         BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         // Nothing to do
     }

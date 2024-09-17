@@ -24,8 +24,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
     public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         if (method == RequestMethod.GET) {
             // Allow read access to everybody

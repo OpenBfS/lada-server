@@ -25,8 +25,7 @@ public class GeolocatMpgAuthorizer extends BaseAuthorizer {
     public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         GeolocatMpg loc = (GeolocatMpg) data;
         MeasFacil mst = repository.getById(
@@ -43,11 +42,10 @@ public class GeolocatMpgAuthorizer extends BaseAuthorizer {
     @Override
     public <T extends BaseModel> void setAuthAttrs(
         BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         // Set readonly flag
-        super.setAuthAttrs(data, userInfo, clazz);
+        super.setAuthAttrs(data, userInfo);
 
         GeolocatMpg loc = (GeolocatMpg) data;
         loc.setOwner(!loc.isReadonly());

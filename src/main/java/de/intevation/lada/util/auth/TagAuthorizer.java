@@ -28,8 +28,7 @@ public class TagAuthorizer extends BaseAuthorizer {
     public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         Tag tag = (Tag) data;
         if (tag.getNetworkId() != null) {

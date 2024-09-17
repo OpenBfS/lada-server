@@ -32,8 +32,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
     public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         Measm messung = (Measm) data;
         Sample probe =
@@ -65,11 +64,10 @@ public class MessungAuthorizer extends BaseAuthorizer {
     @Override
     public <T extends BaseModel> void setAuthAttrs(
         BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         // Set readonly flag
-        super.setAuthAttrs(data, userInfo, clazz);
+        super.setAuthAttrs(data, userInfo);
 
         Measm messung = (Measm) data;
         Sample probe = repository.getById(Sample.class, messung.getSampleId());
