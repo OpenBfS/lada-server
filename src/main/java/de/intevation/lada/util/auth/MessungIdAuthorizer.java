@@ -18,8 +18,12 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 public class MessungIdAuthorizer extends BaseAuthorizer {
 
+    private MessungAuthorizer messungAuthorizer;
+
     public MessungIdAuthorizer(Repository repository) {
         super(repository);
+
+        this.messungAuthorizer = new MessungAuthorizer(repository);
     }
 
     @Override
@@ -29,11 +33,12 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        return getAuthorization(
-            userInfo,
+        return messungAuthorizer.isAuthorizedReason(
             repository.getById(
-                Measm.class, ((BelongsToMeasm) data).getMeasmId()).getSample())
-            ? null : I18N_KEY_FORBIDDEN;
+                Measm.class, ((BelongsToMeasm) data).getMeasmId()),
+            RequestMethod.POST,
+            userInfo,
+            Measm.class);
     }
 
     @Override
