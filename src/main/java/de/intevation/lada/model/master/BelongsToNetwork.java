@@ -7,10 +7,30 @@
  */
 package de.intevation.lada.model.master;
 
-public interface BelongsToNetwork {
+import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-    /**
-     * @return the ID of the network the instance belongs to
-     */
-    String getNetworkId();
+import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
+
+
+@MappedSuperclass
+public abstract class BelongsToNetwork extends BaseModel {
+
+    @NotBlank
+    @Size(max = 2)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Network.class)
+    private String networkId;
+
+
+    public String getNetworkId() {
+        return this.networkId;
+    }
+
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
+    }
 }

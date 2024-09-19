@@ -10,7 +10,6 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.util.Date;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
@@ -34,20 +33,13 @@ import jakarta.validation.constraints.Size;
 @GroupSequence({ MunicDiv.class, DatabaseConstraints.class })
 @Unique(fields = {"networkId", "siteId"},
     groups = DatabaseConstraints.class, clazz = MunicDiv.class)
-public class MunicDiv extends BaseModel
-    implements BelongsToNetwork, Serializable {
+public class MunicDiv extends BelongsToNetwork implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @NotBlank
-    @Size(max = 2)
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Network.class)
-    private String networkId;
 
     @NotBlank
     @Size(max = 8)
@@ -68,8 +60,6 @@ public class MunicDiv extends BaseModel
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    public MunicDiv() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -77,15 +67,6 @@ public class MunicDiv extends BaseModel
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Override
-    public String getNetworkId() {
-        return this.networkId;
-    }
-
-    public void setNetworkId(String networkId) {
-        this.networkId = networkId;
     }
 
     public String getAdminUnitId() {
