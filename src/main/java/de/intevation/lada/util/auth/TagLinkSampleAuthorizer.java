@@ -8,7 +8,6 @@
 
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
@@ -58,13 +57,5 @@ public class TagLinkSampleAuthorizer extends BaseAuthorizer {
         default:
             return I18N_KEY_FORBIDDEN;
         }
-    }
-
-    @Override
-    public void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo
-    ) {
-        // Nothing to do
     }
 }
