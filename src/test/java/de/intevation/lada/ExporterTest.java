@@ -307,15 +307,14 @@ public class ExporterTest extends BaseTest {
             .add("idFilter", Json.createArrayBuilder().add("120510002"))
             .build();
 
-        String result = runExportTest(baseUrl, formatJson, requestJson);
         Assert.assertEquals(
             "Unexpected JSON content",
-            "{\"120510002\":"
-            + "{\"main_sample_id\":\"120510002\","
-            + "\"env_medium_id\":\"L6\","
-            + "\"is_test\":\"false\","
-            + "\"probeId\":1000}}",
-            result);
+            Json.createReader(new StringReader("{\"120510002\":"
+                    + "{\"main_sample_id\":\"120510002\","
+                    + "\"env_medium_id\":\"L6\","
+                    + "\"is_test\":\"false\","
+                    + "\"probeId\":1000}}")).readObject(),
+            runJSONExportTest(baseUrl, requestJson));
     }
 
     /**
@@ -336,8 +335,6 @@ public class ExporterTest extends BaseTest {
                 .add("messwerteCount"))
             .build();
 
-        JsonObject result = Json.createReader(new StringReader(
-                runExportTest(baseUrl, formatJson, requestJson))).readObject();
         Assert.assertEquals(
             "Unexpected JSON content",
             Json.createReader(new StringReader(
@@ -348,7 +345,7 @@ public class ExporterTest extends BaseTest {
                     + "\"probeId\":1000,"
                     + "\"Messungen\":[{\"messwerteCount\":2,\"extId\":453},"
                     + "{\"messwerteCount\":0,\"extId\":454}]}}")).readObject(),
-            result);
+            runJSONExportTest(baseUrl, requestJson));
     }
 
     /**
@@ -359,22 +356,20 @@ public class ExporterTest extends BaseTest {
     public final void testJsonExportMeasmSubData(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        String result = runExportTest(
-            baseUrl, formatJson, measmRequestJsonBuilder.build());
         Assert.assertEquals(
             "Unexpected JSON content",
-            "{\"1200\":"
-            + "{\"messungId\":1200,"
-            + "\"messwerte\":[{"
-            + "\"measUnitId\":\"Sv\","
-            + "\"measdId\":\"test\","
-            + "\"measVal\":1.1,"
-            + "\"id\":1000},{"
-            + "\"measUnitId\":\"Sv\","
-            + "\"measdId\":\"test\","
-            + "\"measVal\":null,"
-            + "\"id\":1001}]}}",
-            result);
+            Json.createReader(new StringReader("{\"1200\":"
+                    + "{\"messungId\":1200,"
+                    + "\"messwerte\":[{"
+                    + "\"measUnitId\":\"Sv\","
+                    + "\"measdId\":\"test\","
+                    + "\"measVal\":1.1,"
+                    + "\"id\":1000},{"
+                    + "\"measUnitId\":\"Sv\","
+                    + "\"measdId\":\"test\","
+                    + "\"measVal\":null,"
+                    + "\"id\":1001}]}}")).readObject(),
+            runJSONExportTest(baseUrl, measmRequestJsonBuilder.build()));
     }
 
     /**
@@ -418,12 +413,10 @@ public class ExporterTest extends BaseTest {
             "hauptprobenNr,umwId,isTest,probeId\r\n",
             csvResult);
 
-        String jsonResult = runExportTest(
-            baseUrl, formatJson, requestJson);
         Assert.assertEquals(
             "Unexpected JSON content",
-            "{}",
-            jsonResult);
+            JsonValue.EMPTY_JSON_OBJECT,
+            runJSONExportTest(baseUrl, requestJson));
     }
 
     /**
@@ -527,6 +520,13 @@ public class ExporterTest extends BaseTest {
             exportStatusObject.getString(statusKey));
 
         return refId;
+    }
+
+    private JsonObject runJSONExportTest(
+        URL baseUrl, JsonObject requestJson
+    ) throws InterruptedException {
+        return Json.createReader(new StringReader(
+                runExportTest(baseUrl, formatJson, requestJson))).readObject();
     }
 
     private String runExportTest(
