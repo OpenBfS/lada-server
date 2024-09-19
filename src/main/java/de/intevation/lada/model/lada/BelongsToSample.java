@@ -7,21 +7,40 @@
  */
 package de.intevation.lada.model.lada;
 
-public interface BelongsToSample {
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 
-    /**
-     * @return the ID of the sample the instance belongs to
-     */
-    Integer getSampleId();
+import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 
-    /**
-     * @return true if requesting user is owner of the instance
-     */
-    boolean isOwner();
 
-    /**
-     * @param owner boolean specifying if requesting user
-     * is owner of the instance
-     */
-    void setOwner(boolean owner);
+@MappedSuperclass
+public abstract class BelongsToSample extends BaseModel {
+
+    @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Sample.class)
+    private Integer sampleId;
+
+    @Transient
+    private boolean owner;
+
+
+    public Integer getSampleId() {
+        return this.sampleId;
+    }
+
+    public void setSampleId(Integer sampleId) {
+        this.sampleId = sampleId;
+    }
+
+    public boolean isOwner() {
+        return owner;
+    }
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
+    }
 }

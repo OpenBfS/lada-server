@@ -26,7 +26,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.TypeRegulation;
@@ -47,8 +46,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     propertyNodeName = "typeRegulation",
     message = "{de.intevation.lada.validation.GeolocatUniqueSamplingLocation}",
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
-public class Geolocat extends BaseModel
-    implements BelongsToSample, Serializable {
+public class Geolocat extends BelongsToSample implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -75,11 +73,6 @@ public class Geolocat extends BaseModel
     @NotEmptyNorWhitespace
     private String addSiteText;
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Sample.class)
-    private Integer sampleId;
-
     @Size(max = 7)
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Poi.class)
@@ -94,13 +87,8 @@ public class Geolocat extends BaseModel
     private Sample sample;
 
     @Transient
-    private boolean owner;
-
-    @Transient
     private Date parentModified;
 
-    public Geolocat() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -142,15 +130,6 @@ public class Geolocat extends BaseModel
         this.addSiteText = addSiteText;
     }
 
-    @Override
-    public Integer getSampleId() {
-        return this.sampleId;
-    }
-
-    public void setSampleId(Integer sampleId) {
-        this.sampleId = sampleId;
-    }
-
     public String getPoiId() {
         return this.poiId;
     }
@@ -165,16 +144,6 @@ public class Geolocat extends BaseModel
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    @Override
-    public boolean isOwner() {
-        return owner;
-    }
-
-    @Override
-    public void setOwner(boolean owner) {
-        this.owner = owner;
     }
 
     /**

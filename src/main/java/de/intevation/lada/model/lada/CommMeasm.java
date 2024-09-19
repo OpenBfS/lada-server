@@ -21,21 +21,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import de.intevation.lada.model.BaseModel;
 
 @Entity
 @Table(name = "comm_measm", schema = SchemaName.NAME)
 @Unique(fields = {"text", "measmId"},
     groups = DatabaseConstraints.class, clazz = CommMeasm.class)
 @GroupSequence({ CommMeasm.class, DatabaseConstraints.class })
-public class CommMeasm extends BaseModel
-    implements BelongsToMeasm, Serializable {
+public class CommMeasm extends BelongsToMeasm implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,11 +41,6 @@ public class CommMeasm extends BaseModel
 
     @Temporal(TIMESTAMP)
     private Date date;
-
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Measm.class)
-    private Integer measmId;
 
     @NotBlank
     @Size(max = 5)
@@ -61,11 +52,6 @@ public class CommMeasm extends BaseModel
     @Size(max = 1024)
     private String text;
 
-    @Transient
-    private boolean owner;
-
-    public CommMeasm() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -83,15 +69,6 @@ public class CommMeasm extends BaseModel
         this.date = datum;
     }
 
-    @Override
-    public Integer getMeasmId() {
-        return this.measmId;
-    }
-
-    public void setMeasmId(Integer measmId) {
-        this.measmId = measmId;
-    }
-
     public String getMeasFacilId() {
         return this.measFacilId;
     }
@@ -106,15 +83,5 @@ public class CommMeasm extends BaseModel
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    @Override
-    public boolean isOwner() {
-        return owner;
-    }
-
-    @Override
-    public void setOwner(boolean owner) {
-        this.owner = owner;
     }
 }

@@ -28,10 +28,8 @@ import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
@@ -43,8 +41,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ MpgMmtMp.class, DatabaseConstraints.class })
 @Unique(fields = {"mmtId", "mpgId"},
     groups = DatabaseConstraints.class, clazz = MpgMmtMp.class)
-public class MpgMmtMp extends BaseModel
-    implements BelongsToMpg, Serializable {
+public class MpgMmtMp extends BelongsToMpg implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -64,11 +61,6 @@ public class MpgMmtMp extends BaseModel
     @Valid
     private Set<Measd> measdObjects;
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Mpg.class)
-    private Integer mpgId;
-
     @NotBlank
     @Size(max = 2)
     @IsValidPrimaryKey(
@@ -78,8 +70,6 @@ public class MpgMmtMp extends BaseModel
     @Transient
     private Integer[] measds;
 
-    public MpgMmtMp() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -119,15 +109,6 @@ public class MpgMmtMp extends BaseModel
         this.measds = measds;
     }
 
-    @Override
-    public Integer getMpgId() {
-        return this.mpgId;
-    }
-
-    public void setMpgId(Integer mpgId) {
-        this.mpgId = mpgId;
-    }
-
     public String getMmtId() {
         return this.mmtId;
     }
@@ -135,5 +116,4 @@ public class MpgMmtMp extends BaseModel
     public void setMmtId(String mmtId) {
         this.mmtId = mmtId;
     }
-
 }

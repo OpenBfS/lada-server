@@ -7,25 +7,40 @@
  */
 package de.intevation.lada.model.lada;
 
-public interface BelongsToMpg {
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 
-    /**
-     * @return the ID of the Mpg the instance belongs to
-     */
-    Integer getMpgId();
+import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 
-    /**
-     * @return true if requesting user is owner of the instance.
-     * Default method always returns false.
-     */
-    default boolean isOwner() {
-        return false;
+
+@MappedSuperclass
+public abstract class BelongsToMpg extends BaseModel {
+
+    @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Mpg.class)
+    private Integer mpgId;
+
+    @Transient
+    private boolean owner;
+
+
+    public Integer getMpgId() {
+        return this.mpgId;
     }
 
-    /**
-     * @param owner boolean specifying if requesting user
-     * is owner of the instance.
-     * Default method just ignores the parameter.
-     */
-    default void setOwner(boolean owner) { }
+    public void setMpgId(Integer mpgId) {
+        this.mpgId = mpgId;
+    }
+
+    public boolean isOwner() {
+        return owner;
+    }
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
+    }
 }

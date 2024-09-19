@@ -7,21 +7,40 @@
  */
 package de.intevation.lada.model.lada;
 
-public interface BelongsToMeasm {
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 
-    /**
-     * @return the ID of the Measm the instance belongs to
-     */
-    Integer getMeasmId();
+import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 
-    /**
-     * @return true if requesting user is owner of the instance
-     */
-    boolean isOwner();
 
-    /**
-     * @param owner boolean specifying if requesting user
-     * is owner of the instance
-     */
-    void setOwner(boolean owner);
+@MappedSuperclass
+public abstract class BelongsToMeasm extends BaseModel {
+
+    @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Measm.class)
+    private Integer measmId;
+
+    @Transient
+    private boolean owner;
+
+
+    public Integer getMeasmId() {
+        return this.measmId;
+    }
+
+    public void setMeasmId(Integer measmId) {
+        this.measmId = measmId;
+    }
+
+    public boolean isOwner() {
+        return owner;
+    }
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
+    }
 }

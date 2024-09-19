@@ -48,6 +48,6 @@ public class MpgIdAuthorizer extends BaseAuthorizer {
         super.setAuthAttrs(data, userInfo);
 
         BelongsToMpg object = (BelongsToMpg) data;
-        object.setOwner(!data.isReadonly());
+        object.setOwner(!object.isReadonly());
     }
 }
