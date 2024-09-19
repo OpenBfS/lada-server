@@ -77,7 +77,8 @@ public class QueryBuilder<T> {
      * @return The builder itself.
      */
     public <X> QueryBuilder<T> andIsNull(
-        SingularAttribute<? super T, X> id) {
+        SingularAttribute<? super T, X> id
+    ) {
         return and(id, null);
     }
 
@@ -90,7 +91,8 @@ public class QueryBuilder<T> {
      * @return The builder itself.
      */
     public <X> QueryBuilder<T> and(
-            SingularAttribute<? super T, X> id, X value) {
+        SingularAttribute<? super T, X> id, X value
+    ) {
         Predicate p;
         if (value == null) {
             p = this.builder.isNull(this.root.get(id));
@@ -125,7 +127,8 @@ public class QueryBuilder<T> {
      * @return The builder itself.
      */
     public QueryBuilder<T> andLike(
-            SingularAttribute<T, String> id, String value) {
+        SingularAttribute<? super T, String> id, String value
+    ) {
         Path<String> path = this.root.get(id);
         Predicate p =
             this.builder.like(this.builder.lower(path), value.toLowerCase());
@@ -168,7 +171,8 @@ public class QueryBuilder<T> {
      * @return The builder itself.
      */
     public QueryBuilder<T> orLike(
-            SingularAttribute<T, String> id, String value) {
+        SingularAttribute<? super T, String> id, String value
+    ) {
         Path<String> path = this.root.get(id);
         Predicate p =
             this.builder.like(this.builder.lower(path), value.toLowerCase());
@@ -189,7 +193,8 @@ public class QueryBuilder<T> {
      * @return The builder itself.
      */
     public QueryBuilder<T> and(
-            SingularAttribute<T, String> id, Iterable<String> values) {
+        SingularAttribute<? super T, String> id, Iterable<String> values
+    ) {
         if (values == null) {
             Predicate p = this.builder.isNull(this.root.get(id));
             if (this.filter != null) {
@@ -214,7 +219,8 @@ public class QueryBuilder<T> {
      * @return The builder itself.
      */
     public QueryBuilder<T> or(
-            SingularAttribute<T, String> id, Collection<String> values) {
+        SingularAttribute<? super T, String> id, Collection<String> values
+    ) {
         if (values == null) {
             Predicate p = this.builder.isNull(this.root.get(id));
             if (this.filter != null) {
@@ -237,7 +243,8 @@ public class QueryBuilder<T> {
      * @return The builder itself.
      */
     public QueryBuilder<T> orIntList(
-            SingularAttribute<T, Integer> id, Iterable<Integer> values) {
+        SingularAttribute<? super T, Integer> id, Iterable<Integer> values
+    ) {
         for (Integer v: values) {
             this.or(id, v);
         }
@@ -295,7 +302,8 @@ public class QueryBuilder<T> {
      * @return The current Querybuilder.
      */
     public <M> QueryBuilder<T> orIn(
-            SingularAttribute<T, M> key, Collection<M> values) {
+        SingularAttribute<? super T, M> key, Collection<M> values
+    ) {
         Expression<M> exp = this.root.get(key);
         Predicate p = exp.in(values);
         if (this.filter == null) {
@@ -317,7 +325,8 @@ public class QueryBuilder<T> {
      * @return The current Querybuilder.
      */
     public <M> QueryBuilder<T> andIn(
-            SingularAttribute<T, M> key, Collection<M> values) {
+        SingularAttribute<? super T, M> key, Collection<M> values
+    ) {
         Expression<M> exp = this.root.get(key);
         Predicate p = exp.in(values);
         if (this.filter == null) {
@@ -344,7 +353,8 @@ public class QueryBuilder<T> {
      * @return The current Querybuilder.
      */
     public <X> QueryBuilder<T> orderBy(
-            SingularAttribute<T, X> id, boolean asc) {
+        SingularAttribute<? super T, X> id, boolean asc
+    ) {
         Order order;
         if (asc) {
             order = this.builder.asc(this.root.get(id));
