@@ -30,6 +30,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.MultipleFailureException;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
@@ -58,6 +59,8 @@ public class AuthorizerTest extends BaseTest {
     private Logger log = Logger.getLogger(AuthorizerTest.class);
 
     private static Authorization authorization;
+
+    private static I18n i18n;
 
     private static Repository repository;
 
@@ -91,12 +94,15 @@ public class AuthorizerTest extends BaseTest {
     }
 
     /**
-     * Init repository.
-     * @param repo Repo.
+     * Initialize static instance variables.
+     *
+     * @param repo Repository
+     * @param localizer I18n
      */
     @Inject
-    private void initRepository(Repository repo) {
+    private void init(Repository repo, I18n localizer) {
         repository = repo;
+        i18n = localizer;
     }
 
     /**
@@ -110,6 +116,7 @@ public class AuthorizerTest extends BaseTest {
                 testUser,
                 userId,
                 List.of(repository.getById(Auth.class, 1))),
+            i18n,
             repository);
     }
 
