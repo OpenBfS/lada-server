@@ -9,7 +9,7 @@
 #
 
 FROM debian:bookworm
-MAINTAINER tom.gottfried@intevation.de
+LABEL maintainer=tom.gottfried@intevation.de
 
 #
 # Use utf-8
