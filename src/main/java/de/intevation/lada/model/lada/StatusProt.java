@@ -24,7 +24,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
@@ -42,7 +41,8 @@ import de.intevation.lada.validation.groups.Notifications;
 @ValidDependenciesFinalStatus(groups = DatabaseConstraints.class)
 @HaveDependenciesNotifications(groups = Notifications.class)
 @StatusOrder(groups = DatabaseConstraints.class)
-public class StatusProt extends BaseModel implements Serializable {
+public class StatusProt extends BelongsToMeasm implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -52,11 +52,6 @@ public class StatusProt extends BaseModel implements Serializable {
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date date;
-
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Measm.class)
-    private Integer measmId;
 
     @NotBlank
     @Size(max = 5)
@@ -78,9 +73,6 @@ public class StatusProt extends BaseModel implements Serializable {
     private Date treeMod;
 
     @Transient
-    private boolean owner;
-
-    @Transient
     private Date parentModified;
 
     @Transient
@@ -89,8 +81,6 @@ public class StatusProt extends BaseModel implements Serializable {
     @Transient
     private Integer statusVal;
 
-    public StatusProt() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -106,14 +96,6 @@ public class StatusProt extends BaseModel implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public Integer getMeasmId() {
-        return this.measmId;
-    }
-
-    public void setMeasmId(Integer measmId) {
-        this.measmId = measmId;
     }
 
     public String getMeasFacilId() {
@@ -146,20 +128,6 @@ public class StatusProt extends BaseModel implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    /**
-     * @return the owner
-     */
-    public boolean isOwner() {
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    public void setOwner(boolean owner) {
-        this.owner = owner;
     }
 
     /**

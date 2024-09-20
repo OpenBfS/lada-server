@@ -7,9 +7,7 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
+import de.intevation.lada.model.master.BelongsToNetwork;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -21,36 +19,13 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> String isAuthorizedReason(
+    public String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
-        try {
-            Method m = clazz.getMethod("getNetworkId");
-            String id = (String) m.invoke(data);
-            return isAuthorizedById(id, method, userInfo, clazz)
-                ? null : I18N_KEY_FORBIDDEN;
-        } catch (NoSuchMethodException
-            | IllegalAccessException
-            | InvocationTargetException e
-        ) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        String netId = (String) id;
-        return (method == RequestMethod.PUT
-            || method == RequestMethod.POST
-            || method == RequestMethod.DELETE
-            ) && userInfo.getFunktionenForNetzbetreiber(netId).contains(4);
+        return userInfo.getFunktionenForNetzbetreiber(
+            ((BelongsToNetwork) data).getNetworkId()).contains(4)
+            ? null : I18N_KEY_FORBIDDEN;
     }
 }

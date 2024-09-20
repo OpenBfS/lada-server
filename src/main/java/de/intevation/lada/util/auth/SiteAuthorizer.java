@@ -19,11 +19,10 @@ public class SiteAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> String isAuthorizedReason(
+    public String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         Site site = (Site) data;
         String netId = site.getNetworkId();
@@ -41,16 +40,5 @@ public class SiteAuthorizer extends BaseAuthorizer {
             return I18N_KEY_CANNOTDELETE;
         }
         return null;
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        return isAuthorized(
-            repository.getById(Site.class, id), method, userInfo, clazz);
     }
 }

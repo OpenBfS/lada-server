@@ -27,7 +27,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.validation.constraints.HasDetectLim;
@@ -59,7 +58,8 @@ import de.intevation.lada.validation.groups.Warnings;
 @MeasdMatchesMmt(groups = Warnings.class)
 @IsNormalized(groups = Warnings.class)
 @IsMeasdPrimaryOrConvertibleTo(groups = Notifications.class)
-public class MeasVal extends BaseModel implements Serializable {
+public class MeasVal extends BelongsToMeasm implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -84,11 +84,6 @@ public class MeasVal extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Measd.class)
     private Integer measdId;
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Measm.class)
-    private Integer measmId;
-
     @Positive(groups = Notifications.class)
     private Double measVal;
 
@@ -107,13 +102,8 @@ public class MeasVal extends BaseModel implements Serializable {
     private Measm measm;
 
     @Transient
-    private boolean owner;
-
-    @Transient
     private Date parentModified;
 
-    public MeasVal() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -168,14 +158,6 @@ public class MeasVal extends BaseModel implements Serializable {
         return this.measm;
     }
 
-    public Integer getMeasmId() {
-        return this.measmId;
-    }
-
-    public void setMeasmId(Integer measmId) {
-        this.measmId = measmId;
-    }
-
     public Double getMeasVal() {
         return this.measVal;
     }
@@ -206,20 +188,6 @@ public class MeasVal extends BaseModel implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    /**
-     * @return the owner
-     */
-    public boolean isOwner() {
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    public void setOwner(boolean owner) {
-        this.owner = owner;
     }
 
     /**

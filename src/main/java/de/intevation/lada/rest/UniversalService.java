@@ -169,29 +169,13 @@ public class UniversalService extends LadaService {
 
             for (Map<String, Object> row: result) {
                 Object idToAuthorize = row.get(authorizationColumnIndex);
-                boolean readonly;
-                if (doAuthorize) {
-                    if (idToAuthorize != null) {
-                        if (authorizationColumnType == DatasetCreator.class) {
-                            DatasetCreator de = repository.getById(
-                                DatasetCreator.class, idToAuthorize);
-                            idToAuthorize = de.getNetworkId();
-                        }
-                        if (authorizationColumnType == MpgCateg.class) {
-                            MpgCateg mk = repository.getById(
-                                MpgCateg.class, idToAuthorize);
-                            idToAuthorize = mk.getNetworkId();
-                        }
-
-                        readonly = !authorization.isAuthorizedById(
-                            idToAuthorize,
-                            RequestMethod.PUT,
-                            authorizationColumnType);
-                    } else {
-                        readonly = true;
-                    }
-                } else {
-                    readonly = true;
+                boolean readonly = true;
+                if (doAuthorize && idToAuthorize != null) {
+                    readonly = !authorization.isAuthorized(
+                        repository.getById(
+                            authorizationColumnType, idToAuthorize),
+                        RequestMethod.PUT,
+                        authorizationColumnType);
                 }
                 row.put("readonly", readonly);
             }

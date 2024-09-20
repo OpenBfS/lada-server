@@ -8,7 +8,6 @@
 
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -26,11 +25,10 @@ public class TagAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> String isAuthorizedReason(
+    public String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         Tag tag = (Tag) data;
         if (tag.getNetworkId() != null) {
@@ -57,28 +55,5 @@ public class TagAuthorizer extends BaseAuthorizer {
             // Global tags (and anything unknown) can not be edited
             return I18N_KEY_FORBIDDEN;
         }
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(Object id, RequestMethod method,
-        UserInfo userInfo, Class<T> clazz) {
-        Tag tag = repository.getById(Tag.class, id);
-        return isAuthorized(tag, method, userInfo, clazz);
-    }
-
-    @Override
-    public <T extends BaseModel> void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        if (data instanceof Tag) {
-            setAuthData(userInfo, (Tag) data);
-        }
-    }
-
-    private void setAuthData(UserInfo userInfo, Tag tag) {
-        tag.setReadonly(!isAuthorized(tag, RequestMethod.PUT,
-            userInfo, Tag.class));
     }
 }

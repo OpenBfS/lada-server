@@ -180,8 +180,17 @@ public class ServiceTest {
                     Object value;
 
                     // Apply JPA conversion, if any
-                    Convert convert = clazz.getDeclaredField(key).getAnnotation(
-                        Convert.class);
+                    Convert convert = null;
+                    Class<?> declaringClass = clazz;
+                    do {
+                        try {
+                            convert = declaringClass.getDeclaredField(key)
+                                .getAnnotation(Convert.class);
+                            break;
+                        } catch (NoSuchFieldException e) {
+                            declaringClass = declaringClass.getSuperclass();
+                        }
+                    } while (declaringClass != null);
                     if (convert != null) {
                         Class<?> converter = convert.converter();
                         // Get database attribute type from AttributeConverter

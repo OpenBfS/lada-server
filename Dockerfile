@@ -13,7 +13,7 @@
 #
 
 FROM debian:bookworm
-MAINTAINER raimund.renkert@intevation.de
+LABEL maintainer=raimund.renkert@intevation.de
 
 #
 # install packages

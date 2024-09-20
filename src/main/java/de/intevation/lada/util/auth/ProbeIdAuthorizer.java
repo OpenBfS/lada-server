@@ -7,10 +7,8 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
@@ -19,86 +17,44 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 public class ProbeIdAuthorizer extends BaseAuthorizer {
 
+    ProbeAuthorizer probeAuthorizer;
+
     public ProbeIdAuthorizer(Repository repository) {
         super(repository);
+
+        this.probeAuthorizer = new ProbeAuthorizer(repository);
     }
 
     @Override
-    public <T> String isAuthorizedReason(
+    public String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
-        try {
-            Method m = clazz.getMethod("getSampleId");
-            Integer id = (Integer) m.invoke(data);
-            return isAuthorizedById(id, method, userInfo, clazz)
-                ? null : I18N_KEY_FORBIDDEN;
-        } catch (NoSuchMethodException
-            | IllegalAccessException
-            | InvocationTargetException e
-        ) {
-            throw new RuntimeException(e);
-        }
+        // Authorized if editing associated sample is authorized
+        return probeAuthorizer.isAuthorizedReason(
+            repository.getById(
+                Sample.class, ((BelongsToSample) data).getSampleId()),
+            RequestMethod.PUT,
+            userInfo);
     }
 
     @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        Sample probe =
-            repository.getById(Sample.class, id);
-        return !isProbeReadOnly((Integer) id)
-            && getAuthorization(userInfo, probe);
-    }
-
-    @Override
-    public <T extends BaseModel> void setAuthAttrs(
+    public void setAuthAttrs(
         BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
-        if (data == null) {
-            return;
-        }
-        try {
-            Method getProbeId = clazz.getMethod("getSampleId");
-            Integer id = (Integer) getProbeId.invoke(data);
-            Sample probe = repository.getById(Sample.class, id);
+        // Set readonly flag
+        super.setAuthAttrs(data, userInfo);
 
-            boolean readOnly = true;
-            boolean owner = false;
-            MeasFacil mst =
-                repository.getById(
-                    MeasFacil.class, probe.getMeasFacilId());
-            if (!userInfo.getNetzbetreiber().contains(
-                    mst.getNetworkId())) {
-                owner = false;
-                readOnly = true;
-            } else {
-                if (userInfo.belongsTo(
-                    probe.getMeasFacilId(), probe.getApprLabId())
-                ) {
-                    owner = true;
-                } else {
-                    owner = false;
-                }
-                readOnly = this.isProbeReadOnly(id);
-            }
+        BelongsToSample object = (BelongsToSample) data;
+        Sample sample = repository.getById(Sample.class, object.getSampleId());
 
-            Method setOwner = clazz.getMethod("setOwner", boolean.class);
-            Method setReadonly = clazz.getMethod("setReadonly", boolean.class);
-            setOwner.invoke(data, owner);
-            setReadonly.invoke(data, readOnly);
-        } catch (NoSuchMethodException
-            | IllegalAccessException
-            | InvocationTargetException e
-        ) {
-            throw new RuntimeException(e);
-        }
+        String mfId = sample.getMeasFacilId();
+        MeasFacil mst = repository.getById(MeasFacil.class, mfId);
+
+        object.setOwner(
+            userInfo.getNetzbetreiber().contains(mst.getNetworkId())
+            && userInfo.belongsTo(mfId, sample.getApprLabId()));
     }
 }

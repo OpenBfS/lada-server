@@ -114,65 +114,6 @@ public class AuthorizerTest extends BaseTest {
     }
 
     /**
-     * Test base authorizer with authorized sample.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerAuthorizedSample() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test authorized sample
-        assertEquals(
-            baseAuthorizer.isProbeReadOnly(
-                SAMPLE_ID_AUTHORIZED),
-            false);
-    }
-
-    /**
-     * Test base authorizer with unauthorized sample.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerUnauthorizedSample() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test locked sample
-        assertEquals(
-            "Unauthorized sample",
-            baseAuthorizer.isProbeReadOnly(
-                SAMPLE_ID_LOCKED_BY_STATUS),
-            true);
-    }
-
-    /**
-     * Test base authorizer with authorized measm.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerAuthorizedMeasm() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test unlocked measm
-        assertEquals(
-            "Unlocked measm",
-            baseAuthorizer.isMessungReadOnly(
-                MEASM_ID_STATUS_EDITABLE),
-            false);
-    }
-
-    /**
-     * Test base authorizer with locked sample.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerUnauthorizedMeasm() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test locked measm
-        assertEquals(
-            "Locked measm",
-            baseAuthorizer.isMessungReadOnly(
-                MEASM_ID_STATUS_LOCKED),
-            true);
-    }
-
-    /**
      * Run parameterized isAuthorized tests.
      * @throws Exception Exception that may occure during run
      */
@@ -426,11 +367,11 @@ public class AuthorizerTest extends BaseTest {
         lockedBySample.setMeasmId(MEASM_ID_LOCKED_BY_SAMPLE);
 
         return Map.of(
-            noStatus, new TestConfig(false, true, true, true,
+            noStatus, new TestConfig(true, true, true, true,
                 "measmIdNoStatus"),
-            editableStatus, new TestConfig(false, true, true, true,
+            editableStatus, new TestConfig(true, true, true, true,
                 "measmIdEditableStatus"),
-            lockedByStatus, new TestConfig(false, true, true, true,
+            lockedByStatus, new TestConfig(true, true, true, true,
                 "measmIdLockedByStatus"),
             lockedBySample, new TestConfig(false, false, false, false,
                 "measmIDLockedBySample")
@@ -459,7 +400,7 @@ public class AuthorizerTest extends BaseTest {
         unauthSite.setNetworkId(NETWORK_ID_UNAUTHORIZED);
 
         return Map.of(
-            authorized, new TestConfig(false, true, true, true,
+            authorized, new TestConfig(true, true, true, true,
                  "networkAuthorizer"),
             unauth, new TestConfig(false, false, false, false,
                 "networkUnauthorized"),

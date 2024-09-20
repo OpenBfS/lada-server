@@ -10,7 +10,6 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.util.Date;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
@@ -34,7 +33,8 @@ import jakarta.validation.constraints.Size;
 @Unique(groups = DatabaseConstraints.class,
     clazz = DatasetCreator.class,
     fields = { "extId", "networkId", "measFacilId" })
-public class DatasetCreator extends BaseModel implements Serializable {
+public class DatasetCreator extends BelongsToNetwork implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -59,14 +59,6 @@ public class DatasetCreator extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String measFacilId;
 
-    @NotBlank
-    @Size(max = 2)
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Network.class)
-    private String networkId;
-
-    public DatasetCreator() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -106,13 +98,5 @@ public class DatasetCreator extends BaseModel implements Serializable {
 
     public void setMeasFacilId(String measFacilId) {
         this.measFacilId = measFacilId;
-    }
-
-    public String getNetworkId() {
-        return this.networkId;
-    }
-
-    public void setNetworkId(String networkId) {
-        this.networkId = networkId;
     }
 }

@@ -8,7 +8,6 @@
 
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
@@ -30,11 +29,10 @@ public class TagLinkSampleAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> String isAuthorizedReason(
+    public String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         switch (method) {
         case POST:
@@ -47,8 +45,7 @@ public class TagLinkSampleAuthorizer extends BaseAuthorizer {
                     repository.getById(
                         Sample.class, zuordnung.getSampleId()),
                     RequestMethod.PUT,
-                    userInfo,
-                    Sample.class
+                    userInfo
                 );
             } else if (tag.getNetworkId() != null) {
                 return userInfo.getNetzbetreiber().contains(tag.getNetworkId())
@@ -60,26 +57,5 @@ public class TagLinkSampleAuthorizer extends BaseAuthorizer {
         default:
             return I18N_KEY_FORBIDDEN;
         }
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        TagLinkSample zuordnung = repository.getById(
-            TagLinkSample.class, id);
-        return isAuthorized(zuordnung, method, userInfo, clazz);
-    }
-
-    @Override
-    public <T extends BaseModel> void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        // Nothing to do
     }
 }

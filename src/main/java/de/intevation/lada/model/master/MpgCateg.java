@@ -10,8 +10,6 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.util.Date;
 
-import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
@@ -37,7 +35,8 @@ import jakarta.validation.constraints.Size;
 @GroupSequence({ MpgCateg.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = MpgCateg.class, fields = { "extId", "networkId" })
-public class MpgCateg extends BaseModel implements Serializable {
+public class MpgCateg extends BelongsToNetwork implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -55,14 +54,6 @@ public class MpgCateg extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    @NotBlank
-    @Size(max = 2)
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Network.class)
-    private String networkId;
-
-    public MpgCateg() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -94,13 +85,5 @@ public class MpgCateg extends BaseModel implements Serializable {
 
     public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
-    }
-
-    public String getNetworkId() {
-        return this.networkId;
-    }
-
-    public void setNetworkId(String networkId) {
-        this.networkId = networkId;
     }
 }

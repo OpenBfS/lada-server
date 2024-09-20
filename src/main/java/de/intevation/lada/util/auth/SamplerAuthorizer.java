@@ -19,11 +19,10 @@ public class SamplerAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> String isAuthorizedReason(
+    public String isAuthorizedReason(
         Object data,
         RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
+        UserInfo userInfo
     ) {
         Sampler sampler = (Sampler) data;
         if (!userInfo.getFunktionenForNetzbetreiber(
@@ -37,16 +36,5 @@ public class SamplerAuthorizer extends BaseAuthorizer {
             return I18N_KEY_CANNOTDELETE;
         }
         return null;
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        return isAuthorized(repository.getById(
-                Sampler.class, id), method, userInfo, clazz);
     }
 }

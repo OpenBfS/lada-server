@@ -23,10 +23,8 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
@@ -42,7 +40,9 @@ import de.intevation.lada.validation.groups.Warnings;
 @Unique(fields = {"sampleSpecifId", "sampleId"},
     groups = DatabaseConstraints.class, clazz = SampleSpecifMeasVal.class)
 @SampleSpecifMatchesEnvMedium(groups = Warnings.class)
-public class SampleSpecifMeasVal extends BaseModel implements Serializable {
+public class SampleSpecifMeasVal extends BelongsToSample
+    implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -61,11 +61,6 @@ public class SampleSpecifMeasVal extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String smallerThan;
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Sample.class)
-    private Integer sampleId;
-
     @NotBlank
     @Size(max = 3)
     @IsValidPrimaryKey(
@@ -81,13 +76,8 @@ public class SampleSpecifMeasVal extends BaseModel implements Serializable {
     private Sample sample;
 
     @Transient
-    private boolean owner;
-
-    @Transient
     private Date parentModified;
 
-    public SampleSpecifMeasVal() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -121,14 +111,6 @@ public class SampleSpecifMeasVal extends BaseModel implements Serializable {
         this.measVal = measVal;
     }
 
-    public Integer getSampleId() {
-        return this.sampleId;
-    }
-
-    public void setSampleId(Integer sampleId) {
-        this.sampleId = sampleId;
-    }
-
     public String getSampleSpecifId() {
         return this.sampleSpecifId;
     }
@@ -151,20 +133,6 @@ public class SampleSpecifMeasVal extends BaseModel implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    /**
-     * @return the owner
-     */
-    public boolean isOwner() {
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    public void setOwner(boolean owner) {
-        this.owner = owner;
     }
 
     /**

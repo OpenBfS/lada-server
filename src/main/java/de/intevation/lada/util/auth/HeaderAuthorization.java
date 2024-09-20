@@ -125,8 +125,8 @@ public class HeaderAuthorization implements Authorization {
             new NetzbetreiberAuthorizer(repository);
         MessprogrammAuthorizer messprogrammAuthorizer =
             new MessprogrammAuthorizer(repository);
-        MessprogrammIdAuthorizer mpIdAuthorizer =
-            new MessprogrammIdAuthorizer(repository);
+        MpgIdAuthorizer mpgIdAuthorizer =
+            new MpgIdAuthorizer(repository);
         TagAuthorizer tagAuthorizer =
             new TagAuthorizer(repository);
         TagLinkSampleAuthorizer tagZuordnungAuthorizer =
@@ -153,8 +153,8 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(MpgCateg.class, netzAuthorizer),
             Map.entry(Site.class, siteAuthorizer),
             Map.entry(Mpg.class, messprogrammAuthorizer),
-            Map.entry(MpgMmtMp.class, messprogrammAuthorizer),
-            Map.entry(GeolocatMpg.class, mpIdAuthorizer),
+            Map.entry(MpgMmtMp.class, mpgIdAuthorizer),
+            Map.entry(GeolocatMpg.class, mpgIdAuthorizer),
             Map.entry(Tag.class, tagAuthorizer),
             Map.entry(TagLinkMeasm.class, tagLinkMeasmAuthorizer),
             Map.entry(TagLinkSample.class, tagZuordnungAuthorizer)
@@ -185,7 +185,7 @@ public class HeaderAuthorization implements Authorization {
         T data,
         Class<T> clazz
     ) {
-        authorizers.get(clazz).setAuthAttrs(data, userInfo, clazz);
+        authorizers.get(clazz).setAuthAttrs(data, userInfo);
         return data;
     }
 
@@ -206,7 +206,7 @@ public class HeaderAuthorization implements Authorization {
     ) {
         Authorizer authorizer = authorizers.get(clazz);
         String reason = authorizer.isAuthorizedReason(
-            data, method, userInfo, clazz);
+            data, method, userInfo);
         if (reason == null) {
             return;
         }
@@ -234,53 +234,6 @@ public class HeaderAuthorization implements Authorization {
         if (authorizer == null || data == null) {
             return false;
         }
-        return authorizer.isAuthorized(data, method, userInfo, clazz);
-    }
-
-    /**
-     * Check whether a user is authorized to operate on the given data
-     * by the given object id.
-     *
-     * @param id        The data's id to test.
-     * @param method    The Http request type.
-     * @param clazz     The data object class.
-     * @return True if the user is authorized else returns false.
-     */
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        Class<T> clazz
-    ) {
-        Authorizer authorizer = authorizers.get(clazz);
-        // Do not authorize anything unknown
-        if (authorizer == null) {
-            return false;
-        }
-        return authorizer.isAuthorizedById(id, method, userInfo, clazz);
-    }
-
-    /**
-     * Test whether a probe is readonly.
-     *
-     * @param probeId   The probe Id.
-     * @return True if the probe is readonly.
-     */
-    @Override
-    public boolean isProbeReadOnly(Integer probeId) {
-        Authorizer a = authorizers.get(Sample.class);
-        return a.isProbeReadOnly(probeId);
-    }
-
-    /**
-     * Test whether a Messung object is readonly.
-     *
-     * @param messungId   The ID of the Messung object.
-     * @return True if the Messung object is readonly.
-     */
-    @Override
-    public boolean isMessungReadOnly(Integer messungId) {
-        Authorizer a = authorizers.get(Measm.class);
-        return a.isMessungReadOnly(messungId);
+        return authorizer.isAuthorized(data, method, userInfo);
     }
 }

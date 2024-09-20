@@ -18,13 +18,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.TypeRegulation;
@@ -45,8 +43,10 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     propertyNodeName = "typeRegulation",
     message = "{de.intevation.lada.validation.GeolocatUniqueSamplingLocation}",
     groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
-public class GeolocatMpg extends BaseModel implements Serializable {
+public class GeolocatMpg extends BelongsToMpg implements Serializable {
+
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -54,11 +54,6 @@ public class GeolocatMpg extends BaseModel implements Serializable {
     @Column(insertable = false)
     @Temporal(TIMESTAMP)
     private Date lastMod;
-
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Mpg.class)
-    private Integer mpgId;
 
     @NotNull
     @IsValidPrimaryKey(
@@ -84,11 +79,6 @@ public class GeolocatMpg extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date treeMod;
 
-    @Transient
-    private boolean owner;
-
-    public GeolocatMpg() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -104,14 +94,6 @@ public class GeolocatMpg extends BaseModel implements Serializable {
 
     public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
-    }
-
-    public Integer getMpgId() {
-        return this.mpgId;
-    }
-
-    public void setMpgId(Integer mpgId) {
-        this.mpgId = mpgId;
     }
 
     public Integer getSiteId() {
@@ -152,19 +134,5 @@ public class GeolocatMpg extends BaseModel implements Serializable {
 
     public void setTreeMod(Date treeModified) {
         this.treeMod = treeModified;
-    }
-
-    /**
-     * @return the owner
-     */
-    public boolean isOwner() {
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    public void setOwner(boolean owner) {
-        this.owner = owner;
     }
 }
