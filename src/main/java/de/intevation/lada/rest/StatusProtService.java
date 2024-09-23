@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -34,9 +33,9 @@ import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.rest.RequestMethod;
 
 
 /**
@@ -74,12 +73,14 @@ public class StatusProtService extends LadaService {
      * using an URL parameter named measmId.
      *
      * @return requested objects.
-     * Status-Code 699 if parameter is missing.
      */
     @GET
     public List<StatusProt> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
+        Measm messung = repository.getById(Measm.class, measmId);
+        authorization.authorize(messung, RequestMethod.GET, Measm.class);
+
         QueryBuilder<StatusProt> builder = repository
             .queryBuilder(StatusProt.class)
             .and(StatusProt_.measmId, measmId);
@@ -99,9 +100,9 @@ public class StatusProtService extends LadaService {
     public StatusProt getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(StatusProt.class, id),
-            StatusProt.class);
+        StatusProt status = repository.getById(StatusProt.class, id);
+        authorization.authorize(status, RequestMethod.GET, StatusProt.class);
+        return authorization.filter(status, StatusProt.class);
     }
 
     /**
@@ -114,47 +115,26 @@ public class StatusProtService extends LadaService {
     public StatusProt create(
         @Valid StatusProt status
     ) throws BadRequestException {
-        UserInfo userInfo = authorization.getInfo();
         Measm messung = repository.getById(
             Measm.class, status.getMeasmId());
         lock.isLocked(messung);
 
-        // Is user authorized to edit status at all?
-        // TODO: Move to authorization
-        Measm filteredMessung = authorization.filter(messung, Measm.class);
-        if (!filteredMessung.getStatusEdit()) {
-            throw new ForbiddenException();
-        }
+        authorization.authorize(status, RequestMethod.POST, StatusProt.class);
 
-        StatusProt oldStatus = repository.getById(
-            StatusProt.class, messung.getStatus());
         StatusMp newKombi = repository.getById(
             StatusMp.class, status.getStatusMpId());
 
-        // Check if the user is allowed to change to the requested
-        // status_kombi
-        // TODO: Move to authorization
-        if (userInfo.getFunktionenForMst(
-                status.getMeasFacilId()).contains(
-                    newKombi.getStatusLev().getId())
-            && (newKombi.getStatusLev().getId().equals(1)
-                && messung.getStatusEditMst()
-                || newKombi.getStatusLev().getId().equals(2)
-                && messung.getStatusEditLand()
-                || newKombi.getStatusLev().getId().equals(3)
-                && messung.getStatusEditLst())
-            ) {
-            // 1. user user wants to reset the current status
-            //    'status wert' == 8
-            if (newKombi.getStatusVal().getId() == 8) {
-                return authorization.filter(
-                    resetStatus(status, oldStatus, messung),
-                    StatusProt.class);
+        // 1. user user wants to reset the current status
+        //    'status wert' == 8
+        if (newKombi.getStatusVal().getId() == 8) {
+            StatusProt oldStatus = repository.getById(
+                StatusProt.class, messung.getStatus());
+            return authorization.filter(
+                resetStatus(status, oldStatus, messung),
+                StatusProt.class);
             }
-            // 2. user wants to set new status
-            return setNewStatus(status, newKombi, messung);
-        }
-        throw new ForbiddenException();
+        // 2. user wants to set new status
+        return setNewStatus(status, newKombi, messung);
     }
 
     private StatusProt setNewStatus(

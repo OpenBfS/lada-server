@@ -1225,17 +1225,8 @@ public class LafObjectMapper {
         }
 
         // check auth
-        MeasFacil messStelle =
-            repository.getById(MeasFacil.class, mstId);
-        if ((statusStufe == 1
-                && userInfo.getFunktionenForMst(mstId).contains(1))
-            || (statusStufe == 2
-                && userInfo.getNetzbetreiber().contains(
-                    messStelle.getNetworkId())
-                && userInfo.getFunktionenForNetzbetreiber(
-                    messStelle.getNetworkId()).contains(2))
-            || (statusStufe == 3
-                && userInfo.getFunktionen().contains(3))
+        if (authorizer.isAuthorized(
+                newStatus, RequestMethod.POST, StatusProt.class)
         ) {
             //persist newStatus if authorized to do so
             repository.create(newStatus);

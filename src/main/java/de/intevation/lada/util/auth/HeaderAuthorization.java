@@ -91,6 +91,8 @@ public class HeaderAuthorization implements Authorization {
             new SiteAuthorizer(repository);
         SamplerAuthorizer samplerAuthorizer =
             new SamplerAuthorizer(repository);
+        StatusProtAuthorizer statusAuthorizer =
+            new StatusProtAuthorizer(repository);
 
         this.authorizers = Map.ofEntries(
             Map.entry(Sample.class, probeAuthorizer),
@@ -100,7 +102,7 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(SampleSpecifMeasVal.class, pIdAuthorizer),
             Map.entry(CommMeasm.class, mIdAuthorizer),
             Map.entry(MeasVal.class, mIdAuthorizer),
-            Map.entry(StatusProt.class, mIdAuthorizer),
+            Map.entry(StatusProt.class, statusAuthorizer),
             Map.entry(Sampler.class, samplerAuthorizer),
             Map.entry(DatasetCreator.class, netzAuthorizer),
             Map.entry(MunicDiv.class, netzAuthorizer),

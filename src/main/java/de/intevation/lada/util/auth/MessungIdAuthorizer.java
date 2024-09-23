@@ -18,7 +18,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 public class MessungIdAuthorizer extends BaseAuthorizer {
 
-    private MessungAuthorizer messungAuthorizer;
+    protected MessungAuthorizer messungAuthorizer;
 
     public MessungIdAuthorizer(Repository repository) {
         super(repository);

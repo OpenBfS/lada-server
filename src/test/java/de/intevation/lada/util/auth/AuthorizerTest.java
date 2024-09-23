@@ -38,6 +38,7 @@ import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Auth;
@@ -115,7 +116,7 @@ public class AuthorizerTest extends BaseTest {
             new UserInfo(
                 testUser,
                 userId,
-                List.of(repository.getById(Auth.class, 1))),
+                repository.getAll(Auth.class)),
             i18n,
             repository);
     }
@@ -155,6 +156,8 @@ public class AuthorizerTest extends BaseTest {
             String msg = failure.getMessage();
             String error = String.format("%s: %s", descr, msg);
             log.error(error);
+            // Print stack trace to server log for debugging
+            failure.getException().printStackTrace();
             errors.add(new Throwable(error, failure.getException()));
         });
         //Throw exception manually to ensure all errors are printed
@@ -294,6 +297,7 @@ public class AuthorizerTest extends BaseTest {
         testData.putAll(createMpgIdTestData());
         testData.putAll(createMeasmTestData());
         testData.putAll(createMeasmIdTestData());
+        testData.putAll(createStatusTestData());
         testData.putAll(createNetworkTestData());
         testData.putAll(createSampleTestData());
         testData.putAll(createSampleIdTestData());
@@ -383,6 +387,31 @@ public class AuthorizerTest extends BaseTest {
             lockedBySample, new TestConfig(false, false, false, false,
                 "measmIDLockedBySample")
         );
+    }
+
+    private static Map<Object, TestConfig> createStatusTestData() {
+        return Map.of(
+            // Status of associated Measm instance can be set
+            newStatusProt(MEASM_ID_STATUS_EDITABLE),
+            new TestConfig(true, true, false, false, "statusEditableStatus"),
+
+            // Associated Measm instance is read-only due to status
+            newStatusProt(MEASM_ID_STATUS_LOCKED),
+            new TestConfig(true, false, false, false, "statusReadonlyByStatus"),
+
+            // Associated Measm instance belongs to foreign network and cannot
+            // be read due to status
+            newStatusProt(MEASM_ID_LOCKED_BY_SAMPLE),
+            new TestConfig(false, false, false, false, "statusLockedBySample")
+        );
+    }
+
+    private static StatusProt newStatusProt(Integer measmId) {
+        StatusProt status = new StatusProt();
+        status.setMeasmId(measmId);
+        status.setStatusMpId(2);
+        status.setMeasFacilId("06010");
+        return status;
     }
 
     private static Map<Object, TestConfig> createNetworkTestData() {
