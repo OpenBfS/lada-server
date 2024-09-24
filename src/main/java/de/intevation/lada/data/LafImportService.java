@@ -106,8 +106,7 @@ public class LafImportService extends LadaService {
             QueryBuilder<ImportConf> builder =
                 repository.queryBuilder(ImportConf.class);
             builder.and(ImportConf_.measFacilId, mstId);
-            config = (List<ImportConf>) repository.filter(
-                builder.getQuery());
+            config = repository.filter(builder.getQuery());
         }
         importer.doImport(content, userInfo, mstId, config);
         Map<String, Object> respData = new HashMap<String, Object>();
@@ -126,8 +125,7 @@ public class LafImportService extends LadaService {
         if (!importer.getNotifications().isEmpty()) {
           respData.put("notifications", importer.getNotifications());
         }
-        List<Integer> importedProbeids =
-            ((LafImporter) importer).getImportedIds();
+        List<Integer> importedProbeids = importer.getImportedIds();
         respData.put("probeIds", importedProbeids);
 
         // If import created at least a new record

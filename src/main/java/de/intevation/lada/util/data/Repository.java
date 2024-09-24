@@ -169,7 +169,7 @@ public class Repository {
     public <T> T getSingle(
         CriteriaQuery<T> filter
     ) throws NoResultException, NonUniqueResultException {
-        return (T) em.createQuery(filter).getSingleResult();
+        return em.createQuery(filter).getSingleResult();
     }
 
     /**
