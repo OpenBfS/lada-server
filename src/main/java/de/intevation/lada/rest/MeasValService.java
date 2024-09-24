@@ -113,12 +113,7 @@ public class MeasValService extends LadaService {
         @PathParam("id") Integer id
     ) {
         MeasVal messwert = repository.getById(MeasVal.class, id);
-        Measm messung = repository.getById(
-            Measm.class, messwert.getMeasmId());
-        authorization.authorize(
-            messung,
-            RequestMethod.GET,
-            Measm.class);
+        authorization.authorize(messwert, RequestMethod.GET, MeasVal.class);
         return authorization.filter(
             messwert,
             MeasVal.class);

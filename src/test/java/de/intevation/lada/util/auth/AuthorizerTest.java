@@ -382,7 +382,7 @@ public class AuthorizerTest extends BaseTest {
                 "measmIdNoStatus"),
             editableStatus, new TestConfig(true, true, true, true,
                 "measmIdEditableStatus"),
-            lockedByStatus, new TestConfig(true, true, true, true,
+            lockedByStatus, new TestConfig(true, false, false, false,
                 "measmIdLockedByStatus"),
             lockedBySample, new TestConfig(false, false, false, false,
                 "measmIDLockedBySample")

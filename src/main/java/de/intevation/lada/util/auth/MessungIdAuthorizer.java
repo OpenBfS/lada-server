@@ -35,7 +35,11 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         return messungAuthorizer.isAuthorizedReason(
             repository.getById(
                 Measm.class, ((BelongsToMeasm) data).getMeasmId()),
-            RequestMethod.POST,
+            // Allow reading if measm is readable, everything else corresponds
+            // to editing the measm
+            method == RequestMethod.GET
+            ? RequestMethod.GET
+            : RequestMethod.PUT,
             userInfo);
     }
 

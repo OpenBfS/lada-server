@@ -59,8 +59,6 @@ public class CommMeasmService extends LadaService {
      * using an URL parameter named measmId.
      *
      * @return filtered CommMeasm objects.
-     * Status-Code 699 if requested objects are
-     * not authorized.
      */
     @GET
     public List<CommMeasm> get(
@@ -90,12 +88,7 @@ public class CommMeasmService extends LadaService {
         @PathParam("id") Integer id
     ) {
         CommMeasm comment = repository.getById(CommMeasm.class, id);
-        // TODO: Fix authorization of CommMeasm itself
-        // instead of authorizing indirectly?
-        Measm messung = repository.getById(Measm.class, comment.getMeasmId());
-        authorization.authorize(
-            messung, RequestMethod.GET, Measm.class);
-
+        authorization.authorize(comment, RequestMethod.GET, CommMeasm.class);
         return authorization.filter(comment, CommMeasm.class);
     }
 
