@@ -231,8 +231,6 @@ public class AuthorizerTest extends BaseTest {
         @Parameter(2)
         public String testDescr;
 
-        private static final String IS_READONLY = "isReadonly";
-
         /**
          * Get the test data list for the filter test.
          *
@@ -245,15 +243,6 @@ public class AuthorizerTest extends BaseTest {
             return createTestData()
                 .entrySet()
                 .stream()
-                //Remove testObjects without readonly field
-                .filter(entry -> {
-                    try {
-                        entry.getKey().getClass().getMethod(IS_READONLY);
-                        return true;
-                    } catch (NoSuchMethodException nsme) {
-                        return false;
-                    }
-                })
                 //Expected readonly is the inverted put authorization result
                 .map(entry -> {
                     return new Object[]{
@@ -278,11 +267,10 @@ public class AuthorizerTest extends BaseTest {
                 IllegalAccessException, IllegalArgumentException,
                 InvocationTargetException, NoSuchMethodException,
                 SecurityException {
-            BaseModel filtered = authorization
-                .filter(testObject, (Class<BaseModel>) testObject.getClass());
             assertEquals(expectedReadonly,
-                filtered.getClass()
-                .getMethod(IS_READONLY).invoke(filtered));
+                authorization.filter(
+                    testObject,
+                    (Class<BaseModel>) testObject.getClass()).isReadonly());
         }
     }
 
