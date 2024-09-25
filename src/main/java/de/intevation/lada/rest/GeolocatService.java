@@ -133,7 +133,7 @@ public class GeolocatService extends LadaService {
         Geolocat ortObj = repository.getById(Geolocat.class, id);
         authorization.authorize(
             ortObj,
-            RequestMethod.PUT,
+            RequestMethod.DELETE,
             Geolocat.class);
         lock.isLocked(ortObj);
 

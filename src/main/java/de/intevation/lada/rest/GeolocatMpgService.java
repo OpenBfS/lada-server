@@ -134,7 +134,7 @@ public class GeolocatMpgService extends LadaService {
             GeolocatMpg.class, id);
         authorization.authorize(
             ortObj,
-            RequestMethod.PUT,
+            RequestMethod.DELETE,
             GeolocatMpg.class);
 
         repository.delete(ortObj);
