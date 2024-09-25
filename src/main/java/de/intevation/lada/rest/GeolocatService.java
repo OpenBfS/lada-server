@@ -93,10 +93,6 @@ public class GeolocatService extends LadaService {
     public Geolocat create(
         @Valid Geolocat ort
     ) throws BadRequestException {
-        authorization.authorize(
-            ort,
-            RequestMethod.POST,
-            Geolocat.class);
         return repository.create(ort);
     }
 
@@ -112,10 +108,6 @@ public class GeolocatService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Geolocat ort
     ) throws BadRequestException {
-        authorization.authorize(
-                ort,
-                RequestMethod.PUT,
-                Geolocat.class);
         lock.isLocked(ort);
         return repository.update(ort);
     }

@@ -90,10 +90,6 @@ public class MeasmService extends LadaService {
     public Measm create(
         @Valid Measm messung
     ) throws BadRequestException {
-        authorization.authorize(
-            messung,
-            RequestMethod.POST,
-            Measm.class);
         return repository.create(messung);
     }
 
@@ -109,10 +105,6 @@ public class MeasmService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Measm messung
     ) throws BadRequestException {
-        authorization.authorize(
-            messung,
-            RequestMethod.PUT,
-            Measm.class);
         lock.isLocked(messung);
 
         return repository.update(messung);

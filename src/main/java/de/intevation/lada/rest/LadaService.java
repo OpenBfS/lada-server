@@ -26,6 +26,7 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
+import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.groups.Warnings;
 import de.intevation.lada.validation.groups.Notifications;
@@ -64,7 +65,8 @@ public abstract class LadaService {
     protected Authorization authorization;
 
     /**
-     * Validate return values of business methods returning (lists of) instances
+     * Authorize parameters that are model instances and validate return
+     * values of business methods returning (lists of) instances
      * of class BaseModel and set authorization hints at instances.
      *
      * Only warnings and notifications are considered in validation. Validation
@@ -81,6 +83,16 @@ public abstract class LadaService {
     public Object intercept(InvocationContext ctx) throws Exception {
         LOG.debug("Set locale from request");
         ThreadLocale.set(request.getLocale());
+
+        // Authorize input model instances
+        for (Object param: ctx.getParameters()) {
+            if (param instanceof BaseModel p) {
+                authorization.authorize(
+                    p,
+                    RequestMethod.valueOf(request.getMethod()),
+                    p.getClass());
+            }
+        }
 
         Object result = ctx.proceed();
         if (result != null) {

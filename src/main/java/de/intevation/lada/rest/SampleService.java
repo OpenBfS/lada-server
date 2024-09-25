@@ -145,11 +145,6 @@ public class SampleService extends LadaService {
     public Sample create(
         @Valid Sample probe
     ) throws BadRequestException {
-        authorization.authorize(
-                probe,
-                RequestMethod.POST,
-                Sample.class);
-
         setEnvAttrs(probe);
 
         return repository.create(probe);
@@ -253,10 +248,6 @@ public class SampleService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Sample probe
     ) throws BadRequestException {
-        authorization.authorize(
-            probe,
-            RequestMethod.PUT,
-            Sample.class);
         lock.isLocked(probe);
 
         setEnvAttrs(probe);

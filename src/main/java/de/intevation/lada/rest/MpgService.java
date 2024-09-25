@@ -99,11 +99,6 @@ public class MpgService extends LadaService {
     public Mpg create(
         @Valid Mpg messprogramm
     ) throws BadRequestException {
-        authorization.authorize(
-            messprogramm,
-            RequestMethod.POST,
-            Mpg.class);
-
         setEnvAttrs(messprogramm);
 
         return repository.create(messprogramm);
@@ -121,11 +116,6 @@ public class MpgService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Mpg messprogramm
     ) throws BadRequestException {
-        authorization.authorize(
-            messprogramm,
-            RequestMethod.PUT,
-            Mpg.class);
-
         setEnvAttrs(messprogramm);
 
         return repository.update(messprogramm);

@@ -33,7 +33,7 @@ public interface Authorization {
     <T> T authorize(
         T data,
         RequestMethod method,
-        Class<T> clazz);
+        Class<? extends T> clazz);
 
     <T> boolean isAuthorized(
         Object data,

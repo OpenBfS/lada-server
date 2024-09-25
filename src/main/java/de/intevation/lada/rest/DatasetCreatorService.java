@@ -74,10 +74,6 @@ public class DatasetCreatorService extends LadaService {
     public DatasetCreator create(
         @Valid DatasetCreator datensatzerzeuger
     ) throws BadRequestException {
-        authorization.authorize(
-            datensatzerzeuger,
-            RequestMethod.POST,
-            DatasetCreator.class);
         return repository.create(datensatzerzeuger);
     }
 
@@ -94,10 +90,6 @@ public class DatasetCreatorService extends LadaService {
         @PathParam("id") Integer id,
         @Valid DatasetCreator datensatzerzeuger
     ) throws BadRequestException {
-        authorization.authorize(
-            datensatzerzeuger,
-            RequestMethod.PUT,
-            DatasetCreator.class);
         return repository.update(datensatzerzeuger);
     }
 

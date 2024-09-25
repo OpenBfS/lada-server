@@ -90,10 +90,6 @@ public class CommMeasmService extends LadaService {
     public CommMeasm create(
         @Valid CommMeasm kommentar
     ) throws BadRequestException {
-        authorization.authorize(
-            kommentar,
-            RequestMethod.POST,
-            CommMeasm.class);
         return repository.create(kommentar);
     }
 
@@ -109,10 +105,6 @@ public class CommMeasmService extends LadaService {
         @PathParam("id") Integer id,
         @Valid CommMeasm kommentar
     ) throws BadRequestException {
-        authorization.authorize(
-                kommentar,
-                RequestMethod.PUT,
-                CommMeasm.class);
         return repository.update(kommentar);
     }
 

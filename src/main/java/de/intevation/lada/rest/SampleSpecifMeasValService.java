@@ -93,11 +93,6 @@ public class SampleSpecifMeasValService extends LadaService {
     public SampleSpecifMeasVal create(
         @Valid SampleSpecifMeasVal zusatzwert
     ) throws BadRequestException {
-        authorization.authorize(
-            zusatzwert,
-            RequestMethod.POST,
-            SampleSpecifMeasVal.class);
-
         return repository.create(zusatzwert);
     }
 
@@ -113,10 +108,6 @@ public class SampleSpecifMeasValService extends LadaService {
         @PathParam("id") Integer id,
         @Valid SampleSpecifMeasVal zusatzwert
     ) throws BadRequestException {
-        authorization.authorize(
-            zusatzwert,
-            RequestMethod.PUT,
-            SampleSpecifMeasVal.class);
         lock.isLocked(zusatzwert);
 
         return repository.update(zusatzwert);

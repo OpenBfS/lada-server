@@ -133,8 +133,6 @@ public class TagService extends LadaService {
         @PathParam("id") String id,
         @Valid Tag tag
     ) throws BadRequestException {
-        authorization.authorize(tag, RequestMethod.PUT, Tag.class);
-
         // Drop validity for network-tags
         if (tag.getNetworkId() != null) {
             tag.setValUntil(null);
@@ -159,9 +157,6 @@ public class TagService extends LadaService {
     public Tag create(
         @Valid Tag tag
     ) throws BadRequestException {
-        authorization.authorize(
-            tag, RequestMethod.POST, Tag.class);
-
         tag.setLadaUserId(authorization.getInfo().getUserId());
 
         if (tag.getValUntil() == null

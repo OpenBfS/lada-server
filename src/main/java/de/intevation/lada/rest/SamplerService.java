@@ -71,10 +71,6 @@ public class SamplerService extends LadaService {
     public Sampler create(
         @Valid Sampler probenehmer
     ) throws BadRequestException {
-        authorization.authorize(
-            probenehmer,
-            RequestMethod.POST,
-            Sampler.class);
         return repository.create(probenehmer);
     }
 
@@ -91,10 +87,6 @@ public class SamplerService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Sampler probenehmer
     ) throws BadRequestException {
-        authorization.authorize(
-            probenehmer,
-            RequestMethod.PUT,
-            Sampler.class);
         return repository.update(probenehmer);
     }
 

@@ -179,11 +179,6 @@ public class SiteService extends LadaService {
     public Site create(
         @Valid Site ort
     ) throws BadRequestException {
-        authorization.authorize(
-            ort,
-            RequestMethod.POST,
-            Site.class);
-
         Site existing = ortFactory.findExistingSite(ort);
         if (existing != null) {
             ort = existing;
@@ -209,11 +204,6 @@ public class SiteService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Site ort
     ) throws BadRequestException {
-        authorization.authorize(
-            ort,
-            RequestMethod.PUT,
-            Site.class);
-
         ortFactory.completeSite(ort);
 
         return repository.update(ort);

@@ -108,8 +108,6 @@ public class StatusProtService extends LadaService {
             Measm.class, status.getMeasmId());
         lock.isLocked(messung);
 
-        authorization.authorize(status, RequestMethod.POST, StatusProt.class);
-
         StatusMp newKombi = repository.getById(
             StatusMp.class, status.getStatusMpId());
 

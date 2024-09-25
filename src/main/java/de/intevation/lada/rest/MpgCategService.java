@@ -71,10 +71,6 @@ public class MpgCategService extends LadaService {
     public MpgCateg create(
         @Valid MpgCateg kategorie
     ) throws BadRequestException {
-        authorization.authorize(
-            kategorie,
-            RequestMethod.POST,
-            MpgCateg.class);
         return repository.create(kategorie);
     }
 
@@ -92,10 +88,6 @@ public class MpgCategService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MpgCateg kategorie
     ) throws BadRequestException {
-        authorization.authorize(
-            kategorie,
-            RequestMethod.PUT,
-            MpgCateg.class);
         return repository.update(kategorie);
     }
 

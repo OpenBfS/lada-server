@@ -85,10 +85,6 @@ public class MpgMmtMpService extends LadaService {
     public MpgMmtMp create(
         @Valid MpgMmtMp messprogrammmmt
     ) throws BadRequestException {
-        authorization.authorize(
-                messprogrammmmt,
-                RequestMethod.POST,
-                MpgMmtMp.class);
         setMessgroesseObjects(messprogrammmmt);
         return repository.create(messprogrammmmt);
     }
@@ -105,11 +101,6 @@ public class MpgMmtMpService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MpgMmtMp messprogrammmmt
     ) throws BadRequestException {
-        authorization.authorize(
-                messprogrammmmt,
-                RequestMethod.PUT,
-                MpgMmtMp.class);
-
         setMessgroesseObjects(messprogrammmmt);
 
         return repository.update(messprogrammmmt);

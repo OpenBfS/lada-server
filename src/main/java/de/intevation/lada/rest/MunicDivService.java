@@ -70,10 +70,6 @@ public class MunicDivService extends LadaService {
     public MunicDiv create(
         @Valid MunicDiv gemUntergliederung
     ) throws BadRequestException {
-        authorization.authorize(
-            gemUntergliederung,
-            RequestMethod.POST,
-            MunicDiv.class);
         return repository.create(gemUntergliederung);
     }
 
@@ -90,10 +86,6 @@ public class MunicDivService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MunicDiv gemUntergliederung
     ) throws BadRequestException {
-        authorization.authorize(
-            gemUntergliederung,
-            RequestMethod.PUT,
-            MunicDiv.class);
         return repository.update(gemUntergliederung);
     }
 
