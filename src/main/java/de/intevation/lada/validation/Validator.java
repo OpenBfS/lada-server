@@ -58,7 +58,7 @@ public class Validator {
      * @return The validated objects
      */
     public <T extends BaseModel> List<T> validate(
-        List<T> objects, Class... groups
+        List<T> objects, Class<?>... groups
     ) {
         for (T object: objects) {
             validate(object, groups);
@@ -78,10 +78,10 @@ public class Validator {
      * should be given.
      * @return The validated object
      */
-    public <T extends BaseModel> T validate(T object, Class... groups) {
-        final Class[] defaultGroups =  {
+    public <T extends BaseModel> T validate(T object, Class<?>... groups) {
+        final Class<?>[] defaultGroups =  {
             Default.class, Warnings.class, Notifications.class };
-        for (Class group: groups.length == 0 ? defaultGroups : groups) {
+        for (Class<?> group: groups.length == 0 ? defaultGroups : groups) {
             Set<ConstraintViolation<T>> beanViolations =
                 beanValidator.validate(object, group);
             if (group.equals(Default.class)) {

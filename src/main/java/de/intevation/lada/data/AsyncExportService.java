@@ -85,7 +85,7 @@ public class AsyncExportService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "csv", objects.getEncoding(), objects,
+                objects.getEncoding(), objects,
                 i18n.getResourceBundle(), userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
@@ -108,7 +108,10 @@ public class AsyncExportService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "laf", objects.getEncoding(), objects, i18n.getResourceBundle(), userInfo);
+                objects.getEncoding(),
+                objects,
+                i18n.getResourceBundle(),
+                userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -130,7 +133,6 @@ public class AsyncExportService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "json",
                 StandardCharsets.UTF_8,
                 objects,
                 i18n.getResourceBundle(),

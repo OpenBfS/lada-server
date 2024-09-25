@@ -76,17 +76,18 @@ public abstract class LadaService {
 
         Object result = ctx.proceed();
         if (result != null) {
-            if (result instanceof List) {
-                List listResult = (List) result;
+            if (result instanceof List<?> listResult) {
                 if (!listResult.isEmpty()
                     && listResult.get(0) instanceof BaseModel
                 ) {
                     new Validator().validate(
-                        listResult, Warnings.class, Notifications.class);
+                        (List<BaseModel>) listResult,
+                        Warnings.class,
+                        Notifications.class);
                 }
-            } else if (result instanceof BaseModel) {
+            } else if (result instanceof BaseModel r) {
                 new Validator().validate(
-                    (BaseModel) result, Warnings.class, Notifications.class);
+                    r, Warnings.class, Notifications.class);
             }
         }
         return result;

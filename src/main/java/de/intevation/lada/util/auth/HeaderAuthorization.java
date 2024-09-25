@@ -51,7 +51,7 @@ public class HeaderAuthorization implements Authorization {
 
     private UserInfo userInfo;
 
-    private Map<Class, Authorizer> authorizers;
+    private Map<Class<?>, Authorizer> authorizers;
 
     private I18n i18n;
 
