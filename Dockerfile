@@ -26,11 +26,11 @@ RUN apt-get update -y && \
 
 #
 # Set ENV for pacakge versions
-ENV WILDFLY_VERSION 33.0.0.Final
+ENV WILDFLY_VERSION=33.0.0.Final
 # see wildfly pom.xml for hibernate_spatial_version
-ENV HIBERNATE_VERSION 6.4.4.Final
-ENV GEOLATTE_GEOM_VERSION 1.9.0
-ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/
+ENV HIBERNATE_VERSION=6.4.4.Final
+ENV GEOLATTE_GEOM_VERSION=1.9.0
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
 
 RUN echo "Building Image using WILDFLY_VERSION=${WILDFLY_VERSION}, HIBERNATE_VERSION=${HIBERNATE_VERSION}, GEOLATTE_GEOM_VERSION=${GEOLATTE_GEOM_VERSION}."
 
@@ -43,7 +43,7 @@ RUN curl -Ls \
     https://github.com/wildfly/wildfly/releases/download/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.tar.gz\
     | tar zx && mv wildfly-${WILDFLY_VERSION} /opt/jboss/wildfly
 
-ENV JBOSS_HOME /opt/jboss/wildfly
+ENV JBOSS_HOME=/opt/jboss/wildfly
 
 RUN $JBOSS_HOME/bin/add-user.sh admin secret --silent
 
@@ -54,9 +54,9 @@ EXPOSE 8080 9990 80
 #
 RUN mkdir -p $JBOSS_HOME/modules/org/postgres/main
 
-ENV MVN_REPO https://repo1.maven.org/maven2
-ENV WFLY_MODULES $JBOSS_HOME/modules/system/layers/base
-ENV HIBERNATE_MODULE $WFLY_MODULES/org/hibernate/main
+ENV MVN_REPO=https://repo1.maven.org/maven2
+ENV WFLY_MODULES=$JBOSS_HOME/modules/system/layers/base
+ENV HIBERNATE_MODULE=$WFLY_MODULES/org/hibernate/main
 RUN curl -s $MVN_REPO/org/hibernate/orm/hibernate-spatial/${HIBERNATE_VERSION}/hibernate-spatial-${HIBERNATE_VERSION}.jar >\
         $HIBERNATE_MODULE/hibernate-spatial.jar;
 
@@ -72,7 +72,7 @@ RUN ln -s /usr/share/java/postgis-geometry.jar \
 RUN ln -s /usr/share/java/jts-core.jar \
        $HIBERNATE_MODULE/jts-core.jar
 
-ENV SRC /usr/src/lada-server
+ENV SRC=/usr/src/lada-server
 
 # Download dependencies before adding sources to leverage build cache
 ADD pom.xml $SRC/
