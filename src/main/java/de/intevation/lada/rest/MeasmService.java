@@ -26,9 +26,6 @@ import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -55,13 +52,6 @@ public class MeasmService extends LadaService {
     private ObjectLocker lock;
 
     /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    /**
      * Get Measm objects.
      *
      * @param sampleId URL parameter sampleId to use as filter (required).
@@ -73,9 +63,7 @@ public class MeasmService extends LadaService {
     ) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
             .and(Measm_.sampleId, sampleId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            Measm.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -89,9 +77,7 @@ public class MeasmService extends LadaService {
     public Measm getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(Measm.class, id),
-            Measm.class);
+        return repository.getById(Measm.class, id);
     }
 
     /**
@@ -108,9 +94,7 @@ public class MeasmService extends LadaService {
             messung,
             RequestMethod.POST,
             Measm.class);
-        return authorization.filter(
-            repository.create(messung),
-            Measm.class);
+        return repository.create(messung);
     }
 
     /**
@@ -131,9 +115,7 @@ public class MeasmService extends LadaService {
             Measm.class);
         lock.isLocked(messung);
 
-        return authorization.filter(
-            repository.update(messung),
-            Measm.class);
+        return repository.update(messung);
     }
 
     /**

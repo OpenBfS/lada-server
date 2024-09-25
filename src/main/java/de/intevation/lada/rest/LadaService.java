@@ -23,6 +23,9 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.context.ThreadLocale;
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.util.annotation.AuthorizationConfig;
+import de.intevation.lada.util.auth.Authorization;
+import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.groups.Warnings;
 import de.intevation.lada.validation.groups.Notifications;
@@ -56,16 +59,21 @@ public abstract class LadaService {
     @Inject
     private HttpServletRequest request;
 
+    @Inject
+    @AuthorizationConfig(type = AuthorizationType.HEADER)
+    protected Authorization authorization;
+
     /**
      * Validate return values of business methods returning (lists of) instances
-     * of class BaseModel.
+     * of class BaseModel and set authorization hints at instances.
      *
      * Only warnings and notifications are considered in validation. Validation
      * errors are expected to be handled respectively prevented by parameter
      * validation before method invocation.
      *
      * @param ctx Invocation context
-     * @return The (validated) return value of the business method
+     * @return The possibly validated and modified return value of the
+     * business method
      * @throws Exception in case the business method throws an exception
      */
     @AroundInvoke
@@ -76,16 +84,22 @@ public abstract class LadaService {
 
         Object result = ctx.proceed();
         if (result != null) {
+            // Set authorization hints and validate
             if (result instanceof List<?> listResult) {
                 if (!listResult.isEmpty()
                     && listResult.get(0) instanceof BaseModel
                 ) {
+                    List<BaseModel> bmList = (List<BaseModel>) listResult;
+                    authorization.filter(bmList);
+
                     new Validator().validate(
-                        (List<BaseModel>) listResult,
+                        bmList,
                         Warnings.class,
                         Notifications.class);
                 }
             } else if (result instanceof BaseModel r) {
+                authorization.filter(r);
+
                 new Validator().validate(
                     r, Warnings.class, Notifications.class);
             }

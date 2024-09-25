@@ -23,9 +23,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.CommSample_;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -45,13 +42,6 @@ public class CommSampleService extends LadaService {
     private Repository repository;
 
     /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    /**
      * Get CommSample objects.
      *
      * @param sampleId The requested objects will be filtered
@@ -66,9 +56,7 @@ public class CommSampleService extends LadaService {
         QueryBuilder<CommSample> builder =
             repository.queryBuilder(CommSample.class);
         builder.and(CommSample_.sampleId, sampleId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            CommSample.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -82,9 +70,7 @@ public class CommSampleService extends LadaService {
     public CommSample getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(CommSample.class, id),
-            CommSample.class);
+        return repository.getById(CommSample.class, id);
     }
 
     /**
@@ -101,8 +87,7 @@ public class CommSampleService extends LadaService {
             kommentar,
             RequestMethod.POST,
             CommSample.class);
-        return authorization.filter(
-            repository.create(kommentar), CommSample.class);
+        return repository.create(kommentar);
     }
 
     /**
@@ -121,8 +106,7 @@ public class CommSampleService extends LadaService {
             kommentar,
             RequestMethod.PUT,
             CommSample.class);
-        return authorization.filter(
-            repository.update(kommentar), CommSample.class);
+        return repository.update(kommentar);
     }
 
     /**

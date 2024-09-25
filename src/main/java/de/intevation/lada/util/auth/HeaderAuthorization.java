@@ -132,16 +132,11 @@ public class HeaderAuthorization implements Authorization {
      * the HttpServletRequest.
      *
      * @param data      The Response object containing the data.
-     * @param clazz     The data object class.
      * @return The Response object containing the filtered data.
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public <T extends BaseModel> T filter(
-        T data,
-        Class<T> clazz
-    ) {
-        authorizers.get(clazz).setAuthAttrs(data, userInfo);
+    public <T extends BaseModel> T filter(T data) {
+        authorizers.get(data.getClass()).setAuthAttrs(data, userInfo);
         return data;
     }
 
@@ -154,8 +149,8 @@ public class HeaderAuthorization implements Authorization {
      * @throws ForbiddenException if the user is not authorized.
      */
     @Override
-    public <T> void authorize(
-        Object data,
+    public <T> T authorize(
+        T data,
         RequestMethod method,
         Class<T> clazz
     ) {
@@ -163,7 +158,7 @@ public class HeaderAuthorization implements Authorization {
         String reason = authorizer.isAuthorizedReason(
             data, method, userInfo);
         if (reason == null) {
-            return;
+            return data;
         }
         throw new ForbiddenException(
             jakarta.ws.rs.core.Response.status(Status.FORBIDDEN)

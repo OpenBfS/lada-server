@@ -262,15 +262,12 @@ public class AuthorizerTest extends BaseTest {
          * @throws IllegalAccessException
          */
         @Test
-        @SuppressWarnings("unchecked")
         public void testFilter() throws
                 IllegalAccessException, IllegalArgumentException,
                 InvocationTargetException, NoSuchMethodException,
                 SecurityException {
             assertEquals(expectedReadonly,
-                authorization.filter(
-                    testObject,
-                    (Class<BaseModel>) testObject.getClass()).isReadonly());
+                authorization.filter(testObject).isReadonly());
         }
     }
 

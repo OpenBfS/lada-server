@@ -21,18 +21,17 @@ import de.intevation.lada.util.rest.RequestMethod;
 public interface Authorization {
     UserInfo getInfo();
 
-    default <T extends BaseModel> List<T> filter(List<T> data, Class<T> clazz) {
+    default <T extends BaseModel> List<T> filter(List<T> data) {
         for (T object: data) {
-            filter(object, clazz);
+            filter(object);
         }
         return data;
     }
 
-    <T extends BaseModel> T filter(
-        T data, Class<T> clazz);
+    <T extends BaseModel> T filter(T data);
 
-    <T> void authorize(
-        Object data,
+    <T> T authorize(
+        T data,
         RequestMethod method,
         Class<T> clazz);
 

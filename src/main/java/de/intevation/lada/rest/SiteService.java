@@ -37,9 +37,6 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.model.master.Site;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
@@ -66,10 +63,6 @@ public class SiteService extends LadaService {
      */
     @Inject
     private Repository repository;
-
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     @Inject
     private OrtFactory ortFactory;
@@ -159,7 +152,7 @@ public class SiteService extends LadaService {
 
         int size = Math.toIntExact((Long) countQuery.getSingleResult());
 
-        return new Response(authorization.filter(orte, Site.class), size);
+        return new Response(authorization.filter(orte), size);
     }
 
     /**
@@ -173,9 +166,7 @@ public class SiteService extends LadaService {
     public Site getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(Site.class, id),
-            Site.class);
+        return repository.getById(Site.class, id);
     }
 
     /**

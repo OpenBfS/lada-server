@@ -20,9 +20,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.model.master.Sampler;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -40,10 +37,6 @@ public class SamplerService extends LadaService {
     @Inject
     private Repository repository;
 
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
     /**
      * Get all Sampler objects.
      *
@@ -51,8 +44,7 @@ public class SamplerService extends LadaService {
      */
     @GET
     public List<Sampler> get() {
-        return authorization.filter(
-            repository.getAll(Sampler.class), Sampler.class);
+        return repository.getAll(Sampler.class);
     }
 
     /**
@@ -66,8 +58,7 @@ public class SamplerService extends LadaService {
     public Sampler getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(Sampler.class, id), Sampler.class);
+        return repository.getById(Sampler.class, id);
     }
 
     /**

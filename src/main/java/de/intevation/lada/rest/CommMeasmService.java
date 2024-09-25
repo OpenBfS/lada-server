@@ -24,9 +24,6 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -44,13 +41,6 @@ public class CommMeasmService extends LadaService {
      */
     @Inject
     private Repository repository;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     /**
      * Get CommMeasm objects.
@@ -71,9 +61,7 @@ public class CommMeasmService extends LadaService {
         QueryBuilder<CommMeasm> builder =
             repository.queryBuilder(CommMeasm.class);
         builder.and(CommMeasm_.measmId, measmId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            CommMeasm.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -87,9 +75,10 @@ public class CommMeasmService extends LadaService {
     public CommMeasm getById(
         @PathParam("id") Integer id
     ) {
-        CommMeasm comment = repository.getById(CommMeasm.class, id);
-        authorization.authorize(comment, RequestMethod.GET, CommMeasm.class);
-        return authorization.filter(comment, CommMeasm.class);
+        return authorization.authorize(
+            repository.getById(CommMeasm.class, id),
+            RequestMethod.GET,
+            CommMeasm.class);
     }
 
     /**
@@ -105,8 +94,7 @@ public class CommMeasmService extends LadaService {
             kommentar,
             RequestMethod.POST,
             CommMeasm.class);
-        return authorization.filter(
-            repository.create(kommentar), CommMeasm.class);
+        return repository.create(kommentar);
     }
 
     /**
@@ -125,8 +113,7 @@ public class CommMeasmService extends LadaService {
                 kommentar,
                 RequestMethod.PUT,
                 CommMeasm.class);
-        return authorization.filter(
-            repository.update(kommentar), CommMeasm.class);
+        return repository.update(kommentar);
     }
 
     /**

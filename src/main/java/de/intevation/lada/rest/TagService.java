@@ -32,9 +32,6 @@ import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.lada.TagLinkSample_;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -49,10 +46,6 @@ public class TagService extends LadaService {
     @Inject
     private Repository repository;
 
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
     /**
      * Get a single tag by id.
      * @param id Tag id
@@ -61,11 +54,9 @@ public class TagService extends LadaService {
     @GET
     @Path("{id}")
     public Tag getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(Tag.class, Integer.valueOf(id)),
-            Tag.class);
+        return repository.getById(Tag.class, id);
     }
 
     /**
@@ -125,7 +116,7 @@ public class TagService extends LadaService {
             result = repository.getAll(Tag.class);
         }
 
-        return authorization.filter(result, Tag.class);
+        return result;
     }
 
     /**
@@ -154,9 +145,7 @@ public class TagService extends LadaService {
             tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
         }
 
-        return authorization.filter(
-            repository.update(tag),
-            Tag.class);
+        return repository.update(tag);
     }
 
     /**

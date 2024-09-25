@@ -26,9 +26,6 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.lada.MpgMmtMp_;
 import de.intevation.lada.model.master.Measd;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -48,13 +45,6 @@ public class MpgMmtMpService extends LadaService {
     private Repository repository;
 
     /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    /**
      * Get MpgMmtMp objects.
      *
      * @param mpgId The requested objects will be filtered
@@ -69,9 +59,7 @@ public class MpgMmtMpService extends LadaService {
         QueryBuilder<MpgMmtMp> builder =
             repository.queryBuilder(MpgMmtMp.class);
         builder.and(MpgMmtMp_.mpgId, mpgId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            MpgMmtMp.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -85,9 +73,7 @@ public class MpgMmtMpService extends LadaService {
     public MpgMmtMp getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(MpgMmtMp.class, id),
-            MpgMmtMp.class);
+        return repository.getById(MpgMmtMp.class, id);
     }
 
     /**
@@ -104,9 +90,7 @@ public class MpgMmtMpService extends LadaService {
                 RequestMethod.POST,
                 MpgMmtMp.class);
         setMessgroesseObjects(messprogrammmmt);
-        return authorization.filter(
-            repository.create(messprogrammmmt),
-            MpgMmtMp.class);
+        return repository.create(messprogrammmmt);
     }
 
     /**
@@ -128,9 +112,7 @@ public class MpgMmtMpService extends LadaService {
 
         setMessgroesseObjects(messprogrammmmt);
 
-        return authorization.filter(
-            repository.update(messprogrammmmt),
-            MpgMmtMp.class);
+        return repository.update(messprogrammmmt);
     }
 
     /**

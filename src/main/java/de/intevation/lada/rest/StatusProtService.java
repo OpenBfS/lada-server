@@ -30,9 +30,6 @@ import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.StatusMp;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -60,13 +57,6 @@ public class StatusProtService extends LadaService {
     private ObjectLocker lock;
 
     /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    /**
      * Get StatusProt objects.
      *
      * @param measmId The requested objects have to be filtered
@@ -84,9 +74,7 @@ public class StatusProtService extends LadaService {
         QueryBuilder<StatusProt> builder = repository
             .queryBuilder(StatusProt.class)
             .and(StatusProt_.measmId, measmId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            StatusProt.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -100,9 +88,10 @@ public class StatusProtService extends LadaService {
     public StatusProt getById(
         @PathParam("id") Integer id
     ) {
-        StatusProt status = repository.getById(StatusProt.class, id);
-        authorization.authorize(status, RequestMethod.GET, StatusProt.class);
-        return authorization.filter(status, StatusProt.class);
+        return authorization.authorize(
+            repository.getById(StatusProt.class, id),
+            RequestMethod.GET,
+            StatusProt.class);
     }
 
     /**
@@ -129,10 +118,8 @@ public class StatusProtService extends LadaService {
         if (newKombi.getStatusVal().getId() == 8) {
             StatusProt oldStatus = repository.getById(
                 StatusProt.class, messung.getStatus());
-            return authorization.filter(
-                resetStatus(status, oldStatus, messung),
-                StatusProt.class);
-            }
+            return resetStatus(status, oldStatus, messung);
+        }
         // 2. user wants to set new status
         return setNewStatus(status, newKombi, messung);
     }
@@ -164,9 +151,7 @@ public class StatusProtService extends LadaService {
         status.setDate(null);
 
         //NOTE: The referenced messung status field is updated by a DB trigger
-        return authorization.filter(
-            repository.create(status),
-            StatusProt.class);
+        return repository.create(status);
     }
 
     private StatusProt resetStatus(

@@ -19,9 +19,6 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.model.master.DatasetCreator;
@@ -43,10 +40,6 @@ public class DatasetCreatorService extends LadaService {
     @Inject
     private Repository repository;
 
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
     /**
      * Get all DatasetCreator objects.
      *
@@ -54,8 +47,7 @@ public class DatasetCreatorService extends LadaService {
      */
     @GET
     public List<DatasetCreator> get() {
-        return authorization.filter(
-            repository.getAll(DatasetCreator.class), DatasetCreator.class);
+        return repository.getAll(DatasetCreator.class);
     }
 
     /**
@@ -69,8 +61,7 @@ public class DatasetCreatorService extends LadaService {
     public DatasetCreator getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(repository.getById(
-                DatasetCreator.class, id), DatasetCreator.class);
+        return repository.getById(DatasetCreator.class, id);
     }
 
     /**
