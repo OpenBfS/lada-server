@@ -114,7 +114,7 @@ public class StatusProtService extends LadaService {
         // 1. user user wants to reset the current status
         //    'status wert' == 8
         if (newKombi.getStatusVal().getId() == 8) {
-            return resetStatus(status, messung.getStatusProt(), messung);
+            return resetStatus(status, messung);
         }
         // 2. user wants to set new status
         return setNewStatus(status, newKombi, messung);
@@ -152,12 +152,11 @@ public class StatusProtService extends LadaService {
 
     private StatusProt resetStatus(
         StatusProt newStatus,
-        StatusProt oldStatus,
         Measm messung
     ) {
         // Create a new Status with value = 8.
         StatusMp oldKombi = repository.getById(
-            StatusMp.class, oldStatus.getStatusMpId());
+            StatusMp.class, messung.getStatusProt().getStatusMpId());
 
         StatusMp newKombi = (StatusMp) repository.entityManager()
             .createNativeQuery("SELECT * FROM master.status_mp "
@@ -174,11 +173,7 @@ public class StatusProtService extends LadaService {
 
         repository.create(statusNew);
 
-        StatusMp kombi = repository.getById(
-            StatusMp.class,
-            oldStatus.getStatusMpId()
-        );
-        if (kombi.getStatusLev().getId() == 1) {
+        if (oldKombi.getStatusLev().getId() == 1) {
             StatusProt nV = new StatusProt();
             nV.setDate(new Timestamp(new Date().getTime()));
             nV.setMeasFacilId(newStatus.getMeasFacilId());
@@ -197,7 +192,7 @@ public class StatusProtService extends LadaService {
         for (int i = proto.size() - 1; i >= 0; i--) {
             int curKom = proto.get(i).getStatusMpId();
             StatusMp sk = repository.getById(StatusMp.class, curKom);
-            if (sk.getStatusLev().getId() < kombi.getStatusLev().getId()) {
+            if (sk.getStatusLev().getId() < oldKombi.getStatusLev().getId()) {
                 ndx = i;
                 break;
             }
