@@ -32,6 +32,7 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
@@ -133,6 +134,9 @@ public class LafObjectMapper {
 
     @Inject
     private Repository repository;
+
+    @Inject
+    private I18n i18n;
 
     @Inject
     private ProbeFactory factory;
@@ -1219,17 +1223,8 @@ public class LafObjectMapper {
         }
 
         // check auth
-        MeasFacil messStelle =
-            repository.getById(MeasFacil.class, mstId);
-        if ((statusStufe == 1
-                && userInfo.getFunktionenForMst(mstId).contains(1))
-            || (statusStufe == 2
-                && userInfo.getNetzbetreiber().contains(
-                    messStelle.getNetworkId())
-                && userInfo.getFunktionenForNetzbetreiber(
-                    messStelle.getNetworkId()).contains(2))
-            || (statusStufe == 3
-                && userInfo.getFunktionen().contains(3))
+        if (authorizer.isAuthorized(
+                newStatus, RequestMethod.POST, StatusProt.class)
         ) {
             //persist newStatus if authorized to do so
             repository.create(newStatus);
@@ -2041,7 +2036,8 @@ public class LafObjectMapper {
      */
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
-        this.authorizer = new HeaderAuthorization(userInfo, this.repository);
+        this.authorizer = new HeaderAuthorization(
+            userInfo, this.i18n, this.repository);
     }
 
     /**

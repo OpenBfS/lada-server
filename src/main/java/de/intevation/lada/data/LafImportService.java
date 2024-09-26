@@ -33,9 +33,6 @@ import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -58,13 +55,6 @@ public class LafImportService extends LadaService {
 
     @Inject
     private Repository repository;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     @Inject
     private TagUtil tagUtil;
@@ -106,8 +96,7 @@ public class LafImportService extends LadaService {
             QueryBuilder<ImportConf> builder =
                 repository.queryBuilder(ImportConf.class);
             builder.and(ImportConf_.measFacilId, mstId);
-            config = (List<ImportConf>) repository.filter(
-                builder.getQuery());
+            config = repository.filter(builder.getQuery());
         }
         importer.doImport(content, userInfo, mstId, config);
         Map<String, Object> respData = new HashMap<String, Object>();
@@ -126,8 +115,7 @@ public class LafImportService extends LadaService {
         if (!importer.getNotifications().isEmpty()) {
           respData.put("notifications", importer.getNotifications());
         }
-        List<Integer> importedProbeids =
-            ((LafImporter) importer).getImportedIds();
+        List<Integer> importedProbeids = importer.getImportedIds();
         respData.put("probeIds", importedProbeids);
 
         // If import created at least a new record

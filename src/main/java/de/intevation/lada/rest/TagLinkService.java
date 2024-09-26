@@ -20,9 +20,6 @@ import java.util.List;
 
 import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
@@ -32,10 +29,6 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
 
     @Inject
     protected Repository repository;
-
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    protected Authorization authorization;
 
     private static final String EXISTS_QUERY_TEMPLATE =
         "SELECT EXISTS("

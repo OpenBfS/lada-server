@@ -160,9 +160,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
     private boolean isMeasmReadOnly(Integer measmId) {
         StatusProt status = repository.getById(
             Measm.class, measmId).getStatusProt();
-        StatusMp kombi = repository.getById(
-            StatusMp.class, status.getStatusMpId());
-        return (kombi.getStatusVal().getId() != 0
-                && kombi.getStatusVal().getId() != 4);
+        int val = repository.getById(StatusMp.class, status.getStatusMpId())
+            .getStatusVal().getId();
+        return val != 0 && val != 4;
     }
 }

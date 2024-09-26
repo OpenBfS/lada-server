@@ -19,9 +19,6 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.model.master.MpgCateg;
@@ -40,10 +37,6 @@ public class MpgCategService extends LadaService {
     @Inject
     private Repository repository;
 
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
     /**
      * Get all MpgCateg objects.
      *
@@ -51,8 +44,7 @@ public class MpgCategService extends LadaService {
      */
     @GET
     public List<MpgCateg> get() {
-        return authorization.filter(
-            repository.getAll(MpgCateg.class), MpgCateg.class);
+        return repository.getAll(MpgCateg.class);
     }
 
     /**
@@ -66,8 +58,7 @@ public class MpgCategService extends LadaService {
     public MpgCateg getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(MpgCateg.class, id), MpgCateg.class);
+        return repository.getById(MpgCateg.class, id);
     }
 
     /**
@@ -80,10 +71,6 @@ public class MpgCategService extends LadaService {
     public MpgCateg create(
         @Valid MpgCateg kategorie
     ) throws BadRequestException {
-        authorization.authorize(
-            kategorie,
-            RequestMethod.POST,
-            MpgCateg.class);
         return repository.create(kategorie);
     }
 
@@ -101,10 +88,6 @@ public class MpgCategService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MpgCateg kategorie
     ) throws BadRequestException {
-        authorization.authorize(
-            kategorie,
-            RequestMethod.PUT,
-            MpgCateg.class);
         return repository.update(kategorie);
     }
 

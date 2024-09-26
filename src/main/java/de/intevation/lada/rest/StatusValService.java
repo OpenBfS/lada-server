@@ -21,9 +21,6 @@ import de.intevation.lada.model.master.StatusAccessMpView_;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.model.master.StatusVal;
 import de.intevation.lada.model.master.StatusVal_;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -41,10 +38,6 @@ public class StatusValService extends LadaService {
      */
     @Inject
     private Repository repository;
-
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     /**
      * Get StatusVal objects.

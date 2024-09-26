@@ -34,9 +34,6 @@ import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
@@ -63,13 +60,6 @@ public class SampleService extends LadaService {
      */
     @Inject
     private Repository repository;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     /**
      * The object lock mechanism.
@@ -139,9 +129,7 @@ public class SampleService extends LadaService {
     public Sample getById(
         @PathParam("id") Integer id
     ) {
-        return this.authorization.filter(
-            repository.getById(Sample.class, id),
-            Sample.class);
+        return repository.getById(Sample.class, id);
     }
 
     /**
@@ -157,16 +145,9 @@ public class SampleService extends LadaService {
     public Sample create(
         @Valid Sample probe
     ) throws BadRequestException {
-        authorization.authorize(
-                probe,
-                RequestMethod.POST,
-                Sample.class);
-
         setEnvAttrs(probe);
 
-        return authorization.filter(
-            repository.create(probe),
-            Sample.class);
+        return repository.create(probe);
     }
 
     /**
@@ -267,17 +248,11 @@ public class SampleService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Sample probe
     ) throws BadRequestException {
-        authorization.authorize(
-            probe,
-            RequestMethod.PUT,
-            Sample.class);
         lock.isLocked(probe);
 
         setEnvAttrs(probe);
 
-        return authorization.filter(
-            repository.update(probe),
-            Sample.class);
+        return repository.update(probe);
     }
 
     /**

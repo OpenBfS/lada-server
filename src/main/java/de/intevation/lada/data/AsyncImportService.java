@@ -31,9 +31,6 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.model.master.MeasFacil;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.JobManager.JobNotFoundException;
@@ -51,13 +48,6 @@ public class AsyncImportService extends LadaService {
 
     @Inject
     private Repository repository;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     @Inject
     private Logger logger;

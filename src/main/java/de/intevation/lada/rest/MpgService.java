@@ -26,9 +26,6 @@ import jakarta.ws.rs.PathParam;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Mpg_;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -48,13 +45,6 @@ public class MpgService extends LadaService {
      */
     @Inject
     private Repository repository;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     @Inject
     private ProbeFactory factory;
@@ -96,8 +86,7 @@ public class MpgService extends LadaService {
     public Mpg getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(Mpg.class, id), Mpg.class);
+        return repository.getById(Mpg.class, id);
     }
 
     /**
@@ -110,17 +99,9 @@ public class MpgService extends LadaService {
     public Mpg create(
         @Valid Mpg messprogramm
     ) throws BadRequestException {
-        authorization.authorize(
-            messprogramm,
-            RequestMethod.POST,
-            Mpg.class);
-
         setEnvAttrs(messprogramm);
 
-        /* Persist the new messprogramm object*/
-        return authorization.filter(
-            repository.create(messprogramm),
-            Mpg.class);
+        return repository.create(messprogramm);
     }
 
     /**
@@ -135,16 +116,9 @@ public class MpgService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Mpg messprogramm
     ) throws BadRequestException {
-        authorization.authorize(
-            messprogramm,
-            RequestMethod.PUT,
-            Mpg.class);
-
         setEnvAttrs(messprogramm);
 
-        return authorization.filter(
-            repository.update(messprogramm),
-            Mpg.class);
+        return repository.update(messprogramm);
     }
 
     /**

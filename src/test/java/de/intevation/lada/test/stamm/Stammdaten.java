@@ -30,7 +30,7 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class Stammdaten extends ServiceTest {
 
-    private static Map<String, Matcher> matchers;
+    private static Map<String, Matcher<Iterable<?>>> matchers;
 
     @Override
     public void init(

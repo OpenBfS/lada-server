@@ -17,6 +17,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import de.intevation.lada.exporter.Creator;
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.CommSample;
@@ -91,6 +92,9 @@ implements Creator {
      */
     @Inject
     private Repository repository;
+
+    @Inject
+    private I18n i18n;
 
     private UserInfo userInfo;
 
@@ -602,6 +606,7 @@ implements Creator {
     @Override
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
-        this.authorization = new HeaderAuthorization(userInfo, this.repository);
+        this.authorization = new HeaderAuthorization(
+            userInfo, this.i18n, this.repository);
     }
 }

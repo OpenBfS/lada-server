@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -31,12 +30,9 @@ import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.StatusMp;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.rest.RequestMethod;
 
 
 /**
@@ -61,31 +57,24 @@ public class StatusProtService extends LadaService {
     private ObjectLocker lock;
 
     /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    /**
      * Get StatusProt objects.
      *
      * @param measmId The requested objects have to be filtered
      * using an URL parameter named measmId.
      *
      * @return requested objects.
-     * Status-Code 699 if parameter is missing.
      */
     @GET
     public List<StatusProt> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
+        Measm messung = repository.getById(Measm.class, measmId);
+        authorization.authorize(messung, RequestMethod.GET, Measm.class);
+
         QueryBuilder<StatusProt> builder = repository
             .queryBuilder(StatusProt.class)
             .and(StatusProt_.measmId, measmId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            StatusProt.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -99,8 +88,9 @@ public class StatusProtService extends LadaService {
     public StatusProt getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
+        return authorization.authorize(
             repository.getById(StatusProt.class, id),
+            RequestMethod.GET,
             StatusProt.class);
     }
 
@@ -114,46 +104,20 @@ public class StatusProtService extends LadaService {
     public StatusProt create(
         @Valid StatusProt status
     ) throws BadRequestException {
-        UserInfo userInfo = authorization.getInfo();
         Measm messung = repository.getById(
             Measm.class, status.getMeasmId());
         lock.isLocked(messung);
 
-        // Is user authorized to edit status at all?
-        // TODO: Move to authorization
-        Measm filteredMessung = authorization.filter(messung, Measm.class);
-        if (!filteredMessung.getStatusEdit()) {
-            throw new ForbiddenException();
-        }
-
-        StatusProt oldStatus = messung.getStatusProt();
         StatusMp newKombi = repository.getById(
             StatusMp.class, status.getStatusMpId());
 
-        // Check if the user is allowed to change to the requested
-        // status_kombi
-        // TODO: Move to authorization
-        if (userInfo.getFunktionenForMst(
-                status.getMeasFacilId()).contains(
-                    newKombi.getStatusLev().getId())
-            && (newKombi.getStatusLev().getId().equals(1)
-                && messung.getStatusEditMst()
-                || newKombi.getStatusLev().getId().equals(2)
-                && messung.getStatusEditLand()
-                || newKombi.getStatusLev().getId().equals(3)
-                && messung.getStatusEditLst())
-            ) {
-            // 1. user user wants to reset the current status
-            //    'status wert' == 8
-            if (newKombi.getStatusVal().getId() == 8) {
-                return authorization.filter(
-                    resetStatus(status, oldStatus, messung),
-                    StatusProt.class);
-            }
-            // 2. user wants to set new status
-            return setNewStatus(status, newKombi, messung);
+        // 1. user user wants to reset the current status
+        //    'status wert' == 8
+        if (newKombi.getStatusVal().getId() == 8) {
+            return resetStatus(status, messung.getStatusProt(), messung);
         }
-        throw new ForbiddenException();
+        // 2. user wants to set new status
+        return setNewStatus(status, newKombi, messung);
     }
 
     private StatusProt setNewStatus(
@@ -183,9 +147,7 @@ public class StatusProtService extends LadaService {
         status.setDate(null);
 
         //NOTE: The referenced messung status field is updated by a DB trigger
-        return authorization.filter(
-            repository.create(status),
-            StatusProt.class);
+        return repository.create(status);
     }
 
     private StatusProt resetStatus(

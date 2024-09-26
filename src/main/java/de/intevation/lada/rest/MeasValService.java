@@ -32,9 +32,6 @@ import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.EnvMedium;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -60,13 +57,6 @@ public class MeasValService extends LadaService {
     @Inject
     @LockConfig(type = LockType.TIMESTAMP)
     private ObjectLocker lock;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     @Inject
     private MesswertNormalizer messwertNormalizer;
@@ -96,9 +86,7 @@ public class MeasValService extends LadaService {
         QueryBuilder<MeasVal> builder = repository
             .queryBuilder(MeasVal.class)
             .and(MeasVal_.measmId, measmId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            MeasVal.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -112,15 +100,9 @@ public class MeasValService extends LadaService {
     public MeasVal getById(
         @PathParam("id") Integer id
     ) {
-        MeasVal messwert = repository.getById(MeasVal.class, id);
-        Measm messung = repository.getById(
-            Measm.class, messwert.getMeasmId());
-        authorization.authorize(
-            messung,
+        return authorization.authorize(
+            repository.getById(MeasVal.class, id),
             RequestMethod.GET,
-            Measm.class);
-        return authorization.filter(
-            messwert,
             MeasVal.class);
     }
 
@@ -134,13 +116,7 @@ public class MeasValService extends LadaService {
     public MeasVal create(
         @Valid MeasVal messwert
     ) throws BadRequestException {
-        authorization.authorize(
-                messwert,
-                RequestMethod.POST,
-                MeasVal.class);
-        return authorization.filter(
-            repository.create(messwert),
-            MeasVal.class);
+        return repository.create(messwert);
     }
 
     /**
@@ -155,15 +131,9 @@ public class MeasValService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MeasVal messwert
     ) throws BadRequestException {
-        authorization.authorize(
-                messwert,
-                RequestMethod.PUT,
-                MeasVal.class);
         lock.isLocked(messwert);
 
-        return authorization.filter(
-            repository.update(messwert),
-            MeasVal.class);
+        return repository.update(messwert);
     }
 
     /**
@@ -205,10 +175,7 @@ public class MeasValService extends LadaService {
                 RequestMethod.PUT,
                 MeasVal.class);
             lock.isLocked(messwert);
-
-            authorization.filter(
-                repository.update(messwert),
-                MeasVal.class);
+            repository.update(messwert);
         }
         return messwerte;
     }

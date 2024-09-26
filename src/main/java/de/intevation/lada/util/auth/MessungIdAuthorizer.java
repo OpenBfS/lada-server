@@ -18,7 +18,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 public class MessungIdAuthorizer extends BaseAuthorizer {
 
-    private MessungAuthorizer messungAuthorizer;
+    protected MessungAuthorizer messungAuthorizer;
 
     public MessungIdAuthorizer(Repository repository) {
         super(repository);
@@ -35,7 +35,11 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         return messungAuthorizer.isAuthorizedReason(
             repository.getById(
                 Measm.class, ((BelongsToMeasm) data).getMeasmId()),
-            RequestMethod.POST,
+            // Allow reading if measm is readable, everything else corresponds
+            // to editing the measm
+            method == RequestMethod.GET
+            ? RequestMethod.GET
+            : RequestMethod.PUT,
             userInfo);
     }
 

@@ -17,14 +17,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.util.TypeLiteral;
 import jakarta.inject.Inject;
-import jakarta.inject.Provider;
+
+import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.data.requests.ExportParameters;
-import de.intevation.lada.exporter.csv.CsvExportJob;
-import de.intevation.lada.exporter.json.JsonExportJob;
-import de.intevation.lada.exporter.laf.LafExportJob;
+import de.intevation.lada.data.requests.QueryExportParameters;
+import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.JobManager;
+
 
 /**
  * Class creating and managing ExportJobs.
@@ -33,13 +36,7 @@ import de.intevation.lada.util.data.JobManager;
 public class ExportJobManager extends JobManager {
 
     @Inject
-    private Provider<CsvExportJob> csvExportJobProvider;
-
-    @Inject
-    private Provider<JsonExportJob> jsonExportJobProvider;
-
-    @Inject
-    private Provider<LafExportJob> lafExportJobProvider;
+    private Instance<ExportJob<? extends ExportParameters>> exportJobProvider;
 
     public ExportJobManager() {
         logger.debug("Creating ExportJobManager");
@@ -47,7 +44,7 @@ public class ExportJobManager extends JobManager {
 
     /**
      * Creates a new export job using the given format and parameters.
-     * @param format Export format
+     * @param <F> Type of export parameters bound to format
      * @param encoding Result encoding
      * @param params Export parameters as JsonObject
      * @param bundle ResourceBundle for export i18n
@@ -55,29 +52,41 @@ public class ExportJobManager extends JobManager {
      * @return The new ExportJob's id
      * @throws IllegalArgumentException if an invalid export format is specified
      */
-    public String createExportJob(
-        String format,
+    public <F extends ExportParameters> String createExportJob(
         Charset encoding,
-        ExportParameters params,
+        F params,
         ResourceBundle bundle,
         UserInfo userInfo
     ) throws IllegalArgumentException {
-        ExportJob newJob;
-        switch (format) {
-            case "csv":
-                newJob = csvExportJobProvider.get();
-                newJob.setBundle(bundle);
-                break;
-            case "laf":
-                newJob = lafExportJobProvider.get();
-                break;
-            case "json":
-                newJob = jsonExportJobProvider.get();
-                break;
-            default:
-                logger.error(String.format("Unkown export format: %s", format));
-                throw new IllegalArgumentException(
-                    String.format("%s is not a valid export format", format));
+        ExportJob<?> newJob;
+        String format;
+        if (params instanceof CsvExportParameters p) {
+            TypeLiteral<ExportJob<CsvExportParameters>> type
+                = new TypeLiteral<>() { };
+            ExportJob<CsvExportParameters> job
+                = exportJobProvider.select(type).get();
+            job.setExportParameter(p);
+            job.setBundle(bundle);
+            format = "csv";
+            newJob = job;
+        } else if (params instanceof LafExportParameters p) {
+            TypeLiteral<ExportJob<LafExportParameters>> type
+                = new TypeLiteral<>() { };
+            ExportJob<LafExportParameters> job
+                = exportJobProvider.select(type).get();
+            job.setExportParameter(p);
+            format = "laf";
+            newJob = job;
+        } else if (params instanceof QueryExportParameters p) {
+            TypeLiteral<ExportJob<QueryExportParameters>> type
+                = new TypeLiteral<>() { };
+            ExportJob<QueryExportParameters> job
+                = exportJobProvider.select(type).get();
+            job.setExportParameter(p);
+            format = "json";
+            newJob = job;
+        } else {
+            throw new IllegalArgumentException("Unkown export format");
         }
 
         String downloadFileName =
@@ -86,22 +95,8 @@ public class ExportJobManager extends JobManager {
                 : String.format("export.%s", format);
         newJob.setDownloadFileName(downloadFileName);
         newJob.setEncoding(encoding);
-        newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
         return addJob(newJob);
-    }
-
-    /**
-     * Get Exportjob by id.
-     * @param id Id to look for
-     * @throws JobNotFoundException Thrown if a job with the given can not
-     *                              be found
-     * @return Job instance with given id
-     */
-    protected ExportJob getJobById(
-        String id
-    ) throws JobNotFoundException {
-        return (ExportJob) super.getJobById(id);
     }
 
     /**
@@ -114,7 +109,7 @@ public class ExportJobManager extends JobManager {
     public String getJobDownloadFilename(
         String id
     ) throws JobNotFoundException {
-        ExportJob job = getJobById(id);
+        ExportJob<?> job = (ExportJob) getJobById(id);
         return job.getDownloadFileName();
     }
 
@@ -130,7 +125,7 @@ public class ExportJobManager extends JobManager {
     public ByteArrayInputStream getResultFileAsStream(
         String id
     ) throws JobNotFoundException, FileNotFoundException {
-        ExportJob job = getJobById(id);
+        ExportJob<?> job = (ExportJob) getJobById(id);
         Path filePath = job.getOutputFilePath();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {

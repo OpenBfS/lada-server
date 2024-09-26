@@ -15,9 +15,6 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.model.master.GridColMp;
@@ -32,10 +29,6 @@ public class GridColMpService extends LadaService {
 
     @Inject
     private Repository repository;
-
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     /**
      * Request all predefined GridColMp objects connected to the given query.

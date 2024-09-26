@@ -19,9 +19,6 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.model.master.MunicDiv;
@@ -39,10 +36,6 @@ public class MunicDivService extends LadaService {
     @Inject
     private Repository repository;
 
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
     /**
      * Get all MunicDiv objects.
      *
@@ -50,8 +43,7 @@ public class MunicDivService extends LadaService {
      */
     @GET
     public List<MunicDiv> get() {
-        return authorization.filter(
-            repository.getAll(MunicDiv.class), MunicDiv.class);
+        return repository.getAll(MunicDiv.class);
     }
 
     /**
@@ -65,8 +57,7 @@ public class MunicDivService extends LadaService {
     public MunicDiv getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(MunicDiv.class, id), MunicDiv.class);
+        return repository.getById(MunicDiv.class, id);
     }
 
     /**
@@ -79,10 +70,6 @@ public class MunicDivService extends LadaService {
     public MunicDiv create(
         @Valid MunicDiv gemUntergliederung
     ) throws BadRequestException {
-        authorization.authorize(
-            gemUntergliederung,
-            RequestMethod.POST,
-            MunicDiv.class);
         return repository.create(gemUntergliederung);
     }
 
@@ -99,10 +86,6 @@ public class MunicDivService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MunicDiv gemUntergliederung
     ) throws BadRequestException {
-        authorization.authorize(
-            gemUntergliederung,
-            RequestMethod.PUT,
-            MunicDiv.class);
         return repository.update(gemUntergliederung);
     }
 

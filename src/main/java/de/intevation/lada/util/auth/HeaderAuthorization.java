@@ -7,16 +7,11 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.NoResultException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.ForbiddenException;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response.Status;
 
 import de.intevation.lada.i18n.I18n;
@@ -34,18 +29,13 @@ import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
-import de.intevation.lada.model.master.Auth;
-import de.intevation.lada.model.master.Auth_;
 import de.intevation.lada.model.master.DatasetCreator;
-import de.intevation.lada.model.master.LadaUser;
-import de.intevation.lada.model.master.LadaUser_;
 import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -61,58 +51,22 @@ public class HeaderAuthorization implements Authorization {
 
     private UserInfo userInfo;
 
-    private Map<Class, Authorizer> authorizers;
+    private Map<Class<?>, Authorizer> authorizers;
 
-    @Inject
     private I18n i18n;
 
     /**
-     * Injectable constructor to be used in request context.
+     * Sets information about requesting user and initializes authorizers.
      */
     @Inject
     public HeaderAuthorization(
-        @Context HttpServletRequest request,
-        Repository repository
-    ) {
-        // The username
-        String name = request.getAttribute("lada.user.name").toString();
-
-        // The user's roles
-        String[] mst = request.getAttribute("lada.user.roles").toString()
-            .replace("[", "").replace("]", "").replace(" ", "").split(",");
-        QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class);
-        authBuilder.andIn(Auth_.ldapGr, Arrays.asList(mst));
-        List<Auth> auth = repository.filter(authBuilder.getQuery());
-
-        // The user's ID
-        QueryBuilder<LadaUser> uIdBuilder =
-            repository.queryBuilder(LadaUser.class);
-        uIdBuilder.and(LadaUser_.name, name);
-        LadaUser user;
-        try {
-            user = repository.getSingle(uIdBuilder.getQuery());
-        } catch (NoResultException e) {
-            LadaUser newUser = new LadaUser();
-            newUser.setName(name);
-            user = repository.create(newUser);
-        }
-
-        this.userInfo = new UserInfo(name, user.getId(), auth);
-        initAuthorizers(repository);
-    }
-
-    /**
-     * Constructor to be used outside request context.
-     */
-    public HeaderAuthorization(
         UserInfo userInfo,
+        I18n i18n,
         Repository repository
     ) {
         this.userInfo = userInfo;
-        initAuthorizers(repository);
-    }
+        this.i18n = i18n;
 
-    private void initAuthorizers(Repository repository) {
         ProbeAuthorizer probeAuthorizer =
             new ProbeAuthorizer(repository);
         MessungAuthorizer messungAuthorizer =
@@ -137,6 +91,8 @@ public class HeaderAuthorization implements Authorization {
             new SiteAuthorizer(repository);
         SamplerAuthorizer samplerAuthorizer =
             new SamplerAuthorizer(repository);
+        StatusProtAuthorizer statusAuthorizer =
+            new StatusProtAuthorizer(repository);
 
         this.authorizers = Map.ofEntries(
             Map.entry(Sample.class, probeAuthorizer),
@@ -146,7 +102,7 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(SampleSpecifMeasVal.class, pIdAuthorizer),
             Map.entry(CommMeasm.class, mIdAuthorizer),
             Map.entry(MeasVal.class, mIdAuthorizer),
-            Map.entry(StatusProt.class, mIdAuthorizer),
+            Map.entry(StatusProt.class, statusAuthorizer),
             Map.entry(Sampler.class, samplerAuthorizer),
             Map.entry(DatasetCreator.class, netzAuthorizer),
             Map.entry(MunicDiv.class, netzAuthorizer),
@@ -176,22 +132,16 @@ public class HeaderAuthorization implements Authorization {
      * the HttpServletRequest.
      *
      * @param data      The Response object containing the data.
-     * @param clazz     The data object class.
      * @return The Response object containing the filtered data.
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public <T extends BaseModel> T filter(
-        T data,
-        Class<T> clazz
-    ) {
-        authorizers.get(clazz).setAuthAttrs(data, userInfo);
+    public <T extends BaseModel> T filter(T data) {
+        authorizers.get(data.getClass()).setAuthAttrs(data, userInfo);
         return data;
     }
 
     /**
      * Check whether a user is authorized to operate on the given data.
-     * Use only in request context.
      *
      * @param data      The data to test.
      * @param method    The Http request type.
@@ -199,16 +149,16 @@ public class HeaderAuthorization implements Authorization {
      * @throws ForbiddenException if the user is not authorized.
      */
     @Override
-    public <T> void authorize(
-        Object data,
+    public <T> T authorize(
+        T data,
         RequestMethod method,
-        Class<T> clazz
+        Class<? extends T> clazz
     ) {
         Authorizer authorizer = authorizers.get(clazz);
         String reason = authorizer.isAuthorizedReason(
             data, method, userInfo);
         if (reason == null) {
-            return;
+            return data;
         }
         throw new ForbiddenException(
             jakarta.ws.rs.core.Response.status(Status.FORBIDDEN)

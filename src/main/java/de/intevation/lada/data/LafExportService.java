@@ -23,9 +23,6 @@ import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.rest.LadaService;
@@ -57,14 +54,6 @@ public class LafExportService extends LadaService {
     @Inject
     @ExportConfig(format = ExportFormat.LAF)
     private Exporter<LafExportParameters> exporter;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
 
     /**
      * Export objects as LAF 8.

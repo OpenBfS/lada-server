@@ -29,6 +29,7 @@ public class TagLinkSampleAuthorizer extends BaseAuthorizer {
     }
 
     @Override
+    @SuppressWarnings("fallthrough")
     public String isAuthorizedReason(
         Object data,
         RequestMethod method,

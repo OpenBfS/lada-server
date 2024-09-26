@@ -22,7 +22,7 @@ RUN echo \
 
 RUN apt-get update -y && apt-get install -y locales
 
-ENV LC_ALL en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
 #
 # Install packages
@@ -40,8 +40,8 @@ RUN apt-get update && \
 #
 # Set environment variables
 #
-ENV PGCONF /etc/postgresql/12/main/postgresql.conf
-ENV PGDATA /var/lib/postgresql/12/main
+ENV PGCONF=/etc/postgresql/12/main/postgresql.conf
+ENV PGDATA=/var/lib/postgresql/12/main
 
 #
 # Use user postgres to run the next commands

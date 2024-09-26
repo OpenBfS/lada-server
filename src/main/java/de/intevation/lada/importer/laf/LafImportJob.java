@@ -121,10 +121,9 @@ public class LafImportJob extends Job {
                 this.currentStatus.setNotifications(true);
             }
             fileResponseData.put("success", !currentStatus.getErrors());
-            fileResponseData.put(
-                "probeIds", ((LafImporter) importer).getImportedIds());
+            fileResponseData.put("probeIds", importer.getImportedIds());
             importResponseData.put(fileName, fileResponseData);
-            importedProbeids.addAll(((LafImporter) importer).getImportedIds());
+            importedProbeids.addAll(importer.getImportedIds());
             logger.debug(
                 String.format("Finished import of file \"%s\"", fileName));
         });
