@@ -88,9 +88,7 @@ public abstract class LadaService {
         for (Object param: ctx.getParameters()) {
             if (param instanceof BaseModel p) {
                 authorization.authorize(
-                    p,
-                    RequestMethod.valueOf(request.getMethod()),
-                    p.getClass());
+                    p, RequestMethod.valueOf(request.getMethod()));
             }
         }
 

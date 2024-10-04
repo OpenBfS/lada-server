@@ -145,9 +145,7 @@ public class MpgService extends LadaService {
             Map<String, Integer> mpResult = new HashMap<>();
             int id = m.getId().intValue();
             mpResult.put("id", id);
-            if (authorization.isAuthorized(
-                    m, RequestMethod.PUT, Mpg.class)
-            ) {
+            if (authorization.isAuthorized(m, RequestMethod.PUT)) {
                 m.setIsActive(data.isActive());
                 repository.update(m);
                 mpResult.put("success", StatusCodes.OK);
@@ -172,10 +170,7 @@ public class MpgService extends LadaService {
     ) {
         Mpg messprogrammObj = repository.getById(
             Mpg.class, id);
-        authorization.authorize(
-            messprogrammObj,
-            RequestMethod.DELETE,
-            Mpg.class);
+        authorization.authorize(messprogrammObj, RequestMethod.DELETE);
         repository.delete(messprogrammObj);
     }
 

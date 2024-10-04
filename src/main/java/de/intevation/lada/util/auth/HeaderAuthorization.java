@@ -145,16 +145,14 @@ public class HeaderAuthorization implements Authorization {
      *
      * @param data      The data to test.
      * @param method    The Http request type.
-     * @param clazz     The data object class.
      * @throws ForbiddenException if the user is not authorized.
      */
     @Override
     public <T> T authorize(
         T data,
-        RequestMethod method,
-        Class<? extends T> clazz
+        RequestMethod method
     ) {
-        Authorizer authorizer = authorizers.get(clazz);
+        Authorizer authorizer = authorizers.get(data.getClass());
         String reason = authorizer.isAuthorizedReason(
             data, method, userInfo);
         if (reason == null) {
@@ -170,16 +168,14 @@ public class HeaderAuthorization implements Authorization {
      *
      * @param data      The data to test.
      * @param method    The Http request type.
-     * @param clazz     The data object class.
      * @return True if the user is authorized else returns false.
      */
     @Override
     public <T> boolean isAuthorized(
         Object data,
-        RequestMethod method,
-        Class<T> clazz
+        RequestMethod method
     ) {
-        Authorizer authorizer = authorizers.get(clazz);
+        Authorizer authorizer = authorizers.get(data.getClass());
         // Do not authorize anything unknown
         if (authorizer == null || data == null) {
             return false;

@@ -69,7 +69,7 @@ public class StatusProtService extends LadaService {
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getById(Measm.class, measmId);
-        authorization.authorize(messung, RequestMethod.GET, Measm.class);
+        authorization.authorize(messung, RequestMethod.GET);
 
         QueryBuilder<StatusProt> builder = repository
             .queryBuilder(StatusProt.class)
@@ -90,8 +90,7 @@ public class StatusProtService extends LadaService {
     ) {
         return authorization.authorize(
             repository.getById(StatusProt.class, id),
-            RequestMethod.GET,
-            StatusProt.class);
+            RequestMethod.GET);
     }
 
     /**

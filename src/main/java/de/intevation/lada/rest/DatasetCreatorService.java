@@ -100,10 +100,7 @@ public class DatasetCreatorService extends LadaService {
     ) {
         DatasetCreator datensatzerzeuger = repository.getById(
             DatasetCreator.class, id);
-        authorization.authorize(
-            datensatzerzeuger,
-            RequestMethod.DELETE,
-            DatasetCreator.class);
+        authorization.authorize(datensatzerzeuger, RequestMethod.DELETE);
         repository.delete(datensatzerzeuger);
     }
 }

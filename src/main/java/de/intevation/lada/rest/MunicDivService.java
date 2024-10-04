@@ -96,10 +96,7 @@ public class MunicDivService extends LadaService {
     ) {
         MunicDiv gemUntergliederung = repository.getById(
             MunicDiv.class, id);
-        authorization.authorize(
-            gemUntergliederung,
-            RequestMethod.DELETE,
-            MunicDiv.class);
+        authorization.authorize(gemUntergliederung, RequestMethod.DELETE);
         repository.delete(gemUntergliederung);
     }
 }

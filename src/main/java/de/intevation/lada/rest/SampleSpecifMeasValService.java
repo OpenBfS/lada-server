@@ -125,10 +125,7 @@ public class SampleSpecifMeasValService extends LadaService {
     ) {
         SampleSpecifMeasVal obj = repository.getById(
             SampleSpecifMeasVal.class, id);
-        authorization.authorize(
-            obj,
-            RequestMethod.DELETE,
-            SampleSpecifMeasVal.class);
+        authorization.authorize(obj, RequestMethod.DELETE);
         lock.isLocked(obj);
         /* Delete the object*/
         repository.delete(obj);

@@ -177,8 +177,7 @@ public class TagService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Tag tag = repository.getById(Tag.class, id);
-        authorization.authorize(
-            tag, RequestMethod.DELETE, Tag.class);
+        authorization.authorize(tag, RequestMethod.DELETE);
         repository.delete(tag);
     }
 }

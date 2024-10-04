@@ -121,10 +121,7 @@ public class MeasmService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Measm messungObj = repository.getById(Measm.class, id);
-        authorization.authorize(
-            messungObj,
-            RequestMethod.DELETE,
-            Measm.class);
+        authorization.authorize(messungObj, RequestMethod.DELETE);
         lock.isLocked(messungObj);
 
         repository.delete(messungObj);

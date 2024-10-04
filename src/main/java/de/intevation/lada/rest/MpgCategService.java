@@ -98,10 +98,7 @@ public class MpgCategService extends LadaService {
     ) {
         MpgCateg kategorie = repository.getById(
             MpgCateg.class, id);
-        authorization.authorize(
-                kategorie,
-                RequestMethod.DELETE,
-                MpgCateg.class);
+        authorization.authorize(kategorie, RequestMethod.DELETE);
         repository.delete(kategorie);
     }
 }

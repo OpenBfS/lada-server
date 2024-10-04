@@ -260,9 +260,7 @@ public class LafObjectMapper {
         }
 
         // Check if the user is authorized to create the probe
-        if (
-            !authorizer.isAuthorized(probe, RequestMethod.POST, Sample.class)
-        ) {
+        if (!authorizer.isAuthorized(probe, RequestMethod.POST)) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
             err.setKey(userInfo.getName());
@@ -285,12 +283,11 @@ public class LafObjectMapper {
             if (i == Identified.UPDATE) {
                 if (
                     // Check if user belongs to matching measFacil
-                    authorizer.isAuthorized(
-                        old, RequestMethod.POST, Sample.class)
+                    authorizer.isAuthorized(old, RequestMethod.POST)
                 ) {
                     // Check if sample is read-only due to status
                     oldProbeIsReadonly = authorizer.isAuthorized(
-                        old, RequestMethod.PUT, Sample.class);
+                        old, RequestMethod.PUT);
                     if (oldProbeIsReadonly) {
                         newProbe = old;
                         currentNotifications.add(
@@ -659,9 +656,7 @@ public class LafObjectMapper {
             addMessungAttribute(attribute, messung);
         }
         // Check if the user is authorized to create the object
-        if (
-            !authorizer.isAuthorized(messung, RequestMethod.POST, Measm.class)
-        ) {
+        if (!authorizer.isAuthorized(messung, RequestMethod.POST)) {
             ReportItem warn = new ReportItem();
             warn.setCode(StatusCodes.NOT_ALLOWED);
             warn.setKey(userInfo.getName());
@@ -686,7 +681,7 @@ public class LafObjectMapper {
         Measm old = (Measm) messungIdentifier.getExisting();
         switch (ident) {
         case UPDATE:
-            if (!authorizer.isAuthorized(old, RequestMethod.PUT, Measm.class)) {
+            if (!authorizer.isAuthorized(old, RequestMethod.PUT)) {
                 currentNotifications.add(
                     new ReportItem(
                         "messung",
@@ -1223,9 +1218,7 @@ public class LafObjectMapper {
         }
 
         // check auth
-        if (authorizer.isAuthorized(
-                newStatus, RequestMethod.POST, StatusProt.class)
-        ) {
+        if (authorizer.isAuthorized(newStatus, RequestMethod.POST)) {
             //persist newStatus if authorized to do so
             repository.create(newStatus);
             if (newKombi == 0 || newKombi == 9 || newKombi == 13) {

@@ -467,8 +467,7 @@ implements Creator {
                 (m.getIsCompleted() ? "1" : "0"));
             laf += lafLine("BEARBEITUNGSSTATUS", writeStatus(m));
             if (this.userInfo != null
-                && authorization.isAuthorized(
-                    m, RequestMethod.GET, Measm.class)
+                && authorization.isAuthorized(m, RequestMethod.GET)
             ) {
                 for (MeasVal mw : werte) {
                     laf += writeMesswert(mw);

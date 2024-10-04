@@ -220,10 +220,7 @@ public class SiteService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Site ort = repository.getById(Site.class, id);
-        authorization.authorize(
-            ort,
-            RequestMethod.DELETE,
-            Site.class);
+        authorization.authorize(ort, RequestMethod.DELETE);
         repository.delete(ort);
     }
 
@@ -266,10 +263,7 @@ public class SiteService extends LadaService {
             @NotBlank String dataUrl
     ) throws IOException {
         Site site = repository.getById(Site.class, id);
-        authorization.authorize(
-                site,
-                RequestMethod.PUT,
-                Site.class);
+        authorization.authorize(site, RequestMethod.PUT);
         int contentLength = request.getContentLength();
         if (contentLength == -1) {
             throw new IOException();
@@ -302,10 +296,7 @@ public class SiteService extends LadaService {
             @PathParam("type") @Pattern(regexp = "img|map") String type
     ) {
         Site site = repository.getById(Site.class, id);
-        authorization.authorize(
-                site,
-                RequestMethod.PUT,
-                Site.class);
+        authorization.authorize(site, RequestMethod.PUT);
         if (type.equals("map")) {
             site.setMap(null);
         } else {

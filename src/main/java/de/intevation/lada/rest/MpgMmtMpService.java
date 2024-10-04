@@ -118,10 +118,7 @@ public class MpgMmtMpService extends LadaService {
     ) {
         MpgMmtMp messprogrammmmtObj = repository.getById(
             MpgMmtMp.class, id);
-        authorization.authorize(
-                messprogrammmmtObj,
-                RequestMethod.DELETE,
-                MpgMmtMp.class);
+        authorization.authorize(messprogrammmmtObj, RequestMethod.DELETE);
         repository.delete(messprogrammmmtObj);
     }
 

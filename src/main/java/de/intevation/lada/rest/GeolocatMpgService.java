@@ -123,11 +123,7 @@ public class GeolocatMpgService extends LadaService {
     ) {
         GeolocatMpg ortObj = repository.getById(
             GeolocatMpg.class, id);
-        authorization.authorize(
-            ortObj,
-            RequestMethod.DELETE,
-            GeolocatMpg.class);
-
+        authorization.authorize(ortObj, RequestMethod.DELETE);
         repository.delete(ortObj);
     }
 }

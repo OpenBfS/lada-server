@@ -210,10 +210,8 @@ public class AuthorizerTest extends BaseTest {
          */
         @Test
         public void testIsAuthorized() {
-            Class<?> testClass = testObject.getClass();
-            boolean authorized = authorization.isAuthorized(
-                    testObject, method, testClass);
-            assertEquals(expectedResult, authorized);
+            assertEquals(expectedResult,
+                authorization.isAuthorized(testObject, method));
         }
     }
 

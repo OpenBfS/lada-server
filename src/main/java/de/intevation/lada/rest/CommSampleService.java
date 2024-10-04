@@ -112,10 +112,7 @@ public class CommSampleService extends LadaService {
         @PathParam("id") Integer id
     ) {
         CommSample kommentarObj = repository.getById(CommSample.class, id);
-        authorization.authorize(
-            kommentarObj,
-            RequestMethod.DELETE,
-            CommSample.class);
+        authorization.authorize(kommentarObj, RequestMethod.DELETE);
         repository.delete(kommentarObj);
     }
 }

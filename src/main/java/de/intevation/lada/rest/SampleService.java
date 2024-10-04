@@ -189,10 +189,8 @@ public class SampleService extends LadaService {
                 // authorize the user to create probe objects.
                 Sample testProbe = new Sample();
                 testProbe.setMeasFacilId(messprogramm.getMeasFacilId());
-                if (!authorization.isAuthorized(
-                        testProbe,
-                        RequestMethod.POST,
-                        Sample.class)
+                if (
+                    !authorization.isAuthorized(testProbe, RequestMethod.POST)
                 ) {
                     data.put("success", false);
                     data.put("message", StatusCodes.NOT_ALLOWED);
@@ -266,10 +264,7 @@ public class SampleService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Sample probeObj = repository.getById(Sample.class, id);
-        authorization.authorize(
-            probeObj,
-            RequestMethod.DELETE,
-            Sample.class);
+        authorization.authorize(probeObj, RequestMethod.DELETE);
         repository.delete(probeObj);
     }
 

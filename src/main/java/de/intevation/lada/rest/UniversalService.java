@@ -164,8 +164,7 @@ public class UniversalService extends LadaService {
                     readonly = !authorization.isAuthorized(
                         repository.getById(
                             authorizationColumnType, idToAuthorize),
-                        RequestMethod.PUT,
-                        authorizationColumnType);
+                        RequestMethod.PUT);
                 }
                 row.put("readonly", readonly);
             }

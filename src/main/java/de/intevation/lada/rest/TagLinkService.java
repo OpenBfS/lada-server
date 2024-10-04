@@ -104,9 +104,7 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
                 continue;
             }
 
-            if (!authorization.isAuthorized(
-                    tagLink, RequestMethod.POST, tagLink.getClass())
-            ) {
+            if (!authorization.isAuthorized(tagLink, RequestMethod.POST)) {
                 responseList.add(new Response<T>(
                         false, StatusCodes.NOT_ALLOWED, tagLink));
                 continue;
@@ -142,11 +140,7 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
                         true, StatusCodes.OK, tagLink));
                 continue;
             }
-            if (!authorization.isAuthorized(
-                    tagLink,
-                    RequestMethod.DELETE,
-                    tagLink.getClass())
-            ) {
+            if (!authorization.isAuthorized(tagLink, RequestMethod.DELETE)) {
                 responseList.add(new Response<T>(
                         false,
                         StatusCodes.NOT_ALLOWED,

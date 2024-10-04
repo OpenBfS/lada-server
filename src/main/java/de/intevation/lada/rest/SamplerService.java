@@ -97,10 +97,7 @@ public class SamplerService extends LadaService {
     ) {
         Sampler probenehmer = repository.getById(
             Sampler.class, id);
-        authorization.authorize(
-            probenehmer,
-            RequestMethod.DELETE,
-            Sampler.class);
+        authorization.authorize(probenehmer, RequestMethod.DELETE);
         repository.delete(probenehmer);
     }
 }

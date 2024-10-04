@@ -55,8 +55,7 @@ public class CommMeasmService extends LadaService {
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getById(Measm.class, measmId);
-        authorization.authorize(
-                messung, RequestMethod.GET, Measm.class);
+        authorization.authorize(messung, RequestMethod.GET);
 
         QueryBuilder<CommMeasm> builder =
             repository.queryBuilder(CommMeasm.class);
@@ -77,8 +76,7 @@ public class CommMeasmService extends LadaService {
     ) {
         return authorization.authorize(
             repository.getById(CommMeasm.class, id),
-            RequestMethod.GET,
-            CommMeasm.class);
+            RequestMethod.GET);
     }
 
     /**
@@ -119,10 +117,7 @@ public class CommMeasmService extends LadaService {
         @PathParam("id") Integer id
     ) {
         CommMeasm kommentarObj = repository.getById(CommMeasm.class, id);
-        authorization.authorize(
-            kommentarObj,
-            RequestMethod.DELETE,
-            CommMeasm.class);
+        authorization.authorize(kommentarObj, RequestMethod.DELETE);
         repository.delete(kommentarObj);
     }
 }

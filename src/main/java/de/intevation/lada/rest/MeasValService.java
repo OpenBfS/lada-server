@@ -78,10 +78,7 @@ public class MeasValService extends LadaService {
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getById(Measm.class, measmId);
-        authorization.authorize(
-                messung,
-                RequestMethod.GET,
-                Measm.class);
+        authorization.authorize(messung, RequestMethod.GET);
 
         QueryBuilder<MeasVal> builder = repository
             .queryBuilder(MeasVal.class)
@@ -102,8 +99,7 @@ public class MeasValService extends LadaService {
     ) {
         return authorization.authorize(
             repository.getById(MeasVal.class, id),
-            RequestMethod.GET,
-            MeasVal.class);
+            RequestMethod.GET);
     }
 
     /**
@@ -148,10 +144,7 @@ public class MeasValService extends LadaService {
     ) {
         //Load messung, probe and umwelt to get MessEinheit to convert to
         Measm messung = repository.getById(Measm.class, measmId);
-        authorization.authorize(
-            messung,
-            RequestMethod.PUT,
-            Measm.class);
+        authorization.authorize(messung, RequestMethod.PUT);
 
         Sample probe = repository.getById(Sample.class, messung.getSampleId());
         if (probe.getEnvMediumId() == null) {
@@ -170,10 +163,7 @@ public class MeasValService extends LadaService {
             umwelt.getId());
 
         for (MeasVal messwert: messwerte) {
-            authorization.authorize(
-                messwert,
-                RequestMethod.PUT,
-                MeasVal.class);
+            authorization.authorize(messwert, RequestMethod.PUT);
             lock.isLocked(messwert);
             repository.update(messwert);
         }
@@ -191,10 +181,7 @@ public class MeasValService extends LadaService {
         @PathParam("id") Integer id
     ) {
         MeasVal messwertObj = repository.getById(MeasVal.class, id);
-        authorization.authorize(
-            messwertObj,
-            RequestMethod.DELETE,
-            MeasVal.class);
+        authorization.authorize(messwertObj, RequestMethod.DELETE);
         lock.isLocked(messwertObj);
         repository.delete(messwertObj);
     }
