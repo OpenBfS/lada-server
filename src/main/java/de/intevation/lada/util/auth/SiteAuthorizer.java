@@ -12,19 +12,20 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class SiteAuthorizer extends BaseAuthorizer {
+class SiteAuthorizer extends Authorizer<Site> {
 
-    public SiteAuthorizer(Repository repository) {
-        super(repository);
+    SiteAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
     }
 
     @Override
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
-        Site site = (Site) data;
+    void authorize(
+        Site site,
+        RequestMethod method
+    ) throws AuthorizationException {
         String netId = site.getNetworkId();
         if ((method == RequestMethod.PUT || method == RequestMethod.DELETE)
             && (!userInfo.getFunktionenForNetzbetreiber(netId).contains(4)
@@ -32,13 +33,12 @@ public class SiteAuthorizer extends BaseAuthorizer {
             || method == RequestMethod.POST
                 && !userInfo.getNetzbetreiber().contains(netId)
         ) {
-            return I18N_KEY_FORBIDDEN;
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         }
         if (method == RequestMethod.DELETE
             && (site.getReferenceCount() > 0 || site.getReferenceCountMp() > 0)
         ) {
-            return I18N_KEY_CANNOTDELETE;
+            throw new AuthorizationException(I18N_KEY_CANNOTDELETE);
         }
-        return null;
     }
 }

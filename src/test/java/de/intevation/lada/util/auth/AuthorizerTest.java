@@ -172,7 +172,7 @@ public class AuthorizerTest extends BaseTest {
 
         //Test parameters
         @Parameter(0)
-        public Object testObject;
+        public BaseModel testObject;
         @Parameter(1)
         public RequestMethod method;
         @Parameter(2)

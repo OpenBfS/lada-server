@@ -9,7 +9,6 @@ package de.intevation.lada.util.auth;
 
 import java.util.List;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
@@ -19,50 +18,57 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class ProbeAuthorizer extends BaseAuthorizer {
+class ProbeAuthorizer extends Authorizer<Sample> {
 
-    private MessungAuthorizer messungAuthorizer;
+    private Authorizer<Measm> messungAuthorizer;
 
-    public ProbeAuthorizer(Repository repository) {
-        super(repository);
+    ProbeAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
 
-        this.messungAuthorizer = new MessungAuthorizer(repository, this);
+        this.messungAuthorizer = new MessungAuthorizer(
+            this.userInfo, this.repository, this);
     }
 
-    public ProbeAuthorizer(
-        Repository repository, MessungAuthorizer messungAuthorizer
+    /**
+     * Constructor to be used in MessungAuthorizer.
+     */
+    ProbeAuthorizer(
+        UserInfo userInfo,
+        Repository repository,
+        Authorizer<Measm> messungAuthorizer
     ) {
-        super(repository);
+        super(userInfo, repository);
 
         this.messungAuthorizer = messungAuthorizer;
     }
 
     @Override
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
-        Sample probe = (Sample) data;
+    void authorize(
+        Sample probe,
+        RequestMethod method
+    ) throws AuthorizationException {
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
-            return !anyMeasmReadOnly(probe.getId(), userInfo)
-                && getAuthorization(userInfo, probe)
-                ? null : I18N_KEY_FORBIDDEN;
+            if (!anyMeasmReadOnly(probe.getId(), userInfo)
+                && getAuthorization(userInfo, probe)) {
+                return;
+            }
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         }
-        return getAuthorization(userInfo, probe)
-            ? null : I18N_KEY_FORBIDDEN;
+        if (getAuthorization(userInfo, probe)) {
+            return;
+        }
+        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
     }
 
     @Override
-    public void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo
-    ) {
+    void setAuthAttrs(Sample sample) {
         // Set readonly flag
-        super.setAuthAttrs(data, userInfo);
+        super.setAuthAttrs(sample);
 
-        Sample sample = (Sample) data;
         String mstId = sample.getMeasFacilId();
         MeasFacil mst = repository.getById(MeasFacil.class, mstId);
         sample.setOwner(
@@ -76,9 +82,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
             .and(Measm_.sampleId, sampleId);
         List<Measm> measms = repository.filter(builder.getQuery());
         for (Measm measm: measms) {
-            if (!messungAuthorizer.isAuthorized(
-                    measm, RequestMethod.PUT, userInfo)
-            ) {
+            if (!messungAuthorizer.isAuthorized(measm, RequestMethod.PUT)) {
                 return true;
             }
         }

@@ -7,31 +7,24 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.Map;
-
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.ForbiddenException;
-import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response;
 
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.model.lada.CommMeasm;
-import de.intevation.lada.model.lada.CommSample;
-import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.GeolocatMpg;
-import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.BelongsToMeasm;
+import de.intevation.lada.model.lada.BelongsToMpg;
+import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
-import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
-import de.intevation.lada.model.master.DatasetCreator;
-import de.intevation.lada.model.master.MpgCateg;
-import de.intevation.lada.model.master.MunicDiv;
+import de.intevation.lada.model.master.BelongsToNetwork;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
@@ -51,9 +44,24 @@ public class HeaderAuthorization implements Authorization {
 
     private UserInfo userInfo;
 
-    private Map<Class<?>, Authorizer> authorizers;
-
     private I18n i18n;
+
+    private Authorizer<Sample> probeAuthorizer;
+    private Authorizer<Measm> messungAuthorizer;
+    private Authorizer<Mpg> messprogrammAuthorizer;
+    private Authorizer<Tag> tagAuthorizer;
+    private Authorizer<TagLinkSample> tagZuordnungAuthorizer;
+    private Authorizer<TagLinkMeasm> tagLinkMeasmAuthorizer;
+    private Authorizer<Site> siteAuthorizer;
+    private Authorizer<Sampler> samplerAuthorizer;
+    private Authorizer<StatusProt> statusAuthorizer;
+    private Authorizer<BelongsToSample> pIdAuthorizer;
+    private Authorizer<BelongsToMeasm> mIdAuthorizer;
+    private Authorizer<BelongsToMpg> mpgIdAuthorizer;
+    private Authorizer<BelongsToNetwork> netzAuthorizer;
+
+    @Inject
+    private Instance<Authorizer<?>> authorizer;
 
     /**
      * Sets information about requesting user and initializes authorizers.
@@ -67,54 +75,32 @@ public class HeaderAuthorization implements Authorization {
         this.userInfo = userInfo;
         this.i18n = i18n;
 
-        ProbeAuthorizer probeAuthorizer =
-            new ProbeAuthorizer(repository);
-        MessungAuthorizer messungAuthorizer =
-            new MessungAuthorizer(repository);
-        ProbeIdAuthorizer pIdAuthorizer =
-            new ProbeIdAuthorizer(repository);
-        MessungIdAuthorizer mIdAuthorizer =
-            new MessungIdAuthorizer(repository);
-        NetzbetreiberAuthorizer netzAuthorizer =
-            new NetzbetreiberAuthorizer(repository);
-        MessprogrammAuthorizer messprogrammAuthorizer =
-            new MessprogrammAuthorizer(repository);
-        MpgIdAuthorizer mpgIdAuthorizer =
-            new MpgIdAuthorizer(repository);
-        TagAuthorizer tagAuthorizer =
-            new TagAuthorizer(repository);
-        TagLinkSampleAuthorizer tagZuordnungAuthorizer =
-            new TagLinkSampleAuthorizer(repository);
-        TagLinkMeasmAuthorizer tagLinkMeasmAuthorizer =
-            new TagLinkMeasmAuthorizer(repository);
-        SiteAuthorizer siteAuthorizer =
-            new SiteAuthorizer(repository);
-        SamplerAuthorizer samplerAuthorizer =
-            new SamplerAuthorizer(repository);
-        StatusProtAuthorizer statusAuthorizer =
-            new StatusProtAuthorizer(repository);
-
-        this.authorizers = Map.ofEntries(
-            Map.entry(Sample.class, probeAuthorizer),
-            Map.entry(Measm.class, messungAuthorizer),
-            Map.entry(Geolocat.class, pIdAuthorizer),
-            Map.entry(CommSample.class, pIdAuthorizer),
-            Map.entry(SampleSpecifMeasVal.class, pIdAuthorizer),
-            Map.entry(CommMeasm.class, mIdAuthorizer),
-            Map.entry(MeasVal.class, mIdAuthorizer),
-            Map.entry(StatusProt.class, statusAuthorizer),
-            Map.entry(Sampler.class, samplerAuthorizer),
-            Map.entry(DatasetCreator.class, netzAuthorizer),
-            Map.entry(MunicDiv.class, netzAuthorizer),
-            Map.entry(MpgCateg.class, netzAuthorizer),
-            Map.entry(Site.class, siteAuthorizer),
-            Map.entry(Mpg.class, messprogrammAuthorizer),
-            Map.entry(MpgMmtMp.class, mpgIdAuthorizer),
-            Map.entry(GeolocatMpg.class, mpgIdAuthorizer),
-            Map.entry(Tag.class, tagAuthorizer),
-            Map.entry(TagLinkMeasm.class, tagLinkMeasmAuthorizer),
-            Map.entry(TagLinkSample.class, tagZuordnungAuthorizer)
-        );
+        this.probeAuthorizer =
+            new ProbeAuthorizer(userInfo, repository);
+        this.messungAuthorizer =
+            new MessungAuthorizer(userInfo, repository);
+        this.messprogrammAuthorizer =
+            new MessprogrammAuthorizer(userInfo, repository);
+        this.tagAuthorizer =
+            new TagAuthorizer(userInfo, repository);
+        this.tagZuordnungAuthorizer =
+            new TagLinkSampleAuthorizer(userInfo, repository);
+        this.tagLinkMeasmAuthorizer =
+            new TagLinkMeasmAuthorizer(userInfo, repository);
+        this.siteAuthorizer =
+            new SiteAuthorizer(userInfo, repository);
+        this.samplerAuthorizer =
+            new SamplerAuthorizer(userInfo, repository);
+        this.statusAuthorizer =
+            new StatusProtAuthorizer(userInfo, repository);
+        this.pIdAuthorizer =
+            new ProbeIdAuthorizer(userInfo, repository);
+        this.mIdAuthorizer =
+            new MessungIdAuthorizer(userInfo, repository);
+        this.mpgIdAuthorizer =
+            new MpgIdAuthorizer(userInfo, repository);
+        this.netzAuthorizer =
+            new NetzbetreiberAuthorizer(userInfo, repository);
     }
 
     /**
@@ -136,8 +122,13 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     public <T extends BaseModel> T filter(T data) {
-        authorizers.get(data.getClass()).setAuthAttrs(data, userInfo);
-        return data;
+        try {
+            return doAuthorize(data, null);
+        } catch (AuthorizationException ae) {
+            // Should not happen
+            throw new RuntimeException(
+                "Error during setting of authorization hints", ae);
+        }
     }
 
     /**
@@ -148,19 +139,17 @@ public class HeaderAuthorization implements Authorization {
      * @throws ForbiddenException if the user is not authorized.
      */
     @Override
-    public <T> T authorize(
+    public <T extends BaseModel> T authorize(
         T data,
         RequestMethod method
     ) {
-        Authorizer authorizer = authorizers.get(data.getClass());
-        String reason = authorizer.isAuthorizedReason(
-            data, method, userInfo);
-        if (reason == null) {
-            return data;
+        try {
+            return doAuthorize(data, method);
+        } catch (AuthorizationException ae) {
+            throw new ForbiddenException(
+                Response.status(Response.Status.FORBIDDEN)
+                .entity(i18n.getString(ae.getMessage())).build());
         }
-        throw new ForbiddenException(
-            jakarta.ws.rs.core.Response.status(Status.FORBIDDEN)
-            .entity(i18n.getString(reason)).build());
      }
 
     /**
@@ -171,15 +160,104 @@ public class HeaderAuthorization implements Authorization {
      * @return True if the user is authorized else returns false.
      */
     @Override
-    public <T> boolean isAuthorized(
-        Object data,
+    public <T extends BaseModel> boolean isAuthorized(
+        T data,
         RequestMethod method
     ) {
-        Authorizer authorizer = authorizers.get(data.getClass());
-        // Do not authorize anything unknown
-        if (authorizer == null || data == null) {
+        try {
+            doAuthorize(data, method);
+            return true;
+        } catch (AuthorizationException ae) {
             return false;
         }
-        return authorizer.isAuthorized(data, method, userInfo);
+    }
+
+    private <T extends BaseModel> T doAuthorize(
+        T data,
+        RequestMethod method
+    ) throws AuthorizationException {
+        if (data instanceof Sample o) {
+            if (method == null) {
+                this.probeAuthorizer.setAuthAttrs(o);
+            } else {
+                this.probeAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof Measm o) {
+            if (method == null) {
+                this.messungAuthorizer.setAuthAttrs(o);
+            } else {
+                this.messungAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof Mpg o) {
+            if (method == null) {
+                this.messprogrammAuthorizer.setAuthAttrs(o);
+            } else {
+                this.messprogrammAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof Tag o) {
+            if (method == null) {
+                this.tagAuthorizer.setAuthAttrs(o);
+            } else {
+                this.tagAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof TagLinkSample o) {
+            if (method == null) {
+                this.tagZuordnungAuthorizer.setAuthAttrs(o);
+            } else {
+                this.tagZuordnungAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof TagLinkMeasm o) {
+            if (method == null) {
+                this.tagLinkMeasmAuthorizer.setAuthAttrs(o);
+            } else {
+                this.tagLinkMeasmAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof Site o) {
+            if (method == null) {
+                this.siteAuthorizer.setAuthAttrs(o);
+            } else {
+                this.siteAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof Sampler o) {
+            if (method == null) {
+                this.samplerAuthorizer.setAuthAttrs(o);
+            } else {
+                this.samplerAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof StatusProt o) {
+            if (method == null) {
+                this.statusAuthorizer.setAuthAttrs(o);
+            } else {
+                this.statusAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof BelongsToSample o) {
+            if (method == null) {
+                this.pIdAuthorizer.setAuthAttrs(o);
+            } else {
+                this.pIdAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof BelongsToMeasm o) {
+            if (method == null) {
+                this.mIdAuthorizer.setAuthAttrs(o);
+            } else {
+                this.mIdAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof BelongsToMpg o) {
+            if (method == null) {
+                this.mpgIdAuthorizer.setAuthAttrs(o);
+            } else {
+                this.mpgIdAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof BelongsToNetwork o) {
+            if (method == null) {
+                this.netzAuthorizer.setAuthAttrs(o);
+            } else {
+                this.netzAuthorizer.authorize(o, method);
+            }
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "%s not authorizable", data.getClass()));
+        }
+        return data;
     }
 }

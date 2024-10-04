@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
@@ -16,42 +15,39 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class MessungIdAuthorizer extends BaseAuthorizer {
+class MessungIdAuthorizer extends Authorizer<BelongsToMeasm> {
 
     protected MessungAuthorizer messungAuthorizer;
 
-    public MessungIdAuthorizer(Repository repository) {
-        super(repository);
+    MessungIdAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
 
-        this.messungAuthorizer = new MessungAuthorizer(repository);
+        this.messungAuthorizer = new MessungAuthorizer(
+            this.userInfo, this.repository);
     }
 
     @Override
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
-        return messungAuthorizer.isAuthorizedReason(
-            repository.getById(
-                Measm.class, ((BelongsToMeasm) data).getMeasmId()),
+    void authorize(
+        BelongsToMeasm data,
+        RequestMethod method
+    ) throws AuthorizationException {
+        messungAuthorizer.authorize(
+            repository.getById(Measm.class, data.getMeasmId()),
             // Allow reading if measm is readable, everything else corresponds
             // to editing the measm
             method == RequestMethod.GET
             ? RequestMethod.GET
-            : RequestMethod.PUT,
-            userInfo);
+            : RequestMethod.PUT);
     }
 
     @Override
-    public void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo
-    ) {
+    void setAuthAttrs(BelongsToMeasm object) {
         // Set readonly flag
-        super.setAuthAttrs(data, userInfo);
+        super.setAuthAttrs(object);
 
-        BelongsToMeasm object = (BelongsToMeasm) data;
         Sample probe = repository.getById(Measm.class, object.getMeasmId())
             .getSample();
         MeasFacil mst = repository.getById(

@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
@@ -15,39 +14,36 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class ProbeIdAuthorizer extends BaseAuthorizer {
+class ProbeIdAuthorizer extends Authorizer<BelongsToSample> {
 
-    ProbeAuthorizer probeAuthorizer;
+    Authorizer<Sample> probeAuthorizer;
 
-    public ProbeIdAuthorizer(Repository repository) {
-        super(repository);
+    ProbeIdAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
 
-        this.probeAuthorizer = new ProbeAuthorizer(repository);
+        this.probeAuthorizer = new ProbeAuthorizer(
+            this.userInfo, this.repository);
     }
 
     @Override
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
+    void authorize(
+        BelongsToSample data,
+        RequestMethod method
+    ) throws AuthorizationException {
         // Authorized if editing associated sample is authorized
-        return probeAuthorizer.isAuthorizedReason(
-            repository.getById(
-                Sample.class, ((BelongsToSample) data).getSampleId()),
-            RequestMethod.PUT,
-            userInfo);
+        probeAuthorizer.authorize(
+            repository.getById(Sample.class, data.getSampleId()),
+            RequestMethod.PUT);
     }
 
     @Override
-    public void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo
-    ) {
+    void setAuthAttrs(BelongsToSample object) {
         // Set readonly flag
-        super.setAuthAttrs(data, userInfo);
+        super.setAuthAttrs(object);
 
-        BelongsToSample object = (BelongsToSample) data;
         Sample sample = repository.getById(Sample.class, object.getSampleId());
 
         String mfId = sample.getMeasFacilId();

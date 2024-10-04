@@ -19,44 +19,49 @@ import de.intevation.lada.util.rest.RequestMethod;
  * Authorizer class for TagZuordnung objects.
  *
  */
-public class TagLinkMeasmAuthorizer extends BaseAuthorizer {
+class TagLinkMeasmAuthorizer extends Authorizer<TagLinkMeasm> {
 
-    MessungAuthorizer messungAuthorizer;
+    Authorizer<Measm> messungAuthorizer;
 
-    public TagLinkMeasmAuthorizer(Repository repository) {
-        super(repository);
-        messungAuthorizer = new MessungAuthorizer(repository);
+    TagLinkMeasmAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
+
+        this.messungAuthorizer = new MessungAuthorizer(
+            this.userInfo, this.repository);
     }
 
     @Override
     @SuppressWarnings("fallthrough")
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
+    void authorize(
+        TagLinkMeasm zuordnung,
+        RequestMethod method
+    ) throws AuthorizationException {
         switch (method) {
         case POST:
         case DELETE:
-            TagLinkMeasm zuordnung = (TagLinkMeasm) data;
             Tag tag = repository.getById(Tag.class, zuordnung.getTagId());
 
             if (tag.getNetworkId() == null && tag.getMeasFacilId() == null) {
-                return messungAuthorizer.isAuthorizedReason(
+                messungAuthorizer.authorize(
                     repository.getById(
                         Measm.class, zuordnung.getMeasmId()),
-                    RequestMethod.PUT,
-                    userInfo
+                    RequestMethod.PUT
                 );
+                return;
             } else if (tag.getNetworkId() != null) {
-                return userInfo.getNetzbetreiber().contains(tag.getNetworkId())
-                    ? null : I18N_KEY_FORBIDDEN;
+                if (userInfo.getNetzbetreiber().contains(tag.getNetworkId())) {
+                    return;
+                }
             } else if (tag.getMeasFacilId() != null) {
-                return userInfo.getMessstellen().contains(tag.getMeasFacilId())
-                    ? null : I18N_KEY_FORBIDDEN;
+                if (userInfo.getMessstellen().contains(tag.getMeasFacilId())) {
+                    return;
+                }
             }
         default:
-            return I18N_KEY_FORBIDDEN;
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         }
     }
 }

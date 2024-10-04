@@ -12,20 +12,25 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class NetzbetreiberAuthorizer extends BaseAuthorizer {
+class NetzbetreiberAuthorizer extends Authorizer<BelongsToNetwork> {
 
-    public NetzbetreiberAuthorizer(Repository repository) {
-        super(repository);
+    NetzbetreiberAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
     }
 
     @Override
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
-        return userInfo.getFunktionenForNetzbetreiber(
-            ((BelongsToNetwork) data).getNetworkId()).contains(4)
-            ? null : I18N_KEY_FORBIDDEN;
+    void authorize(
+        BelongsToNetwork data,
+        RequestMethod method
+    ) throws AuthorizationException {
+        if (userInfo.getFunktionenForNetzbetreiber(data.getNetworkId())
+                .contains(4)
+        ) {
+            return;
+        }
+        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
     }
 }

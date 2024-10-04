@@ -8,36 +8,43 @@
 package de.intevation.lada.util.auth;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class StatusProtAuthorizer extends MessungIdAuthorizer {
+class StatusProtAuthorizer extends Authorizer<StatusProt> {
 
-    public StatusProtAuthorizer(Repository repository) {
-        super(repository);
+    private Authorizer<Measm> messungAuthorizer;
+
+    StatusProtAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
+
+        this.messungAuthorizer = new MessungAuthorizer(userInfo, repository);
     }
 
     @Override
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
-        StatusProt status = (StatusProt) data;
+    void authorize(
+        StatusProt status,
+        RequestMethod method
+    ) throws AuthorizationException {
         switch (method) {
         case PUT:
         case DELETE:
             // StatusProt instances should never be edited or deleted
-            return I18N_KEY_FORBIDDEN;
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         case POST:
             // Is user authorized to edit status at all?
             Measm measm = repository.getById(Measm.class, status.getMeasmId());
-            messungAuthorizer.setAuthAttrs(measm, userInfo);
+            messungAuthorizer.setAuthAttrs(measm);
             if (!measm.getStatusEdit()) {
-                return I18N_KEY_FORBIDDEN;
+                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
             }
             // Check if the user is allowed to change to the requested
             // status_kombi
@@ -49,14 +56,28 @@ public class StatusProtAuthorizer extends MessungIdAuthorizer {
                     || lev == 2 && measm.getStatusEditLand()
                     || lev == 3 && measm.getStatusEditLst())
             ) {
-                return null;
+                return;
             }
-            return I18N_KEY_FORBIDDEN;
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         default:
-            return messungAuthorizer.isAuthorizedReason(
+            messungAuthorizer.authorize(
                 repository.getById(Measm.class, status.getMeasmId()),
-                method,
-                userInfo);
+                method);
         }
+    }
+
+    @Override
+    void setAuthAttrs(StatusProt status) {
+        // Set readonly flag
+        super.setAuthAttrs(status);
+
+        Sample probe = repository.getById(Measm.class, status.getMeasmId())
+            .getSample();
+        MeasFacil mst = repository.getById(
+            MeasFacil.class, probe.getMeasFacilId());
+        status.setOwner(
+            userInfo.getNetzbetreiber().contains(mst.getNetworkId())
+            && userInfo.belongsTo(
+                probe.getMeasFacilId(), probe.getApprLabId()));
     }
 }

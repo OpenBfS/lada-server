@@ -18,42 +18,47 @@ import de.intevation.lada.util.rest.RequestMethod;
  *
  * @author Alexander Woestmann <awoestmann@intevation.de>
  */
-public class TagAuthorizer extends BaseAuthorizer {
+class TagAuthorizer extends Authorizer<Tag> {
 
-    public TagAuthorizer(Repository repository) {
-        super(repository);
+    TagAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
     }
 
     @Override
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
-        Tag tag = (Tag) data;
+    void authorize(
+        Tag tag,
+        RequestMethod method
+    ) throws AuthorizationException {
         if (tag.getNetworkId() != null) {
             // Netzbetreiber tags may only be edited by stamm users
             switch (method) {
             case GET:
             case POST:
-                return userInfo.getNetzbetreiber().contains(
-                    tag.getNetworkId())
-                    ? null : I18N_KEY_FORBIDDEN;
+                if (userInfo.getNetzbetreiber().contains(tag.getNetworkId())) {
+                    return;
+                }
+                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
             case PUT:
             case DELETE:
-                return userInfo.getFunktionenForNetzbetreiber(
+                if (userInfo.getFunktionenForNetzbetreiber(
                     tag.getNetworkId()).contains(4)
-                    ? null : I18N_KEY_FORBIDDEN;
+                ) {
+                    return;
+                }
+                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
             default:
-                return I18N_KEY_FORBIDDEN;
+                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
             }
-        } else if (tag.getMeasFacilId() != null) {
+        } else if (tag.getMeasFacilId() != null
             // Tags my only be edited by members of the referenced Messstelle
-            return userInfo.getMessstellen().contains(tag.getMeasFacilId())
-                ? null : I18N_KEY_FORBIDDEN;
-        } else {
-            // Global tags (and anything unknown) can not be edited
-            return I18N_KEY_FORBIDDEN;
+            && userInfo.getMessstellen().contains(tag.getMeasFacilId())
+        ) {
+            return;
         }
+        // Global tags (and anything unknown) can not be edited
+        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
     }
 }

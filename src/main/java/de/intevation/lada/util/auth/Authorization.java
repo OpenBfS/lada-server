@@ -30,11 +30,11 @@ public interface Authorization {
 
     <T extends BaseModel> T filter(T data);
 
-    <T> T authorize(
+    <T extends BaseModel> T authorize(
         T data,
         RequestMethod method);
 
-    <T> boolean isAuthorized(
-        Object data,
+    <T extends BaseModel> boolean isAuthorized(
+        T data,
         RequestMethod method);
 }

@@ -7,47 +7,43 @@
  */
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToMpg;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.master.MeasFacil;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
+import de.intevation.lada.util.data.Repository;
 
 
-public class MpgIdAuthorizer extends BaseAuthorizer {
+class MpgIdAuthorizer extends Authorizer<BelongsToMpg> {
 
-    public MpgIdAuthorizer(Repository repository) {
-        super(repository);
+    MpgIdAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
     }
 
     @Override
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
-        BelongsToMpg object = (BelongsToMpg) data;
+    void authorize(
+        BelongsToMpg object,
+        RequestMethod method
+    ) throws AuthorizationException {
         MeasFacil mst = repository.getById(
             MeasFacil.class,
             repository.getById(Mpg.class, object.getMpgId()).getMeasFacilId());
         if (userInfo.getFunktionenForNetzbetreiber(
                 mst.getNetworkId()).contains(4)
         ) {
-            return null;
+            return;
         }
-        return I18N_KEY_FORBIDDEN;
+        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
     }
 
     @Override
-    public void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo
-    ) {
+    void setAuthAttrs(BelongsToMpg object) {
         // Set readonly flag
-        super.setAuthAttrs(data, userInfo);
+        super.setAuthAttrs(object);
 
-        BelongsToMpg object = (BelongsToMpg) data;
         object.setOwner(!object.isReadonly());
     }
 }

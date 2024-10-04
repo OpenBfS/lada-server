@@ -13,36 +13,35 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class MessprogrammAuthorizer extends BaseAuthorizer {
+class MessprogrammAuthorizer extends Authorizer<Mpg> {
 
-    public MessprogrammAuthorizer(Repository repository) {
-        super(repository);
+    MessprogrammAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
     }
 
     @Override
-    public String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo
-    ) {
+    void authorize(
+        Mpg messprogramm,
+        RequestMethod method
+    ) throws AuthorizationException {
         if (method == RequestMethod.GET) {
             // Allow read access to everybody
-            return null;
+            return;
         }
-        Mpg messprogramm = (Mpg) data;
         MeasFacil mst = repository.getById(
             MeasFacil.class, messprogramm.getMeasFacilId());
         if (!userInfo.getFunktionenForNetzbetreiber(
                 mst.getNetworkId()).contains(4)) {
-            return I18N_KEY_FORBIDDEN;
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         }
 
         if (method == RequestMethod.DELETE
             && messprogramm.getReferenceCount() > 0
         ) {
-            return I18N_KEY_CANNOTDELETE;
+            throw new AuthorizationException(I18N_KEY_CANNOTDELETE);
         }
-
-        return null;
     }
 }

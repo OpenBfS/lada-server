@@ -19,6 +19,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.validation.constraints.NotEmpty;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
@@ -101,14 +102,14 @@ public class UniversalService extends LadaService {
         @NotEmpty List<GridColConf> gridColumnValues
     ) {
         String authorizationColumnIndex = null;
-        Class<?> authorizationColumnType = null;
+        Class<? extends BaseModel> authorizationColumnType = null;
 
         /**
          * Determines the class used for authorizing result entries:
          * Later entries overrule earlier ones.
          */
-        final LinkedHashMap<String, Class<?>> hierarchy
-            = new LinkedHashMap<String, Class<?>>();
+        final LinkedHashMap<String, Class<? extends BaseModel>> hierarchy
+            = new LinkedHashMap<>();
         hierarchy.put("tagId",       Tag.class);
         hierarchy.put("mprkat",      MpgCateg.class);
         hierarchy.put("dsatzerz",    DatasetCreator.class);
