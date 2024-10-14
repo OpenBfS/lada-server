@@ -10,7 +10,6 @@ package de.intevation.lada.data;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
-
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -25,16 +24,14 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.Job.JobStatus;
-import de.intevation.lada.util.data.JobManager.JobNotFoundException;
+import de.intevation.lada.util.data.JobManager;
+import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.LadaService;
 
 /**
@@ -49,16 +46,22 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 @Path(LadaService.PATH_DATA + "asyncexport")
-public class AsyncExportService extends LadaService {
-
-    @Inject
-    private Logger logger;
+public class AsyncExportService extends AsyncLadaService {
 
     @Inject
     private ExportJobManager exportJobManager;
 
     @Inject
     I18n i18n;
+
+    /**
+     * getJobManager is used to retrieve the class specific JobManager
+     * @return JobManager
+     */
+    @Override
+    protected JobManager getJobManager(){
+        return exportJobManager;
+    }
 
     /**
      * Export data into a CSV file.
@@ -134,55 +137,6 @@ public class AsyncExportService extends LadaService {
     }
 
     /**
-     * Get the status of an export job.
-     *
-     * Output format:
-     *
-     * <pre>
-     * {
-     *    done: boolean
-     *    status: 'waiting' | 'running' | 'finished' | 'error'
-     *    message: string (optional)
-     *  }
-     * </pre>
-     *
-     * @param id Job id to check
-     * @return Json object containing the status information, status
-     *         403 if the requesting user has not created the request
-     *         or status 404 if job was not found
-     */
-    @GET
-    @Path("status/{id}")
-    public Response getStatus(
-        @PathParam("id") String id
-    ) {
-        JobStatus status;
-        UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo();
-
-        try {
-            originalCreator = exportJobManager.getJobUserInfo(id);
-            if (!originalCreator.getUserId().equals(
-                    requestingUser.getUserId())
-            ) {
-                logger.warn(String.format(
-                    "Rejected status request by user "
-                    + "#%s for job %s created by user #%s",
-                    requestingUser.getUserId(),
-                    id,
-                    originalCreator.getUserId()));
-                return Response.status(Response.Status.FORBIDDEN).build();
-            }
-
-            status = exportJobManager.getJobStatus(id);
-        } catch (JobNotFoundException jnfe) {
-            logger.info(String.format("Could not find status for job %s", id));
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.ok(status, MediaType.APPLICATION_JSON).build();
-    }
-
-    /**
      * Download a finished export file.
      * @param id Job id to download file from
      * @return Export file, status 403 if the requesting user has not created
@@ -204,7 +158,7 @@ public class AsyncExportService extends LadaService {
             if (!originalCreator.getUserId().equals(
                     requestingUser.getUserId())
             ) {
-                logger.warn(String.format(
+                this.logger.warn(String.format(
                     "Rejected download request by user %s "
                     + "for job %s created by user %s",
                     requestingUser.getUserId(),
@@ -216,12 +170,12 @@ public class AsyncExportService extends LadaService {
             filename = exportJobManager.getJobDownloadFilename(id);
             resultStream = exportJobManager.getResultFileAsStream(id);
 
-        } catch (JobNotFoundException jfe) {
-            logger.info(String.format(
+        } catch (JobManager.JobNotFoundException jfe) {
+            this.logger.info(String.format(
                 "Returning 404 for download: Could not find job %s", id));
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (FileNotFoundException fnfe) {
-            logger.error(String.format(
+            this.logger.error(String.format(
                 "Error on reading result file for job %s", id));
             return Response.status(
                 Response.Status.INTERNAL_SERVER_ERROR).build();
