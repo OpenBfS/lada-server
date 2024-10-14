@@ -11,8 +11,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 import jakarta.inject.Inject;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
@@ -31,6 +29,7 @@ import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.JobManager;
+import de.intevation.lada.rest.AsyncJobResponse;
 import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.LadaService;
 
@@ -72,7 +71,7 @@ public class AsyncExportService extends AsyncLadaService {
      */
     @POST
     @Path("csv")
-    public Response createCsvExportJob(
+    public AsyncJobResponse createCsvExportJob(
         @Valid CsvExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
@@ -80,10 +79,7 @@ public class AsyncExportService extends AsyncLadaService {
             exportJobManager.createExportJob(
                 objects.getEncoding(), objects,
                 i18n.getResourceBundle(), userInfo);
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("refId", newJobId)
-            .build();
-        return Response.ok(responseJson.toString()).build();
+        return new AsyncJobResponse(newJobId);
     }
 
     /**
@@ -95,7 +91,7 @@ public class AsyncExportService extends AsyncLadaService {
      */
     @POST
     @Path("laf")
-    public Response createLafExportJob(
+    public AsyncJobResponse createLafExportJob(
         @Valid LafExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
@@ -105,10 +101,7 @@ public class AsyncExportService extends AsyncLadaService {
                 objects,
                 i18n.getResourceBundle(),
                 userInfo);
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("refId", newJobId)
-            .build();
-        return Response.ok(responseJson.toString()).build();
+        return new AsyncJobResponse(newJobId);
     }
 
     /**
@@ -120,7 +113,7 @@ public class AsyncExportService extends AsyncLadaService {
      */
     @POST
     @Path("json")
-    public Response createJsonExportJob(
+    public AsyncJobResponse createJsonExportJob(
         @Valid QueryExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
@@ -130,10 +123,7 @@ public class AsyncExportService extends AsyncLadaService {
                 objects,
                 i18n.getResourceBundle(),
                 userInfo);
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("refId", newJobId)
-            .build();
-        return Response.ok(responseJson.toString()).build();
+        return new AsyncJobResponse(newJobId);
     }
 
     /**

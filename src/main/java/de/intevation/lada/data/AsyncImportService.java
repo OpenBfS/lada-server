@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.inject.Inject;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
@@ -32,6 +30,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.JobManager;
 import de.intevation.lada.util.data.JobManager.JobNotFoundException;
+import de.intevation.lada.rest.AsyncJobResponse;
 import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.LadaService;
 
@@ -71,7 +70,7 @@ public class AsyncImportService extends AsyncLadaService {
      */
     @POST
     @Path("laf")
-    public Response createAsyncImport(
+    public AsyncJobResponse createAsyncImport(
         @Valid LafImportParameters lafImportParameters
     ) throws BadRequestException {
         MeasFacil mst = repository.getById(
@@ -99,10 +98,7 @@ public class AsyncImportService extends AsyncLadaService {
 
         String newJobId = importJobManager.createImportJob(
             authorization.getInfo(), lafImportParameters, mst, files);
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("refId", newJobId)
-            .build();
-        return Response.ok(responseJson.toString()).build();
+        return new AsyncJobResponse(newJobId);
     }
 
     @GET
