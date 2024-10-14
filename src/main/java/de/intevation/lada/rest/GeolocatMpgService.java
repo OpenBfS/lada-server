@@ -21,9 +21,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
-import de.intevation.lada.lock.LockConfig;
-import de.intevation.lada.lock.LockType;
-import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.GeolocatMpg_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -43,13 +40,6 @@ public class GeolocatMpgService extends LadaService {
      */
     @Inject
     private Repository repository;
-
-    /**
-     * The object lock mechanism.
-     */
-    @Inject
-    @LockConfig(type = LockType.TIMESTAMP)
-    private ObjectLocker lock;
 
     /**
      * Get GeolocatMpg objects.
