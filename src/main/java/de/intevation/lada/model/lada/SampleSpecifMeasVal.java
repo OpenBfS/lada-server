@@ -15,12 +15,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -70,13 +67,6 @@ public class SampleSpecifMeasVal extends BelongsToSample
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date treeMod;
-
-    @OneToOne
-    @JoinColumn(insertable = false, updatable = false)
-    private Sample sample;
-
-    @Transient
-    private Date parentModified;
 
 
     public Integer getId() {
@@ -133,20 +123,5 @@ public class SampleSpecifMeasVal extends BelongsToSample
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    /**
-     * Check if a parent object was modified.
-     * @return timestamp when the parent was modified
-     */
-    public Date getParentModified() {
-        if (this.parentModified == null && this.sample != null) {
-            return this.sample.getTreeMod();
-        }
-        return this.parentModified;
-    }
-
-    public void setParentModified(Date parentModified) {
-        this.parentModified = parentModified;
     }
 }

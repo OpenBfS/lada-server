@@ -7,7 +7,11 @@
  */
 package de.intevation.lada.model.lada;
 
+import java.util.Date;
+
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
@@ -24,8 +28,15 @@ public abstract class BelongsToMeasm extends BaseModel {
         groups = DatabaseConstraints.class, clazz = Measm.class)
     private Integer measmId;
 
+    @OneToOne
+    @JoinColumn(insertable = false, updatable = false)
+    private Measm measm;
+
     @Transient
     private boolean owner;
+
+    @Transient
+    private Date parentModified;
 
 
     public Integer getMeasmId() {
@@ -42,5 +53,20 @@ public abstract class BelongsToMeasm extends BaseModel {
 
     public void setOwner(boolean owner) {
         this.owner = owner;
+    }
+
+    /**
+     * Check if a parent object was modified.
+     * @return timestamp when the parent was modified
+     */
+    public Date getParentModified() {
+        if (this.parentModified == null && this.measm != null) {
+            return this.measm.getTreeMod();
+        }
+        return this.parentModified;
+    }
+
+    public void setParentModified(Date parentModified) {
+        this.parentModified = parentModified;
     }
 }

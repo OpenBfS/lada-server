@@ -24,9 +24,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.lock.LockConfig;
-import de.intevation.lada.lock.LockType;
-import de.intevation.lada.lock.ObjectLocker;
+import de.intevation.lada.lock.TimestampLocker;
+import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
@@ -55,8 +54,7 @@ public class MeasValService extends LadaService {
      * The object lock mechanism.
      */
     @Inject
-    @LockConfig(type = LockType.TIMESTAMP)
-    private ObjectLocker lock;
+    private TimestampLocker<BelongsToMeasm> lock;
 
     @Inject
     private MesswertNormalizer messwertNormalizer;

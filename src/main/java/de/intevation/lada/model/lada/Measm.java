@@ -10,7 +10,6 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,13 +23,11 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.DynamicInsert;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulation1;
 import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulationNot1;
@@ -63,7 +60,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @HasMeasmStartDateRegulation1(groups = Warnings.class)
 @HasMeasmStartDateRegulationNot1(groups = Notifications.class)
 @HasObligMeasds(groups = Notifications.class)
-public class Measm extends BaseModel implements Serializable {
+public class Measm extends BelongsToSample implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -96,15 +93,6 @@ public class Measm extends BaseModel implements Serializable {
     @NotBlank(groups = Notifications.class)
     private String minSampleId;
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Sample.class)
-    private Integer sampleId;
-
-    @OneToOne
-    @JoinColumn(insertable = false, updatable = false)
-    private Sample sample;
-
     @OneToOne
     @JoinColumn(name = "status", insertable = false, updatable = false)
     private StatusProt statusProt;
@@ -125,14 +113,6 @@ public class Measm extends BaseModel implements Serializable {
     @Transient
     private Boolean statusEditLst;
 
-    @Transient
-    private Date parentModified;
-
-    @Transient
-    private boolean owner;
-
-    public Measm() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -206,19 +186,6 @@ public class Measm extends BaseModel implements Serializable {
         this.minSampleId = minSampleId;
     }
 
-    @JsonbTransient
-    public Sample getSample() {
-        return this.sample;
-    }
-
-    public Integer getSampleId() {
-        return this.sampleId;
-    }
-
-    public void setSampleId(Integer sampleId) {
-        this.sampleId = sampleId;
-    }
-
     public Date getTreeMod() {
         return this.treeMod;
     }
@@ -257,37 +224,6 @@ public class Measm extends BaseModel implements Serializable {
     }
     public void setStatusEditLst(Boolean statusEditLst) {
         this.statusEditLst = statusEditLst;
-    }
-
-    /**
-     * @return the parentModified
-     */
-    public Date getParentModified() {
-        if (this.parentModified == null && this.sample != null) {
-            return this.sample.getTreeMod();
-        }
-        return parentModified;
-    }
-
-    /**
-     * @param parentModified the parentModified to set
-     */
-    public void setParentModified(Date parentModified) {
-        this.parentModified = parentModified;
-    }
-
-    /**
-     * @return the owner
-     */
-    public boolean isOwner() {
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    public void setOwner(boolean owner) {
-        this.owner = owner;
     }
 
     public StatusProt getStatusProt() {

@@ -73,9 +73,6 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     private Date treeMod;
 
     @Transient
-    private Date parentModified;
-
-    @Transient
     private Integer statusLev;
 
     @Transient
@@ -131,20 +128,6 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     }
 
     /**
-     * @return the parentModified
-     */
-    public Date getParentModified() {
-        return parentModified;
-    }
-
-    /**
-     * @param parentModified the parentModified to set
-     */
-    public void setParentModified(Date parentModified) {
-        this.parentModified = parentModified;
-    }
-
-    /**
      * @return the status level
      */
     public Integer getStatusLev() {
@@ -171,5 +154,4 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     public void setStatusVal(Integer statusVal) {
         this.statusVal = statusVal;
     }
-
 }
