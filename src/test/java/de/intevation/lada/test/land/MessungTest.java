@@ -10,6 +10,7 @@ package de.intevation.lada.test.land;
 import java.net.URL;
 import java.util.Arrays;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Client;
@@ -75,6 +76,18 @@ public class MessungTest extends ServiceTest {
             updateFieldKey,
             "T100",
             updateFieldValue);
+
+        // Test requests with invalid sampleId values
+        final String sampleIdKey = "sampleId";
+        final JsonValue curSampleId = Json.createValue(1000),
+            invalidSampleId = Json.createValue(9999);
+        update("rest/measm/1200", sampleIdKey,
+            curSampleId, invalidSampleId,
+            Response.Status.BAD_REQUEST);
+        update("rest/measm/1200", sampleIdKey,
+            curSampleId, null,
+            Response.Status.BAD_REQUEST);
+
         getAuditTrail(
             "rest/audit/messung/1200",
             updateFieldKey,

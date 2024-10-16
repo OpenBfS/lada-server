@@ -101,8 +101,8 @@ public class ProbeTest extends ServiceTest {
         update(
             "rest/sample/1000",
             "envDescripDisplay",
-            "D: 59 04 01 00 05 05 01 02 00 00 00 00",
-            "",
+            Json.createValue("D: 59 04 01 00 05 05 01 02 00 00 00 00"),
+            Json.createValue(""),
             Status.BAD_REQUEST);
 
         // Test localized validation during sample creation

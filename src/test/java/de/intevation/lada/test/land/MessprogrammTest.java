@@ -84,8 +84,8 @@ public class MessprogrammTest extends ServiceTest {
         update(
             path,
             "envDescripDisplay",
-            "D: 50 90 01 06 02 05 00 00 00 00 00 01",
-            "D: ",
+            Json.createValue("D: 50 90 01 06 02 05 00 00 00 00 00 01"),
+            Json.createValue("D: "),
             Status.BAD_REQUEST);
 
         //Check if referencing probe still has an mpgId

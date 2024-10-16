@@ -82,7 +82,7 @@ public class TagTest extends ServiceTest {
         update(
             tagUrl + createdId,
             measFacilIdKey,
-            "06010",
+            Json.createValue("06010"),
             null,
             Status.FORBIDDEN);
     }

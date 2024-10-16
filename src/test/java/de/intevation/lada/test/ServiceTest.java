@@ -448,6 +448,29 @@ public class ServiceTest {
         return update(
             parameter,
             updateAttribute,
+            Json.createValue(oldValue),
+            Json.createValue(newValue),
+            Response.Status.OK
+        );
+    }
+
+    /**
+     * Test an update service expecting success.
+     * @param parameter the parameters used in the request.
+     * @param updateAttribute the name of the attribute to update.
+     * @param oldValue the value to replace.
+     * @param newValue the new value to set.
+     * @return The resulting json object.
+     */
+    public JsonValue update(
+        String parameter,
+        String updateAttribute,
+        JsonValue oldValue,
+        JsonValue newValue
+    ) {
+        return update(
+            parameter,
+            updateAttribute,
             oldValue,
             newValue,
             Response.Status.OK
@@ -466,10 +489,12 @@ public class ServiceTest {
     public JsonValue update(
         String parameter,
         String updateAttribute,
-        String oldValue,
-        String newValue,
+        JsonValue oldValue,
+        JsonValue newValue,
         Response.Status expectedStatus
     ) {
+        String updAttrPointer = "/" + updateAttribute;
+
         /* Request object corresponding to id in URL */
         WebTarget target = client.target(baseUrl + parameter);
         Response response = target.request()
@@ -483,7 +508,7 @@ public class ServiceTest {
         Assert.assertEquals(
             "Value in to be updated field '" + updateAttribute + "':",
             oldValue,
-            oldObject.getString(updateAttribute));
+            oldObject.getValue(updAttrPointer));
 
         /* Value replacement */
         JsonObjectBuilder updateBuilder = Json.createObjectBuilder();
@@ -521,7 +546,7 @@ public class ServiceTest {
                 updatedObject.isNull(updateAttribute));
         } else {
             Assert.assertEquals(newValue,
-                updatedObject.getString(updateAttribute));
+                updatedObject.getValue(updAttrPointer));
         }
 
         final String modTimeKey = "letzteAenderung";
