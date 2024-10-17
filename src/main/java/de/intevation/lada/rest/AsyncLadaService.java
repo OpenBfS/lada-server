@@ -8,11 +8,11 @@
 package de.intevation.lada.rest;
 
 import jakarta.inject.Inject;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.MediaType;
 
 import java.io.Serializable;
 
@@ -71,7 +71,7 @@ public abstract class AsyncLadaService extends LadaService {
      */
     @GET
     @Path("status/{id}")
-    public Response getStatus(
+    public JobStatus getStatus(
             @PathParam("id") String id) {
         JobStatus status;
         UserInfo originalCreator;
@@ -87,15 +87,15 @@ public abstract class AsyncLadaService extends LadaService {
                         requestingUser.getUserId(),
                         id,
                         originalCreator.getUserId()));
-                return Response.status(Response.Status.FORBIDDEN).build();
+                throw new ForbiddenException();
             }
 
             status = getJobManager().getJobStatus(id);
         } catch (JobNotFoundException jnfe) {
             logger.info(String.format("Could not find status for job %s", id));
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
-        return Response.ok(status, MediaType.APPLICATION_JSON).build();
+        return status;
     }
 
 }
