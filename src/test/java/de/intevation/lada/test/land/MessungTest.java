@@ -65,7 +65,8 @@ public class MessungTest extends ServiceTest {
      */
     public final void execute() {
         get("rest/measm", Response.Status.BAD_REQUEST);
-        get("rest/measm?sampleId=1000");
+        Assert.assertEquals(1,
+            get("rest/measm?sampleId=1000").asJsonArray().size());
         getById("rest/measm/1200", expectedById);
         JsonObject created = create("rest/measm", create);
 
