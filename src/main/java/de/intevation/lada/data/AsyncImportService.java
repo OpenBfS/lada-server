@@ -30,7 +30,6 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.JobManager;
 import de.intevation.lada.util.data.JobManager.JobNotFoundException;
-import de.intevation.lada.rest.AsyncJobResponse;
 import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.LadaService;
 
@@ -70,7 +69,7 @@ public class AsyncImportService extends AsyncLadaService {
      */
     @POST
     @Path("laf")
-    public AsyncJobResponse createAsyncImport(
+    public AsyncLadaService.AsyncJobResponse createAsyncImport(
         @Valid LafImportParameters lafImportParameters
     ) throws BadRequestException {
         MeasFacil mst = repository.getById(
@@ -98,7 +97,7 @@ public class AsyncImportService extends AsyncLadaService {
 
         String newJobId = importJobManager.createImportJob(
             authorization.getInfo(), lafImportParameters, mst, files);
-        return new AsyncJobResponse(newJobId);
+        return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
     @GET

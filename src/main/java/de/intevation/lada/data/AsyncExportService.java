@@ -29,7 +29,6 @@ import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.JobManager;
-import de.intevation.lada.rest.AsyncJobResponse;
 import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.LadaService;
 
@@ -71,7 +70,7 @@ public class AsyncExportService extends AsyncLadaService {
      */
     @POST
     @Path("csv")
-    public AsyncJobResponse createCsvExportJob(
+    public AsyncLadaService.AsyncJobResponse createCsvExportJob(
         @Valid CsvExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
@@ -79,7 +78,7 @@ public class AsyncExportService extends AsyncLadaService {
             exportJobManager.createExportJob(
                 objects.getEncoding(), objects,
                 i18n.getResourceBundle(), userInfo);
-        return new AsyncJobResponse(newJobId);
+        return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
     /**
@@ -91,7 +90,7 @@ public class AsyncExportService extends AsyncLadaService {
      */
     @POST
     @Path("laf")
-    public AsyncJobResponse createLafExportJob(
+    public AsyncLadaService.AsyncJobResponse createLafExportJob(
         @Valid LafExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
@@ -101,7 +100,7 @@ public class AsyncExportService extends AsyncLadaService {
                 objects,
                 i18n.getResourceBundle(),
                 userInfo);
-        return new AsyncJobResponse(newJobId);
+        return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
     /**
@@ -113,7 +112,7 @@ public class AsyncExportService extends AsyncLadaService {
      */
     @POST
     @Path("json")
-    public AsyncJobResponse createJsonExportJob(
+    public AsyncLadaService.AsyncJobResponse createJsonExportJob(
         @Valid QueryExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
@@ -123,7 +122,7 @@ public class AsyncExportService extends AsyncLadaService {
                 objects,
                 i18n.getResourceBundle(),
                 userInfo);
-        return new AsyncJobResponse(newJobId);
+        return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
     /**

@@ -13,6 +13,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.MediaType;
+
+import java.io.Serializable;
+
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.data.JobManager;
@@ -23,6 +26,19 @@ import de.intevation.lada.util.auth.UserInfo;
 public abstract class AsyncLadaService extends LadaService {
 
     protected abstract JobManager getJobManager();
+
+    public static final class AsyncJobResponse implements Serializable {
+        private final String refId;
+
+        public AsyncJobResponse(String refId) {
+            this.refId = refId;
+        }
+
+        public String getRefId() {
+            return refId;
+        }
+    }
+
 
     @Inject
     protected Logger logger;
