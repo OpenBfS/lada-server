@@ -26,6 +26,9 @@ import jakarta.ws.rs.NotFoundException;
  * Classes calling these methods have to ensure to do this inside
  * a transaction context.
  *
+ * The enclosed EntityManager can be accessed also outside a transaction
+ * context. Use with caution, if outside a transaction context!
+ *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @ApplicationScoped
@@ -103,6 +106,7 @@ public class Repository {
     /**
      * @return EntityManager associated with this Repository.
      */
+    @Transactional(Transactional.TxType.SUPPORTS)
     public EntityManager entityManager() {
         return em;
     }
