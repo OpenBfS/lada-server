@@ -10,10 +10,20 @@ package de.intevation.lada.data;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
+
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -70,6 +80,12 @@ public class AsyncExportService extends AsyncLadaService {
      */
     @POST
     @Path("csv")
+    @Operation(summary = "Create a CSV export job")
+    @APIResponse(description ="An Object containing an ID of the job (refId)",
+                 content = @Content(mediaType = "application/json",
+                 schema = @Schema(implementation = AsyncJobResponse.class)
+                )
+    )
     public AsyncLadaService.AsyncJobResponse createCsvExportJob(
         @Valid CsvExportParameters objects
     ) throws BadRequestException {
@@ -90,6 +106,12 @@ public class AsyncExportService extends AsyncLadaService {
      */
     @POST
     @Path("laf")
+    @Operation(summary = "Create a LAF export job")
+    @APIResponse(description = "An Object containing an ID of the job (refId)",
+                 content = @Content(mediaType = "application/json",
+                 schema = @Schema(implementation = AsyncJobResponse.class)
+                )
+    )
     public AsyncLadaService.AsyncJobResponse createLafExportJob(
         @Valid LafExportParameters objects
     ) throws BadRequestException {
@@ -112,6 +134,12 @@ public class AsyncExportService extends AsyncLadaService {
      */
     @POST
     @Path("json")
+    @Operation(summary = "Create a JSON export job")
+    @APIResponse(description = "An Object containing an ID of the job (refId)",
+                 content = @Content(mediaType = "application/json",
+                 schema = @Schema(implementation = AsyncJobResponse.class)
+                )
+    )
     public AsyncLadaService.AsyncJobResponse createJsonExportJob(
         @Valid QueryExportParameters objects
     ) throws BadRequestException {
@@ -134,7 +162,17 @@ public class AsyncExportService extends AsyncLadaService {
     @GET
     @Path("download/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Operation(summary = "Download a finished export file")
+    @APIResponse(description = "A file to download",
+                 content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM,
+                 schema = @Schema(implementation = String.class, format = "binary")
+                )
+    )
+    @APIResponse(responseCode = "403", description = "Forbidden Download requested")
+    @APIResponse(responseCode = "404", description = "Job not found")
+    @APIResponse(responseCode = "500", description = "Error while reading the result")
     public Response download(
+        @Parameter(description = "The id of the file ", required = true)
         @PathParam("id") String id
     ) {
         ByteArrayInputStream resultStream;
@@ -153,7 +191,7 @@ public class AsyncExportService extends AsyncLadaService {
                     requestingUser.getUserId(),
                     id,
                     originalCreator.getUserId()));
-                return Response.status(Response.Status.FORBIDDEN).build();
+                throw new ForbiddenException();
             }
 
             filename = exportJobManager.getJobDownloadFilename(id);
@@ -162,12 +200,11 @@ public class AsyncExportService extends AsyncLadaService {
         } catch (JobManager.JobNotFoundException jfe) {
             this.logger.info(String.format(
                 "Returning 404 for download: Could not find job %s", id));
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new NotFoundException();
         } catch (FileNotFoundException fnfe) {
             this.logger.error(String.format(
                 "Error on reading result file for job %s", id));
-            return Response.status(
-                Response.Status.INTERNAL_SERVER_ERROR).build();
+            throw new InternalServerErrorException();
         }
 
         return Response.ok(resultStream)

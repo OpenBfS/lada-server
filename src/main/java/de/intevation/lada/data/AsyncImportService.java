@@ -14,14 +14,20 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.core.Response;
 
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
@@ -69,6 +75,13 @@ public class AsyncImportService extends AsyncLadaService {
      */
     @POST
     @Path("laf")
+    @Operation(summary="Import a LAF document")
+    @APIResponse(description = "An Object containing an ID of the job (refId)",
+                 content = @Content(mediaType = "application/json",
+                 schema = @Schema(implementation = AsyncJobResponse.class)
+                )
+    )
+    @APIResponse(responseCode = "400", description = "Bad request")
     public AsyncLadaService.AsyncJobResponse createAsyncImport(
         @Valid LafImportParameters lafImportParameters
     ) throws BadRequestException {
@@ -90,9 +103,7 @@ public class AsyncImportService extends AsyncLadaService {
                 files.put(e.getKey(), decodedContent);
             }
         } catch (IllegalArgumentException | CharacterCodingException e) {
-            throw new BadRequestException(
-                Response.status(Response.Status.BAD_REQUEST)
-                    .entity(e.getMessage()).build());
+            throw new BadRequestException();
         }
 
         String newJobId = importJobManager.createImportJob(
@@ -102,7 +113,11 @@ public class AsyncImportService extends AsyncLadaService {
 
     @GET
     @Path("result/{id}")
-    public Response getResult(
+    @Operation(summary = "Get the result")
+    @APIResponse(description = "An ID of the job")
+    @APIResponse(responseCode = "403", description = "Forbidden Download requested")
+    @APIResponse(responseCode = "404", description = "Job not found")
+    public String getResult(
         @PathParam("id") String id
     ) {
         UserInfo originalCreator;
@@ -119,13 +134,13 @@ public class AsyncImportService extends AsyncLadaService {
                     requestingUser.getUserId(),
                     id,
                     originalCreator.getUserId()));
-                    return Response.status(Response.Status.FORBIDDEN).build();
+                    throw new ForbiddenException();
             }
-            return Response.ok(importJobManager.getImportResult(id)).build();
+            return importJobManager.getImportResult(id);
         } catch (JobNotFoundException jfe) {
             logger.info(String.format(
                 "Returning 404 for download: Could not find job %s", id));
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
     }
 }
