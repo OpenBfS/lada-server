@@ -11,8 +11,8 @@ import java.util.Date;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
@@ -29,7 +29,7 @@ public abstract class BelongsToSample extends BaseModel {
         groups = DatabaseConstraints.class, clazz = Sample.class)
     private Integer sampleId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(insertable = false, updatable = false)
     private Sample sample;
 
