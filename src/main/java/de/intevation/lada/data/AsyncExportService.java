@@ -71,13 +71,6 @@ public class AsyncExportService extends AsyncLadaService {
         return exportJobManager;
     }
 
-    /**
-     * Export data into a CSV file.
-     *
-     * @param objects Export parameters object
-     * @return Response containing the new export ref id
-     * @throws BadRequestException if any constraint violations are detected
-     */
     @POST
     @Path("csv")
     @Operation(summary = "Create a CSV export job")
@@ -97,13 +90,6 @@ public class AsyncExportService extends AsyncLadaService {
         return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
-    /**
-     * Export Sample objects into LAF files.
-     *
-     * @param objects    Export parameters object
-     * @return The job identifier.
-     * @throws BadRequestException if any constraint violations are detected
-     */
     @POST
     @Path("laf")
     @Operation(summary = "Create a LAF export job")
@@ -125,13 +111,6 @@ public class AsyncExportService extends AsyncLadaService {
         return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
-    /**
-     * Export data into a JSON file.
-     *
-     * @param objects Export parameters object
-     * @return Response containing the new export ref id
-     * @throws BadRequestException if any constraint violations are detected
-     */
     @POST
     @Path("json")
     @Operation(summary = "Create a JSON export job")
@@ -153,12 +132,6 @@ public class AsyncExportService extends AsyncLadaService {
         return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
-    /**
-     * Download a finished export file.
-     * @param id Job id to download file from
-     * @return Export file, status 403 if the requesting user has not created
-     *         the request or status 404 if job was not found
-     */
     @GET
     @Path("download/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)

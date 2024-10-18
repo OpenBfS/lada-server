@@ -63,16 +63,6 @@ public class AsyncImportService extends AsyncLadaService {
         return importJobManager;
     }
 
-    /**
-     * Import a given list of files, generate a tag and set it to all
-     * imported records.
-     *
-     * @param lafImportParameters LafImportParameters
-     * @return Object containing ID of new job
-     * @throws BadRequestException if any constraint violations are detected,
-     * file content is not in valid Base64 scheme or decoding using the encoding
-     * given in lafImportParameters fails.
-     */
     @POST
     @Path("laf")
     @Operation(summary="Import a LAF document")

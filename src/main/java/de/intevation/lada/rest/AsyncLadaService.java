@@ -49,32 +49,6 @@ public abstract class AsyncLadaService extends LadaService {
     @Inject
     protected Logger logger;
 
-    /**
-     * Retrieve the status of an export job.
-     *
-     * Output format:
-     *
-     * <pre>
-     * {
-     *    done: boolean
-     *    status: 'waiting' | 'running' | 'finished' | 'error'
-     *    message: string (optional)
-     *    errors: boolean
-     *    warnings: boolean
-     *    notifications: boolean
-     *  }
-     * </pre>
-     *
-     * Note: The 'error' status indicates errors in the server
-     * like I/O errors etc.
-     * 'errors' and 'warnings' indicate errors in the import itself,
-     * like authorization issues etc.
-     *
-     * @param id Job id to check
-     * @return Json object containing the status information, status
-     *         403 if the requesting user has not created the request
-     *         or status 404 if job was not found
-     */
     @GET
     @Path("status/{id}")
     @Operation(summary="Retrieve status of an async Job")
