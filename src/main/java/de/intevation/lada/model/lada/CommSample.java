@@ -28,7 +28,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(schema = SchemaName.NAME)
-@Unique(fields = {"text", "sampleId"},
+@Unique(fields = {"text", "sample"},
     groups = DatabaseConstraints.class, clazz = CommSample.class)
 @GroupSequence({ CommSample.class, DatabaseConstraints.class })
 public class CommSample extends BelongsToSample implements Serializable {

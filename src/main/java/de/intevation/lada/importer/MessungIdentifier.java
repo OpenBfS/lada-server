@@ -44,8 +44,8 @@ public class MessungIdentifier implements Identifier {
         if (messung.getExtId() == null
             && messung.getMinSampleId() != null
         ) {
-            builder.and(Measm_.sampleId, messung.getSampleId());
-            builder.and(Measm_.minSampleId, messung.getMinSampleId());
+            builder.and(Measm_.sample, messung.getSample())
+                .and(Measm_.minSampleId, messung.getMinSampleId());
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
             if (messungen.size() > 1) {
@@ -57,9 +57,9 @@ public class MessungIdentifier implements Identifier {
                 //TODO: QueryBuilder instance can not be reused here
                 //This may be a hibernate 6 bug, see:
                 //https://hibernate.atlassian.net/browse/HHH-15951
-                builder = repository.queryBuilder(Measm.class);
-                builder.and(Measm_.sampleId, messung.getSampleId());
-                builder.and(Measm_.mmtId, messung.getMmtId());
+                builder = repository.queryBuilder(Measm.class)
+                    .and(Measm_.sample, messung.getSample())
+                    .and(Measm_.mmtId, messung.getMmtId());
                 messungen =
                     repository.filter(builder.getQuery());
                 if (messungen.isEmpty()) {
@@ -78,8 +78,8 @@ public class MessungIdentifier implements Identifier {
             found = messungen.get(0);
             return Identified.UPDATE;
         } else if (messung.getExtId() != null) {
-            builder.and(Measm_.sampleId, messung.getSampleId());
-            builder.and(Measm_.extId, messung.getExtId());
+            builder.and(Measm_.sample, messung.getSample())
+                .and(Measm_.extId, messung.getExtId());
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
             if (messungen.size() > 1) {
@@ -93,8 +93,8 @@ public class MessungIdentifier implements Identifier {
             found = messungen.get(0);
             return Identified.UPDATE;
         } else if (messung.getMmtId() != null) {
-            builder.and(Measm_.sampleId, messung.getSampleId());
-            builder.and(Measm_.mmtId, messung.getMmtId());
+            builder.and(Measm_.sample, messung.getSample())
+                .and(Measm_.mmtId, messung.getMmtId());
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
             if (messungen.isEmpty()) {

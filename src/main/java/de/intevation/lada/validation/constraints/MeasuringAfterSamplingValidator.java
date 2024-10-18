@@ -9,15 +9,12 @@ package de.intevation.lada.validation.constraints;
 
 import java.util.Date;
 
-import jakarta.enterprise.inject.spi.CDI;
-import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.util.data.Repository;
 
 
 /**
@@ -37,24 +34,14 @@ public class MeasuringAfterSamplingValidator
     }
 
     @Override
-    @Transactional
     public boolean isValid(Measm messung, ConstraintValidatorContext ctx) {
         if (messung == null) {
             return true;
         }
 
-        Integer sampleId = messung.getSampleId();
+        Sample probe = messung.getSample();
         Date measmStartDate = messung.getMeasmStartDate();
-        if (sampleId == null || measmStartDate == null) {
-            return true;
-        }
-
-        // Get instance programmatically because dependency injection is not
-        // guaranteed to work in ConstraintValidator implementations
-        Sample probe = CDI.current().getBeanContainer().createInstance()
-            .select(Repository.class).get().entityManager()
-            .find(Sample.class, sampleId);
-        if (probe == null) {
+        if (probe == null || measmStartDate == null) {
             return true;
         }
 

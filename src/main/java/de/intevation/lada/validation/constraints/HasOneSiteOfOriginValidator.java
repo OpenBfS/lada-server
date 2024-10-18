@@ -49,7 +49,7 @@ public class HasOneSiteOfOriginValidator
             .createInstance().select(Repository.class).get();
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
-            .and(Geolocat_.sampleId, id)
+            .and(Geolocat_.sample, probe)
             .andIn(Geolocat_.typeRegulation, List.of("U", "R"));
         if (repository.filter(builder.getQuery()).size() > 1) {
             ctx.disableDefaultConstraintViolation();

@@ -10,7 +10,6 @@ package de.intevation.lada.lock;
 import java.util.Date;
 
 import de.intevation.lada.model.lada.BelongsToSample;
-import de.intevation.lada.model.lada.Sample;
 
 
 /**
@@ -21,7 +20,7 @@ public class BelongsToSampleLocker extends TimestampLocker<BelongsToSample> {
     @Override
     boolean checkIsLocked(BelongsToSample o) {
         Date ot = o.getParentModified();
-        Sample sample = repository.getById(Sample.class, o.getSampleId());
-        return ot == null || sample.getTreeMod().getTime() > ot.getTime();
+        return ot == null
+            || o.getSample().getTreeMod().getTime() > ot.getTime();
     }
 }

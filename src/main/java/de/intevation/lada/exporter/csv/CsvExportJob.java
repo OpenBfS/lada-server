@@ -84,7 +84,7 @@ public class CsvExportJob extends QueryExportJob<CsvExportParameters> {
         messungData.forEach(messung -> {
             Map<String, Object> mergedRow = transformFieldValues(messung);
             // Add primary record
-            Integer primaryId = messung.getSampleId();
+            Integer primaryId = messung.getSample().getId();
             Map<String, Object> primaryRecord = idMap.get(primaryId);
             primaryRecord.forEach((key, value) -> {
                 mergedRow.put(key, value);

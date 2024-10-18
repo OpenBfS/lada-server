@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
+import de.intevation.lada.model.lada.Sample;
 
 
 /**
@@ -100,15 +101,10 @@ public class MessungTest extends ValidatorBaseTest {
         Measm messung = createMinimalValidMeasm();
         messung.setId(null);
         messung.setMinSampleId(EXISTING_MIN_SAMPLE_ID);
-        validator.validate(messung);
-        Assert.assertTrue(messung.hasErrors());
-        MatcherAssert.assertThat(
-            messung.getErrors().keySet(),
-            CoreMatchers.hasItem(Measm_.MIN_SAMPLE_ID));
-        MatcherAssert.assertThat(
-            messung.getErrors().get(Measm_.MIN_SAMPLE_ID),
-            CoreMatchers.hasItem(
-                "Non-unique value combination for [minSampleId, sampleId]"));
+        assertHasErrors(
+            validator.validate(messung),
+            Measm_.MIN_SAMPLE_ID,
+            "Non-unique value combination for [minSampleId, sample]");
     }
 
     /**
@@ -200,7 +196,8 @@ public class MessungTest extends ValidatorBaseTest {
     @Test
     public void measmWithoutStartDateRegulation161Sample() {
         Measm measm = createMinimalValidMeasm();
-        measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
+        measm.setSample(repository.getById(
+                Sample.class, EXISTING_SAMPLE_ID_REGULATION_161));
         measm.setMeasmStartDate(null);
 
         assertHasNotifications(
@@ -230,7 +227,8 @@ public class MessungTest extends ValidatorBaseTest {
     @Test
     public void measmWithoutMeasPDRegulation161Sample() {
         Measm measm = createMinimalValidMeasm();
-        measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
+        measm.setSample(
+            repository.getById(Sample.class, EXISTING_SAMPLE_ID_REGULATION_161));
         measm.setMeasPd(null);
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
 
@@ -247,7 +245,8 @@ public class MessungTest extends ValidatorBaseTest {
     public void measmWithoutMeasPDRContSample() {
         Measm measm = createMinimalValidMeasm();
         measm.setMeasPd(null);
-        measm.setSampleId(EXISTING_SAMPLE_ID_SAMPLE_METH_CONT);
+        measm.setSample(repository.getById(
+                Sample.class, EXISTING_SAMPLE_ID_SAMPLE_METH_CONT));
 
         assertHasNotifications(
             validator.validate(measm),
@@ -333,7 +332,7 @@ public class MessungTest extends ValidatorBaseTest {
     private Measm createMinimalValidMeasm() {
         Measm measm = new Measm();
         measm.setId(EXISTING_MEASM_ID);
-        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setSample(repository.getById(Sample.class, EXISTING_SAMPLE_ID));
         measm.setMmtId(EXISTING_MMT_ID);
         measm.setMinSampleId(MIN_SAMPLE_ID_00G2);
         measm.setMeasPd(1);

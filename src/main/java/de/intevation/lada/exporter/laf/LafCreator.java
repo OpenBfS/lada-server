@@ -146,7 +146,7 @@ implements Creator {
     private String writeAttributes(Sample probe, List<Integer> messungen) {
         QueryBuilder<CommSample> kommBuilder = repository
             .queryBuilder(CommSample.class)
-            .and(CommSample_.sampleId, probe.getId());
+            .and(CommSample_.sample, probe);
         List<CommSample> kommentare = repository.filter(
             kommBuilder.getQuery());
 
@@ -162,7 +162,7 @@ implements Creator {
 
         QueryBuilder<SampleSpecifMeasVal> zusatzBuilder = repository
             .queryBuilder(SampleSpecifMeasVal.class)
-            .and(SampleSpecifMeasVal_.sampleId, probe.getId());
+            .and(SampleSpecifMeasVal_.sample, probe);
         List<SampleSpecifMeasVal> zusatzwerte =
             repository.filter(zusatzBuilder.getQuery());
 
@@ -307,7 +307,7 @@ implements Creator {
     private String writeOrt(Sample probe) {
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
-            .and(Geolocat_.sampleId, probe.getId());
+            .and(Geolocat_.sample, probe);
         List<Geolocat> orte = repository.filter(builder.getQuery());
 
         String laf = "";
@@ -381,7 +381,7 @@ implements Creator {
         } else if ("U_".equals(typePrefix)
             && "R".equals(o.getTypeRegulation())
         ) {
-            Sample s = repository.getById(Sample.class, o.getSampleId());
+            Sample s = o.getSample();
             if (s.getRegulationId() == DATENBASIS4) {
                 laf += lafLine(
                     typePrefix + "ORTS_ZUSATZCODE",
@@ -428,7 +428,7 @@ implements Creator {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         if (messungen.isEmpty()) {
             // Get all messungen
-            builder.and(Measm_.sampleId, probe.getId());
+            builder.and(Measm_.sample, probe);
         } else {
             builder.andIn(Measm_.id, messungen);
         }

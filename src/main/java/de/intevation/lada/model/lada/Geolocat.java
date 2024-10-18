@@ -35,9 +35,9 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Geolocat.class, DatabaseConstraints.class })
-@Unique(fields = {"typeRegulation", "sampleId", "siteId"},
+@Unique(fields = {"typeRegulation", "sample", "siteId"},
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
-@Unique(fields = {"sampleId"},
+@Unique(fields = {"sample"},
     predicateFields = { "typeRegulation" },
     predicateValues = { "ANY (ARRAY['E', 'R'])" },
     propertyNodeName = "typeRegulation",

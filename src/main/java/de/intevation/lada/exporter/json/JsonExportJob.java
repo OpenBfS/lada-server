@@ -61,7 +61,7 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
             Map<String, Object> mergedMessung = transformFieldValues(messung);
             //Append messung to probe
             Map<String, Object> primaryRecord = idMap.get(
-                messung.getSampleId());
+                messung.getSample().getId());
             if (primaryRecord.get(sDataJsonKey) == null) {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }

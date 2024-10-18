@@ -51,9 +51,9 @@ import de.intevation.lada.validation.groups.Warnings;
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Measm.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
-    clazz = Measm.class, fields = { "minSampleId", "sampleId" })
+    clazz = Measm.class, fields = { "minSampleId", "sample" })
 @Unique(groups = DatabaseConstraints.class,
-    clazz = Measm.class, fields = { "extId", "sampleId" })
+    clazz = Measm.class, fields = { "extId", "sample" })
 @MeasuringAfterSampling(groups = Warnings.class)
 @HasMeasPdNotSampleMeth9OrRegulation1(groups = Warnings.class)
 @HasMeasPdSampleMeth9OrRegulation1(groups = Notifications.class)

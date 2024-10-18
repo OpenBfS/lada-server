@@ -45,7 +45,7 @@ public class HasObligMeasdsValidator
     @Transactional
     @Override
     public boolean isValid(Measm messung, ConstraintValidatorContext ctx) {
-        if (messung == null || messung.getSampleId() == null) {
+        if (messung == null || messung.getSample() == null) {
             return true;
         }
 
@@ -64,20 +64,16 @@ public class HasObligMeasdsValidator
             return false;
         }
 
-        Repository repository = CDI.current().getBeanContainer()
-            .createInstance().select(Repository.class).get();
-        Sample probe = repository.entityManager().find(
-            Sample.class, messung.getSampleId());
-        if (probe == null) {
-            return true;
-        }
-
+        Sample probe = messung.getSample();
         final Integer regulationId = probe.getRegulationId();
         final String mmtId = messung.getMmtId();
         final String envMediumId = probe.getEnvMediumId();
         if (regulationId == null || mmtId == null || envMediumId == null) {
             return true;
         }
+
+        Repository repository = CDI.current().getBeanContainer()
+            .createInstance().select(Repository.class).get();
 
         // Match by complete envMediumId
         QueryBuilder<ObligMeasdMp> builder = repository

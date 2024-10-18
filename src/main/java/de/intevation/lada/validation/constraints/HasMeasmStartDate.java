@@ -7,14 +7,11 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import jakarta.enterprise.inject.spi.CDI;
-import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.util.data.Repository;
 
 
 /**
@@ -32,7 +29,6 @@ abstract class HasMeasmStartDate {
      * @param message Message to be used in case of violation
      * @return false if messung does not pass the constraint
      */
-    @Transactional
     boolean isValid(
         Measm messung,
         boolean regulation1,
@@ -40,7 +36,7 @@ abstract class HasMeasmStartDate {
         String message
     ) {
         if (messung != null
-            && messung.getSampleId() != null
+            && messung.getSample() != null
             && messung.getMeasmStartDate() == null
         ) {
             ctx.disableDefaultConstraintViolation();
@@ -48,11 +44,8 @@ abstract class HasMeasmStartDate {
                 .addPropertyNode(Measm_.MEASM_START_DATE)
                 .addConstraintViolation();
 
-            Sample probe = CDI.current().getBeanContainer()
-                .createInstance().select(Repository.class).get()
-                .entityManager().find(Sample.class, messung.getSampleId());
-            if (probe != null
-                && probe.getRegulationId() != null
+            Sample probe = messung.getSample();
+            if (probe.getRegulationId() != null
                 && probe.getRegulationId() != 1
             ) {
                 return !regulation1;

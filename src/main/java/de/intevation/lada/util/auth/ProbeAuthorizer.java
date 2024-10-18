@@ -52,7 +52,7 @@ class ProbeAuthorizer extends Authorizer<Sample> {
     ) throws AuthorizationException {
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
-            if (!anyMeasmReadOnly(probe.getId(), userInfo)
+            if (!anyMeasmReadOnly(probe, userInfo)
                 && getAuthorization(userInfo, probe)) {
                 return;
             }
@@ -76,10 +76,10 @@ class ProbeAuthorizer extends Authorizer<Sample> {
             && userInfo.belongsTo(mstId, sample.getApprLabId()));
     }
 
-    private boolean anyMeasmReadOnly(Integer sampleId, UserInfo userInfo) {
+    private boolean anyMeasmReadOnly(Sample sample, UserInfo userInfo) {
         QueryBuilder<Measm> builder = repository
             .queryBuilder(Measm.class)
-            .and(Measm_.sampleId, sampleId);
+            .and(Measm_.sample, sample);
         List<Measm> measms = repository.filter(builder.getQuery());
         for (Measm measm: measms) {
             if (!messungAuthorizer.isAuthorized(measm, RequestMethod.PUT)) {

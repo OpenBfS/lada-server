@@ -457,7 +457,7 @@ public class ProbeFactory {
         if (pZusatzs != null) {
             for (SampleSpecif pZusatz: pZusatzs) {
                 SampleSpecifMeasVal zusatz = new SampleSpecifMeasVal();
-                zusatz.setSampleId(probe.getId());
+                zusatz.setSample(probe);
                 zusatz.setSampleSpecifId(pZusatz.getId());
                 createObject(zusatz, dryrun);
                 zusatzWerts.add(zusatz.getSampleSpecifId());
@@ -469,7 +469,7 @@ public class ProbeFactory {
         ) {
             CommSample kommentar = new CommSample();
             kommentar.setDate(new Timestamp(new Date().getTime()));
-            kommentar.setSampleId(probe.getId());
+            kommentar.setSample(probe);
             kommentar.setText(messprogramm.getCommSample());
             kommentar.setMeasFacilId(messprogramm.getMeasFacilId());
 
@@ -481,7 +481,7 @@ public class ProbeFactory {
             messung.setIsCompleted(false);
             messung.setIsScheduled(true);
             messung.setMmtId(mmt.getMmtId());
-            messung.setSampleId(probe.getId());
+            messung.setSample(probe);
             createObject(messung, dryrun);
             for (int mw : mmt.getMeasds()) {
                 MeasVal wert = new MeasVal();
@@ -498,7 +498,7 @@ public class ProbeFactory {
         for (GeolocatMpg ort : orte) {
             Geolocat ortP = new Geolocat();
             ortP.setTypeRegulation(ort.getTypeRegulation());
-            ortP.setSampleId(probe.getId());
+            ortP.setSample(probe);
             ortP.setSiteId(ort.getSiteId());
             ortP.setPoiId(ort.getPoiId());
             ortP.setAddSiteText(ort.getAddSiteText());

@@ -69,7 +69,7 @@ public class LafExporter implements Exporter<LafExportParameters> {
                 Measm.class, messungId);
             List<Integer> mList = new ArrayList<>();
             mList.add(messungId);
-            laf += creator.createMessung(m.getSampleId(), mList);
+            laf += creator.createMessung(m.getSample().getId(), mList);
         }
         laf += "%ENDE%";
         InputStream in = new ByteArrayInputStream(laf.getBytes(encoding));

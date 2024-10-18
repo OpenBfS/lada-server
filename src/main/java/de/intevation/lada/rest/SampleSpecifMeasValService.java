@@ -23,6 +23,7 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.BelongsToSample;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -62,9 +63,10 @@ public class SampleSpecifMeasValService extends LadaService {
     public List<SampleSpecifMeasVal> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
-        QueryBuilder<SampleSpecifMeasVal> builder =
-            repository.queryBuilder(SampleSpecifMeasVal.class);
-        builder.and(SampleSpecifMeasVal_.sampleId, sampleId);
+        QueryBuilder<SampleSpecifMeasVal> builder = repository
+            .queryBuilder(SampleSpecifMeasVal.class)
+            .and(SampleSpecifMeasVal_.sample,
+                repository.getById(Sample.class, sampleId));
         return repository.filter(builder.getQuery());
     }
 

@@ -13,8 +13,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-import jakarta.inject.Inject;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
@@ -23,7 +21,6 @@ import org.junit.Test;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.EnvMedia;
-import de.intevation.lada.util.data.Repository;
 
 
 /**
@@ -60,9 +57,6 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final String NEW_MAIN_SAMPLE_ID = "4564567890";
     private static final String VALID_ENV_DESCRIP_DISPLAY_FOR_N71
         = "D: 10 11 12 00 00 00 00 00 00 00 00 00";
-
-    @Inject
-    private Repository repository;
 
     //Expected validation messages
     private static final String MSG_NOT_NULL = "must not be null";

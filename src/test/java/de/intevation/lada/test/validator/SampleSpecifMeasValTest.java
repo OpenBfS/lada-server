@@ -10,6 +10,7 @@ package de.intevation.lada.test.validator;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.Sample;
 
 
 /**
@@ -41,7 +42,7 @@ public class SampleSpecifMeasValTest extends ValidatorBaseTest {
 
     private SampleSpecifMeasVal createMinimumValidValue() {
         SampleSpecifMeasVal value = new SampleSpecifMeasVal();
-        value.setSampleId(1000);
+        value.setSample(repository.getById(Sample.class, 1000));
         value.setSampleSpecifId("A74");
         return value;
     }

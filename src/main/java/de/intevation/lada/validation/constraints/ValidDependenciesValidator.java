@@ -71,8 +71,7 @@ public abstract class ValidDependenciesValidator {
             || newStatusWert == 2
             || newStatusWert == 7
         ) {
-            Sample probe = repository.getById(
-                Sample.class, messung.getSampleId());
+            Sample probe = messung.getSample();
 
             Validator validator = new Validator();
 
@@ -116,7 +115,7 @@ public abstract class ValidDependenciesValidator {
             // Validate sites
             QueryBuilder<Geolocat> ortBuilder = repository
                 .queryBuilder(Geolocat.class)
-                .and(Geolocat_.sampleId, probe.getId());
+                .and(Geolocat_.sample, probe);
             List<Geolocat> assignedOrte = repository.filter(
                 ortBuilder.getQuery());
             for (Geolocat o : assignedOrte) {

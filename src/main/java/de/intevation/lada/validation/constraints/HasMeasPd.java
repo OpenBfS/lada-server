@@ -7,14 +7,11 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import jakarta.enterprise.inject.spi.CDI;
-import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.util.data.Repository;
 
 
 /**
@@ -34,7 +31,6 @@ abstract class HasMeasPd {
      * @param message Message to be used in case of violation
      * @return false if messung does not pass the constraint
      */
-    @Transactional
     boolean isValid(
         Measm messung,
         boolean sampleMeth9OrRegulation1,
@@ -42,7 +38,7 @@ abstract class HasMeasPd {
         String message
     ) {
         if (messung != null
-            && messung.getSampleId() != null
+            && messung.getSample() != null
             && messung.getMeasPd() == null
         ) {
             ctx.disableDefaultConstraintViolation();
@@ -50,15 +46,12 @@ abstract class HasMeasPd {
                 .addPropertyNode(Measm_.MEAS_PD)
                 .addConstraintViolation();
 
-            Sample probe = CDI.current().getBeanContainer()
-                .createInstance().select(Repository.class).get()
-                .entityManager().find(Sample.class, messung.getSampleId());
+            Sample probe = messung.getSample();
             //Exception for continous samples or Datenbasis = §161
-            if (probe != null
-                && (probe.getSampleMethId() != null
-                    && probe.getSampleMethId() == 9
-                    || probe.getRegulationId() != null
-                    && probe.getRegulationId() == 1)
+            if (probe.getSampleMethId() != null
+                && probe.getSampleMethId() == 9
+                || probe.getRegulationId() != null
+                && probe.getRegulationId() == 1
             ) {
                 return !sampleMeth9OrRegulation1;
             }

@@ -25,6 +25,7 @@ import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -61,7 +62,7 @@ public class MeasmService extends LadaService {
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
-            .and(Measm_.sampleId, sampleId);
+            .and(Measm_.sample, repository.getById(Sample.class, sampleId));
         return repository.filter(builder.getQuery());
     }
 

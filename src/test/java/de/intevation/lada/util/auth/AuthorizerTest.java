@@ -472,13 +472,16 @@ public class AuthorizerTest extends BaseTest {
     private static Map<Object, TestConfig> createSampleIdTestData() {
         //Test authorized sample id
         CommSample authorized = new CommSample();
-        authorized.setSampleId(SAMPLE_ID_AUTHORIZED);
+        authorized.setSample(repository.entityManager().find(
+                Sample.class, SAMPLE_ID_AUTHORIZED));
         //Test unauthorized sample id
         CommSample unauthorized = new CommSample();
-        unauthorized.setSampleId(SAMPLE_ID_UNAUTORIZED);
+        unauthorized.setSample(repository.entityManager().find(
+                Sample.class, SAMPLE_ID_UNAUTORIZED));
         //Test sample id locked by measm status
         CommSample statusLocked = new CommSample();
-            statusLocked.setSampleId(SAMPLE_ID_LOCKED_BY_STATUS);
+        statusLocked.setSample(repository.entityManager().find(
+                Sample.class, SAMPLE_ID_LOCKED_BY_STATUS));
 
         return Map.of(
             authorized, new TestConfig(true, true, true, true,

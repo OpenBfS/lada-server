@@ -380,8 +380,7 @@ public class LafObjectMapper {
                 // Create zusatzwert objects
                 List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<>();
                 for (Map<String, String> raw: object.getZusatzwerte()) {
-                    SampleSpecifMeasVal tmp =
-                        createZusatzwert(raw, newProbe.getId());
+                    SampleSpecifMeasVal tmp = createZusatzwert(raw, newProbe);
                     if (tmp != null) {
                         zusatzwerte.add(tmp);
                     }
@@ -404,7 +403,7 @@ public class LafObjectMapper {
                     // Check if we have EOrte present
                     QueryBuilder<Geolocat> builderPresentEOrte = repository
                         .queryBuilder(Geolocat.class)
-                        .and(Geolocat_.sampleId, newProbe.getId())
+                        .and(Geolocat_.sample, newProbe)
                         .and(Geolocat_.typeRegulation, "E");
                     List<Geolocat> presentEOrte =
                         repository.filter(builderPresentEOrte.getQuery());
@@ -412,7 +411,7 @@ public class LafObjectMapper {
                     // Check if we have UOrte present
                     QueryBuilder<Geolocat> builderPresentUOrte = repository
                         .queryBuilder(Geolocat.class)
-                        .and(Geolocat_.sampleId, newProbe.getId())
+                        .and(Geolocat_.sample, newProbe)
                         .and(Geolocat_.typeRegulation, "U");
                     List<Geolocat> presentUOrte =
                         repository.filter(builderPresentUOrte.getQuery());
@@ -420,7 +419,7 @@ public class LafObjectMapper {
                     // Check if we have ROrte present
                     QueryBuilder<Geolocat> builderPresentROrte = repository
                         .queryBuilder(Geolocat.class)
-                        .and(Geolocat_.sampleId, newProbe.getId())
+                        .and(Geolocat_.sample, newProbe)
                         .and(Geolocat_.typeRegulation, "R");
                     List<Geolocat> presentROrte =
                         repository.filter(builderPresentROrte.getQuery());
@@ -507,13 +506,13 @@ public class LafObjectMapper {
                     if (!rOrt) {
                         //persist general entnahmeOrt
                         if (eOrt != null) {
-                            merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
+                            merger.mergeEntnahmeOrt(newProbe, eOrt);
                         }
                         if (uOrte.size() > 0) {
                             //remove present U-Orte
                             QueryBuilder<Geolocat> builderUOrt = repository
                                 .queryBuilder(Geolocat.class)
-                                .and(Geolocat_.sampleId, newProbe.getId())
+                                .and(Geolocat_.sample, newProbe)
                                 .and(Geolocat_.typeRegulation, "U");
                             List<Geolocat> uOrteProbe =
                                 repository.filter(builderUOrt.getQuery());
@@ -522,7 +521,7 @@ public class LafObjectMapper {
                                     repository.delete(elemOrt);
                                 }
                             }
-                            merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
+                            merger.mergeUrsprungsOrte(newProbe, uOrte);
                         }
                     } else {
                         if (rOrt && presentROrte.size() == 1) {
@@ -531,7 +530,7 @@ public class LafObjectMapper {
                             // we make an update.
                             QueryBuilder<Geolocat> builderUOrt = repository
                                 .queryBuilder(Geolocat.class)
-                                .and(Geolocat_.sampleId, newProbe.getId())
+                                .and(Geolocat_.sample, newProbe)
                                 .and(Geolocat_.typeRegulation, "R");
                             List<Geolocat> uOrteProbe =
                                 repository.filter(builderUOrt.getQuery());
@@ -543,12 +542,11 @@ public class LafObjectMapper {
 
                             if ((eOrt != null)) {
                                 eOrt.setTypeRegulation(("R"));
-                                merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
+                                merger.mergeEntnahmeOrt(newProbe, eOrt);
                             }
                             if (uOrte.size() == 1 && eOrt == null) {
                                 uOrte.get(0).setTypeRegulation("R");
-                                merger.mergeUrsprungsOrte(
-                                    newProbe.getId(), uOrte);
+                                merger.mergeUrsprungsOrte(newProbe, uOrte);
                             }
                         }
                         // clean up ursprungsorte before!
@@ -556,7 +554,7 @@ public class LafObjectMapper {
                             || presentUOrte.size() > 0) {
                             QueryBuilder<Geolocat> builderUOrt = repository
                                 .queryBuilder(Geolocat.class)
-                                .and(Geolocat_.sampleId, newProbe.getId())
+                                .and(Geolocat_.sample, newProbe)
                                 .and(Geolocat_.typeRegulation, "U");
                             List<Geolocat> uOrteProbe =
                                 repository.filter(builderUOrt.getQuery());
@@ -569,12 +567,12 @@ public class LafObjectMapper {
                         if (eOrt != null) {
                             eOrt.setTypeRegulation("R");
                             //Merging the entnahmeOrt cleans it up!
-                            merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
+                            merger.mergeEntnahmeOrt(newProbe, eOrt);
                         } else if (uOrte.size() == 1) {
                             // Clean-up entnahmeOrte before merge
                             QueryBuilder<Geolocat> builderEOrt = repository
                                 .queryBuilder(Geolocat.class)
-                                .and(Geolocat_.sampleId, newProbe.getId())
+                                .and(Geolocat_.sample, newProbe)
                                 .and(Geolocat_.typeRegulation, "E");
                             List<Geolocat> eOrteProbe =
                                 repository.filter(builderEOrt.getQuery());
@@ -585,7 +583,7 @@ public class LafObjectMapper {
                             }
 
                             uOrte.get(0).setTypeRegulation("R");
-                            merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
+                            merger.mergeUrsprungsOrte(newProbe, uOrte);
                         }
                     }
                 }
@@ -608,7 +606,7 @@ public class LafObjectMapper {
                 //assign to messung objects
                 QueryBuilder<Measm> builderMessung = repository
                     .queryBuilder(Measm.class)
-                    .and(Measm_.sampleId, newProbe.getId());
+                    .and(Measm_.sample, newProbe);
                 List<Measm> messungen =
                     repository.filter(builderMessung.getQuery());
                 for (Measm messung: messungen) {
@@ -646,7 +644,7 @@ public class LafObjectMapper {
 
     private void create(LafRawData.Messung object, Sample probe) {
         Measm messung = new Measm();
-        messung.setSampleId(probe.getId());
+        messung.setSample(probe);
 
         // Fill the new messung with data
         this.configMapper.applyConfigs(object.getAttributes());
@@ -788,7 +786,7 @@ public class LafObjectMapper {
         // and it should only be a notification here
         QueryBuilder<CommSample> kommentarBuilder = repository
             .queryBuilder(CommSample.class)
-            .and(CommSample_.sampleId, probe.getId());
+            .and(CommSample_.sample, probe);
         List<CommSample> kommentarExist = repository.filter(
             kommentarBuilder.getQuery());
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
@@ -806,7 +804,7 @@ public class LafObjectMapper {
         }
 
         CommSample kommentar = new CommSample();
-        kommentar.setSampleId(probe.getId());
+        kommentar.setSample(probe);
         kommentar.setText(attributes.get("TEXT"));
         if (attributes.containsKey("MST_ID")) {
             kommentar.setMeasFacilId(attributes.get("MST_ID"));
@@ -840,12 +838,12 @@ public class LafObjectMapper {
 
     private SampleSpecifMeasVal createZusatzwert(
         Map<String, String> attributes,
-        int probeId
+        Sample sample
     ) {
         this.configMapper.applyConfigs(attributes);
 
         SampleSpecifMeasVal zusatzwert = new SampleSpecifMeasVal();
-        zusatzwert.setSampleId(probeId);
+        zusatzwert.setSample(sample);
 
         if (attributes.containsKey("MESSFEHLER")) {
             zusatzwert.setError(
@@ -1240,7 +1238,7 @@ public class LafObjectMapper {
 
     private void createReiMesspunkt(LafRawData.Sample object, Sample probe) {
         QueryBuilder<Geolocat> builder = repository.queryBuilder(Geolocat.class)
-            .and(Geolocat_.sampleId, probe.getId());
+            .and(Geolocat_.sample, probe);
         List<Geolocat> zuordnungen =
             repository.filter(builder.getQuery());
         if (!zuordnungen.isEmpty()) {
@@ -1262,7 +1260,7 @@ public class LafObjectMapper {
             if (!messpunkte.isEmpty()) {
                 Geolocat ort = new Geolocat();
                 ort.setTypeRegulation("R");
-                ort.setSampleId(probe.getId());
+                ort.setSample(probe);
                 ort.setSiteId(messpunkte.get(0).getId());
                 ort.setPoiId(messpunkte.get(0).getPoiId());
                 if (uo.containsKey("U_ORTS_ZUSATZTEXT")) {
@@ -1313,7 +1311,7 @@ public class LafObjectMapper {
                         Geolocat ort = new Geolocat();
                         ort.setSiteId(o.getId());
                         ort.setTypeRegulation("R");
-                        ort.setSampleId(probe.getId());
+                        ort.setSample(probe);
                         ort.setPoiId(o.getPoiId());
 
                         repository.create(ort);
@@ -1351,7 +1349,7 @@ public class LafObjectMapper {
             Geolocat ort = new Geolocat();
             ort.setSiteId(o.getId());
             ort.setTypeRegulation("R");
-            ort.setSampleId(probe.getId());
+            ort.setSample(probe);
             if (uort.size() > 0
                 && uort.get(0).containsKey("U_ORTS_ZUSATZCODE")
             ) {
@@ -1376,7 +1374,7 @@ public class LafObjectMapper {
         }
         Geolocat ort = new Geolocat();
         ort.setTypeRegulation(type);
-        ort.setSampleId(probe.getId());
+        ort.setSample(probe);
         if (type.equals("E")) {
             type = "P";
         }

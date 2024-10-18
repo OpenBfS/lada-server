@@ -158,9 +158,9 @@ public class ObjectMerger {
         QueryBuilder<SampleSpecifMeasVal> builder =
             repository.queryBuilder(SampleSpecifMeasVal.class);
         for (int i = 0; i < zusatzwerte.size(); i++) {
-            builder.and(SampleSpecifMeasVal_.sampleId, target.getId());
-            builder.and(SampleSpecifMeasVal_.sampleSpecifId,
-                zusatzwerte.get(i).getSampleSpecifId());
+            builder.and(SampleSpecifMeasVal_.sample, target)
+                .and(SampleSpecifMeasVal_.sampleSpecifId,
+                    zusatzwerte.get(i).getSampleSpecifId());
             List<SampleSpecifMeasVal> found =
                 repository.filter(builder.getQuery());
             if (found.isEmpty()) {
@@ -228,18 +228,18 @@ public class ObjectMerger {
 
     /**
      * Merge entnahme orte.
-     * @param probeId the probe id
+     * @param sample the sample
      * @param ort the ortszuordnung
      * @return the merger instance
      */
     public ObjectMerger mergeEntnahmeOrt(
-        int probeId,
+        Sample sample,
         Geolocat ort
     ) {
-        QueryBuilder<Geolocat> builder =
-            repository.queryBuilder(Geolocat.class);
-        builder.and(Geolocat_.sampleId, probeId);
-        builder.and(Geolocat_.typeRegulation, "E");
+        QueryBuilder<Geolocat> builder = repository
+            .queryBuilder(Geolocat.class)
+            .and(Geolocat_.sample, sample)
+            .and(Geolocat_.typeRegulation, "E");
         List<Geolocat> found =
             repository.filter(builder.getQuery());
         if (found.isEmpty()) {
@@ -266,20 +266,20 @@ public class ObjectMerger {
 
     /**
      * Merge entnahme orte.
-     * @param probeId the probe id
+     * @param sample the sample
      * @param orte the ortszuordnung list
      * @return the merger instance
      */
     public ObjectMerger mergeUrsprungsOrte(
-        int probeId,
+        Sample sample,
         List<Geolocat> orte
     ) {
         QueryBuilder<Geolocat> builder =
             repository.queryBuilder(Geolocat.class);
         for (int i = 0; i < orte.size(); i++) {
-            builder.and(Geolocat_.sampleId, probeId);
-            builder.and(Geolocat_.typeRegulation, "U");
-            builder.and(Geolocat_.siteId, orte.get(i).getSiteId());
+            builder.and(Geolocat_.sample, sample)
+                .and(Geolocat_.typeRegulation, "U")
+                .and(Geolocat_.siteId, orte.get(i).getSiteId());
             List<Geolocat> found =
                 repository.filter(builder.getQuery());
             if (found.isEmpty()) {

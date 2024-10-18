@@ -34,7 +34,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ SampleSpecifMeasVal.class, DatabaseConstraints.class })
-@Unique(fields = {"sampleSpecifId", "sampleId"},
+@Unique(fields = {"sampleSpecifId", "sample"},
     groups = DatabaseConstraints.class, clazz = SampleSpecifMeasVal.class)
 @SampleSpecifMatchesEnvMedium(groups = Warnings.class)
 public class SampleSpecifMeasVal extends BelongsToSample

@@ -53,9 +53,7 @@ class MessungAuthorizer extends Authorizer<Measm> {
         Measm messung,
         RequestMethod method
     ) throws AuthorizationException {
-        Sample probe =
-            repository.getById(
-                Sample.class, messung.getSampleId());
+        Sample probe = messung.getSample();
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
             if (!this.isMeasmReadOnly(messung.getId())
@@ -88,7 +86,7 @@ class MessungAuthorizer extends Authorizer<Measm> {
         // Set readonly flag
         super.setAuthAttrs(messung);
 
-        Sample probe = repository.getById(Sample.class, messung.getSampleId());
+        Sample probe = messung.getSample();
         MeasFacil mst = repository.getById(
             MeasFacil.class, probe.getMeasFacilId());
 

@@ -144,7 +144,7 @@ public class MeasValService extends LadaService {
         Measm messung = repository.getById(Measm.class, measmId);
         authorization.authorize(messung, RequestMethod.PUT);
 
-        Sample probe = repository.getById(Sample.class, messung.getSampleId());
+        Sample probe = messung.getSample();
         if (probe.getEnvMediumId() == null) {
             throw new ClientErrorException(jakarta.ws.rs.core.Response
                 .status(Status.CONFLICT)

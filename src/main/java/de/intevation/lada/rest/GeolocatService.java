@@ -25,6 +25,7 @@ import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -63,7 +64,7 @@ public class GeolocatService extends LadaService {
     ) {
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
-            .and(Geolocat_.sampleId, sampleId);
+            .and(Geolocat_.sample, repository.getById(Sample.class, sampleId));
         return repository.filter(builder.getQuery());
     }
 

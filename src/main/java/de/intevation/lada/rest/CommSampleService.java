@@ -23,6 +23,7 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.CommSample_;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -53,9 +54,10 @@ public class CommSampleService extends LadaService {
     public List<CommSample> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
-        QueryBuilder<CommSample> builder =
-            repository.queryBuilder(CommSample.class);
-        builder.and(CommSample_.sampleId, sampleId);
+        QueryBuilder<CommSample> builder = repository
+            .queryBuilder(CommSample.class)
+            .and(CommSample_.sample,
+                repository.getById(Sample.class, sampleId));
         return repository.filter(builder.getQuery());
     }
 

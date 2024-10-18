@@ -252,10 +252,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         final ObjectMapper mapper = createObjectMapper();
         ArrayNode json = mapper.createArrayNode();
         for (Measm m : messungen) {
-            Sample p = repository.getById(
-                Sample.class,
-                m.getSampleId()
-            );
+            Sample p = m.getSample();
             try {
                 String tmp = mapper.writeValueAsString(p);
                 JsonNode jsProbe = mapper.readTree(tmp);
@@ -275,9 +272,9 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
                 mArry.add(jsMessung);
                 ((ObjectNode) jsProbe).set("measms", mArry);
                 addKommentare(jsProbe);
-                addZusatzwerte(jsProbe);
+                addZusatzwerte(jsProbe, p);
                 addDeskriptoren(jsProbe);
-                addOrtszuordung(jsProbe);
+                addOrtszuordung(jsProbe, p);
                 addMessstelle(jsProbe);
                 json.add(jsProbe);
             } catch (IOException e) {
@@ -311,9 +308,9 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
                 addProbeninfo(nodes.get(i));
                 addMessungen(nodes.get(i));
                 addKommentare(nodes.get(i));
-                addZusatzwerte(nodes.get(i));
+                addZusatzwerte(nodes.get(i), proben.get(i));
                 addDeskriptoren(nodes.get(i));
-                addOrtszuordung(nodes.get(i));
+                addOrtszuordung(nodes.get(i), proben.get(i));
                 addMessstelle(nodes.get(i));
             }
             return mapper.writeValueAsString(nodes);
@@ -454,10 +451,10 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         }
     }
 
-    private void addZusatzwerte(JsonNode probe) {
-        QueryBuilder<SampleSpecifMeasVal> builder =
-            repository.queryBuilder(SampleSpecifMeasVal.class);
-        builder.and(SampleSpecifMeasVal_.sampleId, probe.get("id").asInt());
+    private void addZusatzwerte(JsonNode probe, Sample sample) {
+        QueryBuilder<SampleSpecifMeasVal> builder = repository
+            .queryBuilder(SampleSpecifMeasVal.class)
+            .and(SampleSpecifMeasVal_.sample, sample);
         List<SampleSpecifMeasVal> zusatzwerte =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -631,10 +628,10 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         }
     }
 
-    private void addOrtszuordung(JsonNode node) {
-        QueryBuilder<Geolocat> builder =
-            repository.queryBuilder(Geolocat.class);
-        builder.and(Geolocat_.sampleId, node.get("id").asInt());
+    private void addOrtszuordung(JsonNode node, Sample sample) {
+        QueryBuilder<Geolocat> builder = repository
+            .queryBuilder(Geolocat.class)
+            .and(Geolocat_.sample, sample);
         List<Geolocat> ortszuordnung =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();

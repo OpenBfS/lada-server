@@ -11,7 +11,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +23,8 @@ import jakarta.enterprise.inject.spi.CDI;
 import jakarta.persistence.Id;
 import jakarta.persistence.Query;
 import jakarta.persistence.Table;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.EntityType;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -38,6 +39,8 @@ import de.intevation.lada.util.data.Repository;
  */
 public class UniqueValidator implements ConstraintValidator<Unique, Object> {
 
+    private static final String ID_SUFFIX = "Id";
+
     private static final String EXISTS_QUERY_TEMPLATE =
         "SELECT EXISTS(SELECT 1 FROM %s WHERE %s)";
 
@@ -45,6 +48,8 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
     private String[] predicateFields;
     private String[] predicateValues;
     private boolean[] predicateIsNull;
+
+    private EntityType<?> entityType;
 
     private Map<String, Method> fieldGetters = new HashMap<>();
 
@@ -64,6 +69,10 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
         this.predicateFields = constraintAnnotation.predicateFields();
         this.predicateValues = constraintAnnotation.predicateValues();
         this.predicateIsNull = constraintAnnotation.predicateIsNull();
+
+        this.entityType = CDI.current().getBeanContainer().createInstance()
+            .select(Repository.class).get().entityManager().getMetamodel()
+            .entity(clazz);
 
         try {
             // Getter methods for fields given in annotation
@@ -97,9 +106,12 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
             // value combination for fields making up the UNIQUE constraint
             // respectively partial UNIQUE constraint, if predicate is given.
             List<String> whereClauseParams = new ArrayList<>();
-            for (int i = 0; i < fields.length; i++) {
-                whereClauseParams.add(NamingStrategy.camelToSnake(fields[i])
-                    + "=" + param(fields[i]));
+            for (String field: fields) {
+                if (entityType.getAttribute(field).isAssociation()) {
+                    field += ID_SUFFIX;
+                }
+                whereClauseParams.add(NamingStrategy.camelToSnake(field)
+                    + "=" + param(field));
             }
             whereClauseParams.add(
                 NamingStrategy.camelToSnake(idField)
@@ -157,8 +169,13 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
                     Boolean.class);
             exists.setParameter(this.idField, this.idGetter.invoke(entity));
             for (String field: this.fieldGetters.keySet()) {
-                exists.setParameter(
-                    field, this.fieldGetters.get(field).invoke(entity));
+                Object param = this.fieldGetters.get(field).invoke(entity);
+                Attribute<?, ?> attr = entityType.getAttribute(field);
+                if (attr.isAssociation()) {
+                    param = attr.getJavaType().getMethod("getId").invoke(param);
+                    field += ID_SUFFIX;
+                }
+                exists.setParameter(field, param);
             }
             boolean isValid = !(Boolean) exists.getSingleResult();
             if (!isValid) {
@@ -168,7 +185,7 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
                     .addConstraintViolation();
             }
             return isValid;
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (ReflectiveOperationException e) {
             return false;
         }
     }

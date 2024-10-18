@@ -165,7 +165,7 @@ public class AuditTrailService extends LadaService {
         //Get ort ids connected to this probe
         QueryBuilder<Geolocat> refBuilder = repository
             .queryBuilder(Geolocat.class)
-            .and(Geolocat_.sampleId, pId);
+            .and(Geolocat_.sample, probe);
         List<Integer> ortIds = new LinkedList<Integer>();
         for (Geolocat zuordnung
             : repository.filter(refBuilder.getQuery())
@@ -303,8 +303,7 @@ public class AuditTrailService extends LadaService {
     ) {
         Measm messung = repository.getById(Measm.class, mId);
 
-        Sample probe =
-            repository.getById(Sample.class, messung.getSampleId());
+        Sample probe = messung.getSample();
         UserInfo userInfo = authorization.getInfo();
         QueryBuilder<AuditTrailMeasmView> builder = repository
             .queryBuilder(AuditTrailMeasmView.class)

@@ -231,7 +231,7 @@ public class ImporterTest extends BaseTest {
     @Transactional
     public final void identifyMessungByNpNr() throws Exception {
         Measm messung = new Measm();
-        messung.setSampleId(PID1000);
+        messung.setSample(repository.getById(Sample.class, PID1000));
         messung.setMinSampleId("06A0");
 
         Identified found = messungIdentifier.find(messung);
@@ -246,7 +246,7 @@ public class ImporterTest extends BaseTest {
     @Transactional
     public final void identifyMessungByNpNrNew() throws Exception {
         Measm messung = new Measm();
-        messung.setSampleId(PID1000);
+        messung.setSample(repository.getById(Sample.class, PID1000));
         messung.setMinSampleId("06A1");
 
         Identified found = messungIdentifier.find(messung);
@@ -261,7 +261,7 @@ public class ImporterTest extends BaseTest {
     @Transactional
     public final void identifyMessungByExterneMessungsId() throws Exception {
         Measm messung = new Measm();
-        messung.setSampleId(PID1000);
+        messung.setSample(repository.getById(Sample.class, PID1000));
         messung.setExtId(1);
 
         Identified found = messungIdentifier.find(messung);
@@ -276,7 +276,7 @@ public class ImporterTest extends BaseTest {
     @Transactional
     public final void identifyMessungByExterneMessungsIdNew() throws Exception {
         Measm messung = new Measm();
-        messung.setSampleId(PID1000);
+        messung.setSample(repository.getById(Sample.class, PID1000));
         messung.setExtId(2);
 
         Identified found = messungIdentifier.find(messung);
@@ -294,7 +294,7 @@ public class ImporterTest extends BaseTest {
     public final void identifyMessungByExterneMessungsIdReject()
     throws Exception {
         Measm messung = new Measm();
-        messung.setSampleId(PID1000);
+        messung.setSample(repository.getById(Sample.class, PID1000));
         messung.setExtId(1);
         messung.setMinSampleId("06A2");
 
@@ -311,7 +311,7 @@ public class ImporterTest extends BaseTest {
     public final void identifyMessungByExterneMessungsIdUpdate()
     throws Exception {
         Measm messung = new Measm();
-        messung.setSampleId(PID1000);
+        messung.setSample(repository.getById(Sample.class, PID1000));
         messung.setExtId(1);
         messung.setMinSampleId("");
 
@@ -390,20 +390,20 @@ public class ImporterTest extends BaseTest {
         Sample probe = repository.getById(Sample.class, PID1000);
         List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<SampleSpecifMeasVal>();
         SampleSpecifMeasVal wert1 = new SampleSpecifMeasVal();
-        wert1.setSampleId(PID1000);
+        wert1.setSample(repository.getById(Sample.class, PID1000));
         wert1.setError(MESSFEHLER12F);
         wert1.setSmallerThan("<");
         wert1.setSampleSpecifId("A74");
 
         SampleSpecifMeasVal wert2 = new SampleSpecifMeasVal();
-        wert2.setSampleId(PID1000);
+        wert2.setSample(repository.getById(Sample.class, PID1000));
         wert2.setError(MESSFEHLER02F);
         wert2.setMeasVal(MESS18D);
         wert1.setSmallerThan(null);
         wert2.setSampleSpecifId("A75");
 
         SampleSpecifMeasVal wert3 = new SampleSpecifMeasVal();
-        wert3.setSampleId(PID1000);
+        wert3.setSample(repository.getById(Sample.class, PID1000));
         wert3.setError(MESSFEHLER02F);
         wert3.setMeasVal(MESS18D);
         wert1.setSmallerThan(null);

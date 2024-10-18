@@ -10,6 +10,7 @@ package de.intevation.lada.test.validator;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.Sample;
 
 
 /**
@@ -29,7 +30,7 @@ public class CommSampleTest extends ValidatorBaseTest {
     @Test
     public void commentDuplicateText() {
         CommSample comm = new CommSample();
-        comm.setSampleId(EXISTING_SAMPLE_ID);
+        comm.setSample(repository.getById(Sample.class, EXISTING_SAMPLE_ID));
         comm.setText(COMMENT_TEXT_EXISTING);
         comm.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
 
@@ -37,7 +38,7 @@ public class CommSampleTest extends ValidatorBaseTest {
         assertHasErrors(
             comm,
             "text",
-            "Non-unique value combination for [text, sampleId]");
+            "Non-unique value combination for [text, sample]");
     }
 
     /**
@@ -46,7 +47,7 @@ public class CommSampleTest extends ValidatorBaseTest {
     @Test
     public void commentUniqueText() {
         CommSample comm = new CommSample();
-        comm.setSampleId(EXISTING_SAMPLE_ID);
+        comm.setSample(repository.getById(Sample.class, EXISTING_SAMPLE_ID));
         comm.setText(COMMENT_TEXT_NEW);
         comm.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
 

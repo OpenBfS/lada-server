@@ -25,6 +25,8 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.Filter;
 import de.intevation.lada.model.master.FilterType;
 import de.intevation.lada.model.master.FilterType_;
@@ -253,9 +255,14 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         //Get subdata
         switch (this.idType) {
             case "probeId":
+                QueryBuilder<Sample> sampleBuilder = repository
+                    .queryBuilder(Sample.class)
+                    .andIn(Sample_.id, idMap.keySet());
+                List<Sample> samples =
+                    repository.filter(sampleBuilder.getQuery());
                 QueryBuilder<Measm> messungBuilder = repository
                     .queryBuilder(Measm.class)
-                    .andIn(Measm_.sampleId, idMap.keySet());
+                    .andIn(Measm_.sample, samples);
                 return mergeMessungData(
                     idMap,
                     repository.filter(messungBuilder.getQuery()));

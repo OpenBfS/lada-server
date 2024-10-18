@@ -70,7 +70,7 @@ public class HasSamplingLocationSampleValidator
             : List.of(TYPE_REG_E, TYPE_REG_R);
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
-            .and(Geolocat_.sampleId, id)
+            .and(Geolocat_.sample, probe)
             .andIn(Geolocat_.typeRegulation, expectedTypeRegs);
         if (repository.filter(builder.getQuery()).isEmpty()) {
             return false;

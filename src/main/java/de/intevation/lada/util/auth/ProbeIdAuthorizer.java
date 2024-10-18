@@ -34,9 +34,7 @@ class ProbeIdAuthorizer extends Authorizer<BelongsToSample> {
         RequestMethod method
     ) throws AuthorizationException {
         // Authorized if editing associated sample is authorized
-        probeAuthorizer.authorize(
-            repository.getById(Sample.class, data.getSampleId()),
-            RequestMethod.PUT);
+        probeAuthorizer.authorize(data.getSample(), RequestMethod.PUT);
     }
 
     @Override
@@ -44,7 +42,7 @@ class ProbeIdAuthorizer extends Authorizer<BelongsToSample> {
         // Set readonly flag
         super.setAuthAttrs(object);
 
-        Sample sample = repository.getById(Sample.class, object.getSampleId());
+        Sample sample = object.getSample();
 
         String mfId = sample.getMeasFacilId();
         MeasFacil mst = repository.getById(MeasFacil.class, mfId);

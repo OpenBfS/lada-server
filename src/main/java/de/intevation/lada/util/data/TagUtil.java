@@ -125,7 +125,7 @@ public class TagUtil {
             .getQuery());
         List<Measm> messungs = repository.filter(
             repository.queryBuilder(Measm.class)
-                .andIn(Measm_.sampleId, probeIds)
+                .andIn(Measm_.sample, probes)
                 .getQuery());
 
         //Set tags

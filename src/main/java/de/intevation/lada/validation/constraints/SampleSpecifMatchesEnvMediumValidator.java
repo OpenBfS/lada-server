@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.model.master.EnvSpecifMp;
@@ -46,20 +45,15 @@ public class SampleSpecifMatchesEnvMediumValidator implements
         SampleSpecifMeasVal zusW,
         ConstraintValidatorContext ctx
     ) {
-        if (zusW != null && zusW.getSampleId() != null) {
+        if (zusW != null && zusW.getSample() != null) {
             Repository repository = CDI.current().getBeanContainer()
                 .createInstance().select(Repository.class).get();
-
-            Sample probe = repository.entityManager().find(
-                Sample.class, zusW.getSampleId());
-            if (probe == null) {
-                return true;
-            }
 
             QueryBuilder<EnvSpecifMp> builderUmwZus = repository
                 .queryBuilder(EnvSpecifMp.class)
                 .and(EnvSpecifMp_.sampleSpecifId, zusW.getSampleSpecifId())
-                .and(EnvSpecifMp_.envMediumId, probe.getEnvMediumId());
+                .and(EnvSpecifMp_.envMediumId,
+                    zusW.getSample().getEnvMediumId());
             List<EnvSpecifMp> umwZus = repository.filter(
                 builderUmwZus.getQuery());
             if (umwZus.isEmpty()) {

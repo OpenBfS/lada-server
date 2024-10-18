@@ -9,28 +9,41 @@ package de.intevation.lada.model.lada;
 
 import java.util.Date;
 
-import jakarta.json.bind.annotation.JsonbTransient;
-import jakarta.persistence.JoinColumn;
+import jakarta.json.bind.adapter.JsonbAdapter;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbTypeAdapter;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
 @MappedSuperclass
 public abstract class BelongsToSample extends BaseModel {
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Sample.class)
-    private Integer sampleId;
+    private static class SampleToId implements JsonbAdapter<Sample, Integer> {
+        @PersistenceContext
+        EntityManager em;
 
+        @Override
+        public Sample adaptFromJson(Integer id) {
+            return em.find(Sample.class, id);
+        }
+
+        @Override
+        public Integer adaptToJson(Sample samp) {
+            return samp.getId();
+        }
+    }
+
+    @JsonbProperty("sampleId")
+    @JsonbTypeAdapter(SampleToId.class)
+    @NotNull
     @ManyToOne
-    @JoinColumn(insertable = false, updatable = false)
     private Sample sample;
 
     @Transient
@@ -40,17 +53,12 @@ public abstract class BelongsToSample extends BaseModel {
     private Date parentModified;
 
 
-    public Integer getSampleId() {
-        return this.sampleId;
-    }
-
-    public void setSampleId(Integer sampleId) {
-        this.sampleId = sampleId;
-    }
-
-    @JsonbTransient
     public Sample getSample() {
         return this.sample;
+    }
+
+    public void setSample(Sample sample) {
+        this.sample = sample;
     }
 
     public boolean isOwner() {
