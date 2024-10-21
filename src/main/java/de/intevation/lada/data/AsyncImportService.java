@@ -15,9 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -66,12 +63,6 @@ public class AsyncImportService extends AsyncLadaService {
     @POST
     @Path("laf")
     @Operation(summary="Import a LAF document")
-    @APIResponse(description = "An Object containing an ID of the job (refId)",
-                 content = @Content(mediaType = "application/json",
-                 schema = @Schema(implementation = AsyncJobResponse.class)
-                )
-    )
-    @APIResponse(responseCode = "400", description = "Bad request")
     public AsyncLadaService.AsyncJobResponse createAsyncImport(
         @Valid LafImportParameters lafImportParameters
     ) throws BadRequestException {
@@ -104,9 +95,6 @@ public class AsyncImportService extends AsyncLadaService {
     @GET
     @Path("result/{id}")
     @Operation(summary = "Get the result")
-    @APIResponse(description = "An ID of the job")
-    @APIResponse(responseCode = "403", description = "Forbidden Download requested")
-    @APIResponse(responseCode = "404", description = "Job not found")
     public String getResult(
         @PathParam("id") String id
     ) {

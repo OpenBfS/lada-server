@@ -74,11 +74,6 @@ public class AsyncExportService extends AsyncLadaService {
     @POST
     @Path("csv")
     @Operation(summary = "Create a CSV export job")
-    @APIResponse(description ="An Object containing an ID of the job (refId)",
-                 content = @Content(mediaType = "application/json",
-                 schema = @Schema(implementation = AsyncJobResponse.class)
-                )
-    )
     public AsyncLadaService.AsyncJobResponse createCsvExportJob(
         @Valid CsvExportParameters objects
     ) throws BadRequestException {
@@ -93,11 +88,6 @@ public class AsyncExportService extends AsyncLadaService {
     @POST
     @Path("laf")
     @Operation(summary = "Create a LAF export job")
-    @APIResponse(description = "An Object containing an ID of the job (refId)",
-                 content = @Content(mediaType = "application/json",
-                 schema = @Schema(implementation = AsyncJobResponse.class)
-                )
-    )
     public AsyncLadaService.AsyncJobResponse createLafExportJob(
         @Valid LafExportParameters objects
     ) throws BadRequestException {
@@ -114,11 +104,6 @@ public class AsyncExportService extends AsyncLadaService {
     @POST
     @Path("json")
     @Operation(summary = "Create a JSON export job")
-    @APIResponse(description = "An Object containing an ID of the job (refId)",
-                 content = @Content(mediaType = "application/json",
-                 schema = @Schema(implementation = AsyncJobResponse.class)
-                )
-    )
     public AsyncLadaService.AsyncJobResponse createJsonExportJob(
         @Valid QueryExportParameters objects
     ) throws BadRequestException {
@@ -145,7 +130,7 @@ public class AsyncExportService extends AsyncLadaService {
     @APIResponse(responseCode = "404", description = "Job not found")
     @APIResponse(responseCode = "500", description = "Error while reading the result")
     public Response download(
-        @Parameter(description = "The id of the file ", required = true)
+        @Parameter(description = "The id of the job ", required = true)
         @PathParam("id") String id
     ) {
         ByteArrayInputStream resultStream;

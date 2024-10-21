@@ -14,13 +14,8 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
-import java.io.Serializable;
-
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.data.JobManager;
@@ -32,8 +27,7 @@ public abstract class AsyncLadaService extends LadaService {
 
     protected abstract JobManager getJobManager();
 
-    @Schema(name="AsyncJobResponse", description = "DTO carryin refID of Jobs")
-    public static final class AsyncJobResponse implements Serializable {
+    public static final class AsyncJobResponse {
         private final String refId;
 
         public AsyncJobResponse(String refId) {
@@ -51,14 +45,7 @@ public abstract class AsyncLadaService extends LadaService {
 
     @GET
     @Path("status/{id}")
-    @Operation(summary="Retrieve status of an async Job")
-    @APIResponse(description = "A JobStatus",
-                 content = @Content(mediaType = "application/json",
-                 schema = @Schema(implementation = JobStatus.class)
-                )
-    )
-    @APIResponse(responseCode = "403", description = "Forbidden Job requested")
-    @APIResponse(responseCode = "404", description = "Job not found")
+    @Operation(summary = "Retrieve status of an async Job")
     public JobStatus getStatus(
             @Parameter(description = "The id of the job ", required = true)
             @PathParam("id") String id) {
