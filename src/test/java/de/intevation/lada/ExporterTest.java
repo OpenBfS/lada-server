@@ -485,13 +485,13 @@ public class ExporterTest extends BaseTest {
         JsonObject exportCreatedObject =
             parseResponse(exportCreated).asJsonObject();
 
-        final String refIdKey = "refId";
-        assertContains(exportCreatedObject, refIdKey);
-        String refId = exportCreatedObject.getString(refIdKey);
+        final String jobIdKey = "jobId";
+        assertContains(exportCreatedObject, jobIdKey);
+        String jobId = exportCreatedObject.getString(jobIdKey);
 
         /* Request status of asynchronous export */
         SyncInvoker statusRequest = client.target(
-            baseUrl + "data/asyncexport/status/" + refId)
+            baseUrl + "data/asyncexport/status/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -519,7 +519,7 @@ public class ExporterTest extends BaseTest {
             expectedStatus.name().toLowerCase(),
             exportStatusObject.getString(statusKey));
 
-        return refId;
+        return jobId;
     }
 
     private JsonObject runJSONExportTest(
@@ -532,12 +532,12 @@ public class ExporterTest extends BaseTest {
     private String runExportTest(
         URL baseUrl, String format, JsonObject requestJson
     ) throws InterruptedException {
-        String refId = startExport(
+        String jobId = startExport(
             baseUrl, format, requestJson, Job.Status.FINISHED);
 
         /* Request export result */
         Response download = client.target(
-            baseUrl + "data/asyncexport/download/" + refId)
+            baseUrl + "data/asyncexport/download/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

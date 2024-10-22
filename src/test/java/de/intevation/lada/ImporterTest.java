@@ -790,13 +790,13 @@ public class ImporterTest extends BaseTest {
         JsonObject importCreatedObject =
             parseResponse(importCreated).asJsonObject();
 
-        final String refIdKey = "refId";
-        assertContains(importCreatedObject, refIdKey);
-        String refId = importCreatedObject.getString(refIdKey);
+        final String jobIdKey = "jobId";
+        assertContains(importCreatedObject, jobIdKey);
+        String jobId = importCreatedObject.getString(jobIdKey);
 
         /* Request status of asynchronous import */
         SyncInvoker statusRequest = client.target(
-            asyncImportUrl + "status/" + refId)
+            asyncImportUrl + "status/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -826,7 +826,7 @@ public class ImporterTest extends BaseTest {
 
         /* Fetch import result report */
         Response reportResponse = client.target(
-            asyncImportUrl + "result/" + refId)
+            asyncImportUrl + "result/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

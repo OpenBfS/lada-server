@@ -41,7 +41,7 @@ public class ImportJobManager extends JobManager {
      * @param params Parameters
      * @param mst MessStelle
      * @param files Decoded files
-     * @return New job refId
+     * @return New job jobId
      */
     public String createImportJob(
         UserInfo userInfo,
@@ -58,8 +58,8 @@ public class ImportJobManager extends JobManager {
     }
 
     /**
-     * Get the import result for the job with given refId.
-     * @param id Refid
+     * Get the import result for the job with given jobId.
+     * @param id jobId
      * @return Result as json string
      * @throws JobNotFoundException Thrown if job with given id was not found
      */

@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import jakarta.inject.Inject;
@@ -118,20 +117,17 @@ public class AsyncExportService extends AsyncLadaService {
     }
 
     @GET
-    @Path("download/{id}")
+    @Path("download/{jobId}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(summary = "Download a finished export file")
     @APIResponse(description = "A file to download",
+                 responseCode = "200",
                  content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM,
                  schema = @Schema(implementation = String.class, format = "binary")
                 )
     )
-    @APIResponse(responseCode = "403", description = "Forbidden Download requested")
-    @APIResponse(responseCode = "404", description = "Job not found")
-    @APIResponse(responseCode = "500", description = "Error while reading the result")
     public Response download(
-        @Parameter(description = "The id of the job ", required = true)
-        @PathParam("id") String id
+        @PathParam("jobId") String id
     ) {
         ByteArrayInputStream resultStream;
         String filename;

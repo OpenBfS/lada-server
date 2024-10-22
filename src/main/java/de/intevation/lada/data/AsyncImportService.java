@@ -93,10 +93,10 @@ public class AsyncImportService extends AsyncLadaService {
     }
 
     @GET
-    @Path("result/{id}")
+    @Path("result/{jobId}")
     @Operation(summary = "Get the result")
     public String getResult(
-        @PathParam("id") String id
+        @PathParam("jobId") String id
     ) {
         UserInfo originalCreator;
         UserInfo requestingUser = authorization.getInfo();

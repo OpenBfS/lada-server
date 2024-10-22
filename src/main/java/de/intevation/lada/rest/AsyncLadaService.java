@@ -15,7 +15,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.data.JobManager;
@@ -28,14 +27,14 @@ public abstract class AsyncLadaService extends LadaService {
     protected abstract JobManager getJobManager();
 
     public static final class AsyncJobResponse {
-        private final String refId;
+        private final String jobId;
 
-        public AsyncJobResponse(String refId) {
-            this.refId = refId;
+        public AsyncJobResponse(String jobId) {
+            this.jobId = jobId;
         }
 
-        public String getRefId() {
-            return refId;
+        public String getJobId() {
+            return jobId;
         }
     }
 
@@ -44,11 +43,10 @@ public abstract class AsyncLadaService extends LadaService {
     protected Logger logger;
 
     @GET
-    @Path("status/{id}")
-    @Operation(summary = "Retrieve status of an async Job")
+    @Path("status/{jobId}")
+    @Operation(summary = "Retrieve status of an async job")
     public JobStatus getStatus(
-            @Parameter(description = "The id of the job ", required = true)
-            @PathParam("id") String id) {
+            @PathParam("jobId") String id) {
         JobStatus status;
         UserInfo originalCreator;
         UserInfo requestingUser = authorization.getInfo();
