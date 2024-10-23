@@ -2,15 +2,6 @@
 # Dockerfile for jboss wildfly application server cutomized for usage in the
 # BfS-Lada project
 #
-# Build with e.g. `docker build --force-rm=true -t koala/lada_wildfly .'
-# Run with e.g.
-# `docker run --name lada_wildfly --link lada_db:db
-#            -dp 8181:8080 -p 1818:9990 koala/lada_wildfly'
-# The linked container may be created from db_schema/Dockerfile.
-#
-# The LADA-server will be available under
-# http://yourdockerhost:8181/lada-server
-#
 
 FROM debian:bookworm
 LABEL maintainer=raimund.renkert@intevation.de
