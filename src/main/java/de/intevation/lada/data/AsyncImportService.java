@@ -47,10 +47,6 @@ public class AsyncImportService extends AsyncLadaService {
     @Inject
     ImportJobManager importJobManager;
 
-    /**
-     * getJobManager is used to retrieve the class specific JobManager
-     * @return JobManager
-     */
     @Override
     protected JobManager getJobManager() {
         return importJobManager;
@@ -58,7 +54,7 @@ public class AsyncImportService extends AsyncLadaService {
 
     @POST
     @Path("laf")
-    @Operation(summary="Import a LAF document")
+    @Operation(summary = "Import a LAF document")
     public AsyncLadaService.AsyncJobResponse createAsyncImport(
         @Valid LafImportParameters lafImportParameters
     ) throws BadRequestException {

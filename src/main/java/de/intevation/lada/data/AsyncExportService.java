@@ -59,12 +59,8 @@ public class AsyncExportService extends AsyncLadaService {
     @Inject
     I18n i18n;
 
-    /**
-     * getJobManager is used to retrieve the class specific JobManager
-     * @return JobManager
-     */
     @Override
-    protected JobManager getJobManager(){
+    protected JobManager getJobManager() {
         return exportJobManager;
     }
 

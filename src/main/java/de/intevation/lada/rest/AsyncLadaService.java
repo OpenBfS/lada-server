@@ -21,6 +21,10 @@ import de.intevation.lada.util.data.Job.JobStatus;
 
 public abstract class AsyncLadaService extends LadaService {
 
+    /**
+     * Retrieve the class specific JobManager.
+     * @return JobManager
+     */
     protected abstract JobManager getJobManager();
 
     public static final class AsyncJobResponse {
