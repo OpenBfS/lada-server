@@ -8,7 +8,7 @@
 package de.intevation.lada.data;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -19,10 +19,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -120,44 +118,26 @@ public class AsyncExportService extends AsyncLadaService {
     @Path("download/{jobId}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(summary = "Download a finished export file")
-    @APIResponse(description = "A file to download",
-                 responseCode = "200",
-                 content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM,
-                 schema = @Schema(implementation = String.class, format = "binary")
-                )
+    @APIResponse(
+        description = "A file to download",
+        responseCode = "200",
+        content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM,
+            schema = @Schema(implementation = String.class, format = "binary"))
     )
     public Response download(
         @PathParam("jobId") String id
     ) {
+        String filename = exportJobManager.getJobDownloadFilename(
+            id, authorization.getInfo());
+
         ByteArrayInputStream resultStream;
-        String filename;
-        UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo();
-
         try {
-            originalCreator = exportJobManager.getJobUserInfo(id);
-            if (!originalCreator.getUserId().equals(
-                    requestingUser.getUserId())
-            ) {
-                this.logger.warn(String.format(
-                    "Rejected download request by user %s "
-                    + "for job %s created by user %s",
-                    requestingUser.getUserId(),
-                    id,
-                    originalCreator.getUserId()));
-                throw new ForbiddenException();
-            }
-
-            filename = exportJobManager.getJobDownloadFilename(id);
-            resultStream = exportJobManager.getResultFileAsStream(id);
-
-        } catch (JobManager.JobNotFoundException jfe) {
-            this.logger.info(String.format(
-                "Returning 404 for download: Could not find job %s", id));
-            throw new NotFoundException();
-        } catch (FileNotFoundException fnfe) {
+            resultStream = exportJobManager.getResultFileAsStream(
+                id, authorization.getInfo());
+        } catch (IOException e) {
             this.logger.error(String.format(
-                "Error on reading result file for job %s", id));
+                "Error on reading result file for job %s: %s",
+                id, e.getMessage()));
             throw new InternalServerErrorException();
         }
 

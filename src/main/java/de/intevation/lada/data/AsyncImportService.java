@@ -19,9 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -29,10 +27,8 @@ import jakarta.ws.rs.PathParam;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.model.master.MeasFacil;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.JobManager;
-import de.intevation.lada.util.data.JobManager.JobNotFoundException;
 import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.LadaService;
 
@@ -94,31 +90,10 @@ public class AsyncImportService extends AsyncLadaService {
 
     @GET
     @Path("result/{jobId}")
-    @Operation(summary = "Get the result")
-    public String getResult(
+    @Operation(summary = "Get import result report data")
+    public Map<String, Map<String, Object>> getResult(
         @PathParam("jobId") String id
     ) {
-        UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo();
-
-        try {
-            originalCreator = importJobManager.getJobUserInfo(id);
-            if (!originalCreator.getUserId().equals(
-                    requestingUser.getUserId())
-            ) {
-                logger.warn(String.format(
-                    "Rejected download request by user %s "
-                    + "for job %s created by user %s",
-                    requestingUser.getUserId(),
-                    id,
-                    originalCreator.getUserId()));
-                    throw new ForbiddenException();
-            }
-            return importJobManager.getImportResult(id);
-        } catch (JobNotFoundException jfe) {
-            logger.info(String.format(
-                "Returning 404 for download: Could not find job %s", id));
-            throw new NotFoundException();
-        }
+        return importJobManager.getImportResult(id, authorization.getInfo());
     }
 }

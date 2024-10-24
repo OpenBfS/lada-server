@@ -13,9 +13,6 @@ import java.util.Map;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.laf.LafImportJob;
 import de.intevation.lada.model.master.MeasFacil;
@@ -60,24 +57,18 @@ public class ImportJobManager extends JobManager {
     /**
      * Get the import result for the job with given jobId.
      * @param id jobId
-     * @return Result as json string
-     * @throws JobNotFoundException Thrown if job with given id was not found
+     * @param userInfo for authorization
+     * @return Import result report data for requested job
      */
-    public String getImportResult(String id) throws JobNotFoundException {
-        LafImportJob job = (LafImportJob) getJobById(id);
-        String jsonString = "";
+    public Map<String, Map<String, Object>> getImportResult(
+        String id, UserInfo userInfo
+    ) {
+        LafImportJob job = (LafImportJob) getJobById(id, userInfo);
         logger.debug(String.format("Returning result for job %s", id));
         try {
-            Map<String, Map<String, Object>> importData = job.getImportData();
-            ObjectMapper objectMapper = new ObjectMapper();
-            jsonString = objectMapper.writeValueAsString(importData);
-        } catch (JsonProcessingException jpe) {
-            logger.error(
-                String.format("Error returning result for job %s:", id));
-            jpe.printStackTrace();
+             return job.getImportData();
         } finally {
             removeJob(id);
         }
-        return jsonString;
     }
 }

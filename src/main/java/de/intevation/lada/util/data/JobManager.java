@@ -15,6 +15,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import jakarta.annotation.Resource;
 import jakarta.enterprise.concurrent.ManagedExecutorService;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotFoundException;
 
 import org.jboss.logging.Logger;
 
@@ -43,17 +45,18 @@ public abstract class JobManager {
     /**
      * Get job by id.
      * @param id Id to look for
-     * @throws JobNotFoundException Thrown if a job with the given can not
-     *                              be found
+     * @param userInfo for authorization
+     * @throws NotFoundException if job with given ID cannot be found
+     * @throws ForbiddenException if job does not belong to requesting user
      * @return Job instance with given id
      */
-    protected Job getJobById(
-        String id
-    ) throws JobNotFoundException {
+    protected Job getJobById(String id, UserInfo userInfo) {
         Job job = activeJobs.get(id);
         if (job == null) {
-            logger.debug(String.format("No active job found: %s", id));
-            throw new JobNotFoundException();
+            throw new NotFoundException();
+        }
+        if (!job.getUserInfo().getUserId().equals(userInfo.getUserId())) {
+            throw new ForbiddenException();
         }
         return job;
     }
@@ -64,33 +67,16 @@ public abstract class JobManager {
      * If the job is done with an error, it will be removed after return
      * the failure status.
      * @param id Id to look for
+     * @param userInfo for authorization
      * @return Job status
-     * @throws JobNotFoundException Thrown if a job with the given can not
-     *                              be found
      */
-    public JobStatus getJobStatus(
-        String id
-    ) throws JobNotFoundException {
-        Job job = getJobById(id);
+    public JobStatus getJobStatus(String id, UserInfo userInfo) {
+        Job job = getJobById(id, userInfo);
         JobStatus statusObject = job.getStatus();
         if (statusObject.getStatus() == Status.ERROR && statusObject.isDone()) {
             removeJob(id);
         }
         return statusObject;
-    }
-
-    /**
-     * Get the user informations for the current job by identifier.
-     * @param id Id to look for.
-     * @return The user info
-     * @throws JobNotFoundException Thrown if a job with the given can not
-     *                              be found
-     */
-    public UserInfo getJobUserInfo(
-        String id
-    ) throws JobNotFoundException {
-        Job job = getJobById(id);
-        return job.getUserInfo();
     }
 
     /**
