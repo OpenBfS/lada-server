@@ -7,8 +7,6 @@
  */
 package de.intevation.lada;
 
-import java.net.URL;
-
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
@@ -21,7 +19,6 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -105,7 +102,7 @@ public class UniversalServiceTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testGetAll(@ArquillianResource URL baseUrl) {
+    public final void testGetAll() {
         Response response = client.target(
             baseUrl + "rest/universal")
             .request()
@@ -131,7 +128,7 @@ public class UniversalServiceTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testGetPaged(@ArquillianResource URL baseUrl) {
+    public final void testGetPaged() {
         final int limit = 1;
         Response response = client.target(
             baseUrl + "rest/universal?start=1&limit=" + limit)
@@ -158,7 +155,7 @@ public class UniversalServiceTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testGetSql(@ArquillianResource URL baseUrl) {
+    public final void testGetSql() {
         Response response = client.target(
             baseUrl + "rest/sql")
             .request()
@@ -180,7 +177,7 @@ public class UniversalServiceTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testGetFiltered(@ArquillianResource URL baseUrl) {
+    public final void testGetFiltered() {
         Response response = client.target(
             baseUrl + "rest/universal")
             .request()
@@ -210,7 +207,7 @@ public class UniversalServiceTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testGetSqlWithParameter(@ArquillianResource URL baseUrl) {
+    public final void testGetSqlWithParameter() {
         Response response = client.target(
             baseUrl + "rest/sql")
             .request()
@@ -236,7 +233,7 @@ public class UniversalServiceTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testGetEmpty(@ArquillianResource URL baseUrl) {
+    public final void testGetEmpty() {
         JsonArray requestEmpty = Json.createArrayBuilder()
             .add(Json.createObjectBuilder()
                 .add("colIndex", 0)
@@ -281,7 +278,7 @@ public class UniversalServiceTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testGetSingleColumn(@ArquillianResource URL baseUrl) {
+    public final void testGetSingleColumn() {
         JsonArray request = Json.createArrayBuilder()
             .add(Json.createObjectBuilder()
                 .add("colIndex", 0)

@@ -8,6 +8,7 @@
 package de.intevation.lada;
 
 import java.io.StringReader;
+import java.net.URL;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
@@ -44,6 +45,7 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -81,6 +83,12 @@ public class BaseTest {
      * The client to be used for interface tests.
      */
     protected Client client;
+
+    /**
+     * The base URL to be used for interface tests.
+     */
+    @ArquillianResource
+    protected URL baseUrl;
 
     /**
      * Database connection.

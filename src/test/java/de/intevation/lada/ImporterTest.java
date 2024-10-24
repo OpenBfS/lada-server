@@ -39,7 +39,6 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.logging.Logger;
 import org.junit.Assert;
@@ -458,9 +457,7 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testImportProbe(
-        @ArquillianResource URL baseUrl
-    ) {
+    public final void testImportProbe() {
         final String laf = String.format(
             lafTemplate, randomProbeId(),
             regulation, sampleSpecifId, "", measd, measUnit, "");
@@ -488,9 +485,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportProbeSuccess(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncImportProbeSuccess()
+        throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         final String laf = String.format(
             lafTemplate, lafSampleId,
@@ -512,9 +508,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testImportLowercaseKeywords(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testImportLowercaseKeywords()
+        throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         final String lowerCaseLAF = String.format(
             lafTemplate, lafSampleId, regulation, sampleSpecifId,
@@ -534,9 +529,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportProbeNoSuccess(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncImportProbeNoSuccess()
+        throws InterruptedException, CharacterCodingException {
         testAsyncImportProbe(baseUrl, "no valid LAF", "", false);
     }
 
@@ -545,9 +539,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportProbeI18n(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncImportProbeI18n()
+        throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         final String noOprModeLAF = String.format(
             lafTemplate, lafSampleId, regulation, sampleSpecifId,
@@ -581,9 +574,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportProbeImportConfConvert(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncImportProbeImportConfConvert()
+        throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
@@ -599,9 +591,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportMeasValImportConfTransform(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncImportMeasValImportConfTransform()
+        throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
@@ -619,9 +610,8 @@ public class ImporterTest extends BaseTest {
     @Test
     @RunAsClient
     @Ignore
-    public final void testAsyncImportSampleSpecifMeasValImportConfTransform(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncImportSampleSpecifMeasValImportConfTransform()
+        throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
@@ -638,9 +628,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportSampleGeolocatE(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncImportSampleGeolocatE()
+        throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbeNoWarnings(
             baseUrl,
@@ -658,9 +647,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportStatus(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncImportStatus()
+        throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbeNoWarnings(
             baseUrl,
@@ -679,9 +667,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testZeitbasis(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testZeitbasis()
+        throws InterruptedException, CharacterCodingException {
         testZeitbasis(baseUrl, "ZEITBASIS", "\"MESZ\"", false);
         testZeitbasis(baseUrl, "ZEITBASIS", "\"INVALID\"", true);
         testZeitbasis(baseUrl, "ZEITBASIS_S", "1", false);
