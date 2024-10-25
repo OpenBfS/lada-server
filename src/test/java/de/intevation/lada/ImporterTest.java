@@ -47,6 +47,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
@@ -787,14 +788,9 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .acceptLanguage(locale)
-            .post(Entity.entity(requestJson.toString(),
-                    MediaType.APPLICATION_JSON));
-        JsonObject importCreatedObject =
-            parseResponse(importCreated).asJsonObject();
-
-        final String jobIdKey = "jobId";
-        assertContains(importCreatedObject, jobIdKey);
-        String jobId = importCreatedObject.getString(jobIdKey);
+            .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON));
+        String jobId = parseResponse(importCreated, AsyncJobResponse.class)
+            .getJobId();
 
         /* Request status of asynchronous import */
         SyncInvoker statusRequest = client.target(

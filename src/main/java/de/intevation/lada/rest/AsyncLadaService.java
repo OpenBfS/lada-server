@@ -28,7 +28,12 @@ public abstract class AsyncLadaService extends LadaService {
     protected abstract JobManager getJobManager();
 
     public static final class AsyncJobResponse {
-        private final String jobId;
+        private String jobId;
+
+        /**
+         * Default constructor for JSON binding.
+         */
+        public AsyncJobResponse() { }
 
         public AsyncJobResponse(String jobId) {
             this.jobId = jobId;
@@ -36,6 +41,10 @@ public abstract class AsyncLadaService extends LadaService {
 
         public String getJobId() {
             return jobId;
+        }
+
+        public void setJobId(String jobId) {
+            this.jobId = jobId;
         }
     }
 

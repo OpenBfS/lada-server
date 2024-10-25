@@ -247,6 +247,9 @@
                             org.jboss.resteasy:resteasy-client
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
+                            org.jboss.resteasy:resteasy-json-binding-provider
+                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
                             org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
@@ -484,6 +487,11 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-json-binding-provider</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
