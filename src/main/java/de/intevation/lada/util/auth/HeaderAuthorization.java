@@ -10,6 +10,7 @@ package de.intevation.lada.util.auth;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.json.Json;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.core.Response;
 
@@ -148,7 +149,8 @@ public class HeaderAuthorization implements Authorization {
         } catch (AuthorizationException ae) {
             throw new ForbiddenException(
                 Response.status(Response.Status.FORBIDDEN)
-                .entity(i18n.getString(ae.getMessage())).build());
+                .entity(Json.createValue(i18n.getString(ae.getMessage())))
+                    .build());
         }
      }
 
