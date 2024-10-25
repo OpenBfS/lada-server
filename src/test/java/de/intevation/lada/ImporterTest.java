@@ -41,6 +41,7 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.logging.Logger;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -70,6 +71,8 @@ import de.intevation.lada.util.data.StatusCodes;
 public class ImporterTest extends BaseTest {
 
     private static final Logger LOG = Logger.getLogger(ImporterTest.class);
+
+    private static final String ASYNC_IMPORT_URL = "data/import/async/";
 
     private static final double MESS15D = 1.5d;
     private static final int MGID56 = 56;
@@ -128,6 +131,18 @@ public class ImporterTest extends BaseTest {
 
     public ImporterTest() {
         testDatasetName = "datasets/dbUnit_import.xml";
+    }
+
+    /**
+     * Cancel asynchronous jobs in order to allow database cleanup.
+     */
+    @After
+    public void cancelJobs() {
+        client.target(baseUrl + ASYNC_IMPORT_URL + "cancel")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
     }
 
     /**
@@ -755,7 +770,7 @@ public class ImporterTest extends BaseTest {
         String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
-        final String asyncImportUrl = baseUrl + "data/import/async/";
+        final String asyncImportUrl = baseUrl + ASYNC_IMPORT_URL;
         final String fileName = "test.laf";
 
         /* Request asynchronous import */

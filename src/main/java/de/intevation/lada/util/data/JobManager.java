@@ -80,6 +80,19 @@ public abstract class JobManager {
     }
 
     /**
+     * Try to cancel execution of jobs of a user.
+     *
+     * @param userInfo for authorization
+     */
+    public void cancelJobs(UserInfo userInfo) {
+        for (Job job: activeJobs.values()) {
+            if (job.getUserInfo().getUserId().equals(userInfo.getUserId())) {
+                job.cancel();
+            }
+        }
+    }
+
+    /**
      * Add job and return the next job identifier.
      *
      * The new identifier will be stored in lastIdentifier.

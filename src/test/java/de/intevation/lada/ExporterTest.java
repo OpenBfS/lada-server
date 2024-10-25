@@ -31,6 +31,7 @@ import org.hamcrest.MatcherAssert;
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +47,8 @@ import de.intevation.lada.util.data.Job;
 public class ExporterTest extends BaseTest {
 
     private static Logger logger = Logger.getLogger(ExporterTest.class);
+
+    private static final String ASYNC_EXPORT_URL = "data/asyncexport/";
 
     private final String formatCsv = "csv";
     private final String formatJson = "json";
@@ -125,6 +128,18 @@ public class ExporterTest extends BaseTest {
             .add("measVal")
             .add("measUnitId")
             .add("measdId"));
+
+    /**
+     * Cancel asynchronous jobs in order to allow database cleanup.
+     */
+    @After
+    public void cancelJobs() {
+        client.target(baseUrl + ASYNC_EXPORT_URL + "cancel")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+    }
 
     /**
      * Test asynchronous CSV export of a Sample object.
@@ -436,9 +451,7 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncExportInvalidCharset(
-
-    ) {
+    public final void testAsyncExportInvalidCharset() {
         JsonObject jsonExportJson = Json.createObjectBuilder()
             .add("encoding", "invalidEncoding")
             .build();
@@ -450,7 +463,7 @@ public class ExporterTest extends BaseTest {
     private Response exportRequest(
             URL baseUrl, String format, JsonObject requestJson) {
         Response response = client.target(
-            baseUrl + "data/asyncexport/" + format)
+            baseUrl + ASYNC_EXPORT_URL + format)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -476,7 +489,7 @@ public class ExporterTest extends BaseTest {
 
         /* Request status of asynchronous export */
         SyncInvoker statusRequest = client.target(
-            baseUrl + "data/asyncexport/status/" + jobId)
+            baseUrl + ASYNC_EXPORT_URL + "status/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -522,7 +535,7 @@ public class ExporterTest extends BaseTest {
 
         /* Request export result */
         Response download = client.target(
-            baseUrl + "data/asyncexport/download/" + jobId)
+            baseUrl + ASYNC_EXPORT_URL + "download/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

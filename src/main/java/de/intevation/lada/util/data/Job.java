@@ -78,6 +78,10 @@ public abstract class Job implements Runnable {
         this.future = future;
     }
 
+    void cancel() {
+        this.future.cancel(true);
+    }
+
     /**
      * Cleanup method triggered when the job has finished.
      * @throws JobNotFinishedException Thrown if job is still running

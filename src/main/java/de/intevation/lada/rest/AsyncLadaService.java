@@ -52,4 +52,11 @@ public abstract class AsyncLadaService extends LadaService {
         return getJobManager().getJobStatus(id, authorization.getInfo());
     }
 
+    @GET
+    @Path("cancel")
+    @Operation(
+        summary = "Try to cancel execution of all jobs of requesting user")
+    public void cancel() {
+        getJobManager().cancelJobs(authorization.getInfo());
+    }
 }
