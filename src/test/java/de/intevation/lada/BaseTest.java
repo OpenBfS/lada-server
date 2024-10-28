@@ -27,6 +27,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -247,7 +248,7 @@ public class BaseTest {
         Response.Status expectedStatus
     ) {
         JsonValue json = parseResponse(
-            response, JsonValue.class, expectedStatus);
+            response, new GenericType<JsonValue>() { }, expectedStatus);
         return Response.Status.OK.equals(expectedStatus)
             // Successful response should not contain validation errors
             ? verifyResponseObject(json)
@@ -268,6 +269,24 @@ public class BaseTest {
     public static <T> T parseResponse(
         Response response, Class<T> entityType
     ) {
+        return parseResponse(
+            response, new GenericType<T>(entityType), Response.Status.OK);
+    }
+
+    /**
+     * Utility method to parse JSON in a Response object.
+     *
+     * Asserts that the response has HTTP status code 200 and a parseable
+     * JSON body matching the expected entity type.
+     *
+     * @param <T> Expected response entity type
+     * @param response The response to be parsed.
+     * @param entityType Expected response entity type
+     * @return Parsed entity
+     */
+    public static <T> T parseResponse(
+        Response response, GenericType<T> entityType
+    ) {
         return parseResponse(response, entityType, Response.Status.OK);
     }
 
@@ -282,7 +301,7 @@ public class BaseTest {
      */
     public static <T> T parseResponse(
         Response response,
-        Class<T> entityType,
+        GenericType<T> entityType,
         Response.Status expectedStatus
     ) {
         if (MediaType.APPLICATION_JSON_TYPE.isCompatible(
@@ -291,7 +310,8 @@ public class BaseTest {
             return assertResponseStatus(response, entityType, expectedStatus);
         }
         // Non-JSON response body
-        assertResponseStatus(response, String.class, expectedStatus);
+        assertResponseStatus(
+            response, new GenericType<String>() { }, expectedStatus);
         return null;
     }
 
@@ -332,7 +352,7 @@ public class BaseTest {
         Response response
     ) {
         return assertResponseStatus(
-            response, String.class, Response.Status.OK);
+            response, new GenericType<String>() { }, Response.Status.OK);
     }
 
     /**
@@ -346,7 +366,7 @@ public class BaseTest {
      */
     public static <T> T assertResponseStatus(
         Response response,
-        Class<T> entityType,
+        GenericType<T> entityType,
         Response.Status expectedStatus
     ) {
         T responseBody = response.readEntity(entityType);

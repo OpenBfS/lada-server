@@ -32,6 +32,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.UserTransaction;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.SyncInvoker;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -855,11 +856,11 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject importedSample =
-            parseResponse(importedSampleResponse).asJsonObject();
-        Assert.assertEquals(lafSampleId, importedSample.getString("extId"));
-        Assert.assertEquals(mstId, importedSample.getString("measFacilId"));
-        Assert.assertEquals(1, importedSample.getInt("regulationId"));
+        Sample importedSample =
+            parseResponse(importedSampleResponse, Sample.class);
+        Assert.assertEquals(lafSampleId, importedSample.getExtId());
+        Assert.assertEquals(mstId, importedSample.getMeasFacilId());
+        Assert.assertEquals(1, (int) importedSample.getRegulationId());
 
         Response importedSampleSpecifMeasValResponse = client.target(
             baseUrl + "rest/samplespecifmeasval?sampleId=" + sampleId)
@@ -867,14 +868,13 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonArray importedSampleSpecifMeasVals =
-            parseResponse(importedSampleSpecifMeasValResponse).asJsonArray();
+        List<SampleSpecifMeasVal> importedSampleSpecifMeasVals =
+            parseResponse(importedSampleSpecifMeasValResponse,
+                new GenericType<List<SampleSpecifMeasVal>>() { });
         Assert.assertEquals(1, importedSampleSpecifMeasVals.size());
-        JsonObject importedSampleSpecifMeasVal =
-            importedSampleSpecifMeasVals.getJsonObject(0);
         Assert.assertEquals(
             sampleSpecifId,
-            importedSampleSpecifMeasVal.getString("sampleSpecifId"));
+            importedSampleSpecifMeasVals.get(0).getSampleSpecifId());
 
         Response importedMeasmResponse = client.target(
             baseUrl + "rest/measm?sampleId=" + sampleId)
@@ -882,9 +882,9 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        final int measmId = parseResponse(importedMeasmResponse).asJsonArray()
-            .getJsonObject(0)
-            .getInt("id");
+        final int measmId = parseResponse(
+            importedMeasmResponse, new GenericType<List<Measm>>() { })
+            .get(0).getId();
 
         Response importedMeasValResponse = client.target(
             baseUrl + "rest/measval?measmId=" + measmId)
@@ -892,11 +892,11 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject importedMeasVal = parseResponse(importedMeasValResponse)
-            .asJsonArray()
-            .getJsonObject(0);
-        Assert.assertEquals(1, importedMeasVal.getInt("measdId"));
-        Assert.assertEquals(1, importedMeasVal.getInt("measUnitId"));
+        MeasVal importedMeasVal = parseResponse(
+            importedMeasValResponse, new GenericType<List<MeasVal>>() { })
+            .get(0);
+        Assert.assertEquals(1, (int) importedMeasVal.getMeasdId());
+        Assert.assertEquals(1, (int) importedMeasVal.getMeasUnitId());
 
         return fileReport;
     }
