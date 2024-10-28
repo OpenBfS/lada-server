@@ -52,6 +52,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.postgresql.ds.PGSimpleDataSource;
 
+import de.intevation.lada.util.rest.JSONBConfig;
+
+
 /**
  * Base class for Lada server tests.
  *
@@ -129,7 +132,7 @@ public class BaseTest {
         // Insert test data
         doDbOperation(DatabaseOperation.CLEAN_INSERT);
 
-        this.client = ClientBuilder.newClient();
+        this.client = ClientBuilder.newClient().register(JSONBConfig.class);
     }
 
     /**

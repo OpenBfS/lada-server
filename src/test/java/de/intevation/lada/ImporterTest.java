@@ -48,6 +48,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
+import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
@@ -775,13 +776,11 @@ public class ImporterTest extends BaseTest {
         final String fileName = "test.laf";
 
         /* Request asynchronous import */
-        JsonObject requestJson = Json.createObjectBuilder()
-            .add("encoding", "utf-8")
-            .add("measFacilId", mstId)
-            .add("files", Json.createObjectBuilder()
-                .add(fileName, Base64.getEncoder().encodeToString(
-                        lafData.getBytes(StandardCharsets.UTF_8))))
-            .build();
+        var requestJson = new LafImportParameters();
+        requestJson.setEncoding(StandardCharsets.UTF_8);
+        requestJson.setMeasFacilId(mstId);
+        requestJson.setFiles(Map.of(fileName, Base64.getEncoder()
+                .encodeToString(lafData.getBytes(StandardCharsets.UTF_8))));
 
         Response importCreated = client.target(asyncImportUrl + "laf")
             .request()
