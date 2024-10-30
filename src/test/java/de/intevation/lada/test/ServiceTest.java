@@ -583,6 +583,12 @@ public class ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .delete();
         BaseTest.parseResponse(response, expectedStatus);
+        if (Response.Status.Family.SUCCESSFUL.equals(
+                expectedStatus.getFamily())
+        ) {
+            // Ensure the resource has actually been deleted
+            get(parameter, Response.Status.NOT_FOUND);
+        }
     }
 
     /**
