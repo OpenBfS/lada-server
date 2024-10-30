@@ -9,6 +9,7 @@ package de.intevation.lada.model.lada;
 
 import java.util.Date;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
@@ -28,7 +29,7 @@ public abstract class BelongsToMeasm extends BaseModel {
         groups = DatabaseConstraints.class, clazz = Measm.class)
     private Integer measmId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(insertable = false, updatable = false)
     private Measm measm;
 
