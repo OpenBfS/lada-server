@@ -105,6 +105,27 @@ public class QueryUserService extends LadaService {
     }
 
     /**
+     * Get QueryUser object by ID.
+     *
+     * Does only return objects owned by the requesting user.
+     *
+     * @param id ID of requested QueryUser object
+     * @return requested QueryUser object
+     */
+    @GET
+    @Path("{id}")
+    public QueryUser getById(@PathParam("id") Integer id) {
+        QueryUser query = repository.getById(QueryUser.class, id);
+        // TODO: Move to authorization
+        if (!authorization.getInfo().getUserId().equals(
+                query.getLadaUserId())
+        ) {
+            throw new ForbiddenException();
+        }
+        return query;
+    }
+
+    /**
      * Create a new query_user object in the database.
      * @param Query object
      * @return created query object
