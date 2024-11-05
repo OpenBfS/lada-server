@@ -60,6 +60,7 @@ import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.util.data.Job;
+import de.intevation.lada.util.data.Job.JobStatus;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -798,29 +799,24 @@ public class ImporterTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
-        JsonObject importStatusObject = Json.createObjectBuilder().build();
+        JobStatus importStatusObject;
         boolean done = false;
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
         do {
+            Response response = statusRequest.get();
             importStatusObject =
-                parseResponse(statusRequest.get()).asJsonObject();
-
-            final String doneKey = "done";
-            assertContains(importStatusObject, doneKey);
-            done = importStatusObject.getBoolean(doneKey);
-
+                parseResponse(response, JobStatus.class);
+            done = importStatusObject.isDone();
             Assert.assertTrue(
                 "Import not done within one minute",
                 waitUntil.isAfter(Instant.now()));
             Thread.sleep(waitASecond);
         } while (!done);
 
-        final String statusKey = "status";
-        assertContains(importStatusObject, statusKey);
         Assert.assertEquals(
-            Job.Status.FINISHED.name().toLowerCase(),
-            importStatusObject.getString(statusKey));
+            Job.Status.FINISHED.name(),
+            importStatusObject.getStatus().name());
 
         /* Fetch import result report */
         Response reportResponse = client.target(

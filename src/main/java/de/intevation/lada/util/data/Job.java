@@ -15,10 +15,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import jakarta.inject.Inject;
-import jakarta.json.bind.annotation.JsonbTypeSerializer;
-import jakarta.json.bind.serializer.JsonbSerializer;
-import jakarta.json.bind.serializer.SerializationContext;
-import jakarta.json.stream.JsonGenerator;
 import jakarta.transaction.HeuristicMixedException;
 import jakarta.transaction.HeuristicRollbackException;
 import jakarta.transaction.NotSupportedException;
@@ -173,7 +169,6 @@ public abstract class Job implements Runnable {
      * Stores job status and message
      */
     public static class JobStatus {
-        @JsonbTypeSerializer(StatusSerializer.class)
         private Status status;
         private String message;
         private boolean done;
@@ -181,14 +176,7 @@ public abstract class Job implements Runnable {
         private boolean warnings;
         private boolean errors;
 
-        private static class StatusSerializer
-            implements JsonbSerializer<Status> {
-            public void serialize(
-                Status status, JsonGenerator generator, SerializationContext ctx
-            ) {
-                generator.write(status.name().toLowerCase());
-            }
-        }
+        public JobStatus() {}
 
         public JobStatus(Status s) {
             this(s, "", false);

@@ -36,8 +36,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
-
+import de.intevation.lada.util.data.Job.JobStatus;
 
 /**
  * Test export services.
@@ -480,12 +481,10 @@ public class ExporterTest extends BaseTest {
         Job.Status expectedStatus
     ) throws InterruptedException {
         Response exportCreated = exportRequest(baseUrl, format, requestJson);
-        JsonObject exportCreatedObject =
-            parseResponse(exportCreated).asJsonObject();
-
-        final String jobIdKey = "jobId";
-        assertContains(exportCreatedObject, jobIdKey);
-        String jobId = exportCreatedObject.getString(jobIdKey);
+        AsyncJobResponse asyncJobResponse =
+            parseResponse(exportCreated, AsyncJobResponse.class);
+        String jobId = asyncJobResponse
+            .getJobId();
 
         /* Request status of asynchronous export */
         SyncInvoker statusRequest = client.target(
@@ -493,17 +492,14 @@ public class ExporterTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
-        JsonObject exportStatusObject = Json.createObjectBuilder().build();
         boolean done = false;
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
+        JobStatus exportStatusObject;
         do {
-            exportStatusObject =
-                parseResponse(statusRequest.get()).asJsonObject();
-
-            final String doneKey = "done";
-            assertContains(exportStatusObject, doneKey);
-            done = exportStatusObject.getBoolean(doneKey);
+            Response response = statusRequest.get();
+            exportStatusObject = parseResponse(response, JobStatus.class);
+            done = exportStatusObject.isDone();
 
             Assert.assertTrue(
                 "Export not done within one minute",
@@ -511,11 +507,9 @@ public class ExporterTest extends BaseTest {
             Thread.sleep(waitASecond);
         } while (!done);
 
-        final String statusKey = "status";
-        assertContains(exportStatusObject, statusKey);
         Assert.assertEquals(
-            expectedStatus.name().toLowerCase(),
-            exportStatusObject.getString(statusKey));
+            expectedStatus.name(),
+            exportStatusObject.getStatus().name());
 
         return jobId;
     }
