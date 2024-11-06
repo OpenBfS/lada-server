@@ -25,12 +25,16 @@ import de.intevation.lada.model.BaseModel;
 @MappedSuperclass
 public abstract class BelongsToSample extends BaseModel {
 
-    private static class SampleToId implements JsonbAdapter<Sample, Integer> {
+    public static class SampleToId implements JsonbAdapter<Sample, Integer> {
         @PersistenceContext
         EntityManager em;
 
         @Override
         public Sample adaptFromJson(Integer id) {
+            if (em == null) {
+                // Mock sample when deserializing in client-side tests
+                return new Sample();
+            }
             return em.find(Sample.class, id);
         }
 
