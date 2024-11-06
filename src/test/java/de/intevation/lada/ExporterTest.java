@@ -31,7 +31,7 @@ import org.hamcrest.MatcherAssert;
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +47,8 @@ import de.intevation.lada.util.data.Job;
 public class ExporterTest extends BaseTest {
 
     private static Logger logger = Logger.getLogger(ExporterTest.class);
+
+    private static final String ASYNC_EXPORT_URL = "data/asyncexport/";
 
     private final String formatCsv = "csv";
     private final String formatJson = "json";
@@ -128,13 +130,24 @@ public class ExporterTest extends BaseTest {
             .add("measdId"));
 
     /**
+     * Cancel asynchronous jobs in order to allow database cleanup.
+     */
+    @After
+    public void cancelJobs() {
+        client.target(baseUrl + ASYNC_EXPORT_URL + "cancel")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+    }
+
+    /**
      * Test asynchronous CSV export of a Sample object.
      */
     @Test
     @RunAsClient
-    public final void testCsvExportProbe(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportProbe()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
@@ -153,9 +166,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportFieldSeparator(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportFieldSeparator()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
@@ -175,9 +187,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportRowDelimiter(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportRowDelimiter()
+        throws InterruptedException, CharacterCodingException {
         final String rowDelimiter = "\n";
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
@@ -197,9 +208,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportQuote(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportQuote()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
@@ -219,9 +229,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportDecimalSeparator(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportDecimalSeparator()
+        throws InterruptedException, CharacterCodingException {
         assertHasLinesInAnyOrder(
             runExportTest(baseUrl, formatCsv, measmRequestJsonBuilder
                 .add("decimalSeparator", ",").build()),
@@ -236,9 +245,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportProbeById(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportProbeById()
+        throws InterruptedException, CharacterCodingException {
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "main_sample_id")
             .add("idFilter", Json.createArrayBuilder().add("120510002"))
@@ -256,9 +264,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportProbeSubData(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportProbeSubData()
+        throws InterruptedException, CharacterCodingException {
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "probeId")
             .add("exportSubData", true)
@@ -281,9 +288,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportMeasmSubData(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportMeasmSubData()
+        throws InterruptedException, CharacterCodingException {
         assertHasLinesInAnyOrder(
             runExportTest(
                 baseUrl, formatCsv, measmRequestJsonBuilder.build()),
@@ -298,9 +304,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testJsonExportProbeById(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testJsonExportProbeById()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "main_sample_id")
@@ -322,9 +327,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testJsonExportProbeSubData(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testJsonExportProbeSubData()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "probeId")
@@ -353,9 +357,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testJsonExportMeasmSubData(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testJsonExportMeasmSubData()
+        throws InterruptedException, CharacterCodingException {
         Assert.assertEquals(
             "Unexpected JSON content",
             Json.createReader(new StringReader("{\"1200\":"
@@ -377,9 +380,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testLafExportProbeById(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testLafExportProbeById()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         final int probeId = 1000;
         JsonObject requestJson = requestJsonBuilder
@@ -397,9 +399,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testQueryExportEmpty(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testQueryExportEmpty()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "main_sample_id")
@@ -424,9 +425,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncExportFailure(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncExportFailure()
+        throws InterruptedException, CharacterCodingException {
         /* Test values */
         String sampleValue = "99999";
         String samplePath = "createLafExportJob.arg0.proben[0].<list element>";
@@ -451,9 +451,7 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncExportInvalidCharset(
-        @ArquillianResource URL baseUrl
-    ) {
+    public final void testAsyncExportInvalidCharset() {
         JsonObject jsonExportJson = Json.createObjectBuilder()
             .add("encoding", "invalidEncoding")
             .build();
@@ -465,7 +463,7 @@ public class ExporterTest extends BaseTest {
     private Response exportRequest(
             URL baseUrl, String format, JsonObject requestJson) {
         Response response = client.target(
-            baseUrl + "data/asyncexport/" + format)
+            baseUrl + ASYNC_EXPORT_URL + format)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -485,13 +483,13 @@ public class ExporterTest extends BaseTest {
         JsonObject exportCreatedObject =
             parseResponse(exportCreated).asJsonObject();
 
-        final String refIdKey = "refId";
-        assertContains(exportCreatedObject, refIdKey);
-        String refId = exportCreatedObject.getString(refIdKey);
+        final String jobIdKey = "jobId";
+        assertContains(exportCreatedObject, jobIdKey);
+        String jobId = exportCreatedObject.getString(jobIdKey);
 
         /* Request status of asynchronous export */
         SyncInvoker statusRequest = client.target(
-            baseUrl + "data/asyncexport/status/" + refId)
+            baseUrl + ASYNC_EXPORT_URL + "status/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -519,7 +517,7 @@ public class ExporterTest extends BaseTest {
             expectedStatus.name().toLowerCase(),
             exportStatusObject.getString(statusKey));
 
-        return refId;
+        return jobId;
     }
 
     private JsonObject runJSONExportTest(
@@ -532,12 +530,12 @@ public class ExporterTest extends BaseTest {
     private String runExportTest(
         URL baseUrl, String format, JsonObject requestJson
     ) throws InterruptedException {
-        String refId = startExport(
+        String jobId = startExport(
             baseUrl, format, requestJson, Job.Status.FINISHED);
 
         /* Request export result */
         Response download = client.target(
-            baseUrl + "data/asyncexport/download/" + refId)
+            baseUrl + ASYNC_EXPORT_URL + "download/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

@@ -6,10 +6,6 @@
         <jta-data-source>java:jboss/lada</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
-            <property name="jboss.entity.manager.jndi.name" value="java:app/entitymanager/lada"/>
-            <property name="hibernate.hbm2ddl.auto" value="none"/>
-            <property name="hibernate.show_sql" value="false" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             <property
                 name="hibernate.implicit_naming_strategy"
                 value="de.intevation.lada.model.NamingStrategy"/>

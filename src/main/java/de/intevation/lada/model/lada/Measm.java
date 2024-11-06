@@ -9,13 +9,17 @@ package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -27,6 +31,8 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulation1;
@@ -93,9 +99,18 @@ public class Measm extends BelongsToSample implements Serializable {
     @NotBlank(groups = Notifications.class)
     private String minSampleId;
 
+    /* Latest StatusProt entry accessible via back reference foreign key
+       set by database trigger */
     @OneToOne
     @JoinColumn(name = "status", insertable = false, updatable = false)
     private StatusProt statusProt;
+
+    /* Cascade removal of Measm to referencing StatusProt entries, namely
+       OneToOne-associated statusProt */
+    @OneToMany(mappedBy = StatusProt_.MEASM, cascade = CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonbTransient
+    private Set<StatusProt> statusProts;
 
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)

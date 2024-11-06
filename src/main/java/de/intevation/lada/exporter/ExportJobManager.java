@@ -10,7 +10,6 @@ package de.intevation.lada.exporter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -102,14 +101,11 @@ public class ExportJobManager extends JobManager {
     /**
      * Get the filename used for downloading by the given job id.
      * @param id Job id
+     * @param userInfo for authorization
      * @return Filename as String
-     * @throws JobNotFoundException Thrown if a job with the given can not
-     *                              be found
      */
-    public String getJobDownloadFilename(
-        String id
-    ) throws JobNotFoundException {
-        ExportJob<?> job = (ExportJob) getJobById(id);
+    public String getJobDownloadFilename(String id, UserInfo userInfo) {
+        ExportJob<?> job = (ExportJob) getJobById(id, userInfo);
         return job.getDownloadFileName();
     }
 
@@ -117,25 +113,20 @@ public class ExportJobManager extends JobManager {
      * Get the result file of the export job with the given id as stream.
      * @param id ExportJob id
      * @return Result file as stream
-     * @throws JobNotFoundException Thrown if a job with the given can not
-     *                              be found
-     * @throws FileNotFoundException Thrown if the job exists but the result
-     *                               was deleted or can not be read
+     * @param userInfo for authorization
+     * @throws IOException if the job exists but the result was deleted
+     * or can not be read
      */
     public ByteArrayInputStream getResultFileAsStream(
-        String id
-    ) throws JobNotFoundException, FileNotFoundException {
-        ExportJob<?> job = (ExportJob) getJobById(id);
+        String id, UserInfo userInfo
+    ) throws IOException {
+        ExportJob<?> job = (ExportJob) getJobById(id, userInfo);
         Path filePath = job.getOutputFilePath();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             Files.copy(filePath, outputStream);
             logger.debug(String.format("Returning result file for job %s", id));
             return new ByteArrayInputStream(outputStream.toByteArray());
-        } catch (IOException ioe) {
-            logger.error(String.format(
-                "Error on reading result file: %s", ioe.getMessage()));
-            throw new FileNotFoundException();
         } finally {
             removeJob(id);
         }

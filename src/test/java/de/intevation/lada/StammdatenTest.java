@@ -7,14 +7,11 @@
  */
 package de.intevation.lada;
 
-import java.net.URL;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -83,7 +80,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testDatensatzerzeuger(@ArquillianResource URL baseUrl)
+    public final void testDatensatzerzeuger()
     throws Exception {
         datensatzerzeugerTest.init(this.client, baseUrl);
         datensatzerzeugerTest.execute();
@@ -96,7 +93,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testProbenehmer(@ArquillianResource URL baseUrl)
+    public final void testProbenehmer()
     throws Exception {
         probenehmerTest.init(this.client, baseUrl);
         probenehmerTest.execute();
@@ -109,7 +106,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMessprogrammKategorie(@ArquillianResource URL baseUrl)
+    public final void testMessprogrammKategorie()
     throws Exception {
         messprogrammkategorieTest.init(this.client, baseUrl);
         messprogrammkategorieTest.execute();
@@ -122,7 +119,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testOrt(@ArquillianResource URL baseUrl)
+    public final void testOrt()
     throws Exception {
         ortTest.init(this.client, baseUrl);
         ortTest.execute();
@@ -134,7 +131,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testRegulationAll(@ArquillianResource URL baseUrl) {
+    public final void testRegulationAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("regulation");
     }
@@ -145,7 +142,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testRegulationById(@ArquillianResource URL baseUrl) {
+    public final void testRegulationById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("regulation", ID9);
     }
@@ -156,7 +153,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMesseinheitAll(@ArquillianResource URL baseUrl) {
+    public final void testMesseinheitAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("measunit");
     }
@@ -167,7 +164,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMesseinheitById(@ArquillianResource URL baseUrl) {
+    public final void testMesseinheitById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("measunit", ID207);
     }
@@ -178,7 +175,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMessgroesseAll(@ArquillianResource URL baseUrl) {
+    public final void testMessgroesseAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("measd");
     }
@@ -189,7 +186,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMessgroesseById(@ArquillianResource URL baseUrl) {
+    public final void testMessgroesseById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("measd", ID56);
     }
@@ -200,7 +197,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMessmethodeAll(@ArquillianResource URL baseUrl) {
+    public final void testMessmethodeAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("mmt");
     }
@@ -211,7 +208,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMessmethodeById(@ArquillianResource URL baseUrl) {
+    public final void testMessmethodeById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("mmt", "A3");
     }
@@ -222,7 +219,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMessstelleAll(@ArquillianResource URL baseUrl) {
+    public final void testMessstelleAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("measfacil");
     }
@@ -233,7 +230,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMessstelleById(@ArquillianResource URL baseUrl) {
+    public final void testMessstelleById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("measfacil", "06010");
     }
@@ -244,7 +241,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testNetzbetreiberAll(@ArquillianResource URL baseUrl) {
+    public final void testNetzbetreiberAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("network");
     }
@@ -255,7 +252,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testNetzbetreiberById(@ArquillianResource URL baseUrl) {
+    public final void testNetzbetreiberById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("network", "06");
     }
@@ -266,7 +263,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testProbenartAll(@ArquillianResource URL baseUrl) {
+    public final void testProbenartAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("samplemeth");
     }
@@ -277,7 +274,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testProbenartById(@ArquillianResource URL baseUrl) {
+    public final void testProbenartById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("samplemeth", 1);
     }
@@ -288,7 +285,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testProbenzusatzAll(@ArquillianResource URL baseUrl) {
+    public final void testProbenzusatzAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("samplespecif");
     }
@@ -299,7 +296,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testProbenzusatzById(@ArquillianResource URL baseUrl) {
+    public final void testProbenzusatzById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("samplespecif", "A74");
     }
@@ -310,7 +307,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testKoordinatenartAll(@ArquillianResource URL baseUrl) {
+    public final void testKoordinatenartAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("spatrefsys");
     }
@@ -321,7 +318,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testKoordinatenartById(@ArquillianResource URL baseUrl) {
+    public final void testKoordinatenartById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("spatrefsys", ID5);
     }
@@ -332,7 +329,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testStaatAll(@ArquillianResource URL baseUrl) {
+    public final void testStaatAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("state");
     }
@@ -343,7 +340,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testStaatById(@ArquillianResource URL baseUrl) {
+    public final void testStaatById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("state", 0);
     }
@@ -354,7 +351,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testUmweltAll(@ArquillianResource URL baseUrl) {
+    public final void testUmweltAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("envmedium");
     }
@@ -365,7 +362,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testUmweltById(@ArquillianResource URL baseUrl) {
+    public final void testUmweltById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("envmedium", "L6");
     }
@@ -376,9 +373,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testVerwaltungseinheitAll(
-        @ArquillianResource URL baseUrl
-    ) {
+    public final void testVerwaltungseinheitAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("adminunit");
     }
@@ -389,9 +384,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testVerwaltungseinheitById(
-        @ArquillianResource URL baseUrl
-    ) {
+    public final void testVerwaltungseinheitById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("adminunit", "11000000");
     }
@@ -403,7 +396,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testDeskriptoren(@ArquillianResource URL baseUrl)
+    public final void testDeskriptoren()
     throws Exception {
         deskriptorenTest.init(this.client, baseUrl);
         deskriptorenTest.execute();
@@ -416,7 +409,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testKoordinatenart(@ArquillianResource URL baseUrl)
+    public final void testKoordinatenart()
     throws Exception {
         kdaTest.init(this.client, baseUrl);
         kdaTest.execute();
@@ -429,7 +422,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testTag(@ArquillianResource URL baseUrl)
+    public final void testTag()
     throws Exception {
         tagTest.init(this.client, baseUrl);
         tagTest.execute();
@@ -442,7 +435,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testTagZuordnung(@ArquillianResource URL baseUrl)
+    public final void testTagZuordnung()
     throws Exception {
         tagZuordnungTest.init(this.client, baseUrl);
         tagZuordnungTest.execute();
@@ -454,7 +447,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testTypeRegulationAll(@ArquillianResource URL baseUrl) {
+    public final void testTypeRegulationAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("typeregulation");
     }
@@ -465,7 +458,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testTypeRegulationById(@ArquillianResource URL baseUrl) {
+    public final void testTypeRegulationById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("typeregulation", IDA);
     }
@@ -476,7 +469,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testPoiAll(@ArquillianResource URL baseUrl) {
+    public final void testPoiAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("poi");
     }
@@ -487,7 +480,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testPoiById(@ArquillianResource URL baseUrl) {
+    public final void testPoiById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("poi", IDA);
     }
@@ -498,7 +491,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testTargActMmtGrAll(@ArquillianResource URL baseUrl) {
+    public final void testTargActMmtGrAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("targactmmtgr");
     }
@@ -509,7 +502,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testTargEnvGrAll(@ArquillianResource URL baseUrl) {
+    public final void testTargEnvGrAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("targenvgr");
     }
@@ -520,7 +513,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testEnvSpecifMpAll(@ArquillianResource URL baseUrl) {
+    public final void testEnvSpecifMpAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("envspecifmp");
     }
@@ -531,7 +524,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testEnvSpecifMpGetById(@ArquillianResource URL baseUrl) {
+    public final void testEnvSpecifMpGetById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("envspecifmp", ID101);
     }
@@ -542,7 +535,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testMunicDiv(@ArquillianResource URL baseUrl) {
+    public final void testMunicDiv() {
         municDivTest.init(this.client, baseUrl);
         municDivTest.execute();
     }
@@ -553,7 +546,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testReiAgGrAll(@ArquillianResource URL baseUrl) {
+    public final void testReiAgGrAll() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getAll("reiaggr");
     }
@@ -564,7 +557,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testReiAgGrById(@ArquillianResource URL baseUrl) {
+    public final void testReiAgGrById() {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("reiaggr", ID101);
     }
@@ -575,7 +568,7 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testStatusMp(@ArquillianResource URL baseUrl) {
+    public final void testStatusMp() {
         statusMpTest.init(this.client, baseUrl);
         statusMpTest.execute();
     }
