@@ -27,8 +27,6 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.UserTransaction;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.SyncInvoker;
@@ -114,9 +112,6 @@ public class ImporterTest extends BaseTest {
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%s"
         + "%%ENDE%%\n";
-
-    @PersistenceContext
-    EntityManager em;
 
     @Inject
     @IdentifierConfig(type = "Sample")
