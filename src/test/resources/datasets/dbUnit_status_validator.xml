@@ -23,6 +23,12 @@
         unit_1 = "207"
     />
 
+    <master.nucl_facil ext_id = "A123" name = "nucl_facil_name" />
+    <master.nucl_facil_gr id = "1" ext_id = "GRA1" name = "nucl_facil_gr_name" />
+    <master.nucl_facil_gr_mp
+        id = "1"
+        nucl_facil_ext_id = "A123"
+        nucl_facil_gr_id = "1" />
     <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
     <master.rei_ag_gr_env_medium_mp
         id = "1"
