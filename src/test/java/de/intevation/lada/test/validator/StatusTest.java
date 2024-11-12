@@ -179,6 +179,42 @@ public class StatusTest extends ValidatorBaseTest {
         );
     }
 
+    /**
+     * Test status of measm with class-level warning at associated sample.
+     */
+    @Test
+    public void sampleWithClassWarning() {
+        StatusProt status = minimalStatusProt();
+        final int measmId = 1210;
+        status.setMeasmId(measmId);
+        assertHasErrors(
+            validator.validate(status),
+            MSG_KEY,
+            "Operation not possible due to constraint violations\n"
+            + "Warnings:\n"
+            + "- sampleMethId: [Individual sample expects "
+            + "sample start date = sample end date]"
+        );
+    }
+
+    /**
+     * Test status of measm with attribute-level warning at associated sample.
+     */
+    @Test
+    public void sampleWithAttrWarning() {
+        StatusProt status = minimalStatusProt();
+        final int measmId = 1211;
+        status.setMeasmId(measmId);
+        assertHasErrors(
+            validator.validate(status),
+            MSG_KEY,
+            "Operation not possible due to constraint violations\n"
+            + "Warnings:\n"
+            + "- envDescripDisplay: "
+            + "[Invalid descriptor combination, must not be blank]"
+        );
+    }
+
     private StatusProt minimalStatusProt() {
         StatusProt status = new StatusProt();
         final int existingMeasmId = 1200;
