@@ -19,6 +19,8 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 import de.intevation.lada.model.BaseModel;
 
 
@@ -46,6 +48,7 @@ public abstract class BelongsToSample extends BaseModel {
 
     @JsonbProperty("sampleId")
     @JsonbTypeAdapter(SampleToId.class)
+    @Schema(implementation = Integer.class)
     @NotNull
     @ManyToOne
     private Sample sample;
