@@ -23,6 +23,12 @@
         unit_1 = "207"
     />
 
+    <master.nucl_facil ext_id = "A123" name = "nucl_facil_name" />
+    <master.nucl_facil_gr id = "1" ext_id = "GRA1" name = "nucl_facil_gr_name" />
+    <master.nucl_facil_gr_mp
+        id = "1"
+        nucl_facil_ext_id = "A123"
+        nucl_facil_gr_id = "1" />
     <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
     <master.rei_ag_gr_env_medium_mp
         id = "1"
@@ -253,5 +259,98 @@
         text = "Initialer Status"
         measm_id = "4200"
         status_mp_id = "1"
+    />
+
+    <!--Sample with class-level warning-->
+    <lada.sample
+        id = "1001"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 01 01 00 00 00 00 00 00 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-02 13:07:00"
+        sample_end_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "N71"
+        main_sample_id = "120510003"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        ext_id = "classWarning"
+    />
+    <lada.measm
+        id = "1210"
+        sample_id = "1001"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.meas_val
+        id = "10010"
+        measm_id = "1210"
+        measd_id = "56"
+        meas_val = "42.0"
+        error = "3.3"
+        detect_lim = "2.4"
+        meas_unit_id = "207"
+    />
+    <lada.geolocat
+        id = "1001"
+        type_regulation = "E"
+        sample_id = "1001"
+        site_id = "1000"
+        add_site_text = "Test"
+    />
+
+    <!--Sample with attribute-level warning-->
+    <lada.sample
+        id = "1002"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-02 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "N71"
+        main_sample_id = "120510004"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        ext_id = "attrWarning"
+    />
+    <lada.measm
+        id = "1211"
+        sample_id = "1002"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.meas_val
+        id = "10011"
+        measm_id = "1211"
+        measd_id = "56"
+        meas_val = "42.0"
+        error = "3.3"
+        detect_lim = "2.4"
+        meas_unit_id = "207"
+    />
+    <lada.geolocat
+        id = "1002"
+        type_regulation = "E"
+        sample_id = "1002"
+        site_id = "1000"
+        add_site_text = "Test"
     />
 </dataset>
