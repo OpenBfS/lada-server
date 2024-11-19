@@ -134,8 +134,8 @@ public class ProbeTest extends ServiceTest {
         }
         // Warnings
         Map<Locale, String> wrngs = Map.of(
-            Locale.GERMAN, "darf nicht null sein",
-            Locale.US, "must not be null");
+            Locale.GERMAN, "Wert nicht gesetzt",
+            Locale.US, "No value provided");
         final String measFacilId = "06010";
         JsonObject wrngPayload = Json.createObjectBuilder()
             .add("measFacilId", measFacilId)

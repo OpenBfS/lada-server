@@ -163,6 +163,8 @@ public class BaseTest {
             .addAsResource("lada_en.properties", "lada_en.properties")
             .addAsResource("ValidationMessages.properties",
                 "ValidationMessages.properties")
+            .addAsResource("ValidationMessages_de.properties",
+                "ValidationMessages_de.properties")
             .addAsLibraries(compileAndRuntimeDeps)
             .addAsResource("META-INF/test-persistence.xml",
                 "META-INF/persistence.xml")

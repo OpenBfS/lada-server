@@ -563,8 +563,8 @@ public class ImporterTest extends BaseTest {
                     Collectors.joining("\n"));
 
         Map<Locale, String> msgs = Map.of(
-            Locale.GERMAN, "darf nicht null sein",
-            Locale.US, "must not be null");
+            Locale.GERMAN, "Wert nicht gesetzt",
+            Locale.US, "No value provided");
         final String errorsKey = "errors";
         for (Locale locale: msgs.keySet()) {
             JsonObject report = testAsyncImportProbe(

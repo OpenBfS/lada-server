@@ -65,8 +65,8 @@ public class ProbeTest extends ValidatorBaseTest {
     private Repository repository;
 
     //Expected validation messages
-    private static final String MSG_NOT_NULL = "must not be null";
-    private static final String MSG_NOT_BLANK = "must not be blank";
+    private static final String MSG_NOT_NULL = "No value provided";
+    private static final String MSG_NOT_BLANK = "No value provided";
     private static final String MSG_VALUE_MISSING = "A value must be provided";
     private static final String MSG_MULTIPLE_U_SITE =
         "Only one single site of origin should be given";
