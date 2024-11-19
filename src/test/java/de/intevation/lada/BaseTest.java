@@ -163,6 +163,8 @@ public class BaseTest {
             .addAsResource("lada_en.properties", "lada_en.properties")
             .addAsResource("ValidationMessages.properties",
                 "ValidationMessages.properties")
+            .addAsResource("ValidationMessages_de.properties",
+                "ValidationMessages_de.properties")
             .addAsLibraries(compileAndRuntimeDeps)
             .addAsResource("META-INF/test-persistence.xml",
                 "META-INF/persistence.xml")
@@ -288,6 +290,24 @@ public class BaseTest {
         Response response, GenericType<T> entityType
     ) {
         return parseResponse(response, entityType, Response.Status.OK);
+    }
+
+    /**
+     * Utility method to check status and parse JSON in a Response object.
+     *
+     * @param <T> Expected response entity type
+     * @param response The response to be parsed.
+     * @param entityType Expected response entity type
+     * @param expectedStatus Expected HTTP status code
+     * @return Parsed entity
+     */
+    public static <T> T parseResponse(
+        Response response,
+        Class<T> entityType,
+        Response.Status expectedStatus
+    ) {
+        return parseResponse(
+            response, new GenericType<T>(entityType), expectedStatus);
     }
 
     /**

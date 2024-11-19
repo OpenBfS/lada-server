@@ -68,7 +68,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MIN_SAMPLE_ID,
-            "must not be blank");
+            "No value provided");
     }
 
     /**

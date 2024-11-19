@@ -127,7 +127,7 @@ public class StatusTest extends ValidatorBaseTest {
             + "Warnings:\n"
             + "- measmStartDate: [A value must be provided]\n"
             + "Notifications:\n"
-            + "- minSampleId: [must not be blank]"
+            + "- minSampleId: [No value provided]"
         );
     }
 
@@ -159,7 +159,7 @@ public class StatusTest extends ValidatorBaseTest {
             + "Warnings:\n"
             + "- measmStartDate: [A value must be provided]\n"
             + "Notifications:\n"
-            + "- minSampleId: [must not be blank]"
+            + "- minSampleId: [No value provided]"
         );
     }
 
@@ -175,7 +175,7 @@ public class StatusTest extends ValidatorBaseTest {
             validator.validate(status),
             MSG_KEY,
             "Notifications:\n"
-            + "- minSampleId: [must not be blank]"
+            + "- minSampleId: [No value provided]"
         );
     }
 
@@ -211,7 +211,7 @@ public class StatusTest extends ValidatorBaseTest {
             "Operation not possible due to constraint violations\n"
             + "Warnings:\n"
             + "- envDescripDisplay: "
-            + "[Invalid descriptor combination, must not be blank]"
+            + "[No value provided, Invalid descriptor combination]"
         );
     }
 

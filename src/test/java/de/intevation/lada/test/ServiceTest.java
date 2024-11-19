@@ -17,12 +17,12 @@ import java.lang.reflect.ParameterizedType;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.ArrayList;
@@ -406,6 +406,22 @@ public class ServiceTest {
 
     /**
      * Test the CREATE Service.
+     * @param <T> Expected response entity type
+     * @param parameter the parameters used in the request.
+     * @param create the object to create, embedded in POST body.
+     * @param entityType Expected response entity type
+     * @return The resulting json object.
+     *
+     */
+    public <T> T create(
+        String parameter, Object create, Class<T> entityType
+    ) {
+        return create(
+            parameter, create, Locale.GERMAN, Response.Status.OK, entityType);
+    }
+
+    /**
+     * Test the CREATE Service.
      * @param parameter the parameters used in the request.
      * @param create the object to create, embedded in POST body.
      * @param acceptLanguage Acceptable language
@@ -419,6 +435,31 @@ public class ServiceTest {
         Locale acceptLanguage,
         Response.Status expectedStatus
     ) {
+        return create(
+            parameter,
+            create,
+            acceptLanguage,
+            expectedStatus,
+            JsonObject.class);
+    }
+
+    /**
+     * Test the CREATE Service.
+     * @param <T> Expected response entity type
+     * @param parameter the parameters used in the request.
+     * @param create the object to create, embedded in POST body.
+     * @param acceptLanguage Acceptable language
+     * @param expectedStatus Expected HTTP status code
+     * @param entityType Expected response entity type
+     * @return The resulting json object.
+     */
+    public <T> T create(
+        String parameter,
+        Object create,
+        Locale acceptLanguage,
+        Response.Status expectedStatus,
+        Class<T> entityType
+    ) {
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
         Response response = target.request()
@@ -427,7 +468,7 @@ public class ServiceTest {
             .accept(MediaType.APPLICATION_JSON)
             .acceptLanguage(acceptLanguage)
             .post(Entity.entity(create, MediaType.APPLICATION_JSON));
-        return BaseTest.parseResponse(response, expectedStatus).asJsonObject();
+        return BaseTest.parseResponse(response, entityType, expectedStatus);
     }
 
     /**
@@ -644,17 +685,33 @@ public class ServiceTest {
     }
 
     /**
-     * Get the difference in days between the given timestamps.
-     * @param to Date as unix timestamp
+     * Get the difference in days between the given timestamp and now.
+     * @param to timestamp
      * @return Difference in days as long
      */
     protected long getDaysFromNow(String to) {
-        LocalDateTime fromDate = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(System.currentTimeMillis()),
-            ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime toDate = LocalDateTime.parse(
+        ZonedDateTime toDate = ZonedDateTime.parse(
             to, DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT));
-        return ChronoUnit.DAYS.between(fromDate, toDate);
+        return getDaysFromNow(toDate.toInstant());
+    }
+
+    /**
+     * Get the difference in days between the given timestamp and now.
+     * @param to timestamp
+     * @return Difference in days as long
+     */
+    protected long getDaysFromNow(Date to) {
+        return getDaysFromNow(to.toInstant());
+    }
+
+    /**
+     * Get the difference in days between the given timestamp and now.
+     * @param to timestamp
+     * @return Difference in days as long
+     */
+    protected long getDaysFromNow(Instant to) {
+        Instant fromDate = Instant.ofEpochMilli(System.currentTimeMillis())
+            .truncatedTo(ChronoUnit.DAYS);
+        return ChronoUnit.DAYS.between(fromDate, to);
     }
 }
