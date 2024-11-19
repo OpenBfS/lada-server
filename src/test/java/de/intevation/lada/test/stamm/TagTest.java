@@ -26,7 +26,6 @@ public class TagTest extends ServiceTest {
 
     private final String tagUrl = "rest/tag/";
 
-    private final String tagNameAttribute = "name";
     private final String measFacilIdKey = "measFacilId";
 
     @Override
@@ -51,10 +50,9 @@ public class TagTest extends ServiceTest {
      * Test mst tags.
      */
     public void testMstTag() {
-        JsonObject tagToTest = Json.createObjectBuilder()
-            .add(measFacilIdKey, "06010")
-            .add(tagNameAttribute, "mstTag")
-            .build();
+        Tag tagToTest = new Tag();
+        tagToTest.setMeasFacilId("06010");
+        tagToTest.setName("mstTag");
         testTagCRUD(tagToTest);
     }
 
@@ -62,10 +60,9 @@ public class TagTest extends ServiceTest {
      * Test netzbetreiber tags.
      */
     public void testNetzbetreiberTag() {
-        JsonObject tagToTest = Json.createObjectBuilder()
-            .add("networkId", "06")
-            .add(tagNameAttribute, "nbTag")
-            .build();
+        Tag tagToTest = new Tag();
+        tagToTest.setNetworkId("06");
+        tagToTest.setName("nbTag");
         testTagCRUD(tagToTest);
     }
 
@@ -73,10 +70,9 @@ public class TagTest extends ServiceTest {
      * Promote a mst tag to global.
      */
     public void promoteMstTag() {
-        JsonObject tagToTest = Json.createObjectBuilder()
-            .add(measFacilIdKey, "06010")
-            .add(tagNameAttribute, "mstTagPromoted")
-            .build();
+        Tag tagToTest = new Tag();
+        tagToTest.setMeasFacilId("06010");
+        tagToTest.setName("mstTagPromoted");
         JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getInt("id");
         update(
@@ -91,7 +87,7 @@ public class TagTest extends ServiceTest {
      * Test CRUD operations for the given tag.
      * @param tagToTest Tag to test
      */
-    private void testTagCRUD(JsonObject tagToTest) {
+    private void testTagCRUD(Tag tagToTest) {
         JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getInt("id");
         if (!createResponse.isNull(measFacilIdKey)) {
@@ -99,10 +95,10 @@ public class TagTest extends ServiceTest {
             long diff = getDaysFromNow(createdGueltigBis);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
-        String tagUpdated = tagToTest.getString(tagNameAttribute) + "-mod";
+        String tagUpdated = tagToTest.getName() + "-mod";
         JsonObject updateResponse = update(tagUrl + createdId,
-            tagNameAttribute,
-            tagToTest.getString(tagNameAttribute),
+            "name",
+            tagToTest.getName(),
             tagUpdated).asJsonObject();
         Assert.assertFalse(get(tagUrl).asJsonArray().isEmpty());
         getById(tagUrl + createdId, updateResponse);
