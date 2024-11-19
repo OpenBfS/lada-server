@@ -303,6 +303,24 @@ public class BaseTest {
      */
     public static <T> T parseResponse(
         Response response,
+        Class<T> entityType,
+        Response.Status expectedStatus
+    ) {
+        return parseResponse(
+            response, new GenericType<T>(entityType), expectedStatus);
+    }
+
+    /**
+     * Utility method to check status and parse JSON in a Response object.
+     *
+     * @param <T> Expected response entity type
+     * @param response The response to be parsed.
+     * @param entityType Expected response entity type
+     * @param expectedStatus Expected HTTP status code
+     * @return Parsed entity
+     */
+    public static <T> T parseResponse(
+        Response response,
         GenericType<T> entityType,
         Response.Status expectedStatus
     ) {

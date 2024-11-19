@@ -17,6 +17,7 @@ import jakarta.ws.rs.core.Response.Status;
 import org.junit.Assert;
 
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -25,8 +26,6 @@ import de.intevation.lada.test.ServiceTest;
 public class TagTest extends ServiceTest {
 
     private final String tagUrl = "rest/tag/";
-
-    private final String measFacilIdKey = "measFacilId";
 
     @Override
     public void init(
@@ -77,7 +76,7 @@ public class TagTest extends ServiceTest {
         long createdId = createResponse.getInt("id");
         update(
             tagUrl + createdId,
-            measFacilIdKey,
+            Tag_.MEAS_FACIL_ID,
             Json.createValue("06010"),
             null,
             Status.FORBIDDEN);
@@ -88,14 +87,13 @@ public class TagTest extends ServiceTest {
      * @param tagToTest Tag to test
      */
     private void testTagCRUD(Tag tagToTest) {
-        JsonObject createResponse = create(tagUrl, tagToTest);
-        long createdId = createResponse.getInt("id");
-        if (!createResponse.isNull(measFacilIdKey)) {
-            String createdGueltigBis = createResponse.getString("valUntil");
-            long diff = getDaysFromNow(createdGueltigBis);
+        Tag createResponse = create(tagUrl, tagToTest, Tag.class);
+        if (createResponse.getMeasFacilId() != null) {
+            long diff = getDaysFromNow(createResponse.getValUntil());
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
         String tagUpdated = tagToTest.getName() + "-mod";
+        int createdId = createResponse.getId();
         JsonObject updateResponse = update(tagUrl + createdId,
             "name",
             tagToTest.getName(),
