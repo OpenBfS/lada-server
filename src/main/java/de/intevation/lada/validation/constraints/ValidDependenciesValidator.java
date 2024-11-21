@@ -47,7 +47,7 @@ public abstract class ValidDependenciesValidator {
     ) {
         if (status == null
             || status.getStatusMpId() == null
-            || status.getMeasmId() == null
+            || status.getMeasm() == null
         ) {
             return true;
         }
@@ -59,9 +59,8 @@ public abstract class ValidDependenciesValidator {
 
         StatusMp newKombi = repository.entityManager().find(
             StatusMp.class, status.getStatusMpId());
-        Measm messung = repository.entityManager().find(
-            Measm.class, status.getMeasmId());
-        if (newKombi == null || messung == null) {
+        Measm messung = status.getMeasm();
+        if (newKombi == null) {
             return true;
         }
 
@@ -89,7 +88,7 @@ public abstract class ValidDependenciesValidator {
             // Validate measVals
             QueryBuilder<MeasVal> builder = repository
                 .queryBuilder(MeasVal.class)
-                .and(MeasVal_.measmId, messung.getId());
+                .and(MeasVal_.measm, messung);
             List<MeasVal> messwerte = repository.filter(
                 builder.getQuery());
             if (!messwerte.isEmpty()) {

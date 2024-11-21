@@ -192,7 +192,7 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
                 case "messwerteCount":
                     QueryBuilder<MeasVal> builder = repository
                         .queryBuilder(MeasVal.class)
-                        .and(MeasVal_.measmId, measm.getId());
+                        .and(MeasVal_.measm, measm);
                     // TODO: A nice example of ORM-induced database misuse:
                     fieldValue = repository.filter(builder.getQuery())
                         .size();
@@ -267,9 +267,13 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
                     idMap,
                     repository.filter(messungBuilder.getQuery()));
             case "messungId":
+                QueryBuilder<Measm> measmBuilder = repository
+                        .queryBuilder(Measm.class)
+                        .andIn(Measm_.id, idMap.keySet());
+                List<Measm> measms = repository.filter(measmBuilder.getQuery());
                 QueryBuilder<MeasVal> messwertBuilder = repository
-                    .queryBuilder(MeasVal.class)
-                    .andIn(MeasVal_.measmId, idMap.keySet());
+                        .queryBuilder(MeasVal.class)
+                        .andIn(MeasVal_.measm, measms);
                 return mergeMesswertData(
                     idMap,
                     repository.filter(messwertBuilder.getQuery()));

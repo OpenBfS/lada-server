@@ -80,7 +80,7 @@ public class MeasValService extends LadaService {
 
         QueryBuilder<MeasVal> builder = repository
             .queryBuilder(MeasVal.class)
-            .and(MeasVal_.measmId, measmId);
+            .and(MeasVal_.measm, messung);
         return repository.filter(builder.getQuery());
     }
 
@@ -154,8 +154,8 @@ public class MeasValService extends LadaService {
             EnvMedium.class, probe.getEnvMediumId());
         //Get all Messwert objects to convert
         QueryBuilder<MeasVal> messwertBuilder =
-            repository.queryBuilder(MeasVal.class);
-        messwertBuilder.and(MeasVal_.measmId, measmId);
+            repository.queryBuilder(MeasVal.class)
+            .and(MeasVal_.measm, messung);
         List<MeasVal> messwerte = messwertNormalizer.normalizeMesswerte(
             repository.filter(messwertBuilder.getQuery()),
             umwelt.getId());

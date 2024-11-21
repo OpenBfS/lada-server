@@ -720,7 +720,7 @@ public class LafObjectMapper {
 
         // Add commMeasms
         for (Map<String, String> commRaw: object.getKommentare()) {
-            createMessungKommentar(commRaw, newMessung.getId(), probe);
+            createMessungKommentar(commRaw, newMessung, probe);
         }
 
         // Add measVals
@@ -728,7 +728,7 @@ public class LafObjectMapper {
         List<Integer> messgroessenListe = new ArrayList<Integer>();
         for (Map<String, String> measValRaw: object.getMesswerte()) {
             MeasVal tmp =
-                createMesswert(measValRaw, newMessung.getId());
+                createMesswert(measValRaw, newMessung);
             if (tmp != null) {
                 //find duplicates
                 if (messgroessenListe.contains(tmp.getMeasdId())) {
@@ -887,12 +887,12 @@ public class LafObjectMapper {
 
     private MeasVal createMesswert(
         Map<String, String> attributes,
-        int messungsId
+        Measm measm
     ) {
         this.configMapper.applyConfigs(attributes);
 
         MeasVal messwert = new MeasVal();
-        messwert.setMeasmId(messungsId);
+        messwert.setMeasm(measm);
 
         if (attributes.containsKey("MESSGROESSE_ID")) {
             Measd measd = repository.entityManager().find(
@@ -1012,7 +1012,7 @@ public class LafObjectMapper {
 
     private void createMessungKommentar(
         Map<String, String> attributes,
-        int messungsId,
+        Measm messung,
         Sample probe
     ) {
         this.configMapper.applyConfigs(attributes);
@@ -1023,7 +1023,7 @@ public class LafObjectMapper {
             return;
         }
         CommMeasm kommentar = new CommMeasm();
-        kommentar.setMeasmId(messungsId);
+        kommentar.setMeasm(messung);
         if (attributes.containsKey("MST_ID")) {
             kommentar.setMeasFacilId(attributes.get("MST_ID"));
         } else {
@@ -1042,7 +1042,7 @@ public class LafObjectMapper {
         // and it should only be a notification here
         QueryBuilder<CommMeasm> kommentarBuilder = repository
             .queryBuilder(CommMeasm.class)
-            .and(CommMeasm_.measmId, messungsId);
+            .and(CommMeasm_.measm, messung);
         List<CommMeasm> kommentarExist = repository.filter(
             kommentarBuilder.getQuery());
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
@@ -1170,7 +1170,7 @@ public class LafObjectMapper {
         //Cleanup Messwerte for Status 7
         QueryBuilder<MeasVal> builderMW = repository
             .queryBuilder(MeasVal.class)
-            .and(MeasVal_.measmId, messung.getId());
+            .and(MeasVal_.measm, messung);
         List<MeasVal> messwerte =
             repository.filter(builderMW.getQuery());
         boolean hasValidMesswerte = false;
@@ -1206,7 +1206,7 @@ public class LafObjectMapper {
         // Validator: StatusAssignment
         StatusProt newStatus = new StatusProt();
         newStatus.setDate(new Timestamp(new Date().getTime()));
-        newStatus.setMeasmId(messung.getId());
+        newStatus.setMeasm(messung);
         newStatus.setMeasFacilId(mstId);
         newStatus.setStatusMpId(newKombi);
 

@@ -106,7 +106,7 @@ public class HasObligMeasdsValidator
 
         QueryBuilder<MeasVal> wertBuilder = repository
             .queryBuilder(MeasVal.class)
-            .and(MeasVal_.measmId, messung.getId());
+            .and(MeasVal_.measm, messung);
         List<MeasVal> messwerte =
             repository.filter(wertBuilder.getQuery());
         List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();

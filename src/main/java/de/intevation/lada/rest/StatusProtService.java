@@ -71,7 +71,7 @@ public class StatusProtService extends LadaService {
 
         QueryBuilder<StatusProt> builder = repository
             .queryBuilder(StatusProt.class)
-            .and(StatusProt_.measmId, measmId);
+            .and(StatusProt_.measm, messung);
         return repository.filter(builder.getQuery());
     }
 
@@ -101,8 +101,7 @@ public class StatusProtService extends LadaService {
     public StatusProt create(
         @Valid StatusProt status
     ) throws BadRequestException {
-        Measm messung = repository.getById(
-            Measm.class, status.getMeasmId());
+        Measm messung = status.getMeasm();
         lock.isLocked(messung);
 
         StatusMp newKombi = repository.getById(
@@ -127,13 +126,13 @@ public class StatusProtService extends LadaService {
                 .andIsNull(MeasVal_.measVal)
                 .andIsNull(MeasVal_.lessThanLOD)
                 .not()
-                .and(MeasVal_.measmId, messung.getId())
+                .and(MeasVal_.measm, messung)
                 .getQuery()
             ).isEmpty();
         if (newKombi.getStatusVal().getId() == 7 && hasNoValidMeasVals) {
             List<MeasVal> messwerte = repository.filter(repository
                 .queryBuilder(MeasVal.class)
-                .and(MeasVal_.measmId, messung.getId())
+                .and(MeasVal_.measm, messung)
                 .getQuery());
             for (MeasVal measVal : messwerte) {
                 repository.delete(measVal);
@@ -164,7 +163,7 @@ public class StatusProtService extends LadaService {
         StatusProt statusNew = new StatusProt();
         statusNew.setDate(new Timestamp(new Date().getTime()));
         statusNew.setMeasFacilId(newStatus.getMeasFacilId());
-        statusNew.setMeasmId(newStatus.getMeasmId());
+        statusNew.setMeasm(newStatus.getMeasm());
         statusNew.setStatusMpId(newKombi.getId());
         statusNew.setText(newStatus.getText());
 
@@ -174,14 +173,14 @@ public class StatusProtService extends LadaService {
             StatusProt nV = new StatusProt();
             nV.setDate(new Timestamp(new Date().getTime()));
             nV.setMeasFacilId(newStatus.getMeasFacilId());
-            nV.setMeasmId(newStatus.getMeasmId());
+            nV.setMeasm(newStatus.getMeasm());
             nV.setStatusMpId(1);
             nV.setText(null);
             return repository.create(nV);
         }
         QueryBuilder<StatusProt> lastFilter = repository
             .queryBuilder(StatusProt.class)
-            .and(StatusProt_.measmId, newStatus.getMeasmId());
+            .and(StatusProt_.measm, newStatus.getMeasm());
         lastFilter.orderBy(StatusProt_.date, true);
         List<StatusProt> proto = repository.filter(lastFilter.getQuery());
         // Find a status that has "status_stufe" = "old status_stufe - 1"
@@ -198,7 +197,7 @@ public class StatusProtService extends LadaService {
         StatusProt orig = proto.get(ndx);
         copy.setDate(new Timestamp(new Date().getTime()));
         copy.setMeasFacilId(orig.getMeasFacilId());
-        copy.setMeasmId(orig.getMeasmId());
+        copy.setMeasm(orig.getMeasm());
         copy.setStatusMpId(orig.getStatusMpId());
         copy.setText(null);
         return repository.create(copy);

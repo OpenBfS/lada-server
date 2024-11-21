@@ -444,7 +444,7 @@ public class ImporterTest extends BaseTest {
             repository.getById(Measm.class, MID1200);
         List<MeasVal> messwerte = new ArrayList<MeasVal>();
         MeasVal wert1 = new MeasVal();
-        wert1.setMeasmId(MID1200);
+        wert1.setMeasm(messung);
         wert1.setMeasUnitId(MEHID207);
         wert1.setMeasdId(MGID56);
         wert1.setMeasVal(MESS15D);
@@ -453,7 +453,7 @@ public class ImporterTest extends BaseTest {
         merger.mergeMesswerte(messung, messwerte);
         QueryBuilder<MeasVal> builder =
             repository.queryBuilder(MeasVal.class);
-        builder.and(MeasVal_.measmId, messung.getId());
+        builder.and(MeasVal_.measm, messung);
         List<MeasVal> dbWerte =
             repository.filter(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());

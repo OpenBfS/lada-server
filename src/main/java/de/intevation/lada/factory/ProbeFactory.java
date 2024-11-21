@@ -486,7 +486,7 @@ public class ProbeFactory {
             for (int mw : mmt.getMeasds()) {
                 MeasVal wert = new MeasVal();
                 wert.setMeasdId(mw);
-                wert.setMeasmId(messung.getId());
+                wert.setMeasm(messung);
                 if (messprogramm.getMeasUnitId() != null) {
                     wert.setMeasUnitId(messprogramm.getMeasUnitId());
                 } else {

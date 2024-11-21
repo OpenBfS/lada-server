@@ -41,7 +41,7 @@ public class StatusOrderValidator
     @Override
     public boolean isValid(StatusProt status, ConstraintValidatorContext ctx) {
         if (status == null
-            || status.getMeasmId() == null
+            || status.getMeasm() == null
             || status.getStatusMpId() == null
         ) {
             return true;
@@ -54,7 +54,7 @@ public class StatusOrderValidator
         QueryBuilder<StatusProt> lastFilter = repository
             .queryBuilder(StatusProt.class)
             .and(StatusProt_.id, status.getId()).not()
-            .and(StatusProt_.measmId, status.getMeasmId())
+            .and(StatusProt_.measm, status.getMeasm())
             .orderBy(StatusProt_.id, false);
         List<StatusProt> protos =
             repository.filter(lastFilter.getQuery(), 0, 1);

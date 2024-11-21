@@ -114,7 +114,7 @@ public class CsvExportJob extends QueryExportJob<CsvExportParameters> {
         messwertData.forEach(messwert -> {
             Map<String, Object> mergedRow = transformFieldValues(messwert);
             // Add primary record
-            Integer primaryId = messwert.getMeasmId();
+            Integer primaryId = messwert.getMeasm().getId();
             Map<String, Object> primaryRecord = idMap.get(primaryId);
             if (primaryRecord == null) {
                 logger.error("Can not get primary record for merging");

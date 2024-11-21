@@ -40,17 +40,14 @@ public class IsMeasdPrimaryOrConvertibleToValidator
     @Transactional
     @Override
     public boolean isValid(MeasVal messwert, ConstraintValidatorContext ctx) {
-        if (messwert == null || messwert.getMeasmId() == null) {
+        if (messwert == null || messwert.getMeasm() == null) {
             return true;
         }
 
         Repository repository = CDI.current().getBeanContainer()
             .createInstance().select(Repository.class).get();
-        Measm measm = repository.entityManager().find(
-            Measm.class, messwert.getMeasmId());
-        if (measm == null) {
-            return true;
-        }
+        Measm measm = messwert.getMeasm();
+
         EnvMedium umwelt = measm.getSample().getEnvMedium();
         if (umwelt == null) {
             return true;

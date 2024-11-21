@@ -8,7 +8,6 @@
 package de.intevation.lada.util.auth;
 
 import de.intevation.lada.model.lada.BelongsToMeasm;
-import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
@@ -35,7 +34,7 @@ class MessungIdAuthorizer extends Authorizer<BelongsToMeasm> {
         RequestMethod method
     ) throws AuthorizationException {
         messungAuthorizer.authorize(
-            repository.getById(Measm.class, data.getMeasmId()),
+            data.getMeasm(),
             // Allow reading if measm is readable, everything else corresponds
             // to editing the measm
             method == RequestMethod.GET
@@ -48,8 +47,7 @@ class MessungIdAuthorizer extends Authorizer<BelongsToMeasm> {
         // Set readonly flag
         super.setAuthAttrs(object);
 
-        Sample probe = repository.getById(Measm.class, object.getMeasmId())
-            .getSample();
+        Sample probe = object.getMeasm().getSample();
         MeasFacil mst = repository.getById(
             MeasFacil.class, probe.getMeasFacilId());
         object.setOwner(

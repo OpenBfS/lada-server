@@ -265,9 +265,9 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
                 );
                 ((ObjectNode) jsMessung).put("mmt", mmt == null ?
                     "" : mmt.getName());
-                addMesswerte(jsMessung);
-                addMessungsKommentare(jsMessung);
-                addStatusProtokoll(jsMessung);
+                addMesswerte(jsMessung, m);
+                addMessungsKommentare(jsMessung, m);
+                addStatusProtokoll(jsMessung, m);
                 ArrayNode mArry = mapper.createArrayNode();
                 mArry.add(jsMessung);
                 ((ObjectNode) jsProbe).set("measms", mArry);
@@ -399,8 +399,8 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     }
 
     private void addMessungen(JsonNode probe) {
-        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
-        builder.and(Measm_.id, probe.get("id").asInt());
+        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
+        .and(Measm_.id, probe.get("id").asInt());
         List<Measm> messungen =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -414,9 +414,9 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
                 );
                 ((ObjectNode) nodes.get(i)).put("mmt",
                     mmt == null ? "" : mmt.getName());
-                addMesswerte(nodes.get(i));
-                addMessungsKommentare(nodes.get(i));
-                addStatusProtokoll(nodes.get(i));
+                addMesswerte(nodes.get(i), messungen.get(i));
+                addMessungsKommentare(nodes.get(i), messungen.get(i));
+                addStatusProtokoll(nodes.get(i), messungen.get(i));
             }
             ((ObjectNode) probe).set("measms", nodes);
         } catch (IOException e) {
@@ -427,8 +427,8 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
 
     private void addKommentare(JsonNode probe) {
         QueryBuilder<CommSample> builder =
-            repository.queryBuilder(CommSample.class);
-        builder.and(CommSample_.id, probe.get("id").asInt());
+            repository.queryBuilder(CommSample.class)
+            .and(CommSample_.id, probe.get("id").asInt());
         List<CommSample> kommentare =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -502,8 +502,8 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
                 repository.queryBuilder(EnvDescrip.class);
             String beschreibung = "";
             if (Integer.parseInt(parts[i + 1]) != 0) {
-                builder.and(EnvDescrip_.lev, i);
-                builder.and(EnvDescrip_.levVal, Integer.parseInt(parts[i + 1]));
+                builder.and(EnvDescrip_.lev, i)
+                .and(EnvDescrip_.levVal, Integer.parseInt(parts[i + 1]));
                 if (i != 0) {
                     builder.and(EnvDescrip_.predId, vorgaenger);
                 }
@@ -535,10 +535,10 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         ((ObjectNode) probe).set("envDescrip", node);
     }
 
-    private void addMesswerte(JsonNode node) {
+    private void addMesswerte(JsonNode node, Measm measm) {
         QueryBuilder<MeasVal> builder =
-            repository.queryBuilder(MeasVal.class);
-        builder.and(MeasVal_.measmId, node.get("id").asInt());
+            repository.queryBuilder(MeasVal.class)
+            .and(MeasVal_.measm, measm);
         List<MeasVal> messwerte =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -566,10 +566,10 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         }
     }
 
-    private void addMessungsKommentare(JsonNode node) {
+    private void addMessungsKommentare(JsonNode node, Measm measm) {
         QueryBuilder<CommMeasm> builder =
-            repository.queryBuilder(CommMeasm.class);
-        builder.and(CommMeasm_.measmId, node.get("id").asInt());
+            repository.queryBuilder(CommMeasm.class)
+            .and(CommMeasm_.measm, measm);
         List<CommMeasm> kommentare =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -592,10 +592,10 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         }
     }
 
-    private void addStatusProtokoll(JsonNode node) {
+    private void addStatusProtokoll(JsonNode node, Measm measm) {
         QueryBuilder<StatusProt> builder =
-            repository.queryBuilder(StatusProt.class);
-        builder.and(StatusProt_.measmId, node.get("id").asInt());
+            repository.queryBuilder(StatusProt.class)
+            .and(StatusProt_.measm, measm);
         List<StatusProt> status =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();

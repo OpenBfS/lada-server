@@ -363,16 +363,24 @@ public class AuthorizerTest extends BaseTest {
     private static Map<Object, TestConfig> createMeasmIdTestData() {
         //Test editable measm without status
         CommMeasm noStatus = new CommMeasm();
-        noStatus.setMeasmId(MEASM_ID_NO_STATUS);
+        Measm measm = repository.entityManager()
+                .find(Measm.class, MEASM_ID_NO_STATUS);
+        noStatus.setMeasm(measm);
         //Test measm with editable status
         CommMeasm editableStatus = new CommMeasm();
-        editableStatus.setMeasmId(MEASM_ID_STATUS_EDITABLE);
+        Measm measm2 = repository.entityManager()
+                .find(Measm.class, MEASM_ID_STATUS_EDITABLE);
+        editableStatus.setMeasm(measm2);
         //Test measm locked by status
         CommMeasm lockedByStatus = new CommMeasm();
-        lockedByStatus.setMeasmId(MEASM_ID_STATUS_LOCKED);
+        Measm measm3 = repository.entityManager()
+                .find(Measm.class, MEASM_ID_STATUS_LOCKED);
+        lockedByStatus.setMeasm(measm3);
         //Test measm locked by connected sample
         CommMeasm lockedBySample = new CommMeasm();
-        lockedBySample.setMeasmId(MEASM_ID_LOCKED_BY_SAMPLE);
+        Measm measm4 = repository.entityManager()
+                .find(Measm.class, MEASM_ID_LOCKED_BY_SAMPLE);
+        lockedBySample.setMeasm(measm4);
 
         return Map.of(
             noStatus, new TestConfig(true, true, true, true,
@@ -405,7 +413,9 @@ public class AuthorizerTest extends BaseTest {
 
     private static StatusProt newStatusProt(Integer measmId) {
         StatusProt status = new StatusProt();
-        status.setMeasmId(measmId);
+        Measm measm = repository.entityManager()
+                .find(Measm.class, measmId);
+        status.setMeasm(measm);
         status.setStatusMpId(2);
         status.setMeasFacilId("06010");
         return status;

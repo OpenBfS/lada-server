@@ -40,17 +40,13 @@ public class MeasdMatchesMmtValidator
     @Transactional
     @Override
     public boolean isValid(MeasVal messwert, ConstraintValidatorContext ctx) {
-        if (messwert == null) {
+        if (messwert == null || messwert.getMeasm() == null) {
             return true;
         }
 
         Repository repository = CDI.current().getBeanContainer()
             .createInstance().select(Repository.class).get();
-        Measm messung = repository.entityManager().find(
-            Measm.class, messwert.getMeasmId());
-        if (messung == null) {
-            return true;
-        }
+        Measm messung = messwert.getMeasm();
 
         final SingularAttribute<MmtMeasdView, Integer> measdIdKey
             = MmtMeasdView_.measdId;

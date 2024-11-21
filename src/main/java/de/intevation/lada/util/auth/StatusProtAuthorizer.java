@@ -41,7 +41,7 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
             throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         case POST:
             // Is user authorized to edit status at all?
-            Measm measm = repository.getById(Measm.class, status.getMeasmId());
+            Measm measm = status.getMeasm();
             messungAuthorizer.setAuthAttrs(measm);
             if (!measm.getStatusEdit()) {
                 throw new AuthorizationException(I18N_KEY_FORBIDDEN);
@@ -61,7 +61,7 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
             throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         default:
             messungAuthorizer.authorize(
-                repository.getById(Measm.class, status.getMeasmId()),
+                status.getMeasm(),
                 method);
         }
     }
@@ -71,8 +71,7 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
         // Set readonly flag
         super.setAuthAttrs(status);
 
-        Sample probe = repository.getById(Measm.class, status.getMeasmId())
-            .getSample();
+        Sample probe = status.getMeasm().getSample();
         MeasFacil mst = repository.getById(
             MeasFacil.class, probe.getMeasFacilId());
         status.setOwner(

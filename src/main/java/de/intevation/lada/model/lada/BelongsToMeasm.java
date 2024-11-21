@@ -9,27 +9,47 @@ package de.intevation.lada.model.lada;
 
 import java.util.Date;
 
-import jakarta.persistence.JoinColumn;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import jakarta.json.bind.adapter.JsonbAdapter;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbTypeAdapter;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.groups.DatabaseConstraints;
-
 
 @MappedSuperclass
 public abstract class BelongsToMeasm extends BaseModel {
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Measm.class)
-    private Integer measmId;
+    public static class MeasmToId implements JsonbAdapter<Measm, Integer> {
+        @PersistenceContext
+        EntityManager em;
 
+        @Override
+        public Measm adaptFromJson(Integer id) {
+            if (em == null) {
+                // Mock measm when deserializing in client-side tests
+                return new Measm();
+            }
+            return em.find(Measm.class, id);
+        }
+
+        @Override
+        public Integer adaptToJson(Measm measm) {
+            return measm.getId();
+        }
+    }
+
+    @JsonbProperty("measmId")
+    @JsonbTypeAdapter(MeasmToId.class)
+    @Schema(implementation = Integer.class)
+    @NotNull
     @ManyToOne
-    @JoinColumn(insertable = false, updatable = false)
     private Measm measm;
 
     @Transient
@@ -39,12 +59,12 @@ public abstract class BelongsToMeasm extends BaseModel {
     private Date parentModified;
 
 
-    public Integer getMeasmId() {
-        return this.measmId;
+    public Measm getMeasm() {
+        return this.measm;
     }
 
-    public void setMeasmId(Integer measmId) {
-        this.measmId = measmId;
+    public void setMeasm(Measm measm) {
+        this.measm = measm;
     }
 
     public boolean isOwner() {

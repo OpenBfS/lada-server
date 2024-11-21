@@ -10,6 +10,7 @@ package de.intevation.lada.test.validator;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.Measm;
 
 
 /**
@@ -30,7 +31,8 @@ public class CommMeasmTest extends ValidatorBaseTest {
     @Test
     public void commentDuplicateText() {
         CommMeasm comm = new CommMeasm();
-        comm.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        comm.setMeasm(measm);
         comm.setText(COMMENT_TEXT_EXISTING);
         comm.setMeasFacilId(MEAS_FACIL);
 
@@ -38,7 +40,7 @@ public class CommMeasmTest extends ValidatorBaseTest {
         assertHasErrors(
             comm,
             "text",
-            "Non-unique value combination for [text, measmId]");
+            "Non-unique value combination for [text, measm]");
     }
 
     /**
@@ -47,7 +49,8 @@ public class CommMeasmTest extends ValidatorBaseTest {
     @Test
     public void commentUniqueText() {
         CommMeasm comm = new CommMeasm();
-        comm.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        comm.setMeasm(measm);
         comm.setText(COMMENT_TEXT_NEW);
         comm.setMeasFacilId(MEAS_FACIL);
 

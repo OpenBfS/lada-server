@@ -58,8 +58,8 @@ public class CommMeasmService extends LadaService {
         authorization.authorize(messung, RequestMethod.GET);
 
         QueryBuilder<CommMeasm> builder =
-            repository.queryBuilder(CommMeasm.class);
-        builder.and(CommMeasm_.measmId, measmId);
+            repository.queryBuilder(CommMeasm.class)
+            .and(CommMeasm_.measm, messung);
         return repository.filter(builder.getQuery());
     }
 

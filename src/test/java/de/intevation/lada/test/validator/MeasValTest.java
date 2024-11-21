@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
+import de.intevation.lada.model.lada.Measm;
 
 
 public class MeasValTest extends ValidatorBaseTest {
@@ -44,7 +45,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measValWithoutErrorAndLessThanLOD() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
@@ -57,7 +59,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measValWithErrorZeroAndNoLessThanLOD() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         val.setError(0.0f);
@@ -71,7 +74,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measValWithErrorZeroAndLessThanLOD() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setDetectLim(0.0d);
@@ -90,7 +94,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measValWithError() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasVal(1.0d);
         val.setError(1.0f);
@@ -106,7 +111,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void notLessThanLODAndNoMeasVal() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
         val.setMeasVal(null);
@@ -124,7 +130,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void lessThanLODAndMeasVal() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setDetectLim(0.0d);
@@ -143,7 +150,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void lessThanLODAndNoMeasVal() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setDetectLim(0.0d);
@@ -160,7 +168,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measValWithoutLessThanLOD() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
         val.setError(ERROR_GT_ZERO);
@@ -177,7 +186,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measValIsZero() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasVal(0.0d);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
@@ -194,7 +204,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void hasNoDetectLim() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setDetectLim(null);
@@ -212,7 +223,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void hasDetectLim() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setDetectLim(1.0d);
@@ -228,7 +240,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measUnitIsPrimary() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         val.setError(ERROR_GT_ZERO);
@@ -244,7 +257,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measUnitIsSecondary() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_SECONDARY_UNIT);
         val.setError(ERROR_GT_ZERO);
@@ -262,7 +276,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measUnitIsConvertableToPrimary() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_PRIMARY);
 
@@ -278,7 +293,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measUnitIsConvertableToSecondary() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_SECONDARY);
 
@@ -295,7 +311,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measUnitIsNotConvertable() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(UNIT_ID_NOT_CONVERTABLE);
 
@@ -311,7 +328,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void mmtDoesNotMatchMeasd() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(UNMATCHED_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
@@ -327,7 +345,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void mmtDoesMatchMeasd() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         val.setError(ERROR_GT_ZERO);
@@ -342,7 +361,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void secondaryMeasUnitSelected() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_SECONDARY_UNIT);
 
@@ -359,7 +379,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measUnitIsConvertableToSecondaryButNotPrimary() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_SECONDARY);
 
@@ -375,7 +396,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measdIsNotUniqueInMeasm() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(OTHER_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         val.setError(1.0f);
@@ -387,7 +409,7 @@ public class MeasValTest extends ValidatorBaseTest {
             CoreMatchers.hasItem(MeasVal_.MEASD_ID));
         MatcherAssert.assertThat(val.getErrors().get(MeasVal_.MEASD_ID),
             CoreMatchers.hasItem(
-                "Non-unique value combination for [measdId, measmId]"));
+                "Non-unique value combination for [measdId, measm]"));
     }
 
     /**
@@ -396,7 +418,8 @@ public class MeasValTest extends ValidatorBaseTest {
     @Test
     public void measdIsUniqueInMeasm() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_EMPTY_MEASM_ID);
+        Measm measm = repository.getById(Measm.class, EXISTING_EMPTY_MEASM_ID);
+        val.setMeasm(measm);
         val.setMeasdId(OTHER_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 

@@ -44,7 +44,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ MeasVal.class, DatabaseConstraints.class })
-@Unique(fields = {"measdId", "measmId"},
+@Unique(fields = {"measdId", "measm"},
     groups = DatabaseConstraints.class, clazz = MeasVal.class)
 @HasDetectLim
 @HasMeasValOrLessThanLOD(groups = Warnings.class)

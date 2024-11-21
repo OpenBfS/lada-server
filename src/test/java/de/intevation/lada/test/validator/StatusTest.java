@@ -12,6 +12,7 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
 
@@ -103,7 +104,9 @@ public class StatusTest extends ValidatorBaseTest {
     public void statusReiCompleteSample() {
         StatusProt status = minimalStatusProt();
         final int existingMeasmIdValidReiSample = 4200;
-        status.setMeasmId(existingMeasmIdValidReiSample);
+        Measm measm = repository
+                .getById(Measm.class, existingMeasmIdValidReiSample);
+        status.setMeasm(measm);
 
         validator.validate(status);
         assertNoMessages(status);
@@ -117,7 +120,9 @@ public class StatusTest extends ValidatorBaseTest {
     public void measmWithMessages() {
         StatusProt status = minimalStatusProt();
         final int invalidMeasmId = 1201;
-        status.setMeasmId(invalidMeasmId);
+        Measm measm = repository
+                .getById(Measm.class, invalidMeasmId);
+        status.setMeasm(measm);
         assertHasErrors(
             validator.validate(status),
             MSG_KEY,
@@ -140,7 +145,9 @@ public class StatusTest extends ValidatorBaseTest {
         StatusProt status = minimalStatusProt();
         final int notPlausible = 4, invalidMeasmId = 1201;
         status.setStatusMpId(notPlausible);
-        status.setMeasmId(invalidMeasmId);
+        Measm measm = repository
+                .getById(Measm.class, invalidMeasmId);
+        status.setMeasm(measm);
         assertNoMessages(validator.validate(status));
     }
 
@@ -151,7 +158,9 @@ public class StatusTest extends ValidatorBaseTest {
     public void measmWithWarnings() {
         StatusProt status = minimalStatusProt();
         final int invalidMeasmId = 1202;
-        status.setMeasmId(invalidMeasmId);
+        Measm measm = repository
+                .getById(Measm.class, invalidMeasmId);
+        status.setMeasm(measm);
         assertHasErrors(
             validator.validate(status),
             MSG_KEY,
@@ -170,7 +179,8 @@ public class StatusTest extends ValidatorBaseTest {
     public void measmWithNotifications() {
         StatusProt status = minimalStatusProt();
         final int measmId = 1203;
-        status.setMeasmId(measmId);
+        Measm measm = repository.getById(Measm.class, measmId);
+        status.setMeasm(measm);
         assertHasNotifications(
             validator.validate(status),
             MSG_KEY,
@@ -186,7 +196,8 @@ public class StatusTest extends ValidatorBaseTest {
     public void sampleWithClassWarning() {
         StatusProt status = minimalStatusProt();
         final int measmId = 1210;
-        status.setMeasmId(measmId);
+        Measm measm = repository.getById(Measm.class, measmId);
+        status.setMeasm(measm);
         assertHasErrors(
             validator.validate(status),
             MSG_KEY,
@@ -204,7 +215,8 @@ public class StatusTest extends ValidatorBaseTest {
     public void sampleWithAttrWarning() {
         StatusProt status = minimalStatusProt();
         final int measmId = 1211;
-        status.setMeasmId(measmId);
+        Measm measm = repository.getById(Measm.class, measmId);
+        status.setMeasm(measm);
         assertHasErrors(
             validator.validate(status),
             MSG_KEY,
@@ -218,7 +230,8 @@ public class StatusTest extends ValidatorBaseTest {
     private StatusProt minimalStatusProt() {
         StatusProt status = new StatusProt();
         final int existingMeasmId = 1200;
-        status.setMeasmId(existingMeasmId);
+        Measm measm = repository.getById(Measm.class, existingMeasmId);
+        status.setMeasm(measm);
         status.setMeasFacilId("06010");
         status.setStatusMpId(2);
         return status;

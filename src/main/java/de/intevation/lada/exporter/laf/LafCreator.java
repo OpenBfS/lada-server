@@ -436,12 +436,12 @@ implements Creator {
             laf += "%MESSUNG%\n";
             QueryBuilder<MeasVal> wertBuilder = repository
                 .queryBuilder(MeasVal.class)
-                .and(MeasVal_.measmId, m.getId());
+                .and(MeasVal_.measm, m);
             List<MeasVal> werte = repository.filter(
                 wertBuilder.getQuery());
             QueryBuilder<CommMeasm> kommBuilder = repository
                 .queryBuilder(CommMeasm.class)
-                .and(CommMeasm_.measmId, m.getId());
+                .and(CommMeasm_.measm, m);
             List<CommMeasm> kommentare = repository.filter(
                 kommBuilder.getQuery());
             laf += lafLine("MESSUNGS_ID", m.getExtId().toString());
@@ -489,9 +489,9 @@ implements Creator {
     private String writeStatus(Measm messung) {
         Integer[] status = {0, 0, 0};
         QueryBuilder<StatusProt> builder =
-        repository.queryBuilder(StatusProt.class);
-            builder.and(StatusProt_.measmId, messung.getId());
-        builder.orderBy(StatusProt_.id, false);
+        repository.queryBuilder(StatusProt.class)
+        .and(StatusProt_.measm, messung)
+        .orderBy(StatusProt_.id, false);
         List<StatusProt> statusHistory = repository.filter(
                 builder.getQuery());
         Integer stufe = 4;

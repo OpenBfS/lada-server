@@ -62,7 +62,7 @@ public class StatusTest extends ServiceTest {
 
         getById(url + id,
             Json.createObjectBuilder()
-            .add(StatusProt_.MEASM_ID, expectedMeasmId)
+            .add("measmId", expectedMeasmId)
             .add(StatusProt_.STATUS_MP_ID, 1)
             .build());
 
@@ -73,7 +73,7 @@ public class StatusTest extends ServiceTest {
         int measmId;
         //Test for measm with partially valid measvals
         //-> MeasVals should be kept
-        measmId = undeliverablePartiallyValid.getInt(StatusProt_.MEASM_ID);
+        measmId = undeliverablePartiallyValid.getInt("measmId");
         create(url, undeliverablePartiallyValid);
         Assert.assertTrue(
             "measVals should have been kept",
@@ -81,7 +81,7 @@ public class StatusTest extends ServiceTest {
 
         //Test for measm with invalid measvals
         //-> expect MeasVals to be deleted
-        measmId = undeliverableInvalid.getInt(StatusProt_.MEASM_ID);
+        measmId = undeliverableInvalid.getInt("measmId");
         create(url, undeliverableInvalid);
         Assert.assertFalse(
             "measVals should have been deleted",
