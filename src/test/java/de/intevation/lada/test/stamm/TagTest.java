@@ -8,10 +8,12 @@
 package de.intevation.lada.test.stamm;
 
 import java.net.URL;
+import java.util.List;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
@@ -98,7 +100,8 @@ public class TagTest extends ServiceTest {
             "name",
             tagToTest.getName(),
             tagUpdated).asJsonObject();
-        Assert.assertFalse(get(tagUrl).asJsonArray().isEmpty());
+        Assert.assertFalse(
+            get(tagUrl, new GenericType<List<Tag>>() { }).isEmpty());
         getById(tagUrl + createdId, updateResponse);
         delete(tagUrl + createdId);
     }

@@ -41,6 +41,7 @@ import jakarta.persistence.Table;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -350,13 +351,69 @@ public class ServiceTest {
     public JsonValue get(
         String parameter, Response.Status expectedStatus
     ) {
+        return get(parameter, JsonValue.class, expectedStatus);
+    }
+
+    /**
+     * Base for all GET requests.
+     * @param <T> Expected response entity type
+     * @param parameter the url parameter used in the request.
+     * @param entityType Expected response entity type
+     * @return the JSON returned by the service.
+     */
+    public <T> T get(
+        String parameter, Class<T> entityType
+    ) {
+        return get(parameter, entityType, Response.Status.OK);
+    }
+
+    /**
+     * Base for all GET requests.
+     * @param <T> Expected response entity type
+     * @param parameter the url parameter used in the request.
+     * @param entityType Expected response entity type
+     * @return the JSON returned by the service.
+     */
+    public <T> T get(
+        String parameter, GenericType<T> entityType
+    ) {
+        return get(parameter, entityType, Response.Status.OK);
+    }
+
+    /**
+     * Base for all GET requests.
+     * @param <T> Expected response entity type
+     * @param parameter the url parameter used in the request.
+     * @param expectedStatus Expected HTTP status code
+     * @param entityType Expected response entity type
+     * @return the JSON returned by the service.
+     */
+    public <T> T get(
+        String parameter, Class<T> entityType, Response.Status expectedStatus
+    ) {
+        return get(parameter, new GenericType<T>(entityType), expectedStatus);
+    }
+
+    /**
+     * Base for all GET requests.
+     * @param <T> Expected response entity type
+     * @param parameter the url parameter used in the request.
+     * @param expectedStatus Expected HTTP status code
+     * @param entityType Expected response entity type
+     * @return the JSON returned by the service.
+     */
+    public <T> T get(
+        String parameter,
+        GenericType<T> entityType,
+        Response.Status expectedStatus
+    ) {
         WebTarget target = client.target(baseUrl + parameter);
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .get();
-        return BaseTest.parseResponse(response, expectedStatus);
+        return BaseTest.parseResponse(response, entityType, expectedStatus);
     }
 
     /**
