@@ -55,7 +55,7 @@ public class DatensatzErzeugerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("rest/datasetcreator");
+        get("rest/datasetcreator", DatasetCreator.class);
         getById(
             "rest/datasetcreator/1000",
             expectedById);
