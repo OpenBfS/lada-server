@@ -131,17 +131,18 @@ public class SampleService extends LadaService {
 
     /**
      * Create a new Sample object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
      *
-     * @return the new probe object.
+     * @param probe the object to create
+     * @return the created object.
      * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
+    @Operation(description = "Ignores associated measms in requestBody.")
     public Sample create(
         @Valid Sample probe
     ) throws BadRequestException {
+        probe.setMeasms(null);
+
         setEnvAttrs(probe);
 
         return repository.create(probe);
@@ -231,18 +232,19 @@ public class SampleService extends LadaService {
 
     /**
      * Update an existing Sample object.
-     * <p>
-     * The object to update should come as JSON formatted string.
      *
      * @return the updated Sample object.
      * @throws BadRequestException if any constraint violations are detected.
      */
+    @Operation(description = "Ignores associated measms in requestBody.")
     @PUT
     @Path("{id}")
     public Sample update(
         @PathParam("id") Integer id,
         @Valid Sample probe
     ) throws BadRequestException {
+        probe.setMeasms(null);
+
         lock.isLocked(probe);
 
         setEnvAttrs(probe);

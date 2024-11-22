@@ -51,7 +51,7 @@ public abstract class BelongsToSample extends BaseModel {
     @Schema(implementation = Integer.class)
     @NotNull
     @ManyToOne
-    private Sample sample;
+    protected Sample sample;
 
     @Transient
     private boolean owner;
