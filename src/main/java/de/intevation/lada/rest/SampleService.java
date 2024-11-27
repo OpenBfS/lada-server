@@ -137,7 +137,6 @@ public class SampleService extends LadaService {
      * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
-    @Operation(description = "Ignores associated measms in requestBody.")
     public Sample create(
         @Valid Sample probe
     ) throws BadRequestException {
@@ -236,7 +235,6 @@ public class SampleService extends LadaService {
      * @return the updated Sample object.
      * @throws BadRequestException if any constraint violations are detected.
      */
-    @Operation(description = "Ignores associated measms in requestBody.")
     @PUT
     @Path("{id}")
     public Sample update(

@@ -21,6 +21,8 @@ import org.eclipse.microprofile.openapi.annotations.info.Info;
 @OpenAPIDefinition(info = @Info(
         title = "LADA services",
         version = "Please query version service",
-        description = "REST, import and export services for IMIS LADA"))
+        description = "REST, import and export services for IMIS LADA. "
+        + "REST services ignore associated objects (e.g. Sample.measms) "
+        + "given in requestBody."))
 public class LadaApplication extends Application {
 }
