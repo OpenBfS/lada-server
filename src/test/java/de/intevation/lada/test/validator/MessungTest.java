@@ -85,11 +85,7 @@ public class MessungTest extends ValidatorBaseTest {
         MatcherAssert.assertThat(
             measm.getErrors().get(Measm_.MIN_SAMPLE_ID),
             CoreMatchers.hasItem(
-                "size must be between 1 and 2147483647"));
-        MatcherAssert.assertThat(
-            measm.getErrors().get(Measm_.MIN_SAMPLE_ID),
-            CoreMatchers.hasItem(
-                "must match \".*\\S+.*\""));
+                "Field must not be whitespace"));
     }
 
     /**

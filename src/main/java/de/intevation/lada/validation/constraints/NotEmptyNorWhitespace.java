@@ -19,26 +19,25 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import jakarta.validation.ReportAsSingleViolation;
 import jakarta.validation.constraints.Pattern;
 
 /**
- * Composite constraint enforcing non blank Strings.
- *
- * Constraints:
- *   - Size must be at least 1
- *   - Must contain at least one non whitespace character
- *   - Null is considered valid
+ * The annotated element must be null or contain at least one
+ * non-whitespace character.
  */
-@Pattern(regexp = "[\\s\\S]*\\S+[\\s\\S]*", message="{de.intevation.lada.validation.constraints.NotEmptyNorWhitespace.message}")
+@Pattern(regexp = ".*\\S+.*", flags = Pattern.Flag.DOTALL)
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, TYPE_USE })
 @Retention(RUNTIME)
 @Constraint(validatedBy = { })
+@ReportAsSingleViolation
 @Documented
 public @interface NotEmptyNorWhitespace {
     /**
      * Validation message.
      */
-    String message() default "";
+    String message() default
+        "{de.intevation.lada.validation.constraints.NotEmptyNorWhitespace.message}";
 
     Class<?>[] groups() default { };
 
