@@ -77,15 +77,10 @@ public class MessungTest extends ValidatorBaseTest {
     public void hasEmptyNebenprobenNr() {
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId("");
-        validator.validate(measm);
-        Assert.assertTrue(measm.hasErrors());
-        MatcherAssert.assertThat(
-            measm.getErrors().keySet(),
-            CoreMatchers.hasItem(Measm_.MIN_SAMPLE_ID));
-        MatcherAssert.assertThat(
-            measm.getErrors().get(Measm_.MIN_SAMPLE_ID),
-            CoreMatchers.hasItem(
-                "Field must not be whitespace"));
+        assertHasErrors(
+            validator.validate(measm),
+            Measm_.MIN_SAMPLE_ID,
+            "Field must not be whitespace");
     }
 
     /**
