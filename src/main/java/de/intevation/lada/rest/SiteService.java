@@ -15,6 +15,7 @@ import java.util.List;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -50,11 +51,6 @@ import de.intevation.lada.validation.Validator;
 @Path(LadaService.PATH_REST + "site")
 public class SiteService extends LadaService {
 
-    private static final String QUERY_TEMPLATE =
-        "SELECT site.* FROM master.site "
-        + "LEFT JOIN master.admin_unit AS au ON admin_unit_id = au.id "
-        + "%s";
-
     @Inject
     private Logger logger;
 
@@ -69,14 +65,14 @@ public class SiteService extends LadaService {
 
     public static class Response {
         private List<Site> data;
-        private int totalCount;
+        private long totalCount;
 
         /**
          * Default constructor for JSON-B.
          */
         public Response() { };
 
-        private Response(List<Site> data, int totalCount) {
+        private Response(List<Site> data, long totalCount) {
             this.data = data;
             this.totalCount = totalCount;
         }
@@ -89,7 +85,7 @@ public class SiteService extends LadaService {
             this.data = data;
         }
 
-        public int getTotalCount() {
+        public long getTotalCount() {
             return this.totalCount;
         }
 
@@ -120,12 +116,12 @@ public class SiteService extends LadaService {
         // Build SQL query string
         List<String> whereClauseParts = new ArrayList<>();
         if (networkId != null) {
-            whereClauseParts.add("network_id IN(:networkId)");
+            whereClauseParts.add("networkId in(:networkId)");
         }
         if (search != null) {
             List<String> filters = new ArrayList<>();
             for (String attr: List.of(
-                    "ext_id", "short_text", "long_text", "name")) {
+                    "extId", "shortText", "longText", "adminUnit.name")) {
                 filters.add(attr + " LIKE(:pattern)");
             }
             whereClauseParts.add(String.join(" OR ", filters));
@@ -135,13 +131,14 @@ public class SiteService extends LadaService {
             whereClause =
                 "WHERE (" + String.join(") AND (", whereClauseParts) + ")";
         }
-        String queryString = String.format(QUERY_TEMPLATE, whereClause);
 
         // Build queries
-        Query siteQuery = repository.entityManager().createNativeQuery(
-            queryString, Site.class);
-        Query countQuery = repository.entityManager().createNativeQuery(
-            "SELECT count(*) FROM (" + queryString + ") as query");
+        TypedQuery<Site> siteQuery = repository.entityManager().createQuery(
+            String.format("select s from Site s %s", whereClause),
+            Site.class);
+        TypedQuery<Long> countQuery = repository.entityManager().createQuery(
+            String.format("select count(s) from Site s %s", whereClause),
+            Long.class);
         List<Query> queries = List.of(siteQuery, countQuery);
         if (networkId != null) {
             for (Query query: queries) {
@@ -160,12 +157,10 @@ public class SiteService extends LadaService {
             siteQuery.setMaxResults(limit);
         }
 
-        @SuppressWarnings("unchecked")
         List<Site> orte = new Validator().validate(siteQuery.getResultList());
 
-        int size = Math.toIntExact((Long) countQuery.getSingleResult());
-
-        return new Response(authorization.filter(orte), size);
+        return new Response(authorization.filter(orte),
+            countQuery.getSingleResult());
     }
 
     /**
