@@ -71,6 +71,11 @@ public class SiteService extends LadaService {
         private List<Site> data;
         private int totalCount;
 
+        /**
+         * Default constructor for JSON-B.
+         */
+        public Response() { };
+
         private Response(List<Site> data, int totalCount) {
             this.data = data;
             this.totalCount = totalCount;
@@ -80,8 +85,16 @@ public class SiteService extends LadaService {
             return this.data;
         }
 
+        public void setData(List<Site> data) {
+            this.data = data;
+        }
+
         public int getTotalCount() {
             return this.totalCount;
+        }
+
+        public void setTotalCount(int totalCount) {
+            this.totalCount = totalCount;
         }
     }
 

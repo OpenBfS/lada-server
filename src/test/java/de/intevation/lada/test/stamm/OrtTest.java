@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Base64;
 
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
@@ -25,6 +24,7 @@ import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.rest.SiteService;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -58,9 +58,10 @@ public class OrtTest extends ServiceTest {
         JsonObject erzeuger =
             readXmlResource("datasets/dbUnit_master.xml", Site.class)
             .getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(erzeuger);
-        expectedById = builder.build();
-        Assert.assertNotNull(expectedById);
+        expectedById = convertObject(erzeuger)
+            .add("referenceCount", 2)
+            .add("plausibleReferenceCount", 1)
+            .build();
 
         // Load object to test POST request
         create = readJsonResource("/datasets/ort.json");
@@ -127,11 +128,13 @@ public class OrtTest extends ServiceTest {
         get("rest/site");
 
         //Test search interface
-        JsonObject result = get("rest/site?search=Text").asJsonObject();
+        SiteService.Response result = get(
+            "rest/site?search=Text", SiteService.Response.class);
         // "Text" appears in extId, longText, shortText and adminUnit.name,
         // each in one object
         final int expectedSize = 4;
-        Assert.assertEquals(expectedSize, result.getJsonArray("data").size());
+        Assert.assertEquals(expectedSize, result.getTotalCount());
+        Assert.assertEquals(expectedSize, result.getData().size());
 
         final String existingSitePath = "rest/site/1000";
         getById(existingSitePath, expectedById);

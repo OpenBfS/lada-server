@@ -655,6 +655,23 @@
         last_mod = "2012-05-08 12:00:00"
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
+        />
+    <lada.status_prot
+        id = "1"
+        meas_facil_id = "06010"
+        measm_id = "1802"
+        status_mp_id = "2"
+        />
+    <lada.sample
+        id = "1902"
+        ext_id = "T002"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_meth_id = "1"
+        is_test = "false"
     />
     <master.tag
         id = "1001"
@@ -735,13 +752,21 @@
         to_id = "3"
         />
     <!-- Reference site for testing authorization of deletion -->
-    <master.type_regulation id = "X" name = "TestX"/>
+    <master.type_regulation id = "E" name = "TestE"/>
+    <master.type_regulation id = "U" name = "TestU"/>
     <lada.geolocat
         id = "1000"
-        type_regulation = "X"
+        type_regulation = "E"
         sample_id = "1901"
         site_id = "1000"
         add_site_text = "Test"
         last_mod = "2012-05-09 09:00:00"
+    />
+    <lada.geolocat
+        id = "1001"
+        type_regulation = "U"
+        sample_id = "1902"
+        site_id = "1000"
+        add_site_text = "Test"
     />
 </dataset>
