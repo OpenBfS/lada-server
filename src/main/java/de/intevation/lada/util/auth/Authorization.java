@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.List;
+import java.util.Collection;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -21,7 +21,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 public interface Authorization {
     UserInfo getInfo();
 
-    default <T extends BaseModel> List<T> filter(List<T> data) {
+    default <T extends BaseModel> Collection<T> filter(Collection<T> data) {
         for (T object: data) {
             filter(object);
         }

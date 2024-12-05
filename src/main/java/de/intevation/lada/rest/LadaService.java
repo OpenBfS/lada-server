@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.List;
+import java.util.Collection;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -95,11 +95,12 @@ public abstract class LadaService {
         Object result = ctx.proceed();
         if (result != null) {
             // Set authorization hints and validate
-            if (result instanceof List<?> listResult) {
+            if (result instanceof Collection<?> listResult) {
                 if (!listResult.isEmpty()
-                    && listResult.get(0) instanceof BaseModel
+                    && listResult.toArray()[0] instanceof BaseModel
                 ) {
-                    List<BaseModel> bmList = (List<BaseModel>) listResult;
+                    Collection<BaseModel> bmList =
+                        (Collection<BaseModel>) listResult;
                     authorization.filter(bmList);
 
                     new Validator().validate(

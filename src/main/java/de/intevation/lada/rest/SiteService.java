@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -64,7 +65,7 @@ public class SiteService extends LadaService {
     private OrtFactory ortFactory;
 
     public static class Response {
-        private List<Site> data;
+        private Collection<Site> data;
         private long totalCount;
 
         /**
@@ -72,16 +73,16 @@ public class SiteService extends LadaService {
          */
         public Response() { };
 
-        private Response(List<Site> data, long totalCount) {
+        private Response(Collection<Site> data, long totalCount) {
             this.data = data;
             this.totalCount = totalCount;
         }
 
-        public List<Site> getData() {
+        public Collection<Site> getData() {
             return this.data;
         }
 
-        public void setData(List<Site> data) {
+        public void setData(Collection<Site> data) {
             this.data = data;
         }
 
@@ -157,7 +158,8 @@ public class SiteService extends LadaService {
             siteQuery.setMaxResults(limit);
         }
 
-        List<Site> orte = new Validator().validate(siteQuery.getResultList());
+        Collection<Site> orte =
+            new Validator().validate(siteQuery.getResultList());
 
         return new Response(authorization.filter(orte),
             countQuery.getSingleResult());
