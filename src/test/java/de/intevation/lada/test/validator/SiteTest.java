@@ -366,6 +366,17 @@ public class SiteTest extends ValidatorBaseTest {
         assertNoMessages(validator.validate(site));
     }
 
+    @Test
+    public void routeContainsNewline() {
+        Site site = createMinimalSite();
+        final String textWithNewline = """
+            Test
+            with newline""";
+        site.setRoute(textWithNewline);
+
+        assertNoMessages(validator.validate(site));
+    }
+
     /**
      * Test valid GK Coords.
      */
