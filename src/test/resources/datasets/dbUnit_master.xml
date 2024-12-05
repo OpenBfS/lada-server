@@ -657,7 +657,7 @@
         tree_mod = "2012-05-09 12:00:00"
         />
     <lada.status_prot
-        id = "1"
+        id = "1000"
         meas_facil_id = "06010"
         measm_id = "1802"
         status_mp_id = "2"
