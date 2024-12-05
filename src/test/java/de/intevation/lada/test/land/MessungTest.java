@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.Arrays;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Client;
@@ -65,8 +66,16 @@ public class MessungTest extends ServiceTest {
      */
     public final void execute() {
         get("rest/measm", Response.Status.BAD_REQUEST);
-        Assert.assertEquals(1,
-            get("rest/measm?sampleId=1000").asJsonArray().size());
+
+        JsonArray measms = get("rest/measm?sampleId=1000", JsonArray.class);
+        Assert.assertEquals(1, measms.size());
+        // Assert that returned collection elements are authorized and validated
+        JsonObject measm = measms.getJsonObject(0);
+        Assert.assertNotEquals("Authorization hints not set",
+            JsonValue.NULL, measm.get("statusEdit"));
+        Assert.assertFalse("Expected warnings missing",
+            measm.getJsonObject("warnings").isEmpty());
+
         getById("rest/measm/1200", expectedById);
         JsonObject created = create("rest/measm", create);
 

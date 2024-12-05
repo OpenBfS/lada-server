@@ -209,7 +209,6 @@
         ext_id = "453"
         mmt_id = "A3"
         meas_pd = "3600"
-        measm_start_date = "2012-05-06 14:00:00"
         is_completed = "false"
         last_mod = "2012-05-08 12:00:00"
         is_scheduled = "true"
