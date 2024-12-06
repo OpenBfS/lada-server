@@ -108,8 +108,7 @@ public class UniversalServiceTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(this.requestJson.toString(),
-                    MediaType.APPLICATION_JSON));
+            .post(Entity.entity(this.requestJson, MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
         assertContains(responseJson, totalCountKey);
@@ -135,8 +134,7 @@ public class UniversalServiceTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(this.requestJson.toString(),
-                    MediaType.APPLICATION_JSON));
+            .post(Entity.entity(this.requestJson, MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
         assertContains(responseJson, totalCountKey);
@@ -161,8 +159,7 @@ public class UniversalServiceTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(this.requestJson.toString(),
-                    MediaType.APPLICATION_JSON));
+            .post(Entity.entity(this.requestJson, MediaType.APPLICATION_JSON));
         String responseBody = assertResponseOK(response);
 
         Assert.assertEquals(
@@ -183,7 +180,7 @@ public class UniversalServiceTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(this.filteredRequestJson.toString(),
+            .post(Entity.entity(this.filteredRequestJson,
                     MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
@@ -213,7 +210,7 @@ public class UniversalServiceTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(this.filteredRequestJson.toString(),
+            .post(Entity.entity(this.filteredRequestJson,
                     MediaType.APPLICATION_JSON));
         String responseBody = assertResponseOK(response);
 
@@ -258,8 +255,7 @@ public class UniversalServiceTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(requestEmpty.toString(),
-                    MediaType.APPLICATION_JSON));
+            .post(Entity.entity(requestEmpty, MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
         assertContains(responseJson, totalCountKey);
@@ -295,8 +291,7 @@ public class UniversalServiceTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(request.toString(),
-                    MediaType.APPLICATION_JSON));
+            .post(Entity.entity(request, MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
         // single-column query should result in JSON objects with
