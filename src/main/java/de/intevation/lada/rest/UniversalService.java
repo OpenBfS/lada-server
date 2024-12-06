@@ -16,7 +16,7 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response;
 import jakarta.validation.constraints.NotEmpty;
 
 import de.intevation.lada.model.BaseModel;
@@ -55,11 +55,13 @@ public class UniversalService extends LadaService {
     @Inject
     private Repository repository;
 
-    public static class Response {
+    public static class UniversalResponse {
         private List<Map<String, Object>> data;
         private int totalCount;
 
-        private Response(List<Map<String, Object>> data, int totalCount) {
+        private UniversalResponse(
+            List<Map<String, Object>> data, int totalCount
+        ) {
             this.data = data;
             this.totalCount = totalCount;
         }
@@ -96,7 +98,7 @@ public class UniversalService extends LadaService {
      * @throws BadRequestException
      */
     @POST
-    public Response execute(
+    public UniversalResponse execute(
         @QueryParam("start") int start, // default for primitive type: 0
         @QueryParam("limit") Integer limit,
         @NotEmpty List<GridColConf> gridColumnValues
@@ -170,11 +172,10 @@ public class UniversalService extends LadaService {
                 row.put("readonly", readonly);
             }
 
-            return new Response(result, size);
+            return new UniversalResponse(result, size);
         } catch (IllegalArgumentException iae) {
             throw new BadRequestException(
-                jakarta.ws.rs.core.Response
-                .status(Status.BAD_REQUEST)
+                Response.status(Response.Status.BAD_REQUEST)
                 .entity(iae.getMessage()).build());
         }
     }
