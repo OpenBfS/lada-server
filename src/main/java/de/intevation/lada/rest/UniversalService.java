@@ -155,11 +155,9 @@ public class UniversalService extends LadaService {
             // TODO: This issues a potentially costly 'SELECT count(*)'
             // for every request. Better not to rely on total count at client side?
             int size = queryTools.getTotalCountForQuery();
-            boolean doAuthorize = true;
-            if (result.size() > 500) {
-                doAuthorize = false;
-            }
 
+            // Skip authorization of large pages to improve performance
+            boolean doAuthorize = result.size() <= 500;
             for (Map<String, Object> row: result) {
                 Object idToAuthorize = row.get(authorizationColumnIndex);
                 boolean readonly = true;
