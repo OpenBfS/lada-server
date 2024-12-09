@@ -120,7 +120,7 @@ public class UniversalService extends LadaService {
         hierarchy.put("mpId",        Mpg.class);
         hierarchy.put("probeId",     Sample.class);
         hierarchy.put("messungId",   Measm.class);
-        int resultNdx = hierarchy.size();
+        int resultNdx = -1;
         for (GridColConf columnValue : gridColumnValues) {
             GridColMp gridColumn = repository.getById(
                 GridColMp.class,
@@ -136,7 +136,7 @@ public class UniversalService extends LadaService {
                     }
                     i++;
                 }
-                if (ndx > -1 && ndx < resultNdx) {
+                if (ndx > resultNdx) {
                     resultNdx = ndx;
                     authorizationColumnIndex = gridColumn.getDataIndex();
                     authorizationColumnType = hierarchy.get(
