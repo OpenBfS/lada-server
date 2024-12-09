@@ -50,6 +50,23 @@ import de.intevation.lada.util.rest.RequestMethod;
 public class UniversalService extends LadaService {
 
     /**
+     * Determines the class used for authorizing result entries:
+     * Later entries overrule earlier ones.
+     */
+    private static final LinkedHashMap<String, Class<? extends BaseModel>>
+        AUTH_HIERARCHY = new LinkedHashMap<>();
+    static {
+        AUTH_HIERARCHY.put("tagId",       Tag.class);
+        AUTH_HIERARCHY.put("mprkat",      MpgCateg.class);
+        AUTH_HIERARCHY.put("dsatzerz",    DatasetCreator.class);
+        AUTH_HIERARCHY.put("probenehmer", Sampler.class);
+        AUTH_HIERARCHY.put("ortId",       Site.class);
+        AUTH_HIERARCHY.put("mpId",        Mpg.class);
+        AUTH_HIERARCHY.put("probeId",     Sample.class);
+        AUTH_HIERARCHY.put("messungId",   Measm.class);
+    }
+
+    /**
      * The data repository granting read/write access.
      */
     @Inject
@@ -119,40 +136,27 @@ public class UniversalService extends LadaService {
         String authorizationColumnIndex = null;
         Class<? extends BaseModel> authorizationColumnType = null;
 
-        /**
-         * Determines the class used for authorizing result entries:
-         * Later entries overrule earlier ones.
-         */
-        final LinkedHashMap<String, Class<? extends BaseModel>> hierarchy
-            = new LinkedHashMap<>();
-        hierarchy.put("tagId",       Tag.class);
-        hierarchy.put("mprkat",      MpgCateg.class);
-        hierarchy.put("dsatzerz",    DatasetCreator.class);
-        hierarchy.put("probenehmer", Sampler.class);
-        hierarchy.put("ortId",       Site.class);
-        hierarchy.put("mpId",        Mpg.class);
-        hierarchy.put("probeId",     Sample.class);
-        hierarchy.put("messungId",   Measm.class);
         int resultNdx = -1;
         for (GridColConf columnValue : gridColumnValues) {
             GridColMp gridColumn = repository.getById(
                 GridColMp.class,
                 columnValue.getGridColMpId()
             );
-            //Check if column can be used for authorization
             Disp resultType = gridColumn.getDisp();
             if (resultType != null) {
+                //Check if column can be used for authorization
                 int ndx = -1, i = 0;
-                for (String authType: hierarchy.keySet()) {
+                for (String authType: AUTH_HIERARCHY.keySet()) {
                     if (authType.equals(resultType.getName())) {
                         ndx = i;
+                        break;
                     }
                     i++;
                 }
                 if (ndx > resultNdx) {
                     resultNdx = ndx;
                     authorizationColumnIndex = gridColumn.getDataIndex();
-                    authorizationColumnType = hierarchy.get(
+                    authorizationColumnType = AUTH_HIERARCHY.get(
                         resultType.getName());
                 }
             }
