@@ -3,6 +3,12 @@
     <!-- authentication data -->
     <master.network id = "06" />
     <master.meas_facil id = "06010" network_id = "06" />
+    <master.auth
+        ldap_gr = "mst_06_status"
+        network_id = "06"
+        meas_facil_id = "06010"
+        auth_funct_id = "1"
+    />
 
     <!--master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
@@ -45,7 +51,7 @@
     />
     <master.base_query
         id = "3"
-        sql = "SELECT id AS messungId FROM lada.measm"
+        sql = "SELECT measm.id AS messungId, sample.id AS probeId FROM lada.measm JOIN lada.sample ON sample_id = sample.id"
     />
     <master.query_user
         id = "1"
@@ -66,6 +72,12 @@
         sql = "main_sample_id ~ :hauptprobenNr"
         param = "hauptprobenNr"
         filter_type_id = "0"
+    />
+    <master.filter
+        id = "2"
+        sql = "measm.id IN(:messungId)"
+        param = "messungId"
+        filter_type_id = "5"
     />
     <master.disp
         id = "1"
@@ -127,7 +139,16 @@
         grid_col = "messungId"
         data_index = "messungId"
         position = "1"
+        filter_id = "2"
         disp_id = "3"
+    />
+    <master.grid_col_mp
+        id = "7"
+        base_query_id = "3"
+        grid_col = "probeId"
+        data_index = "probeId"
+        position = "2"
+        disp_id = "2"
     />
     <master.grid_col_conf
         id = "1"
@@ -199,6 +220,11 @@
         mmt_id = "A3"
         is_completed = "false"
         is_scheduled = "true"
+    />
+    <lada.status_prot
+        meas_facil_id = "06010"
+        measm_id = "1201"
+        status_mp_id = "2"
     />
     <lada.meas_val
         id = "1000"

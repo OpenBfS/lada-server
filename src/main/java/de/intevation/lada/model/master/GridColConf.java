@@ -205,7 +205,7 @@ public class GridColConf implements Serializable {
         return this.queryUserId;
     }
 
-    public void setQueryUserId(int queryUserId) {
+    public void setQueryUserId(Integer queryUserId) {
         this.queryUserId = queryUserId;
     }
 

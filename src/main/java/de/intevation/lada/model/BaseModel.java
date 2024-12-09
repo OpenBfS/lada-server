@@ -177,7 +177,6 @@ public abstract class BaseModel {
         return readonly;
     }
 
-    @JsonbTransient
     public void setReadonly(boolean readonly) {
         this.readonly = readonly;
     }

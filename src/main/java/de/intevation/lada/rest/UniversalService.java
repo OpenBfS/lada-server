@@ -59,6 +59,11 @@ public class UniversalService extends LadaService {
         private List<Map<String, Object>> data;
         private int totalCount;
 
+        /**
+         * Default constructor for JSON-B.
+         */
+        public UniversalResponse() { };
+
         private UniversalResponse(
             List<Map<String, Object>> data, int totalCount
         ) {
@@ -70,8 +75,16 @@ public class UniversalService extends LadaService {
             return this.data;
         }
 
+        public void setData(List<Map<String, Object>> data) {
+            this.data = data;
+        }
+
         public int getTotalCount() {
             return this.totalCount;
+        }
+
+        public void setTotalCount(int totalCount) {
+            this.totalCount = totalCount;
         }
     }
 
