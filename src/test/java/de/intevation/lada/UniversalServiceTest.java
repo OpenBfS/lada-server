@@ -13,6 +13,7 @@ import jakarta.json.JsonObject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -20,6 +21,7 @@ import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,6 +48,8 @@ public class UniversalServiceTest extends BaseTest {
     public UniversalServiceTest() {
         this.testDatasetName = "datasets/dbUnit_query.xml";
     }
+
+    private Invocation.Builder universalRequestBuilder;
 
     private JsonArray requestJson = Json.createArrayBuilder()
         .add(Json.createObjectBuilder()
@@ -95,6 +99,15 @@ public class UniversalServiceTest extends BaseTest {
             .add("gridColMpId", 2))
         .build();
 
+    @Before
+    public void prepareBuilder() {
+        this.universalRequestBuilder = this.client.target(
+            baseUrl + "rest/universal")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles);
+    }
+
     /**
      * Test fetching all data returned by a query.
      *
@@ -103,11 +116,7 @@ public class UniversalServiceTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testGetAll() {
-        Response response = client.target(
-            baseUrl + "rest/universal")
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+        Response response = universalRequestBuilder
             .post(Entity.entity(this.requestJson, MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
@@ -175,11 +184,7 @@ public class UniversalServiceTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testGetFiltered() {
-        Response response = client.target(
-            baseUrl + "rest/universal")
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+        Response response = universalRequestBuilder
             .post(Entity.entity(this.filteredRequestJson,
                     MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
@@ -250,11 +255,7 @@ public class UniversalServiceTest extends BaseTest {
                 .add("gridColMpId", 2))
             .build();
 
-        Response response = client.target(
-            baseUrl + "rest/universal")
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+        Response response = universalRequestBuilder
             .post(Entity.entity(requestEmpty, MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
@@ -286,11 +287,7 @@ public class UniversalServiceTest extends BaseTest {
                 .add("gridColMpId", 3))
             .build();
 
-        Response response = client.target(
-            baseUrl + "rest/universal")
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+        Response response = universalRequestBuilder
             .post(Entity.entity(request, MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
