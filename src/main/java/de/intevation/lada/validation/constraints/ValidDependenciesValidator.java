@@ -27,7 +27,6 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -119,9 +118,8 @@ public abstract class ValidDependenciesValidator {
             List<Geolocat> assignedOrte = repository.filter(
                 ortBuilder.getQuery());
             for (Geolocat o : assignedOrte) {
-                Site site = repository.getById(Site.class, o.getSiteId());
                 addMessages(
-                    validator.validate(site),
+                    validator.validate(o.getSite()),
                     errors,
                     warnings,
                     notifications);

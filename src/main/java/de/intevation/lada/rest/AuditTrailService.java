@@ -170,7 +170,7 @@ public class AuditTrailService extends LadaService {
         for (Geolocat zuordnung
             : repository.filter(refBuilder.getQuery())
         ) {
-            ortIds.add(zuordnung.getSiteId());
+            ortIds.add(zuordnung.getSite().getId());
         }
 
         // Get all entries for the probe and its sub objects.

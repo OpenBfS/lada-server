@@ -446,8 +446,8 @@ public class LafObjectMapper {
                     if (uOrte.size() > 0
                         && eOrt != null
                         && uOrte.stream().anyMatch(
-                            uOrt -> uOrt.getSiteId().equals(
-                                eOrt.getSiteId()))) {
+                            uOrt -> uOrt.getSite().getId().equals(
+                                eOrt.getSite().getId()))) {
                         rOrt = true;
                     }
 
@@ -457,14 +457,14 @@ public class LafObjectMapper {
                         if (presentUOrte.size() > 0
                             && eOrt != null
                             && presentUOrte.stream().anyMatch(
-                                uOrt -> uOrt.getSiteId().equals(
-                                    eOrt.getSiteId()))) {
+                                uOrt -> uOrt.getSite().getId().equals(
+                                    eOrt.getSite().getId()))) {
                             rOrt = true;
                         } else if (presentROrte.size() > 0
                             && eOrt != null
                             && presentROrte.stream().anyMatch(
-                                rtypeOrt -> rtypeOrt.getSiteId().equals(
-                                    eOrt.getSiteId()))) {
+                                rtypeOrt -> rtypeOrt.getSite().getId().equals(
+                                    eOrt.getSite().getId()))) {
                             rOrt = true;
                         } else if (presentROrte.size() > 0 && eOrt != null) {
                             for (Geolocat loc: presentROrte) {
@@ -483,14 +483,14 @@ public class LafObjectMapper {
                         if (presentEOrte.size() > 0
                             && uOrte.size() > 0
                             && presentEOrte.stream().anyMatch(
-                                etypeOrt -> etypeOrt.getSiteId().equals(
-                                    uOrte.get(0).getSiteId()))) {
+                                etypeOrt -> etypeOrt.getSite().getId().equals(
+                                    uOrte.get(0).getSite().getId()))) {
                             rOrt = true;
                         } else if (presentROrte.size() > 0
                             && uOrte.size() > 0
                             && presentROrte.stream().anyMatch(
-                                rtypeOrt -> rtypeOrt.getSiteId().equals(
-                                    uOrte.get(0).getSiteId()))) {
+                                rtypeOrt -> rtypeOrt.getSite().getId().equals(
+                                    uOrte.get(0).getSite().getId()))) {
                             //ToDo: We need to handle R-Orte!
                             rOrt = true;
                         } else if (presentROrte.size() > 0
@@ -1261,7 +1261,7 @@ public class LafObjectMapper {
                 Geolocat ort = new Geolocat();
                 ort.setTypeRegulation("R");
                 ort.setSample(probe);
-                ort.setSiteId(messpunkte.get(0).getId());
+                ort.setSite(messpunkte.get(0));
                 ort.setPoiId(messpunkte.get(0).getPoiId());
                 if (uo.containsKey("U_ORTS_ZUSATZTEXT")) {
                     ort.setAddSiteText(uo.get("U_ORTS_ZUSATZTEXT"));
@@ -1309,7 +1309,7 @@ public class LafObjectMapper {
                         repository.update(o);
 
                         Geolocat ort = new Geolocat();
-                        ort.setSiteId(o.getId());
+                        ort.setSite(o);
                         ort.setTypeRegulation("R");
                         ort.setSample(probe);
                         ort.setPoiId(o.getPoiId());
@@ -1347,7 +1347,7 @@ public class LafObjectMapper {
             o.setSiteClassId(Site.SiteClassId.REI);
             repository.update(o);
             Geolocat ort = new Geolocat();
-            ort.setSiteId(o.getId());
+            ort.setSite(o);
             ort.setTypeRegulation("R");
             ort.setSample(probe);
             if (uort.size() > 0
@@ -1382,7 +1382,7 @@ public class LafObjectMapper {
         if (o == null) {
             return null;
         }
-        ort.setSiteId(o.getId());
+        ort.setSite(o);
         ort.setPoiId(o.getPoiId());
         if (rawOrt.containsKey(type + "_ORTS_ZUSATZCODE")) {
             Poi zusatz = repository.entityManager().find(

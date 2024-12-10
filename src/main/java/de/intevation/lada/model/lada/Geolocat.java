@@ -10,11 +10,19 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import jakarta.json.bind.adapter.JsonbAdapter;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbTypeAdapter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -35,7 +43,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Geolocat.class, DatabaseConstraints.class })
-@Unique(fields = {"typeRegulation", "sample", "siteId"},
+@Unique(fields = {"typeRegulation", "sample", "site"},
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
 @Unique(fields = {"sample"},
     predicateFields = { "typeRegulation" },
@@ -47,6 +55,25 @@ public class Geolocat extends BelongsToSample implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public static class SiteToId implements JsonbAdapter<Site, Integer> {
+        @PersistenceContext
+        EntityManager em;
+
+        @Override
+        public Site adaptFromJson(Integer id) {
+            if (em == null) {
+                // Mock site when deserializing in client-side tests
+                return new Site();
+            }
+            return em.find(Site.class, id);
+        }
+
+        @Override
+        public Integer adaptToJson(Site site) {
+            return site.getId();
+        }
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -55,10 +82,12 @@ public class Geolocat extends BelongsToSample implements Serializable {
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
+    @JsonbProperty("siteId")
+    @JsonbTypeAdapter(SiteToId.class)
+    @Schema(implementation = Integer.class)
     @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Site.class)
-    private Integer siteId;
+    @ManyToOne
+    private Site site;
 
     @NotBlank
     @Size(max = 1)
@@ -96,12 +125,12 @@ public class Geolocat extends BelongsToSample implements Serializable {
         this.lastMod = lastMod;
     }
 
-    public Integer getSiteId() {
-        return this.siteId;
+    public Site getSite() {
+        return this.site;
     }
 
-    public void setSiteId(Integer siteId) {
-        this.siteId = siteId;
+    public void setSite(Site site) {
+        this.site = site;
     }
 
     public String getTypeRegulation() {

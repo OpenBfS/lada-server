@@ -44,7 +44,6 @@ import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
-import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
@@ -343,10 +342,7 @@ implements Creator {
                 o.getAddSiteText(), CN);
         }
 
-        QueryBuilder<Site> oBuilder = repository
-            .queryBuilder(Site.class)
-            .and(Site_.id, o.getSiteId());
-        Site sOrt = repository.getSingle(oBuilder.getQuery());
+        Site sOrt = o.getSite();
 
         if (sOrt.getStateId() != null) {
             laf += lafLine(typePrefix + "HERKUNFTSLAND_S",

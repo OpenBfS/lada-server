@@ -499,7 +499,7 @@ public class ProbeFactory {
             Geolocat ortP = new Geolocat();
             ortP.setTypeRegulation(ort.getTypeRegulation());
             ortP.setSample(probe);
-            ortP.setSiteId(ort.getSiteId());
+            ortP.setSite(repository.getById(Site.class, ort.getSiteId()));
             ortP.setPoiId(ort.getPoiId());
             ortP.setAddSiteText(ort.getAddSiteText());
             createObject(ortP, dryrun);

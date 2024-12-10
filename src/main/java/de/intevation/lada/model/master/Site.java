@@ -43,6 +43,7 @@ import org.locationtech.jts.geom.Point;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.validation.constraints.CanChangeCoordinates;
 import de.intevation.lada.validation.constraints.CoordinatesInAdminBorder;
 import de.intevation.lada.validation.constraints.HasCoordsOrAdminUnitOrState;
@@ -227,8 +228,7 @@ public class Site extends BaseModel implements Serializable {
     @Transient
     private Double latitude;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "site_id", insertable = false, updatable = false)
+    @OneToMany(mappedBy = Geolocat_.SITE, fetch = FetchType.EAGER)
     @JsonbTransient
     private Set<Geolocat> geolocats;
 

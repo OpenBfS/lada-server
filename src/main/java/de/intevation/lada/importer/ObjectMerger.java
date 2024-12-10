@@ -276,14 +276,14 @@ public class ObjectMerger {
     ) {
         QueryBuilder<Geolocat> builder =
             repository.queryBuilder(Geolocat.class);
-        for (int i = 0; i < orte.size(); i++) {
+        for (Geolocat loc: orte) {
             builder.and(Geolocat_.sample, sample)
                 .and(Geolocat_.typeRegulation, "U")
-                .and(Geolocat_.siteId, orte.get(i).getSiteId());
+                .and(Geolocat_.site, loc.getSite());
             List<Geolocat> found =
                 repository.filter(builder.getQuery());
             if (found.isEmpty()) {
-                repository.create(orte.get(i));
+                repository.create(loc);
             }
             builder = builder.getEmptyBuilder();
         }
