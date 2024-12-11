@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -61,6 +62,7 @@ import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.NamingStrategy;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.test.land.ProbeTest;
 import de.intevation.lada.util.rest.JSONBConfig;
 
@@ -73,6 +75,9 @@ public class ServiceTest {
 
     private static final String LAT_KEY = "latitude";
     private static final String LONG_KEY = "longitude";
+
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+        DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT);
 
     /**
      * Timestamp attributes.
@@ -126,7 +131,7 @@ public class ServiceTest {
     protected String readTxtResource(String resource) {
         InputStream stream =
             ProbeTest.class.getResourceAsStream(resource);
-        Scanner scanner = new Scanner(stream, "UTF-8");
+        Scanner scanner = new Scanner(stream, StandardCharsets.UTF_8);
         scanner.useDelimiter("\\A");
         String raw = scanner.next();
         scanner.close();
@@ -304,11 +309,10 @@ public class ServiceTest {
             if (timestampAttributes.contains(key)) {
                 Timestamp timestamp = Timestamp.valueOf(
                     entry.getValue().toString().replaceAll("\"", ""));
-                DateTimeFormatter formatter = DateTimeFormatter
-                    .ofPattern(JSONBConfig.DATE_FORMAT)
-                    .withZone(ZoneId.of("UTC"));
 
-                String dateString = formatter.format(timestamp.toInstant());
+                String dateString = TIMESTAMP_FORMATTER
+                    .withZone(ZoneId.of("UTC"))
+                    .format(timestamp.toInstant());
                 builder.add(key, dateString);
             } else if (geomPointAttributes.contains(key)) {
                 // Convert EWKT to latitude and longitude
@@ -438,8 +442,8 @@ public class ServiceTest {
         JsonObject object = BaseTest.parseResponse(response).asJsonObject();
         for (Entry<String, JsonValue> entry : expected.entrySet()) {
             if (entry.getKey().equals("parentModified")
-                || entry.getKey().equals("treeMod")
-                || entry.getKey().equals("lastMod")) {
+                || entry.getKey().equals(Sample_.TREE_MOD)
+                || entry.getKey().equals(Sample_.LAST_MOD)) {
                 continue;
             }
             String key = entry.getKey();
@@ -643,12 +647,15 @@ public class ServiceTest {
                 updatedObject.getValue(updAttrPointer));
         }
 
-        final String modTimeKey = "letzteAenderung";
+        final String modTimeKey = Sample_.LAST_MOD;
         if (oldObject.containsKey(modTimeKey)) {
+            var oldLastMod = ZonedDateTime.parse(
+                oldObject.getString(modTimeKey), TIMESTAMP_FORMATTER);
+            var updatedLastMod = ZonedDateTime.parse(
+                updatedObject.getString(modTimeKey), TIMESTAMP_FORMATTER);
             Assert.assertTrue(
                 "Object modification timestamp did not increase",
-                Long.parseLong(updatedObject.getString(modTimeKey))
-                > Long.parseLong(oldObject.getString(modTimeKey))
+                updatedLastMod.isAfter(oldLastMod)
             );
         }
 
@@ -744,8 +751,7 @@ public class ServiceTest {
      * @return Difference in days as long
      */
     protected long getDaysFromNow(String to) {
-        ZonedDateTime toDate = ZonedDateTime.parse(
-            to, DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT));
+        ZonedDateTime toDate = ZonedDateTime.parse(to, TIMESTAMP_FORMATTER);
         return getDaysFromNow(toDate.toInstant());
     }
 
