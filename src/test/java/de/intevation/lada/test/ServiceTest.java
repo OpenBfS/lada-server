@@ -40,6 +40,7 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Table;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
@@ -593,13 +594,13 @@ public class ServiceTest {
         String updAttrPointer = "/" + updateAttribute;
 
         /* Request object corresponding to id in URL */
-        WebTarget target = client.target(baseUrl + parameter);
-        Response response = target.request()
+        Builder requestBuilder = client.target(baseUrl + parameter)
+            .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
+            .accept(MediaType.APPLICATION_JSON);
         JsonObject oldObject = BaseTest.parseResponse(
-            response).asJsonObject();
+            requestBuilder.get(), JsonObject.class);
 
         BaseTest.assertContains(oldObject, updateAttribute);
         Assert.assertEquals(
@@ -620,15 +621,11 @@ public class ServiceTest {
                 updateBuilder.add(key, value);
             }
         });
-        String updatedEntity = updateBuilder.build().toString();
 
         /* Send modified object via put request*/
-        WebTarget putTarget = client.target(baseUrl + parameter);
-        JsonValue updated = BaseTest.parseResponse(putTarget.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .accept(MediaType.APPLICATION_JSON)
-            .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON)),
+        JsonValue updated = BaseTest.parseResponse(requestBuilder
+            .put(Entity.entity(
+                    updateBuilder.build(), MediaType.APPLICATION_JSON)),
             expectedStatus);
 
         /* Verify the response*/
