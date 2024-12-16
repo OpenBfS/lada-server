@@ -7,12 +7,10 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Base64;
 
 import jakarta.json.JsonObject;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.client.Invocation.Builder;
@@ -40,11 +38,9 @@ public class OrtTest extends ServiceTest {
     private JsonObject createStateSite;
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
+
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -81,7 +77,7 @@ public class OrtTest extends ServiceTest {
      * @param parameter Url parameter
      */
     private void testUploadImage(String imageDataUrl, String parameter) {
-        WebTarget reqTarget = client.target(baseUrl + parameter);
+        WebTarget reqTarget = target.path(parameter);
         Builder reqBuilder = reqTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);

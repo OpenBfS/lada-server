@@ -7,12 +7,9 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.net.URL;
-
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
@@ -33,16 +30,11 @@ public class KoordinatenartTest extends ServiceTest {
 
     private JsonObject expectedById;
 
-    private final String name = "spatrefsys";
-
     private final String url = "rest/spatrefsys/";
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
 
         // Prepare expected object
         JsonObject erzeuger =
@@ -71,8 +63,7 @@ public class KoordinatenartTest extends ServiceTest {
             .add(yKey, coord)
             .build();
 
-        WebTarget target = client.target(baseUrl + url);
-        Response response = target.request()
+        Response response = target.path(url).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(

@@ -7,7 +7,6 @@
  */
 package de.intevation.lada;
 
-import java.net.URL;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -137,7 +136,7 @@ public class ImporterTest extends BaseTest {
      */
     @After
     public void cancelJobs() {
-        client.target(baseUrl + ASYNC_IMPORT_URL + "cancel")
+        target.path(ASYNC_IMPORT_URL + "cancel")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -477,8 +476,8 @@ public class ImporterTest extends BaseTest {
             regulation, sampleSpecifId, "", measd, measUnit, "");
 
         /* Request synchronous import */
-        Response importResponse = client.target(
-            baseUrl + "data/import/laf")
+        Response importResponse = target
+            .path("data/import/laf")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -505,8 +504,7 @@ public class ImporterTest extends BaseTest {
         final String laf = String.format(
             lafTemplate, lafSampleId,
             regulation, sampleSpecifId, "", measd, measUnit, "");
-        JsonObject report = testAsyncImportProbe(
-            baseUrl, laf, lafSampleId, true);
+        JsonObject report = testAsyncImportProbe(laf, lafSampleId, true);
         JsonObject expectedWarning = Json.createObjectBuilder()
             .add("key", "validation#probe")
             .add("value", "geolocats")
@@ -535,7 +533,7 @@ public class ImporterTest extends BaseTest {
                     }
                     return line;
                 }).collect(Collectors.joining("\n"));
-        testAsyncImportProbe(baseUrl, lowerCaseLAF, lafSampleId, true);
+        testAsyncImportProbe(lowerCaseLAF, lafSampleId, true);
     }
 
     /**
@@ -545,7 +543,7 @@ public class ImporterTest extends BaseTest {
     @RunAsClient
     public final void testAsyncImportProbeNoSuccess()
         throws InterruptedException, CharacterCodingException {
-        testAsyncImportProbe(baseUrl, "no valid LAF", "", false);
+        testAsyncImportProbe("no valid LAF", "", false);
     }
 
     /**
@@ -568,7 +566,7 @@ public class ImporterTest extends BaseTest {
         final String errorsKey = "errors";
         for (Locale locale: msgs.keySet()) {
             JsonObject report = testAsyncImportProbe(
-                baseUrl, locale, noOprModeLAF, "", false);
+                locale, noOprModeLAF, "", false);
             assertContains(report, errorsKey);
             JsonArray errors = report.getJsonObject(errorsKey)
                 .getJsonArray(lafSampleId);
@@ -592,7 +590,6 @@ public class ImporterTest extends BaseTest {
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
-            baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", measd, measUnit, ""),
@@ -609,7 +606,6 @@ public class ImporterTest extends BaseTest {
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
-            baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", "H 3", measUnit, ""),
@@ -628,7 +624,6 @@ public class ImporterTest extends BaseTest {
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
-            baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", "XX",
                 "", measd, measUnit, ""),
@@ -646,7 +641,6 @@ public class ImporterTest extends BaseTest {
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbeNoWarnings(
-            baseUrl,
             String.format(
                 lafTemplate, lafSampleId,
                 regulation, sampleSpecifId,
@@ -665,7 +659,6 @@ public class ImporterTest extends BaseTest {
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbeNoWarnings(
-            baseUrl,
             String.format(
                 lafTemplate, lafSampleId,
                 regulation, sampleSpecifId,
@@ -683,17 +676,16 @@ public class ImporterTest extends BaseTest {
     @RunAsClient
     public final void testZeitbasis()
         throws InterruptedException, CharacterCodingException {
-        testZeitbasis(baseUrl, "ZEITBASIS", "\"MESZ\"", false);
-        testZeitbasis(baseUrl, "ZEITBASIS", "\"INVALID\"", true);
-        testZeitbasis(baseUrl, "ZEITBASIS_S", "1", false);
-        testZeitbasis(baseUrl, "ZEITBASIS_S", "0", true);
+        testZeitbasis("ZEITBASIS", "\"MESZ\"", false);
+        testZeitbasis("ZEITBASIS", "\"INVALID\"", true);
+        testZeitbasis("ZEITBASIS_S", "1", false);
+        testZeitbasis("ZEITBASIS_S", "0", true);
 
         // Use default from import_conf
-        testZeitbasis(baseUrl, "", "", false);
+        testZeitbasis("", "", false);
     }
 
     private void testZeitbasis(
-        URL baseUrl,
         String lafKey,
         String value,
         boolean expectWarning
@@ -711,8 +703,7 @@ public class ImporterTest extends BaseTest {
             "");
         LOG.trace(lafZb);
 
-        JsonArray warnings = testAsyncImportProbe(
-            baseUrl, lafZb, lafSampleId, true)
+        JsonArray warnings = testAsyncImportProbe(lafZb, lafSampleId, true)
             .getJsonObject("warnings").getJsonArray(lafSampleId);
         LOG.trace(warnings);
         final String keyKey = "key";
@@ -736,13 +727,12 @@ public class ImporterTest extends BaseTest {
     }
 
     private JsonObject testAsyncImportProbeNoWarnings(
-        URL baseUrl,
         String lafData,
         String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
         JsonObject response = testAsyncImportProbe(
-            baseUrl, lafData, lafSampleId, expectSuccess);
+            lafData, lafSampleId, expectSuccess);
         final String warningsKey = "warnings";
         if (response.containsKey(warningsKey)) {
             Assert.fail("Unexpected warnings: "
@@ -753,23 +743,20 @@ public class ImporterTest extends BaseTest {
     }
 
     private JsonObject testAsyncImportProbe(
-        URL baseUrl,
         String lafData,
         String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
         return testAsyncImportProbe(
-            baseUrl, Locale.US, lafData, lafSampleId, expectSuccess);
+            Locale.US, lafData, lafSampleId, expectSuccess);
     }
 
     private JsonObject testAsyncImportProbe(
-        URL baseUrl,
         Locale locale,
         String lafData,
         String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
-        final String asyncImportUrl = baseUrl + ASYNC_IMPORT_URL;
         final String fileName = "test.laf";
 
         /* Request asynchronous import */
@@ -779,7 +766,7 @@ public class ImporterTest extends BaseTest {
         requestJson.setFiles(Map.of(fileName, Base64.getEncoder()
                 .encodeToString(lafData.getBytes(StandardCharsets.UTF_8))));
 
-        Response importCreated = client.target(asyncImportUrl + "laf")
+        Response importCreated = target.path(ASYNC_IMPORT_URL + "laf")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -789,8 +776,8 @@ public class ImporterTest extends BaseTest {
             .getJobId();
 
         /* Request status of asynchronous import */
-        SyncInvoker statusRequest = client.target(
-            asyncImportUrl + "status/" + jobId)
+        SyncInvoker statusRequest = target
+            .path(ASYNC_IMPORT_URL + "status/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -814,8 +801,8 @@ public class ImporterTest extends BaseTest {
             importStatusObject.getStatus().name());
 
         /* Fetch import result report */
-        Response reportResponse = client.target(
-            asyncImportUrl + "result/" + jobId)
+        Response reportResponse = target
+            .path(ASYNC_IMPORT_URL + "result/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -841,8 +828,8 @@ public class ImporterTest extends BaseTest {
         // Test if data correctly entered database
         final int sampleId = fileReport.getJsonArray(sampleIdsKey)
             .getJsonNumber(0).intValue();
-        Response importedSampleResponse = client.target(
-            baseUrl + "rest/sample/" + sampleId)
+        Response importedSampleResponse = target
+            .path("rest/sample/" + sampleId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -853,8 +840,9 @@ public class ImporterTest extends BaseTest {
         Assert.assertEquals(mstId, importedSample.getMeasFacilId());
         Assert.assertEquals(1, (int) importedSample.getRegulationId());
 
-        Response importedSampleSpecifMeasValResponse = client.target(
-            baseUrl + "rest/samplespecifmeasval?sampleId=" + sampleId)
+        Response importedSampleSpecifMeasValResponse = target
+            .path("rest/samplespecifmeasval")
+            .queryParam("sampleId", sampleId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -867,8 +855,9 @@ public class ImporterTest extends BaseTest {
             sampleSpecifId,
             importedSampleSpecifMeasVals.get(0).getSampleSpecifId());
 
-        Response importedMeasmResponse = client.target(
-            baseUrl + "rest/measm?sampleId=" + sampleId)
+        Response importedMeasmResponse = target
+            .path("rest/measm")
+            .queryParam("sampleId", sampleId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -877,8 +866,9 @@ public class ImporterTest extends BaseTest {
             importedMeasmResponse, new GenericType<List<Measm>>() { })
             .get(0).getId();
 
-        Response importedMeasValResponse = client.target(
-            baseUrl + "rest/measval?measmId=" + measmId)
+        Response importedMeasValResponse = target
+            .path("rest/measval")
+            .queryParam("measmId", measmId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

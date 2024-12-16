@@ -7,12 +7,11 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.net.URL;
 import java.util.List;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response.Status;
 
@@ -30,11 +29,8 @@ public class TagTest extends ServiceTest {
     private final String tagUrl = "rest/tag/";
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
     }
 
     /**

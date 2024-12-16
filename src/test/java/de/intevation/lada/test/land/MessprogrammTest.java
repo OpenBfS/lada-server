@@ -7,14 +7,13 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.util.Arrays;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response.Status;
 
@@ -34,11 +33,9 @@ public class MessprogrammTest extends ServiceTest {
     private JsonObject create;
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
+
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -98,7 +95,7 @@ public class MessprogrammTest extends ServiceTest {
             .add("active", true)
             .add("ids", Json.createArrayBuilder().add(createdId))
             .build();
-        BaseTest.parseResponse(client.target(baseUrl + "rest/mpg/active")
+        BaseTest.parseResponse(target.path("rest/mpg/active")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

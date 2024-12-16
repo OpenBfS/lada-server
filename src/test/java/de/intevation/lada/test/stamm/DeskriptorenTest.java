@@ -7,11 +7,9 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.net.URL;
-
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
-import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
@@ -27,11 +25,8 @@ public class DeskriptorenTest extends ServiceTest {
     private JsonObject expectedById;
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
 
         // Prepare expected object
         JsonObject content =

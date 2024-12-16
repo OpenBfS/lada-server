@@ -8,7 +8,6 @@
 package de.intevation.lada;
 
 import java.io.StringReader;
-import java.net.URL;
 import java.nio.charset.CharacterCodingException;
 import java.time.Duration;
 import java.time.Instant;
@@ -28,7 +27,6 @@ import jakarta.ws.rs.core.Response;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
-import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.After;
@@ -46,8 +44,6 @@ import de.intevation.lada.util.data.Job.JobStatus;
  */
 @RunWith(Arquillian.class)
 public class ExporterTest extends BaseTest {
-
-    private static Logger logger = Logger.getLogger(ExporterTest.class);
 
     private static final String ASYNC_EXPORT_URL = "data/asyncexport/";
 
@@ -135,7 +131,7 @@ public class ExporterTest extends BaseTest {
      */
     @After
     public void cancelJobs() {
-        client.target(baseUrl + ASYNC_EXPORT_URL + "cancel")
+        target.path(ASYNC_EXPORT_URL + "cancel")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -155,7 +151,7 @@ public class ExporterTest extends BaseTest {
             .build();
 
         assertHasLinesInAnyOrder(
-            runExportTest(baseUrl, formatCsv, requestJson),
+            runExportTest(formatCsv, requestJson),
             "\r\n",
             "hauptprobenNr,umwId,isTest,probeId",
             "120510002,L6,No,1000",
@@ -176,7 +172,7 @@ public class ExporterTest extends BaseTest {
             .build();
 
         assertHasLinesInAnyOrder(
-            runExportTest(baseUrl, formatCsv, requestJson),
+            runExportTest(formatCsv, requestJson),
             "\r\n",
             "hauptprobenNr;umwId;isTest;probeId",
             "120510002;L6;No;1000",
@@ -197,7 +193,7 @@ public class ExporterTest extends BaseTest {
             .build();
 
         assertHasLinesInAnyOrder(
-            runExportTest(baseUrl, formatCsv, requestJson),
+            runExportTest(formatCsv, requestJson),
             rowDelimiter,
             "hauptprobenNr,umwId,isTest,probeId",
             "120510002,L6,No,1000",
@@ -218,7 +214,7 @@ public class ExporterTest extends BaseTest {
             .build();
 
         assertHasLinesInAnyOrder(
-            runExportTest(baseUrl, formatCsv, requestJson),
+            runExportTest(formatCsv, requestJson),
             "\r\n",
             "hauptprobenNr,umwId,isTest,probeId",
             "120510002,L6,No,1000",
@@ -233,7 +229,7 @@ public class ExporterTest extends BaseTest {
     public final void testCsvExportDecimalSeparator()
         throws InterruptedException, CharacterCodingException {
         assertHasLinesInAnyOrder(
-            runExportTest(baseUrl, formatCsv, measmRequestJsonBuilder
+            runExportTest(formatCsv, measmRequestJsonBuilder
                 .add("decimalSeparator", ",").build()),
             "\r\n",
             "messungId,id,measVal,measUnitId,measdId",
@@ -254,7 +250,7 @@ public class ExporterTest extends BaseTest {
             .build();
 
         assertHasLinesInAnyOrder(
-            runExportTest(baseUrl, formatCsv, requestJson),
+            runExportTest(formatCsv, requestJson),
             "\r\n",
             "hauptprobenNr,umwId,isTest,probeId",
             "120510002,L6,No,1000");
@@ -276,7 +272,7 @@ public class ExporterTest extends BaseTest {
             .build();
 
         assertHasLinesInAnyOrder(
-            runExportTest(baseUrl, formatCsv, requestJson),
+            runExportTest(formatCsv, requestJson),
             "\r\n",
             "hauptprobenNr,umwId,isTest,probeId,extId,messwerteCount",
             "120510002,L6,No,1000,453,2",
@@ -293,7 +289,7 @@ public class ExporterTest extends BaseTest {
         throws InterruptedException, CharacterCodingException {
         assertHasLinesInAnyOrder(
             runExportTest(
-                baseUrl, formatCsv, measmRequestJsonBuilder.build()),
+                formatCsv, measmRequestJsonBuilder.build()),
             "\r\n",
             "messungId,id,measVal,measUnitId,measdId",
             "1200,1000,1.1E00,Sv,test",
@@ -320,7 +316,7 @@ public class ExporterTest extends BaseTest {
                     + "\"env_medium_id\":\"L6\","
                     + "\"is_test\":\"false\","
                     + "\"probeId\":1000}}")).readObject(),
-            runJSONExportTest(baseUrl, requestJson));
+            runJSONExportTest(requestJson));
     }
 
     /**
@@ -350,7 +346,7 @@ public class ExporterTest extends BaseTest {
                     + "\"probeId\":1000,"
                     + "\"Messungen\":[{\"messwerteCount\":2,\"extId\":453},"
                     + "{\"messwerteCount\":0,\"extId\":454}]}}")).readObject(),
-            runJSONExportTest(baseUrl, requestJson));
+            runJSONExportTest(requestJson));
     }
 
     /**
@@ -373,7 +369,7 @@ public class ExporterTest extends BaseTest {
                     + "\"measdId\":\"test\","
                     + "\"measVal\":null,"
                     + "\"id\":1001}]}}")).readObject(),
-            runJSONExportTest(baseUrl, measmRequestJsonBuilder.build()));
+            runJSONExportTest(measmRequestJsonBuilder.build()));
     }
 
     /**
@@ -389,7 +385,7 @@ public class ExporterTest extends BaseTest {
             .add("proben", Json.createArrayBuilder().add(probeId))
             .build();
 
-        String result = runExportTest(baseUrl, formatLaf, requestJson);
+        String result = runExportTest(formatLaf, requestJson);
         Assert.assertTrue(
             "Unexpected LAF content",
             result.startsWith("%PROBE%") && result.endsWith("%ENDE%"));
@@ -409,7 +405,7 @@ public class ExporterTest extends BaseTest {
             .build();
 
         String csvResult = runExportTest(
-            baseUrl, formatCsv, requestJson);
+            formatCsv, requestJson);
         Assert.assertEquals(
             "Unexpected CSV content",
             "hauptprobenNr,umwId,isTest,probeId\r\n",
@@ -418,7 +414,7 @@ public class ExporterTest extends BaseTest {
         Assert.assertEquals(
             "Unexpected JSON content",
             JsonValue.EMPTY_JSON_OBJECT,
-            runJSONExportTest(baseUrl, requestJson));
+            runJSONExportTest(requestJson));
     }
 
     /**
@@ -441,7 +437,7 @@ public class ExporterTest extends BaseTest {
 
         assertJsonContainsValidationMessage(
             parseResponse(
-                exportRequest(baseUrl, formatLaf, lafJson),
+                exportRequest(formatLaf, lafJson),
                 Response.Status.BAD_REQUEST)
                 .asJsonObject(),
             samplePath, sampleMessage);
@@ -457,14 +453,14 @@ public class ExporterTest extends BaseTest {
             .add("encoding", "invalidEncoding")
             .build();
         parseResponse(
-            exportRequest(baseUrl, formatJson, jsonExportJson),
+            exportRequest(formatJson, jsonExportJson),
             Response.Status.BAD_REQUEST);
     }
 
     private Response exportRequest(
-            URL baseUrl, String format, JsonObject requestJson) {
-        Response response = client.target(
-            baseUrl + ASYNC_EXPORT_URL + format)
+            String format, JsonObject requestJson) {
+        Response response = target
+            .path(ASYNC_EXPORT_URL + format)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -475,20 +471,19 @@ public class ExporterTest extends BaseTest {
     }
 
     private String startExport(
-        URL baseUrl,
         String format,
         JsonObject requestJson,
         Job.Status expectedStatus
     ) throws InterruptedException {
-        Response exportCreated = exportRequest(baseUrl, format, requestJson);
+        Response exportCreated = exportRequest(format, requestJson);
         AsyncJobResponse asyncJobResponse =
             parseResponse(exportCreated, AsyncJobResponse.class);
         String jobId = asyncJobResponse
             .getJobId();
 
         /* Request status of asynchronous export */
-        SyncInvoker statusRequest = client.target(
-            baseUrl + ASYNC_EXPORT_URL + "status/" + jobId)
+        SyncInvoker statusRequest = target
+            .path(ASYNC_EXPORT_URL + "status/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -515,21 +510,21 @@ public class ExporterTest extends BaseTest {
     }
 
     private JsonObject runJSONExportTest(
-        URL baseUrl, JsonObject requestJson
+        JsonObject requestJson
     ) throws InterruptedException {
         return Json.createReader(new StringReader(
-                runExportTest(baseUrl, formatJson, requestJson))).readObject();
+                runExportTest(formatJson, requestJson))).readObject();
     }
 
     private String runExportTest(
-        URL baseUrl, String format, JsonObject requestJson
+        String format, JsonObject requestJson
     ) throws InterruptedException {
         String jobId = startExport(
-            baseUrl, format, requestJson, Job.Status.FINISHED);
+            format, requestJson, Job.Status.FINISHED);
 
         /* Request export result */
-        Response download = client.target(
-            baseUrl + ASYNC_EXPORT_URL + "download/" + jobId)
+        Response download = target
+            .path(ASYNC_EXPORT_URL + "download/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

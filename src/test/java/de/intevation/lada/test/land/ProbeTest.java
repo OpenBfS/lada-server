@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
-import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.hamcrest.CoreMatchers;
@@ -36,11 +35,9 @@ public class ProbeTest extends ServiceTest {
     private JsonObject create;
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
+
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",

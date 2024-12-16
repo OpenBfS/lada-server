@@ -18,8 +18,6 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import org.jboss.logging.Logger;
-
 import java.util.List;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -40,8 +38,6 @@ import de.intevation.lada.rest.UniversalService.UniversalResponse;
  */
 @RunWith(Arquillian.class)
 public class UniversalServiceTest extends BaseTest {
-
-    private static Logger logger = Logger.getLogger(UniversalServiceTest.class);
 
     @PersistenceContext
     EntityManager em;
@@ -110,8 +106,8 @@ public class UniversalServiceTest extends BaseTest {
 
     @Before
     public void prepareBuilder() {
-        this.universalRequestBuilder = this.client.target(
-            baseUrl + "rest/universal")
+        this.universalRequestBuilder = this.target
+            .path("rest/universal")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -147,8 +143,10 @@ public class UniversalServiceTest extends BaseTest {
     @RunAsClient
     public final void testGetPaged() {
         final int limit = 1;
-        Response response = client.target(
-            baseUrl + "rest/universal?start=1&limit=" + limit)
+        Response response = target
+            .path("rest/universal")
+            .queryParam("start", 1)
+            .queryParam("limit", limit)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -172,8 +170,7 @@ public class UniversalServiceTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testGetSql() {
-        Response response = client.target(
-            baseUrl + "rest/sql")
+        Response response = target.path("rest/sql")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -219,8 +216,7 @@ public class UniversalServiceTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testGetSqlWithParameter() {
-        Response response = client.target(
-            baseUrl + "rest/sql")
+        Response response = target.path("rest/sql")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -318,7 +314,7 @@ public class UniversalServiceTest extends BaseTest {
     public void testAuth() {
         // Retrieve expected values from MeasmService
         final int notSetMeasmId = 1200, plausibleMeasmId = 1201;
-        WebTarget measmTarget = client.target(baseUrl + "rest/measm");
+        WebTarget measmTarget = target.path("rest/measm");
         boolean expectedNotSet = measmTarget
             .path(String.valueOf(notSetMeasmId))
             .request()

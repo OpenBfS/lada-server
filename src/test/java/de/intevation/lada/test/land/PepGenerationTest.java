@@ -520,8 +520,8 @@ public class PepGenerationTest extends ServiceTest {
         proben.forEach((probe) -> {
             JsonObject probeObject = (JsonObject) probe;
             Integer probeId = probeObject.getInt(Sample_.ID);
-            Response response = client.target(
-                baseUrl + "rest/samplespecifmeasval?sampleId=" + probeId)
+            Response response = target.path("rest/samplespecifmeasval")
+                .queryParam("sampleId", probeId)
                 .request()
                 .header("X-SHIB-user", BaseTest.testUser)
                 .header("X-SHIB-roles", BaseTest.testRoles)
@@ -587,7 +587,7 @@ public class PepGenerationTest extends ServiceTest {
             .add("end", end)
             .add("ids", idArrayBuilder.build()).build();
 
-        Response response = client.target(baseUrl + "rest/sample/messprogramm")
+        Response response = target.path("rest/sample/messprogramm")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

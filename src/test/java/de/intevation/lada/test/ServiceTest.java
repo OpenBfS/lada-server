@@ -14,7 +14,7 @@ import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -39,7 +39,6 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Table;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
@@ -90,23 +89,17 @@ public class ServiceTest {
     protected List<String> geomPointAttributes = new ArrayList<String>();
 
     /**
-     * The client to be used for interface tests.
+     * Basis for building requests for interface tests.
      */
-    protected Client client;
-
-    /**
-     * Base url of the server.
-     */
-    protected URL baseUrl;
+    protected WebTarget target;
 
     /**
      * Initialize the tests.
      * @param c Client instance used for issueing requests.
      * @param bUrl The server url used for the request.
      */
-    public void init(Client c, URL bUrl) {
-        this.client = c;
-        this.baseUrl = bUrl;
+    public void init(WebTarget t) {
+        this.target = t;
     }
 
     /**
@@ -412,8 +405,16 @@ public class ServiceTest {
         GenericType<T> entityType,
         Response.Status expectedStatus
     ) {
-        WebTarget target = client.target(baseUrl + parameter);
-        Response response = target.request()
+        URI uri = URI.create(parameter);
+        WebTarget t = target.path(uri.getPath());
+        String query = uri.getQuery();
+        if (query != null) {
+            for (String param: query.split("&")) {
+                String[] paramParts = param.split("=");
+                t = t.queryParam(paramParts[0], paramParts[1]);
+            }
+        }
+        Response response = t.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
@@ -431,9 +432,8 @@ public class ServiceTest {
         String parameter,
         JsonObject expected
     ) {
-        WebTarget target = client.target(baseUrl + parameter);
         /* Request a object by id*/
-        Response response = target.request()
+        Response response = target.path(parameter).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
@@ -522,9 +522,8 @@ public class ServiceTest {
         Response.Status expectedStatus,
         Class<T> entityType
     ) {
-        WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
-        Response response = target.request()
+        Response response = target.path(parameter).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
@@ -598,7 +597,7 @@ public class ServiceTest {
         String updAttrPointer = "/" + updateAttribute;
 
         /* Request object corresponding to id in URL */
-        Builder requestBuilder = client.target(baseUrl + parameter)
+        Builder requestBuilder = target.path(parameter)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -676,10 +675,8 @@ public class ServiceTest {
      * @param expectedStatus Expected HTTP status code
      */
     public void delete(String parameter, Response.Status expectedStatus) {
-        WebTarget target =
-            client.target(baseUrl + parameter);
         /* Delete object with ID given in URL */
-        Response response = target.request()
+        Response response = target.path(parameter).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .delete();
@@ -704,9 +701,7 @@ public class ServiceTest {
         String updateFieldKey,
         String newValue
     ) {
-        WebTarget target =
-            client.target(baseUrl + parameter);
-        Response response = target.request()
+        Response response = target.path(parameter).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
