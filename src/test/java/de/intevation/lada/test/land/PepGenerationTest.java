@@ -27,6 +27,7 @@ import jakarta.ws.rs.core.Response;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.test.ServiceTest;
 import de.intevation.lada.util.data.StatusCodes;
 
@@ -57,7 +58,6 @@ public class PepGenerationTest extends ServiceTest {
     private static final int ID1019 = 1019;
     private static final int ID1100 = 1100;
     private static final int ID1103 = 1103;
-    private static final int ID1020 = 1020;
 
     private static final int C4 = 4;
     private static final int C5 = 5;
@@ -508,29 +508,26 @@ public class PepGenerationTest extends ServiceTest {
     }
 
     private void testZusatzwertgeneration() {
-        int mpId = ID1020;
+        final int mpId = 1020;
         List <Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        // 02/01/2020 @ 12:00am (UTC)
-        String start = TS3;
-        // 02/12/2020 @ 12:00am (UTC)
-        String end = TS4;
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS3, TS11);
         JsonArray proben = entity.getJsonObject("proben")
-            .getJsonObject("1020").getJsonArray("data");
+            .getJsonObject(String.valueOf(mpId)).getJsonArray("data");
+        Assert.assertFalse("No samples generated", proben.isEmpty());
 
         proben.forEach((probe) -> {
             JsonObject probeObject = (JsonObject) probe;
-            Integer probeId = probeObject.getInt("id");
-            Response response = client.target(
-                baseUrl + "rest/zusatzwert?probeId=" + probeId)
+            Integer probeId = probeObject.getInt(Sample_.ID);
+            Response response = target.path("rest/samplespecifmeasval")
+                .queryParam("sampleId", probeId)
                 .request()
                 .header("X-SHIB-user", BaseTest.testUser)
                 .header("X-SHIB-roles", BaseTest.testRoles)
                 .get();
             JsonArray zwData = BaseTest.parseResponse(response).asJsonArray();
-            Assert.assertTrue(zwData.size() > 0);
+            Assert.assertFalse(zwData.isEmpty());
         });
     }
 
@@ -590,7 +587,7 @@ public class PepGenerationTest extends ServiceTest {
             .add("end", end)
             .add("ids", idArrayBuilder.build()).build();
 
-        Response response = client.target(baseUrl + "rest/sample/messprogramm")
+        Response response = target.path("rest/sample/messprogramm")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

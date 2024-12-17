@@ -14,7 +14,8 @@ import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
-import java.net.URL;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -38,8 +39,8 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Table;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
@@ -60,6 +61,7 @@ import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.NamingStrategy;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.test.land.ProbeTest;
 import de.intevation.lada.util.rest.JSONBConfig;
 
@@ -73,6 +75,9 @@ public class ServiceTest {
     private static final String LAT_KEY = "latitude";
     private static final String LONG_KEY = "longitude";
 
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+        DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT);
+
     /**
      * Timestamp attributes.
      */
@@ -84,23 +89,17 @@ public class ServiceTest {
     protected List<String> geomPointAttributes = new ArrayList<String>();
 
     /**
-     * The client to be used for interface tests.
+     * Basis for building requests for interface tests.
      */
-    protected Client client;
-
-    /**
-     * Base url of the server.
-     */
-    protected URL baseUrl;
+    protected WebTarget target;
 
     /**
      * Initialize the tests.
      * @param c Client instance used for issueing requests.
      * @param bUrl The server url used for the request.
      */
-    public void init(Client c, URL bUrl) {
-        this.client = c;
-        this.baseUrl = bUrl;
+    public void init(WebTarget t) {
+        this.target = t;
     }
 
     /**
@@ -125,7 +124,7 @@ public class ServiceTest {
     protected String readTxtResource(String resource) {
         InputStream stream =
             ProbeTest.class.getResourceAsStream(resource);
-        Scanner scanner = new Scanner(stream, "UTF-8");
+        Scanner scanner = new Scanner(stream, StandardCharsets.UTF_8);
         scanner.useDelimiter("\\A");
         String raw = scanner.next();
         scanner.close();
@@ -303,11 +302,10 @@ public class ServiceTest {
             if (timestampAttributes.contains(key)) {
                 Timestamp timestamp = Timestamp.valueOf(
                     entry.getValue().toString().replaceAll("\"", ""));
-                DateTimeFormatter formatter = DateTimeFormatter
-                    .ofPattern(JSONBConfig.DATE_FORMAT)
-                    .withZone(ZoneId.of("UTC"));
 
-                String dateString = formatter.format(timestamp.toInstant());
+                String dateString = TIMESTAMP_FORMATTER
+                    .withZone(ZoneId.of("UTC"))
+                    .format(timestamp.toInstant());
                 builder.add(key, dateString);
             } else if (geomPointAttributes.contains(key)) {
                 // Convert EWKT to latitude and longitude
@@ -407,8 +405,16 @@ public class ServiceTest {
         GenericType<T> entityType,
         Response.Status expectedStatus
     ) {
-        WebTarget target = client.target(baseUrl + parameter);
-        Response response = target.request()
+        URI uri = URI.create(parameter);
+        WebTarget t = target.path(uri.getPath());
+        String query = uri.getQuery();
+        if (query != null) {
+            for (String param: query.split("&")) {
+                String[] paramParts = param.split("=");
+                t = t.queryParam(paramParts[0], paramParts[1]);
+            }
+        }
+        Response response = t.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
@@ -426,9 +432,8 @@ public class ServiceTest {
         String parameter,
         JsonObject expected
     ) {
-        WebTarget target = client.target(baseUrl + parameter);
         /* Request a object by id*/
-        Response response = target.request()
+        Response response = target.path(parameter).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
@@ -437,8 +442,8 @@ public class ServiceTest {
         JsonObject object = BaseTest.parseResponse(response).asJsonObject();
         for (Entry<String, JsonValue> entry : expected.entrySet()) {
             if (entry.getKey().equals("parentModified")
-                || entry.getKey().equals("treeMod")
-                || entry.getKey().equals("lastMod")) {
+                || entry.getKey().equals(Sample_.TREE_MOD)
+                || entry.getKey().equals(Sample_.LAST_MOD)) {
                 continue;
             }
             String key = entry.getKey();
@@ -517,9 +522,8 @@ public class ServiceTest {
         Response.Status expectedStatus,
         Class<T> entityType
     ) {
-        WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
-        Response response = target.request()
+        Response response = target.path(parameter).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
@@ -593,13 +597,13 @@ public class ServiceTest {
         String updAttrPointer = "/" + updateAttribute;
 
         /* Request object corresponding to id in URL */
-        WebTarget target = client.target(baseUrl + parameter);
-        Response response = target.request()
+        Builder requestBuilder = target.path(parameter)
+            .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
+            .accept(MediaType.APPLICATION_JSON);
         JsonObject oldObject = BaseTest.parseResponse(
-            response).asJsonObject();
+            requestBuilder.get(), JsonObject.class);
 
         BaseTest.assertContains(oldObject, updateAttribute);
         Assert.assertEquals(
@@ -620,15 +624,11 @@ public class ServiceTest {
                 updateBuilder.add(key, value);
             }
         });
-        String updatedEntity = updateBuilder.build().toString();
 
         /* Send modified object via put request*/
-        WebTarget putTarget = client.target(baseUrl + parameter);
-        JsonValue updated = BaseTest.parseResponse(putTarget.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .accept(MediaType.APPLICATION_JSON)
-            .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON)),
+        JsonValue updated = BaseTest.parseResponse(requestBuilder
+            .put(Entity.entity(
+                    updateBuilder.build(), MediaType.APPLICATION_JSON)),
             expectedStatus);
 
         /* Verify the response*/
@@ -646,12 +646,15 @@ public class ServiceTest {
                 updatedObject.getValue(updAttrPointer));
         }
 
-        final String modTimeKey = "letzteAenderung";
+        final String modTimeKey = Sample_.LAST_MOD;
         if (oldObject.containsKey(modTimeKey)) {
+            var oldLastMod = ZonedDateTime.parse(
+                oldObject.getString(modTimeKey), TIMESTAMP_FORMATTER);
+            var updatedLastMod = ZonedDateTime.parse(
+                updatedObject.getString(modTimeKey), TIMESTAMP_FORMATTER);
             Assert.assertTrue(
                 "Object modification timestamp did not increase",
-                Long.parseLong(updatedObject.getString(modTimeKey))
-                > Long.parseLong(oldObject.getString(modTimeKey))
+                updatedLastMod.isAfter(oldLastMod)
             );
         }
 
@@ -672,10 +675,8 @@ public class ServiceTest {
      * @param expectedStatus Expected HTTP status code
      */
     public void delete(String parameter, Response.Status expectedStatus) {
-        WebTarget target =
-            client.target(baseUrl + parameter);
         /* Delete object with ID given in URL */
-        Response response = target.request()
+        Response response = target.path(parameter).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .delete();
@@ -700,9 +701,7 @@ public class ServiceTest {
         String updateFieldKey,
         String newValue
     ) {
-        WebTarget target =
-            client.target(baseUrl + parameter);
-        Response response = target.request()
+        Response response = target.path(parameter).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
@@ -747,8 +746,7 @@ public class ServiceTest {
      * @return Difference in days as long
      */
     protected long getDaysFromNow(String to) {
-        ZonedDateTime toDate = ZonedDateTime.parse(
-            to, DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT));
+        ZonedDateTime toDate = ZonedDateTime.parse(to, TIMESTAMP_FORMATTER);
         return getDaysFromNow(toDate.toInstant());
     }
 

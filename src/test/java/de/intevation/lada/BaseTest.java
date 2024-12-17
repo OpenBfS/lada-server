@@ -27,11 +27,11 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import org.jboss.logging.Logger;
 import org.dbunit.Assertion;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
@@ -78,18 +78,21 @@ public class BaseTest {
      */
     public static String testRoles = "cn=mst_06_status, cn=land_06_stamm";
 
-    private static Logger logger = Logger.getLogger(BaseTest.class);
-
     /**
-     * The client to be used for interface tests.
+     * The client used for interface tests.
      */
-    protected Client client;
+    private Client client;
 
     /**
-     * The base URL to be used for interface tests.
+     * The base URL used for interface tests.
      */
     @ArquillianResource
-    protected URL baseUrl;
+    private URL baseUrl;
+
+    /**
+     * Basis for building requests for interface tests.
+     */
+    protected WebTarget target;
 
     /**
      * Database connection.
@@ -134,6 +137,7 @@ public class BaseTest {
         doDbOperation(DatabaseOperation.CLEAN_INSERT);
 
         this.client = ClientBuilder.newClient().register(JSONBConfig.class);
+        this.target = client.target(baseUrl.toString());
     }
 
     /**

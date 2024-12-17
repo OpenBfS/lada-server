@@ -7,12 +7,10 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.json.JsonObject;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 
@@ -33,11 +31,8 @@ public class Stammdaten extends ServiceTest {
     private static Map<String, Matcher<Iterable<?>>> matchers;
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
 
         matchers = new HashMap<>();
         matchers.put("regulation",
@@ -262,16 +257,12 @@ public class Stammdaten extends ServiceTest {
      * @param type the entity type
      * @param id the entity id
      */
-    @SuppressWarnings("unchecked")
     public final void getById(
         String type,
         Object id
     ) {
-        /* Create a client*/
-        WebTarget target =
-            client.target(baseUrl + "rest/" + type + "/" + id);
         /* Request an object by id*/
-        Response response = target.request()
+        Response response = target.path("rest/" + type + "/" + id).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();

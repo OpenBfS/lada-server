@@ -7,13 +7,12 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.util.Arrays;
 
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
-import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 
 import org.hamcrest.CoreMatchers;
@@ -30,16 +29,15 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class MesswertTest extends ServiceTest {
 
-    private static final long TS1 = 1450371851654L;
     private JsonObject expectedById;
     private JsonObject create;
 
+    private final int measmId = 1200;
+
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
+
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -51,7 +49,6 @@ public class MesswertTest extends ServiceTest {
             readXmlResource("datasets/dbUnit_lada.xml", MeasVal.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messwert);
-        builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);
         builder.add("owner", JsonValue.TRUE);
         expectedById = builder.build();
@@ -71,7 +68,7 @@ public class MesswertTest extends ServiceTest {
         final String[] expectedWarningKeys = {
             "measUnitId", "measdId", "error" };
         MatcherAssert.assertThat(
-            get("rest/measval?measmId=1200").asJsonArray().get(0).asJsonObject()
+            get("rest/measval?measmId=" + measmId).asJsonArray().getJsonObject(0)
                 .getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItems(expectedWarningKeys));
 
@@ -86,8 +83,9 @@ public class MesswertTest extends ServiceTest {
      * Test messwert normalization.
      */
     private void normalize(JsonObject oldValue) {
-        Response normalized = client.target(
-            baseUrl + "rest/measval/normalize?measmId=1200")
+        Response normalized = target
+            .path("rest/measval/normalize")
+            .queryParam("measmId", measmId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

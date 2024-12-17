@@ -7,14 +7,13 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.util.Arrays;
 
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 
 import org.junit.Assert;
@@ -33,11 +32,9 @@ public class MessungTest extends ServiceTest {
     private JsonObject create;
 
     @Override
-    public void init (
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init (WebTarget t) {
+        super.init(t);
+
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",

@@ -90,7 +90,7 @@ public class LandTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testProbe() {
-        probeTest.init(this.client, baseUrl);
+        probeTest.init(this.target);
         probeTest.execute();
     }
 
@@ -102,7 +102,7 @@ public class LandTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testKommentarP() {
-        pkommentarTest.init(this.client, baseUrl);
+        pkommentarTest.init(this.target);
         pkommentarTest.execute();
     }
 
@@ -115,7 +115,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testOrtszuordnung()
     throws Exception {
-        ortszuordnungTest.init(this.client, baseUrl);
+        ortszuordnungTest.init(this.target);
         ortszuordnungTest.execute();
     }
 
@@ -128,7 +128,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testZusatzwert()
     throws Exception {
-        zusatzwertTest.init(this.client, baseUrl);
+        zusatzwertTest.init(this.target);
         zusatzwertTest.execute();
     }
     /**
@@ -140,7 +140,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessung()
     throws Exception {
-        messungTest.init(this.client, baseUrl);
+        messungTest.init(this.target);
         messungTest.execute();
     }
 
@@ -153,7 +153,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testKommentarM()
     throws Exception {
-        mkommentarTest.init(this.client, baseUrl);
+        mkommentarTest.init(this.target);
         mkommentarTest.execute();
     }
 
@@ -166,7 +166,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMesswert()
     throws Exception {
-        messwertTest.init(this.client, baseUrl);
+        messwertTest.init(this.target);
         messwertTest.execute();
     }
 
@@ -179,7 +179,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testStatus()
     throws Exception {
-        statusTest.init(this.client, baseUrl);
+        statusTest.init(this.target);
         statusTest.execute();
     }
 
@@ -192,7 +192,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessprogramm()
     throws Exception {
-        messprogrammTest.init(this.client, baseUrl);
+        messprogrammTest.init(this.target);
         messprogrammTest.execute();
     }
 
@@ -205,7 +205,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessprogrammMmt()
     throws Exception {
-        messprogrammMmtTest.init(this.client, baseUrl);
+        messprogrammMmtTest.init(this.target);
         messprogrammMmtTest.execute();
     }
 
@@ -218,7 +218,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testQuery()
     throws Exception {
-        queryTest.init(this.client, baseUrl);
+        queryTest.init(this.target);
         queryTest.execute();
     }
 
@@ -231,7 +231,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testPepGeneration()
             throws Exception {
-        pepGenerationTest.init(this.client, baseUrl);
+        pepGenerationTest.init(this.target);
         pepGenerationTest.execute();
     }
 
@@ -244,7 +244,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testGeolocatMpg()
             throws Exception {
-        geolocatMpgTest.init(this.client, baseUrl);
+        geolocatMpgTest.init(this.target);
         geolocatMpgTest.execute();
     }
 
@@ -257,14 +257,14 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testTimestamps()
             throws Exception {
-        timestampTest.init(this.client, baseUrl);
+        timestampTest.init(this.target);
         timestampTest.execute();
     }
 
     @Test
     @RunAsClient
     public final void testAssociations() {
-        associationTest.init(this.client, baseUrl);
+        associationTest.init(this.target);
         associationTest.execute();
     }
 }

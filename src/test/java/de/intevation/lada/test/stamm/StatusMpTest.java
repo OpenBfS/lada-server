@@ -7,12 +7,10 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.net.URL;
-
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -30,11 +28,8 @@ public class StatusMpTest extends ServiceTest {
     private static final String URL = "rest/statusmp/";
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
     }
 
     /**
@@ -53,7 +48,7 @@ public class StatusMpTest extends ServiceTest {
         );
 
         final int measmId = 1801;
-        Response response = client.target(baseUrl + URL + "getbyids")
+        Response response = target.path(URL + "getbyids")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

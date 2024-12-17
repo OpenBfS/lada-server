@@ -7,12 +7,11 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.util.Arrays;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
@@ -26,7 +25,6 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class StatusTest extends ServiceTest {
 
-    private static final long TS1 = 1450371851654L;
     private JsonObject create;
     private JsonObject reset;
 
@@ -34,11 +32,9 @@ public class StatusTest extends ServiceTest {
     private JsonObject undeliverableInvalid;
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
+
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "date",

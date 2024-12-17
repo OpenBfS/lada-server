@@ -10,14 +10,13 @@ package de.intevation.lada.test.land;
 import static de.intevation.lada.rest.LadaService.PATH_DATA;
 import static de.intevation.lada.rest.LadaService.PATH_REST;
 
-import java.net.URL;
 import java.util.Set;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -39,11 +38,8 @@ public class AssociationTest extends ServiceTest {
     private final String laf9Path = PATH_DATA + "laf9/";
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
     }
 
     /**
@@ -117,7 +113,7 @@ public class AssociationTest extends ServiceTest {
         // ... and are not restored by updating the associated sample
         Assert.assertFalse(updated.getMeasms().isEmpty());
         updated.setMainSampleId("Y");
-        updated = client.target(baseUrl + samplePath)
+        updated = target.path(samplePath)
             .path(String.valueOf(updated.getId()))
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
@@ -136,7 +132,7 @@ public class AssociationTest extends ServiceTest {
     }
 
     private Sample assertMeasmsUnchanged(Set<Measm> expected, Sample payload) {
-        Sample updated = client.target(baseUrl + samplePath)
+        Sample updated = target.path(samplePath)
             .path(String.valueOf(payload.getId()))
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
