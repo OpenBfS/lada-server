@@ -124,6 +124,18 @@
         short_text = "kurz"
         rei_report_text = "bericht"
     />
+    <master.site
+        id = "1001"
+        network_id = "06"
+        long_text = "Langer Text"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "4"
+        coord_x_ext = "50.83021"
+        coord_y_ext = "9.81948"
+        geom = "SRID=4326;POINT(50.83021 9.81948)"
+        site_class_id = "1"
+        short_text = "kurz"
+    />
     <!--Mpg data-->
     <lada.mpg
         id = "999"

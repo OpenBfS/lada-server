@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -26,6 +27,7 @@ import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -87,11 +89,13 @@ public class GeolocatService extends LadaService {
      *
      * @return A response object containing the created Ort.
      * @throws BadRequestException if any constraint violations are detected.
+     * @throws NotFoundException if associated Site does not exist
      */
     @POST
     public Geolocat create(
         @Valid Geolocat ort
-    ) throws BadRequestException {
+    ) throws BadRequestException, NotFoundException {
+        siteExists(ort);
         return repository.create(ort);
     }
 
@@ -100,13 +104,15 @@ public class GeolocatService extends LadaService {
      *
      * @return the updated Geolocat object.
      * @throws BadRequestException if any constraint violations are detected.
+     * @throws NotFoundException if associated Site does not exist
      */
     @PUT
     @Path("{id}")
     public Geolocat update(
         @PathParam("id") Integer id,
         @Valid Geolocat ort
-    ) throws BadRequestException {
+    ) throws BadRequestException, NotFoundException {
+        siteExists(ort);
         lock.isLocked(ort);
         return repository.update(ort);
     }
@@ -126,5 +132,15 @@ public class GeolocatService extends LadaService {
         lock.isLocked(ortObj);
 
         repository.delete(ortObj);
+    }
+
+    /* Not a validation constraint, because creating new Site as part of
+       Geolocat should be possible via import. */
+    private void siteExists(Geolocat loc) {
+        Integer siteId = loc.getSite().getId();
+        if (siteId == null) {
+            throw new NotFoundException();
+        }
+        repository.getById(Site.class, siteId);
     }
 }

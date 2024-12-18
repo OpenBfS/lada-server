@@ -426,11 +426,13 @@ public class ServiceTest {
      * Test the GET Service by requesting a single object by id.
      * @param parameter the parameters used in the request.
      * @param expected the expected json result.
+     * @param exclude additional keys of entries to exclude from verification
      * @return The resulting json object.
      */
     public JsonObject getById(
         String parameter,
-        JsonObject expected
+        JsonObject expected,
+        String... exclude
     ) {
         /* Request a object by id*/
         Response response = target.path(parameter).request()
@@ -440,18 +442,11 @@ public class ServiceTest {
             .get();
         /* Verify the response*/
         JsonObject object = BaseTest.parseResponse(response).asJsonObject();
-        for (Entry<String, JsonValue> entry : expected.entrySet()) {
-            if (entry.getKey().equals("parentModified")
-                || entry.getKey().equals(Sample_.TREE_MOD)
-                || entry.getKey().equals(Sample_.LAST_MOD)) {
-                continue;
-            }
-            String key = entry.getKey();
-            Assert.assertEquals(
-                String.format("%s:", key),
-                entry.getValue(),
-                object.get(key));
-        }
+        List<String> defaultExcludes = List.of(
+            "parentModified", Sample_.TREE_MOD, Sample_.LAST_MOD);
+        List<String> excludes = new ArrayList<>(Arrays.asList(exclude));
+        excludes.addAll(defaultExcludes);
+        verify(expected, object, excludes.toArray(exclude));
         return object;
     }
 
@@ -480,6 +475,21 @@ public class ServiceTest {
     ) {
         return create(
             parameter, create, Locale.GERMAN, Response.Status.OK, entityType);
+    }
+
+    /**
+     * Test the CREATE Service.
+     * @param parameter the parameters used in the request.
+     * @param create the object to create, embedded in POST body.
+     * @param expectedStatus Expected HTTP status code
+     * @return The resulting json object.
+     *
+     */
+    public JsonObject create(
+        String parameter, Object create, Response.Status expectedStatus
+    ) {
+        return create(
+            parameter, create, Locale.GERMAN, expectedStatus, JsonObject.class);
     }
 
     /**
@@ -606,10 +616,14 @@ public class ServiceTest {
             requestBuilder.get(), JsonObject.class);
 
         BaseTest.assertContains(oldObject, updateAttribute);
-        Assert.assertEquals(
-            "Value in to be updated field '" + updateAttribute + "':",
-            oldValue,
-            oldObject.getValue(updAttrPointer));
+        if (oldValue instanceof JsonObject oldValueJson) {
+            verify(oldValueJson, oldObject.getJsonObject(updateAttribute));
+        } else {
+            Assert.assertEquals(
+                "Value in to be updated field '" + updateAttribute + "':",
+                oldValue,
+                oldObject.getValue(updAttrPointer));
+        }
 
         /* Value replacement */
         JsonObjectBuilder updateBuilder = Json.createObjectBuilder();
@@ -641,6 +655,8 @@ public class ServiceTest {
             Assert.assertTrue(
                 "Expected '" + updateAttribute + "' to be null",
                 updatedObject.isNull(updateAttribute));
+        } else if (newValue instanceof JsonObject newObject) {
+            verify(newObject, updatedObject.getJsonObject(updateAttribute));
         } else {
             Assert.assertEquals(newValue,
                 updatedObject.getValue(updAttrPointer));
@@ -686,6 +702,36 @@ public class ServiceTest {
         ) {
             // Ensure the resource has actually been deleted
             get(parameter, Response.Status.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Verify recursively that entries in expected appear also in actual and
+     * have the same values.
+     *
+     * @param expected object with expected attributes
+     * @param actual object to be verified
+     * @param exclude keys of entries to exclude from verification
+     */
+    protected void verify(
+        JsonObject expected,
+        JsonObject actual,
+        String... exclude
+    ) {
+        List<String> exclusions = Arrays.asList(exclude);
+        for (Entry<String, JsonValue> entry : expected.entrySet()) {
+            String key = entry.getKey();
+            if (exclusions.contains(key)) {
+                continue;
+            }
+            if (entry.getValue() instanceof JsonObject expectedChild) {
+                verify(expectedChild, actual.get(key).asJsonObject(), exclude);
+            } else {
+                Assert.assertEquals(
+                    String.format("%s:", key),
+                    entry.getValue(),
+                    actual.get(key));
+            }
         }
     }
 
