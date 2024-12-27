@@ -11,6 +11,8 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 
@@ -20,6 +22,10 @@ public abstract class TagLink extends BaseModel {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Tag.class)
     private Integer tagId;
+
+    @ManyToOne
+    @JoinColumn(insertable = false, updatable = false)
+    Tag tag;
 
     public Integer getTagId() {
         return tagId;

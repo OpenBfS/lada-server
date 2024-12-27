@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.CascadeType;
@@ -49,6 +50,7 @@ import de.intevation.lada.model.master.Regulation;
 import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 import de.intevation.lada.validation.constraints.DatesVsSampleMeth;
@@ -214,6 +216,15 @@ public class Sample extends BaseModel implements Serializable {
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Measm> measms;
+
+    /* Work around the fact that hibernate does not provide means to have
+       a ManyToMany association without cascading to the link table */
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "sample_id", insertable = false, updatable = false)
+    @JsonbTransient
+    private Set<TagLinkSample> tagLinks;
+    @Transient
+    private Set<Tag> tags;
 
     @Transient
     private boolean owner;
@@ -451,6 +462,22 @@ public class Sample extends BaseModel implements Serializable {
 
     public void setMeasms(Set<Measm> measms) {
         this.measms = measms;
+    }
+
+    public Set<TagLinkSample> getTagLinks() {
+        return this.tagLinks;
+    }
+
+    public Set<Tag> getTags() {
+        if (this.tags == null && this.tagLinks != null) {
+            this.tags = this.tagLinks.stream().map(link -> link.tag)
+                .collect(Collectors.toSet());
+        }
+        return this.tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 
     public boolean isOwner() {

@@ -140,7 +140,7 @@ public class SampleService extends LadaService {
     public Sample create(
         @Valid Sample probe
     ) throws BadRequestException {
-        probe.setMeasms(null);
+        clearAssociations(probe);
 
         setEnvAttrs(probe);
 
@@ -241,7 +241,7 @@ public class SampleService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Sample probe
     ) throws BadRequestException {
-        probe.setMeasms(null);
+        clearAssociations(probe);
 
         lock.isLocked(probe);
 
@@ -277,5 +277,10 @@ public class SampleService extends LadaService {
                 factory.getInitialMediaDesk(probe.getEnvMediumId()));
         }
         factory.findMedia(probe);
+    }
+
+    private void clearAssociations(Sample probe) {
+        probe.setMeasms(null);
+        probe.setTags(null);
     }
 }

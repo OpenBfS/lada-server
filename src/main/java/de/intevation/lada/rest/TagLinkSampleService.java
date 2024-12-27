@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.rest;
 
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.lada.TagLinkSample_;
 import de.intevation.lada.model.lada.TagLink_;
@@ -24,11 +25,13 @@ public class TagLinkSampleService extends TagLinkService<TagLinkSample> {
 
     @Override
     protected void deleteTagLink(TagLinkSample tagLink) {
-        repository.delete(
-            repository.getSingle(repository
-                .queryBuilder(TagLinkSample.class)
-                .and(TagLink_.tagId, tagLink.getTagId())
-                .and(TagLinkSample_.sampleId, tagLink.getSampleId())
-                .getQuery()));
+        TagLinkSample persistendTagLink = repository.getSingle(repository
+            .queryBuilder(TagLinkSample.class)
+            .and(TagLink_.tagId, tagLink.getTagId())
+            .and(TagLinkSample_.sampleId, tagLink.getSampleId())
+            .getQuery());
+        repository.getById(Sample.class, tagLink.getSampleId())
+            .getTagLinks().remove(persistendTagLink);
+        repository.delete(persistendTagLink);
     }
 }

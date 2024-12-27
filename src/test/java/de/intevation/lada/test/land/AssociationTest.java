@@ -7,9 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import static de.intevation.lada.rest.LadaService.PATH_DATA;
-import static de.intevation.lada.rest.LadaService.PATH_REST;
-
 import java.util.Set;
 
 import jakarta.json.Json;
@@ -20,22 +17,33 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.data.Laf9Service;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.rest.MeasmService;
+import de.intevation.lada.rest.SampleService;
+import de.intevation.lada.rest.TagService;
 import de.intevation.lada.test.ServiceTest;
 
 
 public class AssociationTest extends ServiceTest {
 
-    private final String samplePath = PATH_REST + "sample/";
-    private final String measmPath = PATH_REST + "measm/";
-    private final String laf9Path = PATH_DATA + "laf9/";
+    private final String samplePath = UriBuilder
+        .fromResource(SampleService.class).build() + "/";
+    private final String measmPath = UriBuilder
+        .fromResource(MeasmService.class).build() + "/";
+    private final String tagPath = UriBuilder
+        .fromResource(TagService.class).build() + "/";
+    private final String laf9Path = UriBuilder
+        .fromResource(Laf9Service.class).build() + "/";
 
     @Override
     public void init(WebTarget t) {
@@ -55,23 +63,34 @@ public class AssociationTest extends ServiceTest {
         sample.setMeasFacilId(measFacilId);
         sample.setSampleMethId(1);
         sample.setIsTest(true);
+
         Measm measm = new Measm();
         measm.setMmtId(mmtId);
         sample.setMeasms(Set.of(measm));
 
-        // Create via SampleService should ignore related Measm
+        Tag tag = new Tag();
+        tag.setName("association test");
+        tag.setMeasFacilId(measFacilId);
+        sample.setTags(Set.of(tag));
+
+        // Create via SampleService should ignore related objects
         Sample created = create(samplePath, sample, Sample.class);
         Assert.assertTrue(created.getMeasms().isEmpty());
+        Assert.assertTrue(created.getTags().isEmpty());
 
-        // Create Sample with related Measm
+        // Create Sample with related objects
         created = create(laf9Path, sample, Sample.class);
         Set<Measm> createdMeasms = created.getMeasms();
         Assert.assertNotNull(createdMeasms);
         Assert.assertEquals(1, createdMeasms.size());
+        Set<Tag> createdTags = created.getTags();
+        Assert.assertNotNull(createdTags);
+        Assert.assertEquals(1, createdTags.size());
 
-        // Associated measms are returned as part of sample
+        // Associated objects are returned as part of sample
         created = get(samplePath + created.getId(), Sample.class);
-        assertMeasmsUnchanged(createdMeasms, created.getMeasms());
+        assertAssociatedUnchanged(createdMeasms, created.getMeasms());
+        assertAssociatedUnchanged(createdTags, created.getTags());
 
         // Created measm is correctly associated
         Measm newMeasm = new Measm();
@@ -90,28 +109,41 @@ public class AssociationTest extends ServiceTest {
             get(measmPath + createdMeasm.getId(), JsonObject.class)
             .getInt("sampleId"));
 
-        // Sample.measms in PUT payload should be ignored
+        // Associated objects in PUT payload should be ignored
         created.setMainSampleId("X");
-        Sample updated = assertMeasmsUnchanged(createdMeasms, created);
+        Sample updated = assertAssociatedUnchanged(
+            created, createdMeasms, createdTags);
         Measm measm2 = new Measm();
         measm2.setMmtId(mmtId);
+        Tag tag2 = new Tag();
+        tag2.setName("another tag");
         updated.getMeasms().add(measm2);
-        updated = assertMeasmsUnchanged(createdMeasms, updated);
+        updated.getTags().add(tag2);
+        updated = assertAssociatedUnchanged(
+            updated, createdMeasms, createdTags);
         updated.getMeasms().clear();
-        updated = assertMeasmsUnchanged(createdMeasms, updated);
+        updated.getTags().clear();
+        updated = assertAssociatedUnchanged(
+            updated, createdMeasms, createdTags);
         updated.setMeasms(null);
-        updated = assertMeasmsUnchanged(createdMeasms, updated);
+        updated.setTags(null);
+        updated = assertAssociatedUnchanged(
+            updated, createdMeasms, createdTags);
 
         // Associated measm can be updated
         update(measmPath + createdMeasm.getId(),
             "minSampleId", JsonValue.NULL, Json.createValue("XX"));
 
-        // Associated measms can be deleted
+        // Associated objects can be deleted
         for (Measm m: createdMeasms) {
             delete(measmPath + m.getId());
         }
+        for (Tag t: createdTags) {
+            delete(tagPath + t.getId());
+        }
         // ... and are not restored by updating the associated sample
         Assert.assertFalse(updated.getMeasms().isEmpty());
+        Assert.assertFalse(updated.getTags().isEmpty());
         updated.setMainSampleId("Y");
         updated = target.path(samplePath)
             .path(String.valueOf(updated.getId()))
@@ -121,17 +153,29 @@ public class AssociationTest extends ServiceTest {
             .put(Entity.entity(updated, MediaType.APPLICATION_JSON),
                 Sample.class);
         Assert.assertTrue(updated.getMeasms().isEmpty());
+        Assert.assertTrue(updated.getTags().isEmpty());
 
-        // Sample with associated measms can be deleted
+        // Sample with associated objects can be deleted
+        tag.setName("another association test");
         created = create(laf9Path, sample, Sample.class);
-        Assert.assertFalse(created.getMeasms().isEmpty());
         delete(samplePath + created.getId());
+        // Associated measms are deleted as well
+        Assert.assertFalse(created.getMeasms().isEmpty());
         for (Measm m: created.getMeasms()) {
             get(measmPath + m.getId(), Response.Status.NOT_FOUND);
         }
+        // Previously associated tags still exist
+        Assert.assertFalse(created.getTags().isEmpty());
+        for (Tag t: created.getTags()) {
+            get(tagPath + t.getId());
+        }
     }
 
-    private Sample assertMeasmsUnchanged(Set<Measm> expected, Sample payload) {
+    private Sample assertAssociatedUnchanged(
+        Sample payload,
+        Set<Measm> expectedMeasms,
+        Set<Tag> expectedTags
+    ) {
         Sample updated = target.path(samplePath)
             .path(String.valueOf(payload.getId()))
             .request()
@@ -139,17 +183,26 @@ public class AssociationTest extends ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .put(Entity.entity(payload, MediaType.APPLICATION_JSON),
                 Sample.class);
-        assertMeasmsUnchanged(expected, updated.getMeasms());
+        assertAssociatedUnchanged(expectedMeasms, updated.getMeasms());
+        assertAssociatedUnchanged(expectedTags, updated.getTags());
         return updated;
     }
 
-    private void assertMeasmsUnchanged(
-        Set<Measm> expected, Set<Measm> actual
+    private <T> void assertAssociatedUnchanged(
+        Set<T> expected, Set<T> actual
     ) {
         Assert.assertEquals(expected.size(), actual.size());
         MatcherAssert.assertThat(
-            actual.stream().map(m -> m.getId()).toList(),
+            actual.stream().map(m -> getId(m)).toList(),
             CoreMatchers.hasItems(
-                expected.stream().map(m -> m.getId()).toArray(Integer[]::new)));
+                expected.stream().map(m -> getId(m)).toArray(Object[]::new)));
+    }
+
+    private Object getId(Object instance) {
+        try {
+            return instance.getClass().getMethod("getId").invoke(instance);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
