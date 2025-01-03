@@ -25,9 +25,11 @@ import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.data.Laf9Service;
+import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.rest.CommSampleService;
 import de.intevation.lada.rest.MeasmService;
 import de.intevation.lada.rest.SampleService;
 import de.intevation.lada.rest.TagService;
@@ -44,6 +46,8 @@ public class AssociationTest extends ServiceTest {
         .fromResource(TagService.class).build() + "/";
     private final String laf9Path = UriBuilder
         .fromResource(Laf9Service.class).build() + "/";
+    private final String commSamplePath = UriBuilder
+            .fromResource(CommSampleService.class).build() + "/";
 
     @Override
     public void init(WebTarget t) {
@@ -56,79 +60,96 @@ public class AssociationTest extends ServiceTest {
     public final void execute() {
         final String measFacilId = "06010";
         final String mmtId = "A3";
-        Sample sample = new Sample();
-        sample.setOprModeId(1);
-        sample.setRegulationId(2);
-        sample.setApprLabId(measFacilId);
-        sample.setMeasFacilId(measFacilId);
-        sample.setSampleMethId(1);
-        sample.setIsTest(true);
+        final String comment = "test association with comment";
 
-        Measm measm = new Measm();
-        measm.setMmtId(mmtId);
+        Sample sample = getSample(measFacilId);
+        CommSample commSample = getCommSample(measFacilId, comment);
+        Measm measm = getMeasm(mmtId);
+        Tag tag = getTag(measFacilId);
+
         sample.setMeasms(Set.of(measm));
-
-        Tag tag = new Tag();
-        tag.setName("association test");
-        tag.setMeasFacilId(measFacilId);
+        sample.setCommSamples(Set.of(commSample));
         sample.setTags(Set.of(tag));
 
-        // Create via SampleService should ignore related objects
         Sample created = create(samplePath, sample, Sample.class);
-        Assert.assertTrue(created.getMeasms().isEmpty());
-        Assert.assertTrue(created.getTags().isEmpty());
+        assertSampleServiceIgnoresRelatedObjects(created);
 
-        // Create Sample with related objects
         created = create(laf9Path, sample, Sample.class);
         Set<Measm> createdMeasms = created.getMeasms();
-        Assert.assertNotNull(createdMeasms);
-        Assert.assertEquals(1, createdMeasms.size());
         Set<Tag> createdTags = created.getTags();
-        Assert.assertNotNull(createdTags);
-        Assert.assertEquals(1, createdTags.size());
+        Set<CommSample> createdCommSamples = created.getCommSamples();
+        assertRelatedObjectsArePresent(
+            createdMeasms,
+            createdTags,
+            createdCommSamples);
 
-        // Associated objects are returned as part of sample
         created = get(samplePath + created.getId(), Sample.class);
-        assertAssociatedUnchanged(createdMeasms, created.getMeasms());
-        assertAssociatedUnchanged(createdTags, created.getTags());
+        assertAssociatedObjectsAreReturned(
+            created,
+            createdMeasms,
+            createdTags,
+            createdCommSamples);
 
         // Created measm is correctly associated
         Measm newMeasm = new Measm();
         newMeasm.setMmtId(mmtId);
         newMeasm.setSample(created);
         Measm createdMeasm = create(measmPath, newMeasm, Measm.class);
+        CommSample newCommSample = getCommSample(measFacilId, "new Comment");
+        newCommSample.setSample(created);
+        newCommSample = create(commSamplePath, newCommSample, CommSample.class);
+
         // Check OneToMany side
         createdMeasms = get(measmPath + "?sampleId=" + created.getId(),
             new GenericType<Set<Measm>>() { });
+        createdCommSamples = get(commSamplePath
+                + "?sampleId=" + created.getId(),
+                new GenericType<Set<CommSample>>() {
+                });
         Assert.assertEquals(2, createdMeasms.size());
+        Assert.assertEquals(2, createdCommSamples.size());
         MatcherAssert.assertThat(
             createdMeasms.stream().map(m -> m.getId()).toList(),
             CoreMatchers.hasItem(createdMeasm.getId()));
+        MatcherAssert.assertThat(
+                createdCommSamples.stream().map(s -> s.getId()).toList(),
+                CoreMatchers.hasItem(newCommSample.getId()));
+
         // Check ManyToOne side
         Assert.assertEquals(created.getId().intValue(),
             get(measmPath + createdMeasm.getId(), JsonObject.class)
-            .getInt("sampleId"));
+                .getInt("sampleId"));
+
+        Assert.assertEquals(created.getId().intValue(),
+            get(commSamplePath + newCommSample.getId(), JsonObject.class)
+                 .getInt("sampleId"));
 
         // Associated objects in PUT payload should be ignored
         created.setMainSampleId("X");
         Sample updated = assertAssociatedUnchanged(
-            created, createdMeasms, createdTags);
+            created, createdMeasms, createdTags, createdCommSamples);
+
         Measm measm2 = new Measm();
         measm2.setMmtId(mmtId);
         Tag tag2 = new Tag();
         tag2.setName("another tag");
+        CommSample commSample2 = getCommSample(measFacilId,
+            "new comment2");
         updated.getMeasms().add(measm2);
         updated.getTags().add(tag2);
+        updated.getCommSamples().add(commSample2);
         updated = assertAssociatedUnchanged(
-            updated, createdMeasms, createdTags);
+            updated, createdMeasms, createdTags, createdCommSamples);
         updated.getMeasms().clear();
         updated.getTags().clear();
+        updated.getCommSamples().clear();
         updated = assertAssociatedUnchanged(
-            updated, createdMeasms, createdTags);
+            updated, createdMeasms, createdTags, createdCommSamples);
         updated.setMeasms(null);
         updated.setTags(null);
+        updated.setCommSamples(null);
         updated = assertAssociatedUnchanged(
-            updated, createdMeasms, createdTags);
+            updated, createdMeasms, createdTags, createdCommSamples);
 
         // Associated measm can be updated
         update(measmPath + createdMeasm.getId(),
@@ -141,9 +162,15 @@ public class AssociationTest extends ServiceTest {
         for (Tag t: createdTags) {
             delete(tagPath + t.getId());
         }
+
+        for (CommSample cm: createdCommSamples){
+            delete(commSamplePath + cm.getId());
+        }
+
         // ... and are not restored by updating the associated sample
         Assert.assertFalse(updated.getMeasms().isEmpty());
         Assert.assertFalse(updated.getTags().isEmpty());
+        Assert.assertFalse(updated.getCommSamples().isEmpty());
         updated.setMainSampleId("Y");
         updated = target.path(samplePath)
             .path(String.valueOf(updated.getId()))
@@ -154,16 +181,25 @@ public class AssociationTest extends ServiceTest {
                 Sample.class);
         Assert.assertTrue(updated.getMeasms().isEmpty());
         Assert.assertTrue(updated.getTags().isEmpty());
+        Assert.assertTrue(updated.getCommSamples().isEmpty());
 
         // Sample with associated objects can be deleted
         tag.setName("another association test");
         created = create(laf9Path, sample, Sample.class);
         delete(samplePath + created.getId());
+
         // Associated measms are deleted as well
         Assert.assertFalse(created.getMeasms().isEmpty());
+        Assert.assertFalse(created.getCommSamples().isEmpty());
+
         for (Measm m: created.getMeasms()) {
             get(measmPath + m.getId(), Response.Status.NOT_FOUND);
         }
+
+        for (CommSample cs : created.getCommSamples()) {
+            get(commSamplePath + cs.getId(), Response.Status.NOT_FOUND);
+        }
+
         // Previously associated tags still exist
         Assert.assertFalse(created.getTags().isEmpty());
         for (Tag t: created.getTags()) {
@@ -171,10 +207,75 @@ public class AssociationTest extends ServiceTest {
         }
     }
 
+    private void assertAssociatedObjectsAreReturned(
+        Sample created,
+        Set<Measm> createdMeasms,
+        Set<Tag> createdTags,
+        Set<CommSample> createdCommSamples
+    ) {
+        assertAssociatedUnchanged(createdMeasms, created.getMeasms());
+        assertAssociatedUnchanged(createdTags, created.getTags());
+        assertAssociatedUnchanged(createdCommSamples, created.getCommSamples());
+    }
+
+    private void assertRelatedObjectsArePresent(
+        Set<Measm> createdMeasms,
+        Set<Tag> createdTags,
+        Set<CommSample> createdCommSamples
+    ) {
+        Assert.assertNotNull(createdMeasms);
+        Assert.assertEquals(1, createdMeasms.size());
+        Assert.assertNotNull(createdTags);
+        Assert.assertEquals(1, createdTags.size());
+        Assert.assertNotNull(createdCommSamples);
+        Assert.assertEquals(1, createdCommSamples.size());
+    }
+
+    private void assertSampleServiceIgnoresRelatedObjects(Sample created) {
+        Assert.assertTrue(created.getMeasms().isEmpty());
+        Assert.assertTrue(created.getTags().isEmpty());
+        Assert.assertTrue(created.getCommSamples().isEmpty());
+    }
+
+    private Tag getTag(final String measFacilId) {
+        Tag tag = new Tag();
+        tag.setName("association test");
+        tag.setMeasFacilId(measFacilId);
+        return tag;
+    }
+
+    private Measm getMeasm(final String mmtId) {
+        Measm measm = new Measm();
+        measm.setMmtId(mmtId);
+        return measm;
+    }
+
+    private CommSample getCommSample(
+        final String measFacilId,
+        final String comment
+    ) {
+        CommSample commSample = new CommSample();
+        commSample.setText(comment);
+        commSample.setMeasFacilId(measFacilId);
+        return commSample;
+    }
+
+    private Sample getSample(final String measFacilId) {
+        Sample sample = new Sample();
+        sample.setOprModeId(1);
+        sample.setRegulationId(2);
+        sample.setApprLabId(measFacilId);
+        sample.setMeasFacilId(measFacilId);
+        sample.setSampleMethId(1);
+        sample.setIsTest(true);
+        return sample;
+    }
+
     private Sample assertAssociatedUnchanged(
         Sample payload,
         Set<Measm> expectedMeasms,
-        Set<Tag> expectedTags
+        Set<Tag> expectedTags,
+        Set<CommSample> expectedCommSamples
     ) {
         Sample updated = target.path(samplePath)
             .path(String.valueOf(payload.getId()))
@@ -185,6 +286,8 @@ public class AssociationTest extends ServiceTest {
                 Sample.class);
         assertAssociatedUnchanged(expectedMeasms, updated.getMeasms());
         assertAssociatedUnchanged(expectedTags, updated.getTags());
+        assertAssociatedUnchanged(expectedCommSamples,
+            updated.getCommSamples());
         return updated;
     }
 

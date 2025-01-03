@@ -280,6 +280,7 @@ public class SampleService extends LadaService {
     }
 
     private void clearAssociations(Sample probe) {
+        probe.setCommSamples(null);
         probe.setMeasms(null);
         probe.setTags(null);
     }

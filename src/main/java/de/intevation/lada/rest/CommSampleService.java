@@ -115,6 +115,7 @@ public class CommSampleService extends LadaService {
     ) {
         CommSample kommentarObj = repository.getById(CommSample.class, id);
         authorization.authorize(kommentarObj, RequestMethod.DELETE);
+        kommentarObj.getSample().getCommSamples().remove(kommentarObj);
         repository.delete(kommentarObj);
     }
 }

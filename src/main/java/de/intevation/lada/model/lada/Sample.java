@@ -226,6 +226,13 @@ public class Sample extends BaseModel implements Serializable {
     @Transient
     private Set<Tag> tags;
 
+    @OneToMany(mappedBy = CommSample_.SAMPLE,
+    cascade = {
+            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE },
+    fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<CommSample> commSamples;
+
     @Transient
     private boolean owner;
 
@@ -478,6 +485,14 @@ public class Sample extends BaseModel implements Serializable {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public Set<CommSample> getCommSamples() {
+        return this.commSamples;
+    }
+
+    public void setCommSamples(Set<CommSample> commSamples) {
+        this.commSamples = commSamples;
     }
 
     public boolean isOwner() {
