@@ -237,17 +237,13 @@ public class Site extends BaseModel implements Serializable {
     @JsonbTransient
     private Set<GeolocatMpg> geolocatMpgs;
 
-    /* The purpose of subqueries in FROM-clause is to make "id" an unambiguous
-       identifier for master.site.id, which cannot be used as qualified name
-       because hibernate gives master.site an unpredictable alias. */
+    // Let's hope that hibernate will always give master.site the alias "s1_0"
     @Formula("""
-        (SELECT count(DISTINCT sid)
-        FROM (SELECT sample_id, site_id FROM lada.geolocat) g
-        JOIN (SELECT id AS sid FROM lada.sample) s ON g.sample_id=sid
-        JOIN (SELECT sample_id, status FROM lada.measm) m ON sid=m.sample_id
-        JOIN (SELECT id AS spid, status_mp_id FROM lada.status_prot) sp
-            ON m.status=spid
-        WHERE id = g.site_id AND sp.status_mp_id IN (2,6,10))""")
+        (SELECT count(DISTINCT s.id) FROM lada.geolocat g
+        JOIN lada.sample s ON g.sample_id=s.id
+        JOIN lada.measm m ON s.id=m.sample_id
+        JOIN lada.status_prot sp ON m.status=sp.id
+        WHERE s1_0.id = g.site_id AND sp.status_mp_id IN (2,6,10))""")
     private Integer plausibleReferenceCount;
 
 
