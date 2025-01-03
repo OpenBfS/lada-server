@@ -233,6 +233,12 @@ public class Sample extends BaseModel implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<CommSample> commSamples;
 
+
+    @OneToMany(mappedBy = SampleSpecifMeasVal_.SAMPLE, cascade = {
+            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<SampleSpecifMeasVal> sampleSpecifMeasVals;
+
     @Transient
     private boolean owner;
 
@@ -493,6 +499,15 @@ public class Sample extends BaseModel implements Serializable {
 
     public void setCommSamples(Set<CommSample> commSamples) {
         this.commSamples = commSamples;
+    }
+
+    public Set<SampleSpecifMeasVal> getSampleSpecifMeasVals() {
+        return this.sampleSpecifMeasVals;
+    }
+
+    public void setSampleSpecifMeasVals(
+        Set<SampleSpecifMeasVal> sampleSpecifMeasVals) {
+        this.sampleSpecifMeasVals = sampleSpecifMeasVals;
     }
 
     public boolean isOwner() {

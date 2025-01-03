@@ -283,5 +283,6 @@ public class SampleService extends LadaService {
         probe.setCommSamples(null);
         probe.setMeasms(null);
         probe.setTags(null);
+        probe.setSampleSpecifMeasVals(null);
     }
 }
