@@ -118,6 +118,7 @@ public class CommMeasmService extends LadaService {
     ) {
         CommMeasm kommentarObj = repository.getById(CommMeasm.class, id);
         authorization.authorize(kommentarObj, RequestMethod.DELETE);
+        kommentarObj.getMeasm().getCommMeasms().remove(kommentarObj);
         repository.delete(kommentarObj);
     }
 }

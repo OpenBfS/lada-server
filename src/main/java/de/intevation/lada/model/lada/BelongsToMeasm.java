@@ -50,7 +50,7 @@ public abstract class BelongsToMeasm extends BaseModel {
     @Schema(implementation = Integer.class)
     @NotNull
     @ManyToOne
-    private Measm measm;
+    protected Measm measm;
 
     @Transient
     private boolean owner;

@@ -25,11 +25,13 @@ import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.data.Laf9Service;
+import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.rest.CommMeasmService;
 import de.intevation.lada.rest.CommSampleService;
 import de.intevation.lada.rest.MeasmService;
 import de.intevation.lada.rest.SampleService;
@@ -52,6 +54,8 @@ public class AssociationTest extends ServiceTest {
             .fromResource(CommSampleService.class).build() + "/";
     private final String sampleSpecificMeasValPath = UriBuilder
             .fromResource(SampleSpecifMeasValService.class).build() + "/";
+    private final String commMeasmPath = UriBuilder
+            .fromResource(CommMeasmService.class).build() + "/";
 
     @Override
     public void init(WebTarget t) {
@@ -62,9 +66,11 @@ public class AssociationTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        final String measFacilId = "06010";
-        final String mmtId = "A3";
-        final String comment = "test association with comment";
+        String measFacilId = "06010";
+        String mmtId = "A3";
+        String comment = "test association with comment";
+        String commMeasmText = "Testkommentar";
+
 
         Sample sample = getSample(measFacilId);
         CommSample commSample = getCommSample(measFacilId, comment);
@@ -107,6 +113,14 @@ public class AssociationTest extends ServiceTest {
         newMeasm.setMmtId(mmtId);
         newMeasm.setSample(created);
         Measm createdMeasm = create(measmPath, newMeasm, Measm.class);
+        CommMeasm commMeasm = getCommMeasm(commMeasmText, measFacilId);
+        commMeasm.setMeasm(createdMeasm);
+        commMeasm = create(commMeasmPath, commMeasm, CommMeasm.class);
+        CommMeasm commMeasm2 = getCommMeasm("new Comment", measFacilId);
+        commMeasm2.setMeasm(createdMeasm);
+        commMeasm2 = create(commMeasmPath, commMeasm2, CommMeasm.class);
+        createdMeasm = get(measmPath + createdMeasm.getId(),
+            Measm.class);
         CommSample newCommSample = getCommSample(measFacilId, "new Comment");
         SampleSpecifMeasVal newSampleSpecifMeasVal =
             getSampleSpecificMeasVal("A75");
@@ -129,6 +143,11 @@ public class AssociationTest extends ServiceTest {
                 + "?sampleId=" + created.getId(),
                 new GenericType<Set<SampleSpecifMeasVal>>() {
                 });
+        Set<CommMeasm> createdCommMeasms = get(commMeasmPath
+                + "?measmId=" + createdMeasm.getId(),
+                new GenericType<Set<CommMeasm>>() {
+                });
+        Assert.assertEquals(2, createdCommMeasms.size());
         Assert.assertEquals(2, createdMeasms.size());
         Assert.assertEquals(2, createdCommSamples.size());
         Assert.assertEquals(2, createdSampleSpecifMeasVals.size());
@@ -139,8 +158,17 @@ public class AssociationTest extends ServiceTest {
                 createdCommSamples.stream().map(s -> s.getId()).toList(),
                 CoreMatchers.hasItem(newCommSample.getId()));
         MatcherAssert.assertThat(
-                createdSampleSpecifMeasVals.stream().map(s -> s.getId()).toList(),
+                createdSampleSpecifMeasVals.stream()
+                    .map(s -> s.getId()).toList(),
                 CoreMatchers.hasItem(newSampleSpecifMeasVal.getId()));
+        MatcherAssert.assertThat(
+                createdMeasm.getCommMeasms().stream()
+                        .map(s -> s.getId()).toList(),
+                CoreMatchers.hasItem(commMeasm.getId()));
+        MatcherAssert.assertThat(
+                createdMeasm.getCommMeasms().stream()
+                        .map(s -> s.getId()).toList(),
+                CoreMatchers.hasItem(commMeasm2.getId()));
 
         // Check ManyToOne side
         Assert.assertEquals(created.getId().intValue(),
@@ -151,9 +179,17 @@ public class AssociationTest extends ServiceTest {
             get(commSamplePath + newCommSample.getId(), JsonObject.class)
                  .getInt("sampleId"));
 
+        String url = sampleSpecificMeasValPath + newSampleSpecifMeasVal.getId();
         Assert.assertEquals(created.getId().intValue(),
-                get(sampleSpecificMeasValPath + newSampleSpecifMeasVal.getId(), JsonObject.class)
+                get(url, JsonObject.class)
                         .getInt("sampleId"));
+
+        Assert.assertEquals(createdMeasm.getId().intValue(),
+                get(commMeasmPath + commMeasm.getId(), JsonObject.class)
+                        .getInt("measmId"));
+        Assert.assertEquals(createdMeasm.getId().intValue(),
+                get(commMeasmPath + commMeasm2.getId(), JsonObject.class)
+                        .getInt("measmId"));
 
         // Associated objects in PUT payload should be ignored
         created.setMainSampleId("X");
@@ -168,10 +204,12 @@ public class AssociationTest extends ServiceTest {
         measm2.setMmtId(mmtId);
         Tag tag2 = new Tag();
         tag2.setName("another tag");
+        CommMeasm commMeasm3 = getCommMeasm("new Comment2", measFacilId);
         CommSample commSample2 = getCommSample(measFacilId,
             "new comment2");
         SampleSpecifMeasVal sampleSpecifMeasVal2 =
                 getSampleSpecificMeasVal("A76");
+        measm2.setCommMeasms(Set.of(commMeasm3));
         updated.getMeasms().add(measm2);
         updated.getTags().add(tag2);
         updated.getCommSamples().add(commSample2);
@@ -211,6 +249,7 @@ public class AssociationTest extends ServiceTest {
         for (Measm m: createdMeasms) {
             delete(measmPath + m.getId());
         }
+
         for (Tag t: createdTags) {
             delete(tagPath + t.getId());
         }
@@ -220,7 +259,7 @@ public class AssociationTest extends ServiceTest {
         }
 
         for (SampleSpecifMeasVal smsmv: createdSampleSpecifMeasVals){
-            delete(sampleSpecificMeasValPath+smsmv.getId());
+            delete(sampleSpecificMeasValPath + smsmv.getId());
         }
 
         // ... and are not restored by updating the associated sample
@@ -260,7 +299,13 @@ public class AssociationTest extends ServiceTest {
         }
 
         for (SampleSpecifMeasVal spm : created.getSampleSpecifMeasVals()) {
-            get(sampleSpecificMeasValPath + spm.getId(), Response.Status.NOT_FOUND);
+            get(sampleSpecificMeasValPath + spm.getId(),
+                Response.Status.NOT_FOUND);
+        }
+
+        for (CommMeasm cm : createdCommMeasms) {
+            get(commMeasmPath + cm.getId(),
+                    Response.Status.NOT_FOUND);
         }
 
         // Previously associated tags still exist
@@ -348,6 +393,16 @@ public class AssociationTest extends ServiceTest {
         SampleSpecifMeasVal value = new SampleSpecifMeasVal();
         value.setSampleSpecifId(sampleSpecificId);
         return value;
+    }
+
+    private CommMeasm getCommMeasm (
+            String text,
+            String measFacilId
+    ) {
+        CommMeasm commMeasm = new CommMeasm();
+        commMeasm.setText(text);
+        commMeasm.setMeasFacilId(measFacilId);
+        return commMeasm;
     }
 
     private Sample assertAssociatedUnchanged(
