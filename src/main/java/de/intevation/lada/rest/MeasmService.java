@@ -21,17 +21,14 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
-import de.intevation.lada.lock.LockConfig;
-import de.intevation.lada.lock.LockType;
-import de.intevation.lada.lock.ObjectLocker;
+import de.intevation.lada.lock.TimestampLocker;
+import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
+
 
 /**
  * REST service for Measm objects.
@@ -51,15 +48,7 @@ public class MeasmService extends LadaService {
      * The object lock mechanism.
      */
     @Inject
-    @LockConfig(type = LockType.TIMESTAMP)
-    private ObjectLocker lock;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
+    private TimestampLocker<BelongsToSample> lock;
 
     /**
      * Get Measm objects.
@@ -73,19 +62,7 @@ public class MeasmService extends LadaService {
     ) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
             .and(Measm_.sampleId, sampleId);
-        List<Measm> messungs = authorization.filter(
-            repository.filter(builder.getQuery()),
-            Measm.class);
-        for (Measm messung: messungs) {
-            // TODO: Should have been set by authorization.filter() already,
-            // but that's unfortunately not the same as authorizing PUT.
-            messung.setReadonly(
-                !authorization.isAuthorized(
-                    messung,
-                    RequestMethod.PUT,
-                    Measm.class));
-        }
-        return messungs;
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -99,9 +76,7 @@ public class MeasmService extends LadaService {
     public Measm getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(Measm.class, id),
-            Measm.class);
+        return repository.getById(Measm.class, id);
     }
 
     /**
@@ -114,13 +89,7 @@ public class MeasmService extends LadaService {
     public Measm create(
         @Valid Measm messung
     ) throws BadRequestException {
-        authorization.authorize(
-            messung,
-            RequestMethod.POST,
-            Measm.class);
-        return authorization.filter(
-            repository.create(messung),
-            Measm.class);
+        return repository.create(messung);
     }
 
     /**
@@ -135,15 +104,9 @@ public class MeasmService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Measm messung
     ) throws BadRequestException {
-        authorization.authorize(
-            messung,
-            RequestMethod.PUT,
-            Measm.class);
         lock.isLocked(messung);
 
-        return authorization.filter(
-            repository.update(messung),
-            Measm.class);
+        return repository.update(messung);
     }
 
     /**
@@ -157,10 +120,7 @@ public class MeasmService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Measm messungObj = repository.getById(Measm.class, id);
-        authorization.authorize(
-            messungObj,
-            RequestMethod.DELETE,
-            Measm.class);
+        authorization.authorize(messungObj, RequestMethod.DELETE);
         lock.isLocked(messungObj);
 
         repository.delete(messungObj);

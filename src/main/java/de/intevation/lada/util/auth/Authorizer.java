@@ -7,55 +7,68 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.List;
-
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
-public interface Authorizer {
 
-    <T> String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz);
+abstract class Authorizer<T extends BaseModel> {
 
-    default <T> boolean isAuthorized(
-        Object data,
-        RequestMethod method,
+    static final String I18N_KEY_FORBIDDEN = "forbidden";
+    static final String I18N_KEY_CANNOTDELETE = "cannot_delete";
+
+    protected UserInfo userInfo;
+
+    protected Repository repository;
+
+    /**
+     * Call this in implementations extending this abstract class.
+     */
+    Authorizer(
         UserInfo userInfo,
-        Class<T> clazz
+        Repository repository
     ) {
-        return isAuthorizedReason(data, method, userInfo, clazz) == null;
+        this.userInfo = userInfo;
+        this.repository = repository;
     }
 
-    <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz);
+    /**
+     * Authorize applying a method to data.
+     *
+     * @param data object to authorize
+     * @param method method to authorize
+     * @throws AuthorizationException if authorization does not succeed
+     */
+    abstract void authorize(
+        T data,
+        RequestMethod method
+    ) throws AuthorizationException;
 
-    default <T extends BaseModel> void setAuthAttrs(
-        List<BaseModel> data,
-        UserInfo userInfo,
-        Class<T> clazz
+    /**
+     * Authorize applying a method to data.
+     *
+     * @param data object to authorize
+     * @param method method to authorize
+     * @return true if authorization succeeds
+     */
+    boolean isAuthorized(
+        T data,
+        RequestMethod method
     ) {
-        for (BaseModel object: data) {
-            setAuthAttrs(object, userInfo, clazz);
+        try {
+            authorize(data, method);
+            return true;
+        } catch (AuthorizationException ae) {
+            return false;
         }
     }
 
-    default <T extends BaseModel> void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        data.setReadonly(
-            !isAuthorized(data, RequestMethod.PUT, userInfo, clazz));
+    /**
+     * Set attributes providing hints about authorization.
+     *
+     * @param data object at which attributes should be set
+     */
+    void setAuthAttrs(T data) {
+        data.setReadonly(!isAuthorized(data, RequestMethod.PUT));
     }
-
-    boolean isProbeReadOnly(Integer probeId);
-
-    boolean isMessungReadOnly(Integer messungsId);
-
 }

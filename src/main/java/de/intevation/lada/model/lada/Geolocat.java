@@ -15,18 +15,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.TypeRegulation;
@@ -47,7 +43,8 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     propertyNodeName = "typeRegulation",
     message = "{de.intevation.lada.validation.GeolocatUniqueSamplingLocation}",
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
-public class Geolocat extends BaseModel implements Serializable {
+public class Geolocat extends BelongsToSample implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -73,11 +70,6 @@ public class Geolocat extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String addSiteText;
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Sample.class)
-    private Integer sampleId;
-
     @Size(max = 7)
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Poi.class)
@@ -87,18 +79,6 @@ public class Geolocat extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date treeMod;
 
-    @OneToOne
-    @JoinColumn(insertable = false, updatable = false)
-    private Sample sample;
-
-    @Transient
-    private boolean owner;
-
-    @Transient
-    private Date parentModified;
-
-    public Geolocat() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -140,14 +120,6 @@ public class Geolocat extends BaseModel implements Serializable {
         this.addSiteText = addSiteText;
     }
 
-    public Integer getSampleId() {
-        return this.sampleId;
-    }
-
-    public void setSampleId(Integer sampleId) {
-        this.sampleId = sampleId;
-    }
-
     public String getPoiId() {
         return this.poiId;
     }
@@ -162,34 +134,5 @@ public class Geolocat extends BaseModel implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    /**
-     * @return the owner
-     */
-    public boolean isOwner() {
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    public void setOwner(boolean owner) {
-        this.owner = owner;
-    }
-
-    /**
-     * Check if a parent object was modified.
-     * @return timestamp when the parent was modified
-     */
-    public Date getParentModified() {
-        if (this.parentModified == null && this.sample != null) {
-            return this.sample.getTreeMod();
-        }
-        return this.parentModified;
-    }
-
-    public void setParentModified(Date parentModified) {
-        this.parentModified = parentModified;
     }
 }

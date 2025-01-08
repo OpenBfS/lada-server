@@ -8,7 +8,6 @@
 
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.master.Tag;
@@ -20,66 +19,49 @@ import de.intevation.lada.util.rest.RequestMethod;
  * Authorizer class for TagZuordnung objects.
  *
  */
-public class TagLinkMeasmAuthorizer extends BaseAuthorizer {
+class TagLinkMeasmAuthorizer extends Authorizer<TagLinkMeasm> {
 
-    MessungAuthorizer messungAuthorizer;
+    Authorizer<Measm> messungAuthorizer;
 
-    public TagLinkMeasmAuthorizer(Repository repository) {
-        super(repository);
-        messungAuthorizer = new MessungAuthorizer(repository);
+    TagLinkMeasmAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
+
+        this.messungAuthorizer = new MessungAuthorizer(
+            this.userInfo, this.repository);
     }
 
     @Override
-    public <T> String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
+    @SuppressWarnings("fallthrough")
+    void authorize(
+        TagLinkMeasm zuordnung,
+        RequestMethod method
+    ) throws AuthorizationException {
         switch (method) {
         case POST:
         case DELETE:
-            TagLinkMeasm zuordnung = (TagLinkMeasm) data;
             Tag tag = repository.getById(Tag.class, zuordnung.getTagId());
 
             if (tag.getNetworkId() == null && tag.getMeasFacilId() == null) {
-                return messungAuthorizer.isAuthorizedReason(
+                messungAuthorizer.authorize(
                     repository.getById(
                         Measm.class, zuordnung.getMeasmId()),
-                    RequestMethod.PUT,
-                    userInfo,
-                    Measm.class
+                    RequestMethod.PUT
                 );
+                return;
             } else if (tag.getNetworkId() != null) {
-                return userInfo.getNetzbetreiber().contains(tag.getNetworkId())
-                    ? null : I18N_KEY_FORBIDDEN;
+                if (userInfo.getNetzbetreiber().contains(tag.getNetworkId())) {
+                    return;
+                }
             } else if (tag.getMeasFacilId() != null) {
-                return userInfo.getMessstellen().contains(tag.getMeasFacilId())
-                    ? null : I18N_KEY_FORBIDDEN;
+                if (userInfo.getMessstellen().contains(tag.getMeasFacilId())) {
+                    return;
+                }
             }
         default:
-            return I18N_KEY_FORBIDDEN;
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         }
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        TagLinkMeasm zuordnung = repository.getById(
-            TagLinkMeasm.class, id);
-        return isAuthorized(zuordnung, method, userInfo, clazz);
-    }
-
-    @Override
-    public <T extends BaseModel> void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        // Nothing to do
     }
 }

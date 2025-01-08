@@ -13,7 +13,7 @@ import java.util.List;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.constraints.requests.HasEitherSamplesOrMeasm;
+import de.intevation.lada.validation.constraints.HasEitherSamplesOrMeasm;
 
 @HasEitherSamplesOrMeasm
 public class LafExportParameters extends ExportParameters {

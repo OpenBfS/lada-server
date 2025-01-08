@@ -21,14 +21,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
-import de.intevation.lada.lock.LockConfig;
-import de.intevation.lada.lock.LockType;
-import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.GeolocatMpg_;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -48,20 +42,6 @@ public class GeolocatMpgService extends LadaService {
     private Repository repository;
 
     /**
-     * The object lock mechanism.
-     */
-    @Inject
-    @LockConfig(type = LockType.TIMESTAMP)
-    private ObjectLocker lock;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    /**
      * Get GeolocatMpg objects.
      *
      * @param mpgId The requested objects will be filtered
@@ -76,9 +56,7 @@ public class GeolocatMpgService extends LadaService {
         QueryBuilder<GeolocatMpg> builder = repository
             .queryBuilder(GeolocatMpg.class)
             .and(GeolocatMpg_.mpgId, mpgId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            GeolocatMpg.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -92,9 +70,7 @@ public class GeolocatMpgService extends LadaService {
     public GeolocatMpg getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(GeolocatMpg.class, id),
-            GeolocatMpg.class);
+        return repository.getById(GeolocatMpg.class, id);
     }
 
     /**
@@ -107,13 +83,7 @@ public class GeolocatMpgService extends LadaService {
     public GeolocatMpg create(
         @Valid GeolocatMpg ort
     ) throws BadRequestException {
-        authorization.authorize(
-            ort,
-            RequestMethod.POST,
-            GeolocatMpg.class);
-        return authorization.filter(
-            repository.create(ort),
-            GeolocatMpg.class);
+        return repository.create(ort);
     }
 
     /**
@@ -128,14 +98,7 @@ public class GeolocatMpgService extends LadaService {
         @PathParam("id") Integer id,
         @Valid GeolocatMpg ort
     ) throws BadRequestException {
-        authorization.authorize(
-            ort,
-            RequestMethod.PUT,
-            GeolocatMpg.class);
-
-        return authorization.filter(
-            repository.update(ort),
-            GeolocatMpg.class);
+        return repository.update(ort);
     }
 
     /**
@@ -150,11 +113,7 @@ public class GeolocatMpgService extends LadaService {
     ) {
         GeolocatMpg ortObj = repository.getById(
             GeolocatMpg.class, id);
-        authorization.authorize(
-            ortObj,
-            RequestMethod.PUT,
-            GeolocatMpg.class);
-
+        authorization.authorize(ortObj, RequestMethod.DELETE);
         repository.delete(ortObj);
     }
 }

@@ -25,7 +25,6 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
-import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.Filter;
 import de.intevation.lada.model.master.FilterType;
 import de.intevation.lada.model.master.FilterType_;
@@ -179,12 +178,10 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
                 Object fieldValue = null;
                 switch (subDataColumn) {
                 case "statusMp":
-                    StatusProt prot =
-                        repository.getById(
-                            StatusProt.class, measm.getStatus());
                     StatusMp mp =
                         repository.getById(
-                            StatusMp.class, prot.getStatusMpId());
+                            StatusMp.class,
+                            measm.getStatusProt().getStatusMpId());
                     StatusLev lev = mp.getStatusLev();
                     StatusVal val = mp.getStatusVal();
                     fieldValue = String.format(

@@ -39,10 +39,6 @@ import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -103,13 +99,6 @@ public class AuditTrailService extends LadaService {
      */
     @Inject
     private Repository repository;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     /**
      * Map foreign key to their associated table and the display value.
@@ -213,9 +202,7 @@ public class AuditTrailService extends LadaService {
                 Measm messung = repository.entityManager().find(
                     Measm.class, a.getMeasmId());
                 if (messung != null) {
-                    StatusProt status = repository.getById(
-                        StatusProt.class, messung.getStatus());
-                    if (status.getStatusMpId() == 1
+                    if (messung.getStatusProt().getStatusMpId() == 1
                         && !userInfo.getMessstellen().contains(
                             probe.getMeasFacilId())
                     ) {
@@ -244,24 +231,24 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        node.setChangedFields(translateValues(audit.getChangedFields()));
+        node.setChangedFields(translateValues(audit.getChangedFieldsJson()));
 
         switch (audit.getTableName()) {
         case "site":
-            node.setIdentifier(audit.getRowData().get("ext_id").toString());
+            node.setIdentifier(audit.getRowDataJson().get("ext_id").toString());
             break;
         case "comm_sample":
-            node.setIdentifier(audit.getRowData().get("date").toString());
+            node.setIdentifier(audit.getRowDataJson().get("date").toString());
             break;
         case "sample_specif_meas_val":
             node.setIdentifier(
-                audit.getRowData().get("sample_specif_id").toString());
+                audit.getRowDataJson().get("sample_specif_id").toString());
             break;
         case "geolocat":
             String value = translateId(
                 "site",
                 "ext_id",
-                audit.getRowData().get("site_id").toString(),
+                audit.getRowDataJson().get("site_id").toString(),
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
             node.setIdentifier(value);
@@ -284,13 +271,13 @@ public class AuditTrailService extends LadaService {
             switch (audit.getTableName()) {
             case "comm_measm":
                 identifier.setIdentifier(
-                    audit.getRowData().get("date").toString());
+                    audit.getRowDataJson().get("date").toString());
                 break;
             case "meas_val":
                 String value = translateId(
                     "measd",
                     "name",
-                    audit.getRowData().get("measd_id").toString(),
+                    audit.getRowDataJson().get("measd_id").toString(),
                     "id",
                     de.intevation.lada.model.master.SchemaName.NAME);
                 identifier.setIdentifier(value);
@@ -316,8 +303,6 @@ public class AuditTrailService extends LadaService {
     ) {
         Measm messung = repository.getById(Measm.class, mId);
 
-        StatusProt status =
-            repository.getById(StatusProt.class, messung.getStatus());
         Sample probe =
             repository.getById(Sample.class, messung.getSampleId());
         UserInfo userInfo = authorization.getInfo();
@@ -339,9 +324,9 @@ public class AuditTrailService extends LadaService {
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
             if (a.getTableName().equals("meas_val")
-                    && status.getStatusMpId() == 1
-                    && !userInfo.getMessstellen().contains(
-                        probe.getMeasFacilId())) {
+                && messung.getStatusProt().getStatusMpId() == 1
+                && !userInfo.getMessstellen().contains(
+                    probe.getMeasFacilId())) {
                 continue;
             }
             entries.add(createEntry(a));
@@ -363,17 +348,17 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        node.setChangedFields(audit.getChangedFields());
+        node.setChangedFields(audit.getChangedFieldsJson());
 
         switch (audit.getTableName()) {
         case "comm_measm":
-            node.setIdentifier(audit.getRowData().get("date").toString());
+            node.setIdentifier(audit.getRowDataJson().get("date").toString());
             break;
         case "meas_val":
             String value = translateId(
                 "measd",
                 "name",
-                audit.getRowData().get("measd_id").toString(),
+                audit.getRowDataJson().get("measd_id").toString(),
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
             node.setIdentifier(value);
@@ -420,28 +405,28 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        node.setChangedFields(audit.getChangedFields());
+        node.setChangedFields(audit.getChangedFieldsJson());
 
         if ("mpg_mmt_mp_measd".equals(audit.getTableName())) {
             String value = translateId(
                 "measd",
                 "name",
-                audit.getRowData().get("measd_id").toString(),
+                audit.getRowDataJson().get("measd_id").toString(),
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
             node.setIdentifier(value);
         }
         if ("mpg_sample_specif".equals(audit.getTableName())) {
-            node.setIdentifier(audit.getRowData().get("sample_specif_id"));
+            node.setIdentifier(audit.getRowDataJson().get("sample_specif_id"));
         }
         if ("mpg_mmt_mp".equals(audit.getTableName())) {
-            node.setIdentifier(audit.getRowData().get("mmt_id").toString());
+            node.setIdentifier(audit.getRowDataJson().get("mmt_id").toString());
         }
         if ("geolocat_mpg".equals(audit.getTableName())) {
             String value = translateId(
                 "site",
                 "ext_id",
-                audit.getRowData().get("site_id").toString(),
+                audit.getRowDataJson().get("site_id").toString(),
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
             node.setIdentifier(value);

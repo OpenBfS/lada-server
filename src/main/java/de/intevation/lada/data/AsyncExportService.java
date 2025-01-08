@@ -8,15 +8,19 @@
 package de.intevation.lada.data;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+
 import jakarta.inject.Inject;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -25,19 +29,14 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.Job.JobStatus;
-import de.intevation.lada.util.data.JobManager.JobNotFoundException;
+import de.intevation.lada.util.data.JobManager;
+import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.LadaService;
 
 /**
@@ -52,187 +51,90 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 @Path(LadaService.PATH_DATA + "asyncexport")
-public class AsyncExportService extends LadaService {
-
-    @Inject
-    private Logger logger;
+public class AsyncExportService extends AsyncLadaService {
 
     @Inject
     private ExportJobManager exportJobManager;
 
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
     @Inject
     I18n i18n;
 
-    /**
-     * Export data into a CSV file.
-     *
-     * @param objects Export parameters object
-     * @return Response containing the new export ref id
-     * @throws BadRequestException if any constraint violations are detected
-     */
+    @Override
+    protected JobManager getJobManager() {
+        return exportJobManager;
+    }
+
     @POST
     @Path("csv")
-    public Response createCsvExportJob(
+    @Operation(summary = "Create a CSV export job")
+    public AsyncLadaService.AsyncJobResponse createCsvExportJob(
         @Valid CsvExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "csv", objects.getEncoding(), objects,
+                objects.getEncoding(), objects,
                 i18n.getResourceBundle(), userInfo);
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("refId", newJobId)
-            .build();
-        return Response.ok(responseJson.toString()).build();
+        return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
-    /**
-     * Export Sample objects into LAF files.
-     *
-     * @param objects    Export parameters object
-     * @return The job identifier.
-     * @throws BadRequestException if any constraint violations are detected
-     */
     @POST
     @Path("laf")
-    public Response createLafExportJob(
+    @Operation(summary = "Create a LAF export job")
+    public AsyncLadaService.AsyncJobResponse createLafExportJob(
         @Valid LafExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "laf", objects.getEncoding(), objects, i18n.getResourceBundle(), userInfo);
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("refId", newJobId)
-            .build();
-        return Response.ok(responseJson.toString()).build();
+                objects.getEncoding(),
+                objects,
+                i18n.getResourceBundle(),
+                userInfo);
+        return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
-    /**
-     * Export data into a JSON file.
-     *
-     * @param objects Export parameters object
-     * @return Response containing the new export ref id
-     * @throws BadRequestException if any constraint violations are detected
-     */
     @POST
     @Path("json")
-    public Response createJsonExportJob(
+    @Operation(summary = "Create a JSON export job")
+    public AsyncLadaService.AsyncJobResponse createJsonExportJob(
         @Valid QueryExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "json",
                 StandardCharsets.UTF_8,
                 objects,
                 i18n.getResourceBundle(),
                 userInfo);
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("refId", newJobId)
-            .build();
-        return Response.ok(responseJson.toString()).build();
+        return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
-    /**
-     * Get the status of an export job.
-     *
-     * Output format:
-     *
-     * <pre>
-     * {
-     *    done: boolean
-     *    status: 'waiting' | 'running' | 'finished' | 'error'
-     *    message: string (optional)
-     *  }
-     * </pre>
-     *
-     * @param id Job id to check
-     * @return Json object containing the status information, status
-     *         403 if the requesting user has not created the request
-     *         or status 404 if job was not found
-     */
     @GET
-    @Path("status/{id}")
-    public Response getStatus(
-        @PathParam("id") String id
-    ) {
-        JobStatus status;
-        UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo();
-
-        try {
-            originalCreator = exportJobManager.getJobUserInfo(id);
-            if (!originalCreator.getUserId().equals(
-                    requestingUser.getUserId())
-            ) {
-                logger.warn(String.format(
-                    "Rejected status request by user "
-                    + "#%s for job %s created by user #%s",
-                    requestingUser.getUserId(),
-                    id,
-                    originalCreator.getUserId()));
-                return Response.status(Response.Status.FORBIDDEN).build();
-            }
-
-            status = exportJobManager.getJobStatus(id);
-        } catch (JobNotFoundException jnfe) {
-            logger.info(String.format("Could not find status for job %s", id));
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.ok(status, MediaType.APPLICATION_JSON).build();
-    }
-
-    /**
-     * Download a finished export file.
-     * @param id Job id to download file from
-     * @return Export file, status 403 if the requesting user has not created
-     *         the request or status 404 if job was not found
-     */
-    @GET
-    @Path("download/{id}")
+    @Path("download/{jobId}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Operation(summary = "Download a finished export file")
+    @APIResponse(
+        description = "A file to download",
+        responseCode = "200",
+        content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM,
+            schema = @Schema(implementation = String.class, format = "binary"))
+    )
     public Response download(
-        @PathParam("id") String id
+        @PathParam("jobId") String id
     ) {
+        String filename = exportJobManager.getJobDownloadFilename(
+            id, authorization.getInfo());
+
         ByteArrayInputStream resultStream;
-        String filename;
-        UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo();
-
         try {
-            originalCreator = exportJobManager.getJobUserInfo(id);
-            if (!originalCreator.getUserId().equals(
-                    requestingUser.getUserId())
-            ) {
-                logger.warn(String.format(
-                    "Rejected download request by user %s "
-                    + "for job %s created by user %s",
-                    requestingUser.getUserId(),
-                    id,
-                    originalCreator.getUserId()));
-                return Response.status(Response.Status.FORBIDDEN).build();
-            }
-
-            filename = exportJobManager.getJobDownloadFilename(id);
-            resultStream = exportJobManager.getResultFileAsStream(id);
-
-        } catch (JobNotFoundException jfe) {
-            logger.info(String.format(
-                "Returning 404 for download: Could not find job %s", id));
-            return Response.status(Response.Status.NOT_FOUND).build();
-        } catch (FileNotFoundException fnfe) {
-            logger.error(String.format(
-                "Error on reading result file for job %s", id));
-            return Response.status(
-                Response.Status.INTERNAL_SERVER_ERROR).build();
+            resultStream = exportJobManager.getResultFileAsStream(
+                id, authorization.getInfo());
+        } catch (IOException e) {
+            this.logger.error(String.format(
+                "Error on reading result file for job %s: %s",
+                id, e.getMessage()));
+            throw new InternalServerErrorException();
         }
 
         return Response.ok(resultStream)

@@ -7,76 +7,89 @@
  */
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
+import java.util.List;
+
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class ProbeAuthorizer extends BaseAuthorizer {
+class ProbeAuthorizer extends Authorizer<Sample> {
 
-    public ProbeAuthorizer(Repository repository) {
-        super(repository);
-    }
+    private Authorizer<Measm> messungAuthorizer;
 
-    @Override
-    public <T> String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
+    ProbeAuthorizer(
         UserInfo userInfo,
-        Class<T> clazz
+        Repository repository
     ) {
-        Sample probe = (Sample) data;
-        if (method == RequestMethod.PUT
-            || method == RequestMethod.DELETE) {
-            return !isProbeReadOnly(probe.getId())
-                && getAuthorization(userInfo, probe)
-                ? null : I18N_KEY_FORBIDDEN;
-        }
-        return getAuthorization(userInfo, probe)
-            ? null : I18N_KEY_FORBIDDEN;
-    }
+        super(userInfo, repository);
 
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        Sample probe = repository.getById(Sample.class, id);
-        return isAuthorized(probe, method, userInfo, clazz);
-    }
-
-    @Override
-    public <T extends BaseModel> void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        if (data instanceof Sample) {
-            setAuthData(userInfo, (Sample) data);
-        }
+        this.messungAuthorizer = new MessungAuthorizer(
+            this.userInfo, this.repository, this);
     }
 
     /**
-     * Set authorization data for the current probe object.
-     *
-     * @param userInfo  The user information.
-     * @param probe     The probe object.
+     * Constructor to be used in MessungAuthorizer.
      */
-    private void setAuthData(UserInfo userInfo, Sample probe) {
-        MeasFacil mst =
-            repository.getById(
-                MeasFacil.class, probe.getMeasFacilId());
-        if (!userInfo.getNetzbetreiber().contains(mst.getNetworkId())) {
-            probe.setOwner(false);
-            probe.setReadonly(true);
+    ProbeAuthorizer(
+        UserInfo userInfo,
+        Repository repository,
+        Authorizer<Measm> messungAuthorizer
+    ) {
+        super(userInfo, repository);
+
+        this.messungAuthorizer = messungAuthorizer;
+    }
+
+    @Override
+    void authorize(
+        Sample probe,
+        RequestMethod method
+    ) throws AuthorizationException {
+        if (method == RequestMethod.PUT
+            || method == RequestMethod.DELETE) {
+            if (!anyMeasmReadOnly(probe.getId(), userInfo)
+                && getAuthorization(userInfo, probe)) {
+                return;
+            }
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+        }
+        if (getAuthorization(userInfo, probe)) {
             return;
         }
-        probe.setOwner(
-            userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId()));
-        probe.setReadonly(this.isProbeReadOnly(probe.getId()));
+        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+    }
+
+    @Override
+    void setAuthAttrs(Sample sample) {
+        // Set readonly flag
+        super.setAuthAttrs(sample);
+
+        String mstId = sample.getMeasFacilId();
+        MeasFacil mst = repository.getById(MeasFacil.class, mstId);
+        sample.setOwner(
+            userInfo.getNetzbetreiber().contains(mst.getNetworkId())
+            && userInfo.belongsTo(mstId, sample.getApprLabId()));
+    }
+
+    private boolean anyMeasmReadOnly(Integer sampleId, UserInfo userInfo) {
+        QueryBuilder<Measm> builder = repository
+            .queryBuilder(Measm.class)
+            .and(Measm_.sampleId, sampleId);
+        List<Measm> measms = repository.filter(builder.getQuery());
+        for (Measm measm: measms) {
+            if (!messungAuthorizer.isAuthorized(measm, RequestMethod.PUT)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean getAuthorization(UserInfo userInfo, Sample sample) {
+        return userInfo.getMessstellen().contains(sample.getMeasFacilId());
     }
 }

@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
-import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.hamcrest.CoreMatchers;
@@ -36,11 +35,9 @@ public class ProbeTest extends ServiceTest {
     private JsonObject create;
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
+
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -101,8 +98,8 @@ public class ProbeTest extends ServiceTest {
         update(
             "rest/sample/1000",
             "envDescripDisplay",
-            "D: 59 04 01 00 05 05 01 02 00 00 00 00",
-            "",
+            Json.createValue("D: 59 04 01 00 05 05 01 02 00 00 00 00"),
+            Json.createValue(""),
             Status.BAD_REQUEST);
 
         // Test localized validation during sample creation
@@ -134,8 +131,8 @@ public class ProbeTest extends ServiceTest {
         }
         // Warnings
         Map<Locale, String> wrngs = Map.of(
-            Locale.GERMAN, "darf nicht null sein",
-            Locale.US, "must not be null");
+            Locale.GERMAN, "Wert nicht gesetzt",
+            Locale.US, "No value provided");
         final String measFacilId = "06010";
         JsonObject wrngPayload = Json.createObjectBuilder()
             .add("measFacilId", measFacilId)

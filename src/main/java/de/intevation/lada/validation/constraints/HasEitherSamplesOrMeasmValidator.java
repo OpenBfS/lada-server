@@ -5,7 +5,7 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.constraints.requests;
+package de.intevation.lada.validation.constraints;
 
 import de.intevation.lada.data.requests.LafExportParameters;
 import jakarta.validation.ConstraintValidator;
@@ -15,9 +15,12 @@ public class HasEitherSamplesOrMeasmValidator
     implements ConstraintValidator<HasEitherSamplesOrMeasm, LafExportParameters> {
 
     @Override
-    public boolean isValid(LafExportParameters value, ConstraintValidatorContext context) {
+    public boolean isValid(
+        LafExportParameters value,
+        ConstraintValidatorContext context
+    ) {
         return value == null
-            || value.getMessungen() != null
-            || value.getProben() != null;
+            || value.getMessungen() != null && !value.getMessungen().isEmpty()
+            || value.getProben() != null && !value.getProben().isEmpty();
     }
 }

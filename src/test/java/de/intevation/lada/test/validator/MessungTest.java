@@ -33,7 +33,6 @@ public class MessungTest extends ValidatorBaseTest {
     private static final int EXISTING_SAMPLE_ID_SAMPLE_METH_CONT = 2000;
     private static final int EXISTING_SAMPLE_ID_REGULATION_161 = 3000;
     private static final int EXISTING_MEASM_ID = 1200;
-    private static final int EXISTING_STATUS_PROT_ID = 1000;
     private static final String EXISTING_MIN_SAMPLE_ID = "T100";
     private static final String EXISTING_MMT_ID = "A3";
     private static final String EXISTING_SAMPLE_START_DATE
@@ -68,7 +67,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MIN_SAMPLE_ID,
-            "must not be blank");
+            "No value provided");
     }
 
     /**
@@ -78,19 +77,10 @@ public class MessungTest extends ValidatorBaseTest {
     public void hasEmptyNebenprobenNr() {
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId("");
-        validator.validate(measm);
-        Assert.assertTrue(measm.hasErrors());
-        MatcherAssert.assertThat(
-            measm.getErrors().keySet(),
-            CoreMatchers.hasItem(Measm_.MIN_SAMPLE_ID));
-        MatcherAssert.assertThat(
-            measm.getErrors().get(Measm_.MIN_SAMPLE_ID),
-            CoreMatchers.hasItem(
-                "size must be between 1 and 2147483647"));
-        MatcherAssert.assertThat(
-            measm.getErrors().get(Measm_.MIN_SAMPLE_ID),
-            CoreMatchers.hasItem(
-                "must match \".*\\S+.*\""));
+        assertHasErrors(
+            validator.validate(measm),
+            Measm_.MIN_SAMPLE_ID,
+            "Field must not be whitespace");
     }
 
     /**
@@ -339,7 +329,6 @@ public class MessungTest extends ValidatorBaseTest {
         measm.setMinSampleId(MIN_SAMPLE_ID_00G2);
         measm.setMeasPd(1);
         measm.setMeasmStartDate(new Date());
-        measm.setStatus(EXISTING_STATUS_PROT_ID);
         return measm;
     }
 }

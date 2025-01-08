@@ -1,5 +1,5 @@
 FROM debian:bullseye
-LABEL maintainer tom.gottfried@intevation.de
+LABEL maintainer=tom.gottfried@intevation.de
 
 RUN apt-get -y update
 RUN apt-get -y install debconf-utils curl

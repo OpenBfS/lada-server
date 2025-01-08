@@ -7,16 +7,18 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.net.URL;
+import java.util.List;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -26,15 +28,9 @@ public class TagTest extends ServiceTest {
 
     private final String tagUrl = "rest/tag/";
 
-    private final String tagNameAttribute = "name";
-    private final String measFacilIdKey = "measFacilId";
-
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
     }
 
     /**
@@ -51,10 +47,9 @@ public class TagTest extends ServiceTest {
      * Test mst tags.
      */
     public void testMstTag() {
-        JsonObject tagToTest = Json.createObjectBuilder()
-            .add(measFacilIdKey, "06010")
-            .add(tagNameAttribute, "mstTag")
-            .build();
+        Tag tagToTest = new Tag();
+        tagToTest.setMeasFacilId("06010");
+        tagToTest.setName("mstTag");
         testTagCRUD(tagToTest);
     }
 
@@ -62,10 +57,9 @@ public class TagTest extends ServiceTest {
      * Test netzbetreiber tags.
      */
     public void testNetzbetreiberTag() {
-        JsonObject tagToTest = Json.createObjectBuilder()
-            .add("networkId", "06")
-            .add(tagNameAttribute, "nbTag")
-            .build();
+        Tag tagToTest = new Tag();
+        tagToTest.setNetworkId("06");
+        tagToTest.setName("nbTag");
         testTagCRUD(tagToTest);
     }
 
@@ -73,16 +67,15 @@ public class TagTest extends ServiceTest {
      * Promote a mst tag to global.
      */
     public void promoteMstTag() {
-        JsonObject tagToTest = Json.createObjectBuilder()
-            .add(measFacilIdKey, "06010")
-            .add(tagNameAttribute, "mstTagPromoted")
-            .build();
+        Tag tagToTest = new Tag();
+        tagToTest.setMeasFacilId("06010");
+        tagToTest.setName("mstTagPromoted");
         JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getInt("id");
         update(
             tagUrl + createdId,
-            measFacilIdKey,
-            "06010",
+            Tag_.MEAS_FACIL_ID,
+            Json.createValue("06010"),
             null,
             Status.FORBIDDEN);
     }
@@ -91,20 +84,20 @@ public class TagTest extends ServiceTest {
      * Test CRUD operations for the given tag.
      * @param tagToTest Tag to test
      */
-    private void testTagCRUD(JsonObject tagToTest) {
-        JsonObject createResponse = create(tagUrl, tagToTest);
-        long createdId = createResponse.getInt("id");
-        if (!createResponse.isNull(measFacilIdKey)) {
-            String createdGueltigBis = createResponse.getString("valUntil");
-            long diff = getDaysFromNow(createdGueltigBis);
+    private void testTagCRUD(Tag tagToTest) {
+        Tag createResponse = create(tagUrl, tagToTest, Tag.class);
+        if (createResponse.getMeasFacilId() != null) {
+            long diff = getDaysFromNow(createResponse.getValUntil());
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
-        String tagUpdated = tagToTest.getString(tagNameAttribute) + "-mod";
+        String tagUpdated = tagToTest.getName() + "-mod";
+        int createdId = createResponse.getId();
         JsonObject updateResponse = update(tagUrl + createdId,
-            tagNameAttribute,
-            tagToTest.getString(tagNameAttribute),
+            "name",
+            tagToTest.getName(),
             tagUpdated).asJsonObject();
-        Assert.assertFalse(get(tagUrl).asJsonArray().isEmpty());
+        Assert.assertFalse(
+            get(tagUrl, new GenericType<List<Tag>>() { }).isEmpty());
         getById(tagUrl + createdId, updateResponse);
         delete(tagUrl + createdId);
     }

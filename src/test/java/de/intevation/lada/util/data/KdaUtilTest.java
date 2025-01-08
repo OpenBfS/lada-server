@@ -149,20 +149,17 @@ public class KdaUtilTest {
 
 
         // Transformation result coordinates
-        double rX, rY;
-        switch (toKda) {
-        case GS:
-            result = kdaUtil.arcToDegree(
+        if (toKda == KdaUtil.KDA.GS) {
+            result = KdaUtil.arcToDegree(
                 result.getX().replace(decimalComma, decimalPoint),
                 result.getY().replace(decimalComma, decimalPoint));
             Assert.assertNotNull("Conversion of transformation result "
                 + "to decimal notation failed", result);
-        default:
-            rX = Double.parseDouble(
-                result.getX().replace(decimalComma, decimalPoint));
-            rY = Double.parseDouble(
-                result.getY().replace(decimalComma, decimalPoint));
         }
+        double rX = Double.parseDouble(
+            result.getX().replace(decimalComma, decimalPoint));
+        double rY = Double.parseDouble(
+            result.getY().replace(decimalComma, decimalPoint));
 
         // Distance between expected and result
         double d;

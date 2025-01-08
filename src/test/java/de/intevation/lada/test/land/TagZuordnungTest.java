@@ -7,15 +7,14 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -36,14 +35,10 @@ public class TagZuordnungTest extends ServiceTest {
     private JsonArray createMeasm;
     private JsonArray create2;
 
-    private final String data = "data";
-
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
+
         createSample = readJsonArrayResource(
             "/datasets/tagzuordnung_create_sample.json");
         createMeasm = readJsonArrayResource(
@@ -124,7 +119,7 @@ public class TagZuordnungTest extends ServiceTest {
     private void bulkOperation(
         String parameter, JsonArray payload
     ) {
-        Response response = client.target(baseUrl + parameter)
+        Response response = target.path(parameter)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

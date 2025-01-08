@@ -7,10 +7,7 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
@@ -18,94 +15,46 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class MessungIdAuthorizer extends BaseAuthorizer {
+class MessungIdAuthorizer extends Authorizer<BelongsToMeasm> {
 
-    public MessungIdAuthorizer(Repository repository) {
-        super(repository);
+    protected MessungAuthorizer messungAuthorizer;
+
+    MessungIdAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
+
+        this.messungAuthorizer = new MessungAuthorizer(
+            this.userInfo, this.repository);
     }
 
     @Override
-    public <T> String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        try {
-            Method m = clazz.getMethod("getMeasmId");
-            Integer id = (Integer) m.invoke(data);
-            return isAuthorizedById(id, method, userInfo, clazz)
-                ? null : I18N_KEY_FORBIDDEN;
-        } catch (NoSuchMethodException
-            | IllegalAccessException
-            | InvocationTargetException e
-        ) {
-            throw new RuntimeException(e);
-        }
+    void authorize(
+        BelongsToMeasm data,
+        RequestMethod method
+    ) throws AuthorizationException {
+        messungAuthorizer.authorize(
+            repository.getById(Measm.class, data.getMeasmId()),
+            // Allow reading if measm is readable, everything else corresponds
+            // to editing the measm
+            method == RequestMethod.GET
+            ? RequestMethod.GET
+            : RequestMethod.PUT);
     }
 
     @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        Measm messung = repository.getById(Measm.class, id);
-        Sample probe = repository.getById(
-            Sample.class, messung.getSampleId());
-        if (messung.getStatus() == null) {
-            return false;
-        }
-        return ((method == RequestMethod.POST
-            || method == RequestMethod.PUT
-            || method == RequestMethod.DELETE)
-            && getAuthorization(userInfo, probe));
-    }
+    void setAuthAttrs(BelongsToMeasm object) {
+        // Set readonly flag
+        super.setAuthAttrs(object);
 
-    @Override
-    public <T extends BaseModel> void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        try {
-            Method getMessungsId = clazz.getMethod("getMeasmId");
-            Integer id = (Integer) getMessungsId.invoke(data);
-            Measm messung = repository.getById(
-                Measm.class, id);
-            Sample probe = repository.getById(
-                Sample.class, messung.getSampleId());
-
-            boolean readOnly = true;
-            boolean owner = false;
-            MeasFacil mst =
-                repository.getById(
-                    MeasFacil.class, probe.getMeasFacilId());
-            if (!userInfo.getNetzbetreiber().contains(
-                    mst.getNetworkId())) {
-                owner = false;
-                readOnly = true;
-            } else {
-                if (userInfo.belongsTo(
-                    probe.getMeasFacilId(), probe.getApprLabId())
-                ) {
-                    owner = true;
-                } else {
-                    owner = false;
-                }
-                readOnly = this.isMessungReadOnly(messung.getId());
-            }
-
-            Method setOwner = clazz.getMethod("setOwner", boolean.class);
-            Method setReadonly = clazz.getMethod("setReadonly", boolean.class);
-            setOwner.invoke(data, owner);
-            setReadonly.invoke(data, readOnly);
-        } catch (NoSuchMethodException
-            | IllegalAccessException
-            | InvocationTargetException e
-        ) {
-            throw new RuntimeException(e);
-        }
+        Sample probe = repository.getById(Measm.class, object.getMeasmId())
+            .getSample();
+        MeasFacil mst = repository.getById(
+            MeasFacil.class, probe.getMeasFacilId());
+        object.setOwner(
+            userInfo.getNetzbetreiber().contains(mst.getNetworkId())
+            && userInfo.belongsTo(
+                probe.getMeasFacilId(), probe.getApprLabId()));
     }
 }

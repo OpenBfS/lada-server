@@ -9,14 +9,17 @@ package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -24,13 +27,13 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulation1;
 import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulationNot1;
@@ -63,7 +66,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @HasMeasmStartDateRegulation1(groups = Warnings.class)
 @HasMeasmStartDateRegulationNot1(groups = Notifications.class)
 @HasObligMeasds(groups = Notifications.class)
-public class Measm extends BaseModel implements Serializable {
+public class Measm extends BelongsToSample implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -96,23 +99,18 @@ public class Measm extends BaseModel implements Serializable {
     @NotBlank(groups = Notifications.class)
     private String minSampleId;
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Sample.class)
-    private Integer sampleId;
-
-    @OneToOne
-    @JoinColumn(insertable = false, updatable = false)
-    private Sample sample;
-
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = StatusProt.class)
-    @NotNull(groups = Warnings.class)
-    private Integer status;
-
+    /* Latest StatusProt entry accessible via back reference foreign key
+       set by database trigger */
     @OneToOne
     @JoinColumn(name = "status", insertable = false, updatable = false)
-    private StatusProt statusProtocol;
+    private StatusProt statusProt;
+
+    /* Cascade removal of Measm to referencing StatusProt entries, namely
+       OneToOne-associated statusProt */
+    @OneToMany(mappedBy = StatusProt_.MEASM, cascade = CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonbTransient
+    private Set<StatusProt> statusProts;
 
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
@@ -130,14 +128,6 @@ public class Measm extends BaseModel implements Serializable {
     @Transient
     private Boolean statusEditLst;
 
-    @Transient
-    private Date parentModified;
-
-    @Transient
-    private boolean owner;
-
-    public Measm() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -211,27 +201,6 @@ public class Measm extends BaseModel implements Serializable {
         this.minSampleId = minSampleId;
     }
 
-    @JsonbTransient
-    public Sample getSample() {
-        return this.sample;
-    }
-
-    public Integer getSampleId() {
-        return this.sampleId;
-    }
-
-    public void setSampleId(Integer sampleId) {
-        this.sampleId = sampleId;
-    }
-
-    public Integer getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
     public Date getTreeMod() {
         return this.treeMod;
     }
@@ -272,43 +241,7 @@ public class Measm extends BaseModel implements Serializable {
         this.statusEditLst = statusEditLst;
     }
 
-    /**
-     * @return the parentModified
-     */
-    public Date getParentModified() {
-        if (this.parentModified == null && this.sample != null) {
-            return this.sample.getTreeMod();
-        }
-        return parentModified;
+    public StatusProt getStatusProt() {
+        return this.statusProt;
     }
-
-    /**
-     * @param parentModified the parentModified to set
-     */
-    public void setParentModified(Date parentModified) {
-        this.parentModified = parentModified;
-    }
-
-    /**
-     * @return the owner
-     */
-    public boolean isOwner() {
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    public void setOwner(boolean owner) {
-        this.owner = owner;
-    }
-
-    public StatusProt getStatusProtocol() {
-        return this.statusProtocol;
-    }
-
-    public void setStatusProtocol(StatusProt statusProtocol) {
-        this.statusProtocol = statusProtocol;
-    }
-
 }

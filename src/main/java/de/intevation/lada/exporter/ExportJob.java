@@ -25,6 +25,8 @@ import de.intevation.lada.util.data.Job;
 
 /**
  * Abstract class for an export job.
+ *
+ * @param <T> Type of parameters supporting an implemented export format
  */
 public abstract class ExportJob<T extends ExportParameters> extends Job {
 
@@ -38,7 +40,7 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
     /**
      * Exporter instance.
      */
-    protected Exporter exporter;
+    protected Exporter<T> exporter;
 
     /**
      * Parameters used for the export.

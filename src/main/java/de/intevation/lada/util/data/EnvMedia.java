@@ -71,6 +71,8 @@ public class EnvMedia {
      */
     public static class InvalidEnvDescripDisplayException extends Exception {
 
+        private static final long serialVersionUID = 1L;
+
         /**
          * The first invalid field of the envDescripDisplay.
          */

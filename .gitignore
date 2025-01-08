@@ -17,3 +17,5 @@ db_schema/data/master/private*
 db_schema/data/lada/private*
 .dir-locals.el
 .vscode
+.#*
+#*#

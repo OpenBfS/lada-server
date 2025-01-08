@@ -8,15 +8,14 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
+import java.io.StringReader;
 import java.sql.Timestamp;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 /**
  * The persistent class for the audit_trail_messprogramm database table.
@@ -34,15 +33,13 @@ public class AuditTrailMpgView implements Serializable {
 
     private Timestamp tstamp;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    private JsonObject changedFields;
+    private String changedFields;
 
     private Integer mpgId;
 
     private Integer objectId;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    private JsonObject rowData;
+    private String rowData;
 
     private String tableName;
 
@@ -67,11 +64,12 @@ public class AuditTrailMpgView implements Serializable {
         this.tstamp = tstamp;
     }
 
-    public JsonObject getChangedFields() {
-        return this.changedFields;
+    public JsonObject getChangedFieldsJson() {
+        return Json.createReader(new StringReader(this.changedFields))
+            .readObject();
     }
 
-    public void setChangedFields(JsonObject changedFields) {
+    public void setChangedFields(String changedFields) {
         this.changedFields = changedFields;
     }
 
@@ -99,11 +97,12 @@ public class AuditTrailMpgView implements Serializable {
         this.objectId = objectId;
     }
 
-    public JsonObject getRowData() {
-        return this.rowData;
+    public JsonObject getRowDataJson() {
+        return Json.createReader(new StringReader(this.rowData))
+            .readObject();
     }
 
-    public void setRowData(JsonObject rowData) {
+    public void setRowData(String rowData) {
         this.rowData = rowData;
     }
 

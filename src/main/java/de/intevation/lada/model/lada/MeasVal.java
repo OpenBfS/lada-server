@@ -10,24 +10,19 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.validation.constraints.HasDetectLim;
@@ -59,7 +54,8 @@ import de.intevation.lada.validation.groups.Warnings;
 @MeasdMatchesMmt(groups = Warnings.class)
 @IsNormalized(groups = Warnings.class)
 @IsMeasdPrimaryOrConvertibleTo(groups = Notifications.class)
-public class MeasVal extends BaseModel implements Serializable {
+public class MeasVal extends BelongsToMeasm implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -84,11 +80,6 @@ public class MeasVal extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Measd.class)
     private Integer measdId;
 
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Measm.class)
-    private Integer measmId;
-
     @Positive(groups = Notifications.class)
     private Double measVal;
 
@@ -102,18 +93,6 @@ public class MeasVal extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date treeMod;
 
-    @OneToOne
-    @JoinColumn(insertable = false, updatable = false)
-    private Measm measm;
-
-    @Transient
-    private boolean owner;
-
-    @Transient
-    private Date parentModified;
-
-    public MeasVal() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -163,19 +142,6 @@ public class MeasVal extends BaseModel implements Serializable {
         this.measdId = measdId;
     }
 
-    @JsonbTransient
-    public Measm getMeasm() {
-        return this.measm;
-    }
-
-    public Integer getMeasmId() {
-        return this.measmId;
-    }
-
-    public void setMeasmId(Integer measmId) {
-        this.measmId = measmId;
-    }
-
     public Double getMeasVal() {
         return this.measVal;
     }
@@ -206,34 +172,5 @@ public class MeasVal extends BaseModel implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    /**
-     * @return the owner
-     */
-    public boolean isOwner() {
-        return owner;
-    }
-
-    /**
-     * @param owner the owner to set
-     */
-    public void setOwner(boolean owner) {
-        this.owner = owner;
-    }
-
-    /**
-     * Check if a parent object was modified.
-     * @return timestamp when the parent was modified
-     */
-    public Date getParentModified() {
-        if (this.parentModified == null && this.measm != null) {
-            return this.measm.getTreeMod();
-        }
-        return this.parentModified;
-    }
-
-    public void setParentModified(Date parentModified) {
-        this.parentModified = parentModified;
     }
 }

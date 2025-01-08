@@ -16,9 +16,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 
 import org.jboss.logging.Logger;
@@ -54,9 +51,6 @@ public class UserService extends LadaService {
 
     @Inject
     private Logger logger = Logger.getLogger(UserService.class);
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     /**
      * Get login data.

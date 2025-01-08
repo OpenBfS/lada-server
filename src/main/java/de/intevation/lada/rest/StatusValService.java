@@ -16,15 +16,11 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusAccessMpView;
 import de.intevation.lada.model.master.StatusAccessMpView_;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.model.master.StatusVal;
 import de.intevation.lada.model.master.StatusVal_;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -42,10 +38,6 @@ public class StatusValService extends LadaService {
      */
     @Inject
     private Repository repository;
-
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     /**
      * Get StatusVal objects.
@@ -87,10 +79,8 @@ public class StatusValService extends LadaService {
     private List<StatusVal> getReachable(Integer messungsId) {
         Measm messung = repository.getById(Measm.class, messungsId);
 
-        StatusProt status = repository.getById(
-            StatusProt.class, messung.getStatus());
         StatusMp kombi = repository.getById(
-            StatusMp.class, status.getStatusMpId());
+            StatusMp.class, messung.getStatusProt().getStatusMpId());
 
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)

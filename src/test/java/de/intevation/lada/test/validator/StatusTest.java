@@ -127,7 +127,7 @@ public class StatusTest extends ValidatorBaseTest {
             + "Warnings:\n"
             + "- measmStartDate: [A value must be provided]\n"
             + "Notifications:\n"
-            + "- minSampleId: [must not be blank]"
+            + "- minSampleId: [No value provided]"
         );
     }
 
@@ -159,7 +159,7 @@ public class StatusTest extends ValidatorBaseTest {
             + "Warnings:\n"
             + "- measmStartDate: [A value must be provided]\n"
             + "Notifications:\n"
-            + "- minSampleId: [must not be blank]"
+            + "- minSampleId: [No value provided]"
         );
     }
 
@@ -175,7 +175,43 @@ public class StatusTest extends ValidatorBaseTest {
             validator.validate(status),
             MSG_KEY,
             "Notifications:\n"
-            + "- minSampleId: [must not be blank]"
+            + "- minSampleId: [No value provided]"
+        );
+    }
+
+    /**
+     * Test status of measm with class-level warning at associated sample.
+     */
+    @Test
+    public void sampleWithClassWarning() {
+        StatusProt status = minimalStatusProt();
+        final int measmId = 1210;
+        status.setMeasmId(measmId);
+        assertHasErrors(
+            validator.validate(status),
+            MSG_KEY,
+            "Operation not possible due to constraint violations\n"
+            + "Warnings:\n"
+            + "- sampleMethId: [Individual sample expects "
+            + "sample start date = sample end date]"
+        );
+    }
+
+    /**
+     * Test status of measm with attribute-level warning at associated sample.
+     */
+    @Test
+    public void sampleWithAttrWarning() {
+        StatusProt status = minimalStatusProt();
+        final int measmId = 1211;
+        status.setMeasmId(measmId);
+        assertHasErrors(
+            validator.validate(status),
+            MSG_KEY,
+            "Operation not possible due to constraint violations\n"
+            + "Warnings:\n"
+            + "- envDescripDisplay: "
+            + "[No value provided, Invalid descriptor combination]"
         );
     }
 

@@ -24,9 +24,6 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -46,36 +43,24 @@ public class CommMeasmService extends LadaService {
     private Repository repository;
 
     /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    /**
      * Get CommMeasm objects.
      *
      * @param measmId The requested objects have to be filtered
      * using an URL parameter named measmId.
      *
      * @return filtered CommMeasm objects.
-     * Status-Code 699 if requested objects are
-     * not authorized.
      */
     @GET
     public List<CommMeasm> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getById(Measm.class, measmId);
-        authorization.authorize(
-                messung, RequestMethod.GET, Measm.class);
+        authorization.authorize(messung, RequestMethod.GET);
 
         QueryBuilder<CommMeasm> builder =
             repository.queryBuilder(CommMeasm.class);
         builder.and(CommMeasm_.measmId, measmId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            CommMeasm.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -89,14 +74,9 @@ public class CommMeasmService extends LadaService {
     public CommMeasm getById(
         @PathParam("id") Integer id
     ) {
-        CommMeasm comment = repository.getById(CommMeasm.class, id);
-        // TODO: Fix authorization of CommMeasm itself
-        // instead of authorizing indirectly?
-        Measm messung = repository.getById(Measm.class, comment.getMeasmId());
-        authorization.authorize(
-            messung, RequestMethod.GET, Measm.class);
-
-        return authorization.filter(comment, CommMeasm.class);
+        return authorization.authorize(
+            repository.getById(CommMeasm.class, id),
+            RequestMethod.GET);
     }
 
     /**
@@ -108,12 +88,7 @@ public class CommMeasmService extends LadaService {
     public CommMeasm create(
         @Valid CommMeasm kommentar
     ) throws BadRequestException {
-        authorization.authorize(
-            kommentar,
-            RequestMethod.POST,
-            CommMeasm.class);
-        return authorization.filter(
-            repository.create(kommentar), CommMeasm.class);
+        return repository.create(kommentar);
     }
 
     /**
@@ -128,12 +103,7 @@ public class CommMeasmService extends LadaService {
         @PathParam("id") Integer id,
         @Valid CommMeasm kommentar
     ) throws BadRequestException {
-        authorization.authorize(
-                kommentar,
-                RequestMethod.PUT,
-                CommMeasm.class);
-        return authorization.filter(
-            repository.update(kommentar), CommMeasm.class);
+        return repository.update(kommentar);
     }
 
     /**
@@ -147,10 +117,7 @@ public class CommMeasmService extends LadaService {
         @PathParam("id") Integer id
     ) {
         CommMeasm kommentarObj = repository.getById(CommMeasm.class, id);
-        authorization.authorize(
-            kommentarObj,
-            RequestMethod.DELETE,
-            CommMeasm.class);
+        authorization.authorize(kommentarObj, RequestMethod.DELETE);
         repository.delete(kommentarObj);
     }
 }

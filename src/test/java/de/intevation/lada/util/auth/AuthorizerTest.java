@@ -10,17 +10,14 @@ package de.intevation.lada.util.auth;
 
 import static org.junit.Assert.assertEquals;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.logging.Logger;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -31,6 +28,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.MultipleFailureException;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
@@ -38,6 +36,7 @@ import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Auth;
@@ -49,6 +48,10 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.UserTransaction;
+
 
 /**
  * Class testing authorizers.
@@ -60,7 +63,11 @@ public class AuthorizerTest extends BaseTest {
 
     private static Authorization authorization;
 
+    private static I18n i18n;
+
     private static Repository repository;
+
+    private static UserTransaction transaction;
 
     //Constants
     private static final int TAG_ID_GLOBAL = 103;
@@ -92,85 +99,38 @@ public class AuthorizerTest extends BaseTest {
     }
 
     /**
-     * Init repository.
-     * @param repo Repo.
+     * Initialize static instance variables.
+     *
+     * @param repo Repository
+     * @param localizer I18n
+     * @param tx transaction
      */
     @Inject
-    private void initRepository(Repository repo) {
+    private void init(Repository repo, I18n localizer, UserTransaction tx) {
         repository = repo;
+        i18n = localizer;
+        transaction = tx;
     }
 
     /**
      * Init authorizer.
      */
     @Before
-    public void initAuthorization() {
-        final int userId = 2;
-        authorization = new HeaderAuthorization(
-            new UserInfo(
-                testUser,
-                userId,
-                List.of(repository.getById(Auth.class, 1))),
-            repository);
-    }
-
-    /**
-     * Test base authorizer with authorized sample.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerAuthorizedSample() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test authorized sample
-        assertEquals(
-            baseAuthorizer.isProbeReadOnly(
-                SAMPLE_ID_AUTHORIZED),
-            false);
-    }
-
-    /**
-     * Test base authorizer with unauthorized sample.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerUnauthorizedSample() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test locked sample
-        assertEquals(
-            "Unauthorized sample",
-            baseAuthorizer.isProbeReadOnly(
-                SAMPLE_ID_LOCKED_BY_STATUS),
-            true);
-    }
-
-    /**
-     * Test base authorizer with authorized measm.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerAuthorizedMeasm() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test unlocked measm
-        assertEquals(
-            "Unlocked measm",
-            baseAuthorizer.isMessungReadOnly(
-                MEASM_ID_STATUS_EDITABLE),
-            false);
-    }
-
-    /**
-     * Test base authorizer with locked sample.
-     */
-    @Test
-    @Transactional
-    public void testBaseAuthorizerUnauthorizedMeasm() {
-        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
-        //Test locked measm
-        assertEquals(
-            "Locked measm",
-            baseAuthorizer.isMessungReadOnly(
-                MEASM_ID_STATUS_LOCKED),
-            true);
+    public void initAuthorization() throws
+        NotSupportedException, SystemException {
+        try {
+            final int userId = 2;
+            transaction.begin();
+            authorization = new HeaderAuthorization(
+                new UserInfo(
+                    testUser,
+                    userId,
+                    repository.getAll(Auth.class)),
+                i18n,
+                repository);
+        } finally {
+            transaction.rollback();
+        }
     }
 
     /**
@@ -178,7 +138,6 @@ public class AuthorizerTest extends BaseTest {
      * @throws Exception Exception that may occure during run
      */
     @Test
-    @Transactional
     public void runIsAuthorizedTests() throws Exception {
         processResult(JUnitCore.runClasses(IsAuthorizedTests.class),
             "isAuthorizedTests");
@@ -189,7 +148,6 @@ public class AuthorizerTest extends BaseTest {
      * @throws Exception Exception that may occure during run
      */
     @Test
-    @Transactional
     public void runFilterTests() throws Exception {
         processResult(JUnitCore.runClasses(FilterTests.class),
             "FilterTests");
@@ -208,6 +166,8 @@ public class AuthorizerTest extends BaseTest {
             String msg = failure.getMessage();
             String error = String.format("%s: %s", descr, msg);
             log.error(error);
+            // Print stack trace to server log for debugging
+            failure.getException().printStackTrace();
             errors.add(new Throwable(error, failure.getException()));
         });
         //Throw exception manually to ensure all errors are printed
@@ -222,7 +182,7 @@ public class AuthorizerTest extends BaseTest {
 
         //Test parameters
         @Parameter(0)
-        public Object testObject;
+        public BaseModel testObject;
         @Parameter(1)
         public RequestMethod method;
         @Parameter(2)
@@ -259,11 +219,15 @@ public class AuthorizerTest extends BaseTest {
          * Test the authorizers isAuthorized method.
          */
         @Test
-        public void testIsAuthorized() {
-            Class<?> testClass = testObject.getClass();
-            boolean authorized = authorization.isAuthorized(
-                    testObject, method, testClass);
-            assertEquals(expectedResult, authorized);
+        public void testIsAuthorized() throws
+            NotSupportedException, SystemException {
+            try {
+                transaction.begin();
+                assertEquals(expectedResult,
+                    authorization.isAuthorized(testObject, method));
+            } finally {
+                transaction.rollback();
+            }
         }
     }
 
@@ -281,8 +245,6 @@ public class AuthorizerTest extends BaseTest {
         @Parameter(2)
         public String testDescr;
 
-        private static final String IS_READONLY = "isReadonly";
-
         /**
          * Get the test data list for the filter test.
          *
@@ -295,15 +257,6 @@ public class AuthorizerTest extends BaseTest {
             return createTestData()
                 .entrySet()
                 .stream()
-                //Remove testObjects without readonly field
-                .filter(entry -> {
-                    try {
-                        entry.getKey().getClass().getMethod(IS_READONLY);
-                        return true;
-                    } catch (NoSuchMethodException nsme) {
-                        return false;
-                    }
-                })
                 //Expected readonly is the inverted put authorization result
                 .map(entry -> {
                     return new Object[]{
@@ -316,24 +269,17 @@ public class AuthorizerTest extends BaseTest {
         /**
          * Test the authorizer filter method.
          * Will be skipped if no expected readonly status is given.
-         * @throws SecurityException
-         * @throws NoSuchMethodException
-         * @throws InvocationTargetException
-         * @throws IllegalArgumentException
-         * @throws IllegalAccessException
          */
         @Test
-        @Ignore // TODO: Fix behavior of authorization
-        @SuppressWarnings("unchecked")
         public void testFilter() throws
-                IllegalAccessException, IllegalArgumentException,
-                InvocationTargetException, NoSuchMethodException,
-                SecurityException {
-            BaseModel filtered = authorization
-                .filter(testObject, (Class<BaseModel>) testObject.getClass());
-            assertEquals(expectedReadonly,
-                filtered.getClass()
-                .getMethod(IS_READONLY).invoke(filtered));
+            NotSupportedException, SystemException {
+            try {
+                transaction.begin();
+                assertEquals(expectedReadonly,
+                    authorization.filter(testObject).isReadonly());
+            } finally {
+                transaction.rollback();
+            }
         }
     }
 
@@ -348,6 +294,7 @@ public class AuthorizerTest extends BaseTest {
         testData.putAll(createMpgIdTestData());
         testData.putAll(createMeasmTestData());
         testData.putAll(createMeasmIdTestData());
+        testData.putAll(createStatusTestData());
         testData.putAll(createNetworkTestData());
         testData.putAll(createSampleTestData());
         testData.putAll(createSampleIdTestData());
@@ -389,16 +336,16 @@ public class AuthorizerTest extends BaseTest {
 
     private static Map<Object, TestConfig> createMeasmTestData() {
         //Test editable measm without status
-        Measm noStatus = repository.getById(
+        Measm noStatus = repository.entityManager().find(
             Measm.class, MEASM_ID_NO_STATUS);
         //Test measm with editable status
-        Measm editableStatus = repository.getById(
+        Measm editableStatus = repository.entityManager().find(
             Measm.class, MEASM_ID_STATUS_EDITABLE);
         //Test measm locked by status
-        Measm lockedByStatus = repository.getById(
+        Measm lockedByStatus = repository.entityManager().find(
             Measm.class, MEASM_ID_STATUS_LOCKED);
         //Test measm locked by connected sample
-        Measm lockedBySample = repository.getById(
+        Measm lockedBySample = repository.entityManager().find(
             Measm.class, MEASM_ID_LOCKED_BY_SAMPLE);
 
         return Map.of(
@@ -428,15 +375,40 @@ public class AuthorizerTest extends BaseTest {
         lockedBySample.setMeasmId(MEASM_ID_LOCKED_BY_SAMPLE);
 
         return Map.of(
-            noStatus, new TestConfig(false, true, true, true,
+            noStatus, new TestConfig(true, true, true, true,
                 "measmIdNoStatus"),
-            editableStatus, new TestConfig(false, true, true, true,
+            editableStatus, new TestConfig(true, true, true, true,
                 "measmIdEditableStatus"),
-            lockedByStatus, new TestConfig(false, true, true, true,
+            lockedByStatus, new TestConfig(true, false, false, false,
                 "measmIdLockedByStatus"),
             lockedBySample, new TestConfig(false, false, false, false,
                 "measmIDLockedBySample")
         );
+    }
+
+    private static Map<Object, TestConfig> createStatusTestData() {
+        return Map.of(
+            // Status of associated Measm instance can be set
+            newStatusProt(MEASM_ID_STATUS_EDITABLE),
+            new TestConfig(true, true, false, false, "statusEditableStatus"),
+
+            // Associated Measm instance is read-only due to status
+            newStatusProt(MEASM_ID_STATUS_LOCKED),
+            new TestConfig(true, false, false, false, "statusReadonlyByStatus"),
+
+            // Associated Measm instance belongs to foreign network and cannot
+            // be read due to status
+            newStatusProt(MEASM_ID_LOCKED_BY_SAMPLE),
+            new TestConfig(false, false, false, false, "statusLockedBySample")
+        );
+    }
+
+    private static StatusProt newStatusProt(Integer measmId) {
+        StatusProt status = new StatusProt();
+        status.setMeasmId(measmId);
+        status.setStatusMpId(2);
+        status.setMeasFacilId("06010");
+        return status;
     }
 
     private static Map<Object, TestConfig> createNetworkTestData() {
@@ -461,7 +433,7 @@ public class AuthorizerTest extends BaseTest {
         unauthSite.setNetworkId(NETWORK_ID_UNAUTHORIZED);
 
         return Map.of(
-            authorized, new TestConfig(false, true, true, true,
+            authorized, new TestConfig(true, true, true, true,
                  "networkAuthorizer"),
             unauth, new TestConfig(false, false, false, false,
                 "networkUnauthorized"),
@@ -478,13 +450,13 @@ public class AuthorizerTest extends BaseTest {
 
     private static Map<Object, TestConfig> createSampleTestData() {
         //Test authorized sample
-        Sample authorized = new Sample();
-        authorized.setMeasFacilId(MEAS_FACIL_ID_06010);
+        Sample authorized = repository.entityManager().find(
+            Sample.class, SAMPLE_ID_AUTHORIZED);
         //Test unauthorized sample
-        Sample unauthorized = new Sample();
-        unauthorized.setMeasFacilId(MEAS_FACIL_ID_01010);
+        Sample unauthorized = repository.entityManager().find(
+            Sample.class, SAMPLE_ID_UNAUTORIZED);
         //Test sample locked by measm status
-        Sample statusLocked = repository.getById(
+        Sample statusLocked = repository.entityManager().find(
             Sample.class, SAMPLE_ID_LOCKED_BY_STATUS);
 
         return Map.of(

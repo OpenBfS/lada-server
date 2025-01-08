@@ -21,17 +21,14 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
-import de.intevation.lada.lock.LockConfig;
-import de.intevation.lada.lock.LockType;
-import de.intevation.lada.lock.ObjectLocker;
+import de.intevation.lada.lock.TimestampLocker;
+import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
+
 
 /**
  * REST service for SampleSpecifMeasVal objects.
@@ -51,15 +48,7 @@ public class SampleSpecifMeasValService extends LadaService {
      * The object lock mechanism.
      */
     @Inject
-    @LockConfig(type = LockType.TIMESTAMP)
-    private ObjectLocker lock;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
+    private TimestampLocker<BelongsToSample> lock;
 
     /**
      * Get SampleSpecifMeasVal objects.
@@ -76,9 +65,7 @@ public class SampleSpecifMeasValService extends LadaService {
         QueryBuilder<SampleSpecifMeasVal> builder =
             repository.queryBuilder(SampleSpecifMeasVal.class);
         builder.and(SampleSpecifMeasVal_.sampleId, sampleId);
-        return authorization.filter(
-            repository.filter(builder.getQuery()),
-            SampleSpecifMeasVal.class);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -92,9 +79,7 @@ public class SampleSpecifMeasValService extends LadaService {
     public SampleSpecifMeasVal getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(SampleSpecifMeasVal.class, id),
-            SampleSpecifMeasVal.class);
+        return repository.getById(SampleSpecifMeasVal.class, id);
     }
 
     /**
@@ -107,15 +92,7 @@ public class SampleSpecifMeasValService extends LadaService {
     public SampleSpecifMeasVal create(
         @Valid SampleSpecifMeasVal zusatzwert
     ) throws BadRequestException {
-        authorization.authorize(
-            zusatzwert,
-            RequestMethod.POST,
-            SampleSpecifMeasVal.class);
-
-        // TODO: perform validation to avoid violating database constraints
-        return authorization.filter(
-            repository.create(zusatzwert),
-            SampleSpecifMeasVal.class);
+        return repository.create(zusatzwert);
     }
 
     /**
@@ -130,15 +107,9 @@ public class SampleSpecifMeasValService extends LadaService {
         @PathParam("id") Integer id,
         @Valid SampleSpecifMeasVal zusatzwert
     ) throws BadRequestException {
-        authorization.authorize(
-            zusatzwert,
-            RequestMethod.PUT,
-            SampleSpecifMeasVal.class);
         lock.isLocked(zusatzwert);
 
-        return authorization.filter(
-            repository.update(zusatzwert),
-            SampleSpecifMeasVal.class);
+        return repository.update(zusatzwert);
     }
 
     /**
@@ -153,10 +124,7 @@ public class SampleSpecifMeasValService extends LadaService {
     ) {
         SampleSpecifMeasVal obj = repository.getById(
             SampleSpecifMeasVal.class, id);
-        authorization.authorize(
-            obj,
-            RequestMethod.DELETE,
-            SampleSpecifMeasVal.class);
+        authorization.authorize(obj, RequestMethod.DELETE);
         lock.isLocked(obj);
         /* Delete the object*/
         repository.delete(obj);

@@ -31,9 +31,6 @@ import jakarta.ws.rs.PathParam;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -53,10 +50,6 @@ public class QueryUserService extends LadaService {
 
     @Inject
     private Repository repository;
-
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     @Inject
     Logger logger;
@@ -109,6 +102,27 @@ public class QueryUserService extends LadaService {
             }
         }
         return queries;
+    }
+
+    /**
+     * Get QueryUser object by ID.
+     *
+     * Does only return objects owned by the requesting user.
+     *
+     * @param id ID of requested QueryUser object
+     * @return requested QueryUser object
+     */
+    @GET
+    @Path("{id}")
+    public QueryUser getById(@PathParam("id") Integer id) {
+        QueryUser query = repository.getById(QueryUser.class, id);
+        // TODO: Move to authorization
+        if (!authorization.getInfo().getUserId().equals(
+                query.getLadaUserId())
+        ) {
+            throw new ForbiddenException();
+        }
+        return query;
     }
 
     /**

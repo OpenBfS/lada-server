@@ -20,9 +20,6 @@ import jakarta.validation.constraints.NotEmpty;
 
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.query.QueryTools;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 
 
@@ -39,13 +36,6 @@ public class SqlService extends LadaService {
      */
     @Inject
     private Repository repository;
-
-    /**
-     * The header authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
 
     /**
      * Return SQL as would be executed for the given query.

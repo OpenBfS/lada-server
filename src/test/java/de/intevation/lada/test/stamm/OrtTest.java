@@ -7,13 +7,10 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Base64;
 
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.client.Invocation.Builder;
@@ -25,6 +22,7 @@ import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.rest.SiteService;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -40,11 +38,9 @@ public class OrtTest extends ServiceTest {
     private JsonObject createStateSite;
 
     @Override
-    public void init(
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init(WebTarget t) {
+        super.init(t);
+
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -58,9 +54,10 @@ public class OrtTest extends ServiceTest {
         JsonObject erzeuger =
             readXmlResource("datasets/dbUnit_master.xml", Site.class)
             .getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(erzeuger);
-        expectedById = builder.build();
-        Assert.assertNotNull(expectedById);
+        expectedById = convertObject(erzeuger)
+            .add("referenceCount", 2)
+            .add("plausibleReferenceCount", 1)
+            .build();
 
         // Load object to test POST request
         create = readJsonResource("/datasets/ort.json");
@@ -80,7 +77,7 @@ public class OrtTest extends ServiceTest {
      * @param parameter Url parameter
      */
     private void testUploadImage(String imageDataUrl, String parameter) {
-        WebTarget reqTarget = client.target(baseUrl + parameter);
+        WebTarget reqTarget = target.path(parameter);
         Builder reqBuilder = reqTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -127,11 +124,13 @@ public class OrtTest extends ServiceTest {
         get("rest/site");
 
         //Test search interface
-        JsonObject result = get("rest/site?search=Text").asJsonObject();
+        SiteService.Response result = get(
+            "rest/site?search=Text", SiteService.Response.class);
         // "Text" appears in extId, longText, shortText and adminUnit.name,
         // each in one object
         final int expectedSize = 4;
-        Assert.assertEquals(expectedSize, result.getJsonArray("data").size());
+        Assert.assertEquals(expectedSize, result.getTotalCount());
+        Assert.assertEquals(expectedSize, result.getData().size());
 
         final String existingSitePath = "rest/site/1000";
         getById(existingSitePath, expectedById);

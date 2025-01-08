@@ -19,7 +19,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,6 +36,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Formula;
 import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
 
@@ -60,7 +60,6 @@ import de.intevation.lada.validation.groups.Warnings;
 
 
 @Entity
-@EntityListeners(SiteListener.class)
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Site.class, DatabaseConstraints.class })
 @HasCoordsOrAdminUnitOrState
@@ -238,16 +237,14 @@ public class Site extends BaseModel implements Serializable {
     @JsonbTransient
     private Set<GeolocatMpg> geolocatMpgs;
 
-    @Transient
-    private Integer referenceCount;
-
-    @Transient
-    //Number of plausible sample references
-    //Updated in the entity listener
+    // Let's hope that hibernate will always give master.site the alias "s1_0"
+    @Formula("""
+        (SELECT count(DISTINCT s.id) FROM lada.geolocat g
+        JOIN lada.sample s ON g.sample_id=s.id
+        JOIN lada.measm m ON s.id=m.sample_id
+        JOIN lada.status_prot sp ON m.status=sp.id
+        WHERE s1_0.id = g.site_id AND sp.status_mp_id IN (2,6,10))""")
     private Integer plausibleReferenceCount;
-
-    @Transient
-    private Integer referenceCountMp;
 
 
     public Integer getId() {
@@ -500,10 +497,6 @@ public class Site extends BaseModel implements Serializable {
         return this.plausibleReferenceCount;
     }
 
-    public void setPlausibleReferenceCount(Integer plausibleReferenceCount) {
-        this.plausibleReferenceCount = plausibleReferenceCount;
-    }
-
     public Integer getReferenceCountMp() {
         return this.geolocatMpgs != null
         ? this.geolocatMpgs.size() : 0;
@@ -531,21 +524,5 @@ public class Site extends BaseModel implements Serializable {
 
     public void setRoute(String route) {
         this.route = route;
-    }
-
-    public Set<Geolocat> getGeolocats() {
-        return geolocats;
-    }
-
-    public void setGeolocats(Set<Geolocat> geolocats) {
-        this.geolocats = geolocats;
-    }
-
-    public Set<GeolocatMpg> getGeolocatMpgs() {
-        return geolocatMpgs;
-    }
-
-    public void setGeolocatMpgs(Set<GeolocatMpg> geolocatMpgs) {
-        this.geolocatMpgs = geolocatMpgs;
     }
 }

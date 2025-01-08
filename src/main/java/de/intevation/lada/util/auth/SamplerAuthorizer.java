@@ -12,41 +12,29 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-public class SamplerAuthorizer extends BaseAuthorizer {
+class SamplerAuthorizer extends Authorizer<Sampler> {
 
-    public SamplerAuthorizer(Repository repository) {
-        super(repository);
+    SamplerAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
     }
 
     @Override
-    public <T> String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        Sampler sampler = (Sampler) data;
+    void authorize(
+        Sampler sampler,
+        RequestMethod method
+    ) throws AuthorizationException {
         if (!userInfo.getFunktionenForNetzbetreiber(
                 sampler.getNetworkId()).contains(4)
         ) {
-            return I18N_KEY_FORBIDDEN;
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         }
         if (method == RequestMethod.DELETE
             && sampler.getReferenceCount() > 0
         ) {
-            return I18N_KEY_CANNOTDELETE;
+            throw new AuthorizationException(I18N_KEY_CANNOTDELETE);
         }
-        return null;
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        return isAuthorized(repository.getById(
-                Sampler.class, id), method, userInfo, clazz);
     }
 }

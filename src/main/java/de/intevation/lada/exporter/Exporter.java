@@ -20,6 +20,8 @@ import de.intevation.lada.util.auth.UserInfo;
 /**
  * Interface for Lada data exporter.
  *
+ * @param <T> Type of parameters supporting an implemented export format
+ *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public interface Exporter<T extends ExportParameters> {

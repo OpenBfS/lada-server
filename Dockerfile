@@ -2,48 +2,42 @@
 # Dockerfile for jboss wildfly application server cutomized for usage in the
 # BfS-Lada project
 #
-# Build with e.g. `docker build --force-rm=true -t koala/lada_wildfly .'
-# Run with e.g.
-# `docker run --name lada_wildfly --link lada_db:db
-#            -dp 8181:8080 -p 1818:9990 koala/lada_wildfly'
-# The linked container may be created from db_schema/Dockerfile.
-#
-# The LADA-server will be available under
-# http://yourdockerhost:8181/lada-server
-#
 
 FROM debian:bookworm
-MAINTAINER raimund.renkert@intevation.de
+LABEL maintainer=raimund.renkert@intevation.de
 
 #
 # install packages
 #
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
-            curl ca-certificates-java openjdk-17-jdk-headless libpostgis-java libjts-java \
+            libxml2-utils curl ca-certificates-java openjdk-17-jdk-headless \
+            libpostgis-java libjts-java \
             git maven
 
 
 #
 # Set ENV for pacakge versions
-ENV WILDFLY_VERSION 29.0.1.Final
-# see wildfly pom.xml for hibernate_spatial_version
-ENV HIBERNATE_VERSION 6.2.6.Final
-ENV GEOLATTE_GEOM_VERSION 1.9.0
-ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/
+ENV GEOLATTE_GEOM_VERSION=1.9.0
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
 
-RUN echo "Building Image using WILDFLY_VERSION=${WILDFLY_VERSION}, HIBERNATE_VERSION=${HIBERNATE_VERSION}, GEOLATTE_GEOM_VERSION=${GEOLATTE_GEOM_VERSION}."
+RUN echo "Building Image using GEOLATTE_GEOM_VERSION=${GEOLATTE_GEOM_VERSION}."
 
 #
 # Set up Wildfly
 #
 RUN mkdir /opt/jboss
 
-RUN curl -Ls \
+ENV SRC=/usr/src/lada-server
+
+ADD pom.xml $SRC/
+
+RUN WILDFLY_VERSION=$(xmllint --xpath "//*[local-name()='wildfly.version']/text()" $SRC/pom.xml); \
+    curl -Ls \
     https://github.com/wildfly/wildfly/releases/download/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.tar.gz\
     | tar zx && mv wildfly-${WILDFLY_VERSION} /opt/jboss/wildfly
 
-ENV JBOSS_HOME /opt/jboss/wildfly
+ENV JBOSS_HOME=/opt/jboss/wildfly
 
 RUN $JBOSS_HOME/bin/add-user.sh admin secret --silent
 
@@ -54,10 +48,11 @@ EXPOSE 8080 9990 80
 #
 RUN mkdir -p $JBOSS_HOME/modules/org/postgres/main
 
-ENV MVN_REPO https://repo1.maven.org/maven2
-ENV WFLY_MODULES $JBOSS_HOME/modules/system/layers/base
-ENV HIBERNATE_MODULE $WFLY_MODULES/org/hibernate/main
-RUN curl -s $MVN_REPO/org/hibernate/orm/hibernate-spatial/${HIBERNATE_VERSION}/hibernate-spatial-${HIBERNATE_VERSION}.jar >\
+ENV MVN_REPO=https://repo1.maven.org/maven2
+ENV WFLY_MODULES=$JBOSS_HOME/modules/system/layers/base
+ENV HIBERNATE_MODULE=$WFLY_MODULES/org/hibernate/main
+RUN HIBERNATE_VERSION=$(xmllint --xpath "//*[local-name()='hibernate.version']/text()" $SRC/pom.xml); \
+    curl -s $MVN_REPO/org/hibernate/orm/hibernate-spatial/${HIBERNATE_VERSION}/hibernate-spatial-${HIBERNATE_VERSION}.jar >\
         $HIBERNATE_MODULE/hibernate-spatial.jar;
 
 RUN curl -s $MVN_REPO/org/geolatte/geolatte-geom/${GEOLATTE_GEOM_VERSION}/geolatte-geom-${GEOLATTE_GEOM_VERSION}.jar >\
@@ -72,10 +67,7 @@ RUN ln -s /usr/share/java/postgis-geometry.jar \
 RUN ln -s /usr/share/java/jts-core.jar \
        $HIBERNATE_MODULE/jts-core.jar
 
-ENV SRC /usr/src/lada-server
-
 # Download dependencies before adding sources to leverage build cache
-ADD pom.xml $SRC/
 RUN mvn -q -f $SRC/pom.xml dependency:go-offline
 
 #

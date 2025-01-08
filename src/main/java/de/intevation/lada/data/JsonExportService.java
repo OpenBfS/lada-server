@@ -26,9 +26,6 @@ import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.rest.LadaService;
 
 
@@ -58,14 +55,6 @@ public class JsonExportService extends LadaService {
     @Inject
     @ExportConfig(format = ExportFormat.JSON)
     private Exporter<QueryExportParameters> exporter;
-
-    /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
 
     /**
      * Export Sample objects.

@@ -7,12 +7,13 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.util.Arrays;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 
 import org.junit.Assert;
@@ -31,11 +32,9 @@ public class MessungTest extends ServiceTest {
     private JsonObject create;
 
     @Override
-    public void init (
-        Client c,
-        URL baseUrl
-    ) {
-        super.init(c, baseUrl);
+    public void init (WebTarget t) {
+        super.init(t);
+
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -64,7 +63,16 @@ public class MessungTest extends ServiceTest {
      */
     public final void execute() {
         get("rest/measm", Response.Status.BAD_REQUEST);
-        get("rest/measm?sampleId=1000");
+
+        JsonArray measms = get("rest/measm?sampleId=1000", JsonArray.class);
+        Assert.assertEquals(1, measms.size());
+        // Assert that returned collection elements are authorized and validated
+        JsonObject measm = measms.getJsonObject(0);
+        Assert.assertNotEquals("Authorization hints not set",
+            JsonValue.NULL, measm.get("statusEdit"));
+        Assert.assertFalse("Expected warnings missing",
+            measm.getJsonObject("warnings").isEmpty());
+
         getById("rest/measm/1200", expectedById);
         JsonObject created = create("rest/measm", create);
 
@@ -75,6 +83,18 @@ public class MessungTest extends ServiceTest {
             updateFieldKey,
             "T100",
             updateFieldValue);
+
+        // Test requests with invalid sampleId values
+        final String sampleIdKey = "sampleId";
+        final JsonValue curSampleId = Json.createValue(1000),
+            invalidSampleId = Json.createValue(9999);
+        update("rest/measm/1200", sampleIdKey,
+            curSampleId, invalidSampleId,
+            Response.Status.BAD_REQUEST);
+        update("rest/measm/1200", sampleIdKey,
+            curSampleId, null,
+            Response.Status.BAD_REQUEST);
+
         getAuditTrail(
             "rest/audit/messung/1200",
             updateFieldKey,

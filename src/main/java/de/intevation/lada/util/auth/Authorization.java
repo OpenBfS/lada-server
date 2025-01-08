@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.List;
+import java.util.Collection;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -21,32 +21,20 @@ import de.intevation.lada.util.rest.RequestMethod;
 public interface Authorization {
     UserInfo getInfo();
 
-    default <T extends BaseModel> List<T> filter(List<T> data, Class<T> clazz) {
+    default <T extends BaseModel> Collection<T> filter(Collection<T> data) {
         for (T object: data) {
-            filter(object, clazz);
+            filter(object);
         }
         return data;
     }
 
-    <T extends BaseModel> T filter(
-        T data, Class<T> clazz);
+    <T extends BaseModel> T filter(T data);
 
-    <T> void authorize(
-        Object data,
-        RequestMethod method,
-        Class<T> clazz);
+    <T extends BaseModel> T authorize(
+        T data,
+        RequestMethod method);
 
-    <T> boolean isAuthorized(
-        Object data,
-        RequestMethod method,
-        Class<T> clazz);
-
-    <T> boolean isAuthorizedById(
-        Object id,
-        RequestMethod method,
-        Class<T> clazz);
-
-    boolean isProbeReadOnly(Integer probeId);
-
-    boolean isMessungReadOnly(Integer messungId);
+    <T extends BaseModel> boolean isAuthorized(
+        T data,
+        RequestMethod method);
 }

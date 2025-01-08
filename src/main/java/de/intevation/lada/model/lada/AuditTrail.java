@@ -8,11 +8,10 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
+import java.io.StringReader;
 import java.util.Date;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -32,13 +31,11 @@ public class AuditTrail implements Serializable {
     @Temporal(TIMESTAMP)
     private Date actionTstampClk;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    private JsonObject changedFields;
+    private String changedFields;
 
     private Integer objectId;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    private JsonObject rowData;
+    private String rowData;
 
     private String tableName;
 
@@ -69,11 +66,12 @@ public class AuditTrail implements Serializable {
         this.actionTstampClk = actionTstampClk;
     }
 
-    public JsonObject getChangedFields() {
-        return this.changedFields;
+    public JsonObject getChangedFieldsJson() {
+        return Json.createReader(new StringReader(this.changedFields))
+            .readObject();
     }
 
-    public void setChangedFields(JsonObject changedFields) {
+    public void setChangedFields(String changedFields) {
         this.changedFields = changedFields;
     }
 
@@ -85,11 +83,12 @@ public class AuditTrail implements Serializable {
         this.objectId = objectId;
     }
 
-    public JsonObject getRowData() {
-        return this.rowData;
+    public JsonObject getRowDataJson() {
+        return Json.createReader(new StringReader(this.rowData))
+            .readObject();
     }
 
-    public void setRowData(JsonObject rowData) {
+    public void setRowData(String rowData) {
         this.rowData = rowData;
     }
 

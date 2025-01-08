@@ -39,7 +39,7 @@ public class LafImportJob extends Job {
     @Inject
     private LafImporter importer;
 
-    private Map<String, Map<String, Object>> importData;
+    private Map<String, Map<String, Object>> importData = new HashMap<>();
 
     private LafImportParameters importParams;
 
@@ -89,10 +89,6 @@ public class LafImportJob extends Job {
         //Ids of alle imported probe records
         List<Integer> importedProbeids = new ArrayList<Integer>();
 
-        //Contains a response data object for every import
-        Map<String, Map<String, Object>> importResponseData =
-            new HashMap<String, Map<String, Object>>();
-
         //Import each file
         String mstId = this.mst.getId();
         this.files.forEach((fileName, content) -> {
@@ -121,10 +117,9 @@ public class LafImportJob extends Job {
                 this.currentStatus.setNotifications(true);
             }
             fileResponseData.put("success", !currentStatus.getErrors());
-            fileResponseData.put(
-                "probeIds", ((LafImporter) importer).getImportedIds());
-            importResponseData.put(fileName, fileResponseData);
-            importedProbeids.addAll(((LafImporter) importer).getImportedIds());
+            fileResponseData.put("probeIds", importer.getImportedIds());
+            importData.put(fileName, fileResponseData);
+            importedProbeids.addAll(importer.getImportedIds());
             logger.debug(
                 String.format("Finished import of file \"%s\"", fileName));
         });
@@ -137,11 +132,10 @@ public class LafImportJob extends Job {
                 importedProbeids, newTag.getId());
 
             //Put new tag in import response
-            importResponseData.forEach((file, responseData) -> {
+            importData.forEach((file, responseData) -> {
                 responseData.put("tag", newTag.getName());
             });
         }
-        importData = importResponseData;
         logger.debug("Finished LAF import");
     }
 

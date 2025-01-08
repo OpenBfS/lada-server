@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 import jakarta.validation.ConstraintViolation;
@@ -48,7 +48,7 @@ public class Validator {
     }
 
     /**
-     * Validates objects in given list.
+     * Validates objects in given collection.
      *
      * @param <T> Type of objects to be validated
      * @param objects The objects to be validated
@@ -57,8 +57,8 @@ public class Validator {
      * should be given.
      * @return The validated objects
      */
-    public <T extends BaseModel> List<T> validate(
-        List<T> objects, Class... groups
+    public <T extends BaseModel> Collection<T> validate(
+        Collection<T> objects, Class<?>... groups
     ) {
         for (T object: objects) {
             validate(object, groups);
@@ -78,10 +78,10 @@ public class Validator {
      * should be given.
      * @return The validated object
      */
-    public <T extends BaseModel> T validate(T object, Class... groups) {
-        final Class[] defaultGroups =  {
+    public <T extends BaseModel> T validate(T object, Class<?>... groups) {
+        final Class<?>[] defaultGroups =  {
             Default.class, Warnings.class, Notifications.class };
-        for (Class group: groups.length == 0 ? defaultGroups : groups) {
+        for (Class<?> group: groups.length == 0 ? defaultGroups : groups) {
             Set<ConstraintViolation<T>> beanViolations =
                 beanValidator.validate(object, group);
             if (group.equals(Default.class)) {

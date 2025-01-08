@@ -16,9 +16,10 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response;
 import jakarta.validation.constraints.NotEmpty;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
@@ -31,9 +32,6 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.query.QueryTools;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -52,23 +50,40 @@ import de.intevation.lada.util.rest.RequestMethod;
 public class UniversalService extends LadaService {
 
     /**
+     * Determines the class used for authorizing result entries:
+     * Later entries overrule earlier ones.
+     */
+    private static final LinkedHashMap<String, Class<? extends BaseModel>>
+        AUTH_HIERARCHY = new LinkedHashMap<>();
+    static {
+        AUTH_HIERARCHY.put("tagId",       Tag.class);
+        AUTH_HIERARCHY.put("mprkat",      MpgCateg.class);
+        AUTH_HIERARCHY.put("dsatzerz",    DatasetCreator.class);
+        AUTH_HIERARCHY.put("probenehmer", Sampler.class);
+        AUTH_HIERARCHY.put("ortId",       Site.class);
+        AUTH_HIERARCHY.put("mpId",        Mpg.class);
+        AUTH_HIERARCHY.put("probeId",     Sample.class);
+        AUTH_HIERARCHY.put("messungId",   Measm.class);
+    }
+
+    /**
      * The data repository granting read/write access.
      */
     @Inject
     private Repository repository;
 
-    /**
-     * The header authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    public static class Response {
+    public static class UniversalResponse {
         private List<Map<String, Object>> data;
         private int totalCount;
 
-        private Response(List<Map<String, Object>> data, int totalCount) {
+        /**
+         * Default constructor for JSON-B.
+         */
+        public UniversalResponse() { };
+
+        private UniversalResponse(
+            List<Map<String, Object>> data, int totalCount
+        ) {
             this.data = data;
             this.totalCount = totalCount;
         }
@@ -77,8 +92,16 @@ public class UniversalService extends LadaService {
             return this.data;
         }
 
+        public void setData(List<Map<String, Object>> data) {
+            this.data = data;
+        }
+
         public int getTotalCount() {
             return this.totalCount;
+        }
+
+        public void setTotalCount(int totalCount) {
+            this.totalCount = totalCount;
         }
     }
 
@@ -105,48 +128,35 @@ public class UniversalService extends LadaService {
      * @throws BadRequestException
      */
     @POST
-    public Response execute(
+    public UniversalResponse execute(
         @QueryParam("start") int start, // default for primitive type: 0
         @QueryParam("limit") Integer limit,
         @NotEmpty List<GridColConf> gridColumnValues
     ) {
         String authorizationColumnIndex = null;
-        Class<?> authorizationColumnType = null;
+        Class<? extends BaseModel> authorizationColumnType = null;
 
-        /**
-         * Determines the class used for authorizing result entries:
-         * Later entries overrule earlier ones.
-         */
-        final LinkedHashMap<String, Class<?>> hierarchy
-            = new LinkedHashMap<String, Class<?>>();
-        hierarchy.put("tagId",       Tag.class);
-        hierarchy.put("mprkat",      MpgCateg.class);
-        hierarchy.put("dsatzerz",    DatasetCreator.class);
-        hierarchy.put("probenehmer", Sampler.class);
-        hierarchy.put("ortId",       Site.class);
-        hierarchy.put("mpId",        Mpg.class);
-        hierarchy.put("probeId",     Sample.class);
-        hierarchy.put("messungId",   Measm.class);
-        int resultNdx = hierarchy.size();
+        int resultNdx = -1;
         for (GridColConf columnValue : gridColumnValues) {
             GridColMp gridColumn = repository.getById(
                 GridColMp.class,
                 columnValue.getGridColMpId()
             );
-            //Check if column can be used for authorization
             Disp resultType = gridColumn.getDisp();
             if (resultType != null) {
+                //Check if column can be used for authorization
                 int ndx = -1, i = 0;
-                for (String authType: hierarchy.keySet()) {
+                for (String authType: AUTH_HIERARCHY.keySet()) {
                     if (authType.equals(resultType.getName())) {
                         ndx = i;
+                        break;
                     }
                     i++;
                 }
-                if (ndx > -1 && ndx < resultNdx) {
+                if (ndx > resultNdx) {
                     resultNdx = ndx;
                     authorizationColumnIndex = gridColumn.getDataIndex();
-                    authorizationColumnType = hierarchy.get(
+                    authorizationColumnType = AUTH_HIERARCHY.get(
                         resultType.getName());
                 }
             }
@@ -162,45 +172,25 @@ public class UniversalService extends LadaService {
             // TODO: This issues a potentially costly 'SELECT count(*)'
             // for every request. Better not to rely on total count at client side?
             int size = queryTools.getTotalCountForQuery();
-            boolean doAuthorize = true;
-            if (result.size() > 500) {
-                doAuthorize = false;
-            }
 
+            // Skip authorization of large pages to improve performance
+            boolean doAuthorize = result.size() <= 500;
             for (Map<String, Object> row: result) {
                 Object idToAuthorize = row.get(authorizationColumnIndex);
-                boolean readonly;
-                if (doAuthorize) {
-                    if (idToAuthorize != null) {
-                        if (authorizationColumnType == DatasetCreator.class) {
-                            DatasetCreator de = repository.getById(
-                                DatasetCreator.class, idToAuthorize);
-                            idToAuthorize = de.getNetworkId();
-                        }
-                        if (authorizationColumnType == MpgCateg.class) {
-                            MpgCateg mk = repository.getById(
-                                MpgCateg.class, idToAuthorize);
-                            idToAuthorize = mk.getNetworkId();
-                        }
-
-                        readonly = !authorization.isAuthorizedById(
-                            idToAuthorize,
-                            RequestMethod.PUT,
-                            authorizationColumnType);
-                    } else {
-                        readonly = true;
-                    }
-                } else {
-                    readonly = true;
+                boolean readonly = true;
+                if (doAuthorize && idToAuthorize != null) {
+                    readonly = !authorization.isAuthorized(
+                        repository.getById(
+                            authorizationColumnType, idToAuthorize),
+                        RequestMethod.PUT);
                 }
                 row.put("readonly", readonly);
             }
 
-            return new Response(result, size);
+            return new UniversalResponse(result, size);
         } catch (IllegalArgumentException iae) {
             throw new BadRequestException(
-                jakarta.ws.rs.core.Response
-                .status(Status.BAD_REQUEST)
+                Response.status(Response.Status.BAD_REQUEST)
                 .entity(iae.getMessage()).build());
         }
     }

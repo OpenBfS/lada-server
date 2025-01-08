@@ -8,11 +8,11 @@
 package de.intevation.lada;
 
 import java.io.StringReader;
-import java.net.URL;
 import java.nio.charset.CharacterCodingException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -27,16 +27,16 @@ import jakarta.ws.rs.core.Response;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
-import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
-
+import de.intevation.lada.util.data.Job.JobStatus;
 
 /**
  * Test export services.
@@ -45,7 +45,7 @@ import de.intevation.lada.util.data.Job;
 @RunWith(Arquillian.class)
 public class ExporterTest extends BaseTest {
 
-    private static Logger logger = Logger.getLogger(ExporterTest.class);
+    private static final String ASYNC_EXPORT_URL = "data/asyncexport/";
 
     private final String formatCsv = "csv";
     private final String formatJson = "json";
@@ -127,25 +127,35 @@ public class ExporterTest extends BaseTest {
             .add("measdId"));
 
     /**
+     * Cancel asynchronous jobs in order to allow database cleanup.
+     */
+    @After
+    public void cancelJobs() {
+        target.path(ASYNC_EXPORT_URL + "cancel")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+    }
+
+    /**
      * Test asynchronous CSV export of a Sample object.
      */
     @Test
     @RunAsClient
-    public final void testCsvExportProbe(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportProbe()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
             .build();
 
-        String result = runExportTest(baseUrl, formatCsv, requestJson);
-        Assert.assertEquals(
-            "Unexpected CSV content",
-            "hauptprobenNr,umwId,isTest,probeId\r\n"
-            + "120510002,L6,No,1000\r\n"
-            + "\"12051,0001\",L6,Yes,1001\r\n",
-            result);
+        assertHasLinesInAnyOrder(
+            runExportTest(formatCsv, requestJson),
+            "\r\n",
+            "hauptprobenNr,umwId,isTest,probeId",
+            "120510002,L6,No,1000",
+            "\"12051,0001\",L6,Yes,1001");
     }
 
     /**
@@ -153,22 +163,20 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportFieldSeparator(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportFieldSeparator()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
             .add("fieldSeparator", ";")
             .build();
 
-        String result = runExportTest(baseUrl, formatCsv, requestJson);
-        Assert.assertEquals(
-            "Unexpected CSV content",
-            "hauptprobenNr;umwId;isTest;probeId\r\n"
-            + "120510002;L6;No;1000\r\n"
-            + "12051,0001;L6;Yes;1001\r\n",
-            result);
+        assertHasLinesInAnyOrder(
+            runExportTest(formatCsv, requestJson),
+            "\r\n",
+            "hauptprobenNr;umwId;isTest;probeId",
+            "120510002;L6;No;1000",
+            "12051,0001;L6;Yes;1001");
     }
 
     /**
@@ -176,22 +184,20 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportRowDelimiter(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
-        /* Request asynchronous export */
+    public final void testCsvExportRowDelimiter()
+        throws InterruptedException, CharacterCodingException {
+        final String rowDelimiter = "\n";
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
-            .add("rowDelimiter", "\n")
+            .add("rowDelimiter", rowDelimiter)
             .build();
 
-        String result = runExportTest(baseUrl, formatCsv, requestJson);
-        Assert.assertEquals(
-            "Unexpected CSV content",
-            "hauptprobenNr,umwId,isTest,probeId\n"
-            + "120510002,L6,No,1000\n"
-            + "\"12051,0001\",L6,Yes,1001\n",
-            result);
+        assertHasLinesInAnyOrder(
+            runExportTest(formatCsv, requestJson),
+            rowDelimiter,
+            "hauptprobenNr,umwId,isTest,probeId",
+            "120510002,L6,No,1000",
+            "\"12051,0001\",L6,Yes,1001");
     }
 
     /**
@@ -199,22 +205,20 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportQuote(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportQuote()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
             .add("quote", "'")
             .build();
 
-        String result = runExportTest(baseUrl, formatCsv, requestJson);
-        Assert.assertEquals(
-            "Unexpected CSV content",
-            "hauptprobenNr,umwId,isTest,probeId\r\n"
-            + "120510002,L6,No,1000\r\n"
-            + "'12051,0001',L6,Yes,1001\r\n",
-            result);
+        assertHasLinesInAnyOrder(
+            runExportTest(formatCsv, requestJson),
+            "\r\n",
+            "hauptprobenNr,umwId,isTest,probeId",
+            "120510002,L6,No,1000",
+            "'12051,0001',L6,Yes,1001");
     }
 
     /**
@@ -222,18 +226,15 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportDecimalSeparator(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
-        String result = runExportTest(
-            baseUrl, formatCsv, measmRequestJsonBuilder
-            .add("decimalSeparator", ",").build());
-        Assert.assertEquals(
-            "Unexpected CSV content",
-            "messungId,id,measVal,measUnitId,measdId\r\n"
-            + "1200,1000,\"1,1E00\",Sv,test\r\n"
-            + "1200,1001,,Sv,test\r\n",
-            result);
+    public final void testCsvExportDecimalSeparator()
+        throws InterruptedException, CharacterCodingException {
+        assertHasLinesInAnyOrder(
+            runExportTest(formatCsv, measmRequestJsonBuilder
+                .add("decimalSeparator", ",").build()),
+            "\r\n",
+            "messungId,id,measVal,measUnitId,measdId",
+            "1200,1000,\"1,1E00\",Sv,test",
+            "1200,1001,,Sv,test");
     }
 
     /**
@@ -241,20 +242,18 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportProbeById(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
-        /* Request asynchronous export */
+    public final void testCsvExportProbeById()
+        throws InterruptedException, CharacterCodingException {
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "main_sample_id")
             .add("idFilter", Json.createArrayBuilder().add("120510002"))
             .build();
 
-        String result = runExportTest(baseUrl, formatCsv, requestJson);
-        Assert.assertEquals(
-            "Unexpected CSV content",
-            "hauptprobenNr,umwId,isTest,probeId\r\n120510002,L6,No,1000\r\n",
-            result);
+        assertHasLinesInAnyOrder(
+            runExportTest(formatCsv, requestJson),
+            "\r\n",
+            "hauptprobenNr,umwId,isTest,probeId",
+            "120510002,L6,No,1000");
     }
 
     /**
@@ -262,9 +261,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportProbeSubData(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testCsvExportProbeSubData()
+        throws InterruptedException, CharacterCodingException {
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "probeId")
             .add("exportSubData", true)
@@ -273,15 +271,13 @@ public class ExporterTest extends BaseTest {
                 .add("messwerteCount"))
             .build();
 
-        String result = runExportTest(baseUrl, formatCsv, requestJson);
-        MatcherAssert.assertThat(result,
-            CoreMatchers.startsWith(
-                "hauptprobenNr,umwId,isTest,probeId,extId,messwerteCount\r\n"));
-        MatcherAssert.assertThat(Arrays.asList(result.split("\r\n")),
-            CoreMatchers.hasItems(
-                "120510002,L6,No,1000,453,2",
-                "120510002,L6,No,1000,454,0",
-                "\"12051,0001\",L6,Yes,1001,,"));
+        assertHasLinesInAnyOrder(
+            runExportTest(formatCsv, requestJson),
+            "\r\n",
+            "hauptprobenNr,umwId,isTest,probeId,extId,messwerteCount",
+            "120510002,L6,No,1000,453,2",
+            "120510002,L6,No,1000,454,0",
+            "\"12051,0001\",L6,Yes,1001,,");
     }
 
     /**
@@ -289,17 +285,15 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testCsvExportMeasmSubData(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
-        String result = runExportTest(
-            baseUrl, formatCsv, measmRequestJsonBuilder.build());
-        Assert.assertEquals(
-            "Unexpected CSV content",
-            "messungId,id,measVal,measUnitId,measdId\r\n"
-            + "1200,1000,1.1E00,Sv,test\r\n"
-            + "1200,1001,,Sv,test\r\n",
-            result);
+    public final void testCsvExportMeasmSubData()
+        throws InterruptedException, CharacterCodingException {
+        assertHasLinesInAnyOrder(
+            runExportTest(
+                formatCsv, measmRequestJsonBuilder.build()),
+            "\r\n",
+            "messungId,id,measVal,measUnitId,measdId",
+            "1200,1000,1.1E00,Sv,test",
+            "1200,1001,,Sv,test");
     }
 
     /**
@@ -307,24 +301,22 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testJsonExportProbeById(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testJsonExportProbeById()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "main_sample_id")
             .add("idFilter", Json.createArrayBuilder().add("120510002"))
             .build();
 
-        String result = runExportTest(baseUrl, formatJson, requestJson);
         Assert.assertEquals(
             "Unexpected JSON content",
-            "{\"120510002\":"
-            + "{\"main_sample_id\":\"120510002\","
-            + "\"env_medium_id\":\"L6\","
-            + "\"is_test\":\"false\","
-            + "\"probeId\":1000}}",
-            result);
+            Json.createReader(new StringReader("{\"120510002\":"
+                    + "{\"main_sample_id\":\"120510002\","
+                    + "\"env_medium_id\":\"L6\","
+                    + "\"is_test\":\"false\","
+                    + "\"probeId\":1000}}")).readObject(),
+            runJSONExportTest(requestJson));
     }
 
     /**
@@ -332,9 +324,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testJsonExportProbeSubData(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testJsonExportProbeSubData()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "probeId")
@@ -345,8 +336,6 @@ public class ExporterTest extends BaseTest {
                 .add("messwerteCount"))
             .build();
 
-        JsonObject result = Json.createReader(new StringReader(
-                runExportTest(baseUrl, formatJson, requestJson))).readObject();
         Assert.assertEquals(
             "Unexpected JSON content",
             Json.createReader(new StringReader(
@@ -357,7 +346,7 @@ public class ExporterTest extends BaseTest {
                     + "\"probeId\":1000,"
                     + "\"Messungen\":[{\"messwerteCount\":2,\"extId\":453},"
                     + "{\"messwerteCount\":0,\"extId\":454}]}}")).readObject(),
-            result);
+            runJSONExportTest(requestJson));
     }
 
     /**
@@ -365,25 +354,22 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testJsonExportMeasmSubData(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
-        String result = runExportTest(
-            baseUrl, formatJson, measmRequestJsonBuilder.build());
+    public final void testJsonExportMeasmSubData()
+        throws InterruptedException, CharacterCodingException {
         Assert.assertEquals(
             "Unexpected JSON content",
-            "{\"1200\":"
-            + "{\"messungId\":1200,"
-            + "\"messwerte\":[{"
-            + "\"measUnitId\":\"Sv\","
-            + "\"measdId\":\"test\","
-            + "\"measVal\":1.1,"
-            + "\"id\":1000},{"
-            + "\"measUnitId\":\"Sv\","
-            + "\"measdId\":\"test\","
-            + "\"measVal\":null,"
-            + "\"id\":1001}]}}",
-            result);
+            Json.createReader(new StringReader("{\"1200\":"
+                    + "{\"messungId\":1200,"
+                    + "\"messwerte\":[{"
+                    + "\"measUnitId\":\"Sv\","
+                    + "\"measdId\":\"test\","
+                    + "\"measVal\":1.1,"
+                    + "\"id\":1000},{"
+                    + "\"measUnitId\":\"Sv\","
+                    + "\"measdId\":\"test\","
+                    + "\"measVal\":null,"
+                    + "\"id\":1001}]}}")).readObject(),
+            runJSONExportTest(measmRequestJsonBuilder.build()));
     }
 
     /**
@@ -391,16 +377,15 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testLafExportProbeById(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testLafExportProbeById()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         final int probeId = 1000;
         JsonObject requestJson = requestJsonBuilder
             .add("proben", Json.createArrayBuilder().add(probeId))
             .build();
 
-        String result = runExportTest(baseUrl, formatLaf, requestJson);
+        String result = runExportTest(formatLaf, requestJson);
         Assert.assertTrue(
             "Unexpected LAF content",
             result.startsWith("%PROBE%") && result.endsWith("%ENDE%"));
@@ -411,9 +396,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testQueryExportEmpty(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testQueryExportEmpty()
+        throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "main_sample_id")
@@ -421,18 +405,16 @@ public class ExporterTest extends BaseTest {
             .build();
 
         String csvResult = runExportTest(
-            baseUrl, formatCsv, requestJson);
+            formatCsv, requestJson);
         Assert.assertEquals(
             "Unexpected CSV content",
             "hauptprobenNr,umwId,isTest,probeId\r\n",
             csvResult);
 
-        String jsonResult = runExportTest(
-            baseUrl, formatJson, requestJson);
         Assert.assertEquals(
             "Unexpected JSON content",
-            "{}",
-            jsonResult);
+            JsonValue.EMPTY_JSON_OBJECT,
+            runJSONExportTest(requestJson));
     }
 
     /**
@@ -440,9 +422,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncExportFailure(
-        @ArquillianResource URL baseUrl
-    ) throws InterruptedException, CharacterCodingException {
+    public final void testAsyncExportFailure()
+        throws InterruptedException, CharacterCodingException {
         /* Test values */
         String sampleValue = "99999";
         String samplePath = "createLafExportJob.arg0.proben[0].<list element>";
@@ -456,7 +437,7 @@ public class ExporterTest extends BaseTest {
 
         assertJsonContainsValidationMessage(
             parseResponse(
-                exportRequest(baseUrl, formatLaf, lafJson),
+                exportRequest(formatLaf, lafJson),
                 Response.Status.BAD_REQUEST)
                 .asJsonObject(),
             samplePath, sampleMessage);
@@ -467,21 +448,19 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncExportInvalidCharset(
-        @ArquillianResource URL baseUrl
-    ) {
+    public final void testAsyncExportInvalidCharset() {
         JsonObject jsonExportJson = Json.createObjectBuilder()
             .add("encoding", "invalidEncoding")
             .build();
         parseResponse(
-            exportRequest(baseUrl, formatJson, jsonExportJson),
+            exportRequest(formatJson, jsonExportJson),
             Response.Status.BAD_REQUEST);
     }
 
     private Response exportRequest(
-            URL baseUrl, String format, JsonObject requestJson) {
-        Response response = client.target(
-            baseUrl + "data/asyncexport/" + format)
+            String format, JsonObject requestJson) {
+        Response response = target
+            .path(ASYNC_EXPORT_URL + format)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -492,36 +471,30 @@ public class ExporterTest extends BaseTest {
     }
 
     private String startExport(
-        URL baseUrl,
         String format,
         JsonObject requestJson,
         Job.Status expectedStatus
     ) throws InterruptedException {
-        Response exportCreated = exportRequest(baseUrl, format, requestJson);
-        JsonObject exportCreatedObject =
-            parseResponse(exportCreated).asJsonObject();
-
-        final String refIdKey = "refId";
-        assertContains(exportCreatedObject, refIdKey);
-        String refId = exportCreatedObject.getString(refIdKey);
+        Response exportCreated = exportRequest(format, requestJson);
+        AsyncJobResponse asyncJobResponse =
+            parseResponse(exportCreated, AsyncJobResponse.class);
+        String jobId = asyncJobResponse
+            .getJobId();
 
         /* Request status of asynchronous export */
-        SyncInvoker statusRequest = client.target(
-            baseUrl + "data/asyncexport/status/" + refId)
+        SyncInvoker statusRequest = target
+            .path(ASYNC_EXPORT_URL + "status/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
-        JsonObject exportStatusObject = Json.createObjectBuilder().build();
         boolean done = false;
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
+        JobStatus exportStatusObject;
         do {
-            exportStatusObject =
-                parseResponse(statusRequest.get()).asJsonObject();
-
-            final String doneKey = "done";
-            assertContains(exportStatusObject, doneKey);
-            done = exportStatusObject.getBoolean(doneKey);
+            Response response = statusRequest.get();
+            exportStatusObject = parseResponse(response, JobStatus.class);
+            done = exportStatusObject.isDone();
 
             Assert.assertTrue(
                 "Export not done within one minute",
@@ -529,24 +502,29 @@ public class ExporterTest extends BaseTest {
             Thread.sleep(waitASecond);
         } while (!done);
 
-        final String statusKey = "status";
-        assertContains(exportStatusObject, statusKey);
         Assert.assertEquals(
-            expectedStatus.name().toLowerCase(),
-            exportStatusObject.getString(statusKey));
+            expectedStatus.name(),
+            exportStatusObject.getStatus().name());
 
-        return refId;
+        return jobId;
+    }
+
+    private JsonObject runJSONExportTest(
+        JsonObject requestJson
+    ) throws InterruptedException {
+        return Json.createReader(new StringReader(
+                runExportTest(formatJson, requestJson))).readObject();
     }
 
     private String runExportTest(
-        URL baseUrl, String format, JsonObject requestJson
+        String format, JsonObject requestJson
     ) throws InterruptedException {
-        String refId = startExport(
-            baseUrl, format, requestJson, Job.Status.FINISHED);
+        String jobId = startExport(
+            format, requestJson, Job.Status.FINISHED);
 
         /* Request export result */
-        Response download = client.target(
-            baseUrl + "data/asyncexport/download/" + refId)
+        Response download = target
+            .path(ASYNC_EXPORT_URL + "download/" + jobId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -557,5 +535,22 @@ public class ExporterTest extends BaseTest {
             download.getStatus());
 
         return download.readEntity(String.class);
+    }
+
+    private void assertHasLinesInAnyOrder(
+        String csv, String recordSep, String header, String... line
+    ) {
+        List<String> resultLines = Arrays.asList(csv.split(recordSep));
+
+        // Assert that header matches
+        Assert.assertEquals(
+            "Unexpected CSV header", header, resultLines.get(0));
+
+        // Assert that expected lines exist
+        MatcherAssert.assertThat(resultLines, CoreMatchers.hasItems(line));
+
+        // Assert that result does not have extraneous lines
+        Assert.assertEquals(
+            "Contains extraneous lines", line.length + 1, resultLines.size());
     }
 }

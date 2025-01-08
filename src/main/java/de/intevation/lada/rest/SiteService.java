@@ -10,11 +10,13 @@ package de.intevation.lada.rest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -37,9 +39,6 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.model.master.Site;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
@@ -53,11 +52,6 @@ import de.intevation.lada.validation.Validator;
 @Path(LadaService.PATH_REST + "site")
 public class SiteService extends LadaService {
 
-    private static final String QUERY_TEMPLATE =
-        "SELECT site.* FROM master.site "
-        + "LEFT JOIN master.admin_unit AS au ON admin_unit_id = au.id "
-        + "%s";
-
     @Inject
     private Logger logger;
 
@@ -68,27 +62,36 @@ public class SiteService extends LadaService {
     private Repository repository;
 
     @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    @Inject
     private OrtFactory ortFactory;
 
     public static class Response {
-        private List<Site> data;
-        private int totalCount;
+        private Collection<Site> data;
+        private long totalCount;
 
-        private Response(List<Site> data, int totalCount) {
+        /**
+         * Default constructor for JSON-B.
+         */
+        public Response() { };
+
+        private Response(Collection<Site> data, long totalCount) {
             this.data = data;
             this.totalCount = totalCount;
         }
 
-        public List<Site> getData() {
+        public Collection<Site> getData() {
             return this.data;
         }
 
-        public int getTotalCount() {
+        public void setData(Collection<Site> data) {
+            this.data = data;
+        }
+
+        public long getTotalCount() {
             return this.totalCount;
+        }
+
+        public void setTotalCount(int totalCount) {
+            this.totalCount = totalCount;
         }
     }
 
@@ -114,12 +117,12 @@ public class SiteService extends LadaService {
         // Build SQL query string
         List<String> whereClauseParts = new ArrayList<>();
         if (networkId != null) {
-            whereClauseParts.add("network_id IN(:networkId)");
+            whereClauseParts.add("networkId in(:networkId)");
         }
         if (search != null) {
             List<String> filters = new ArrayList<>();
             for (String attr: List.of(
-                    "ext_id", "short_text", "long_text", "name")) {
+                    "extId", "shortText", "longText", "adminUnit.name")) {
                 filters.add(attr + " LIKE(:pattern)");
             }
             whereClauseParts.add(String.join(" OR ", filters));
@@ -129,13 +132,14 @@ public class SiteService extends LadaService {
             whereClause =
                 "WHERE (" + String.join(") AND (", whereClauseParts) + ")";
         }
-        String queryString = String.format(QUERY_TEMPLATE, whereClause);
 
         // Build queries
-        Query siteQuery = repository.entityManager().createNativeQuery(
-            queryString, Site.class);
-        Query countQuery = repository.entityManager().createNativeQuery(
-            "SELECT count(*) FROM (" + queryString + ") as query");
+        TypedQuery<Site> siteQuery = repository.entityManager().createQuery(
+            String.format("select s from Site s %s", whereClause),
+            Site.class);
+        TypedQuery<Long> countQuery = repository.entityManager().createQuery(
+            String.format("select count(s) from Site s %s", whereClause),
+            Long.class);
         List<Query> queries = List.of(siteQuery, countQuery);
         if (networkId != null) {
             for (Query query: queries) {
@@ -154,12 +158,11 @@ public class SiteService extends LadaService {
             siteQuery.setMaxResults(limit);
         }
 
-        @SuppressWarnings("unchecked")
-        List<Site> orte = new Validator().validate(siteQuery.getResultList());
+        Collection<Site> orte =
+            new Validator().validate(siteQuery.getResultList());
 
-        int size = Math.toIntExact((Long) countQuery.getSingleResult());
-
-        return new Response(authorization.filter(orte, Site.class), size);
+        return new Response(authorization.filter(orte),
+            countQuery.getSingleResult());
     }
 
     /**
@@ -173,9 +176,7 @@ public class SiteService extends LadaService {
     public Site getById(
         @PathParam("id") Integer id
     ) {
-        return authorization.filter(
-            repository.getById(Site.class, id),
-            Site.class);
+        return repository.getById(Site.class, id);
     }
 
     /**
@@ -188,11 +189,6 @@ public class SiteService extends LadaService {
     public Site create(
         @Valid Site ort
     ) throws BadRequestException {
-        authorization.authorize(
-            ort,
-            RequestMethod.POST,
-            Site.class);
-
         Site existing = ortFactory.findExistingSite(ort);
         if (existing != null) {
             ort = existing;
@@ -218,11 +214,6 @@ public class SiteService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Site ort
     ) throws BadRequestException {
-        authorization.authorize(
-            ort,
-            RequestMethod.PUT,
-            Site.class);
-
         ortFactory.completeSite(ort);
 
         return repository.update(ort);
@@ -239,10 +230,7 @@ public class SiteService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Site ort = repository.getById(Site.class, id);
-        authorization.authorize(
-            ort,
-            RequestMethod.DELETE,
-            Site.class);
+        authorization.authorize(ort, RequestMethod.DELETE);
         repository.delete(ort);
     }
 
@@ -285,10 +273,7 @@ public class SiteService extends LadaService {
             @NotBlank String dataUrl
     ) throws IOException {
         Site site = repository.getById(Site.class, id);
-        authorization.authorize(
-                site,
-                RequestMethod.PUT,
-                Site.class);
+        authorization.authorize(site, RequestMethod.PUT);
         int contentLength = request.getContentLength();
         if (contentLength == -1) {
             throw new IOException();
@@ -321,10 +306,7 @@ public class SiteService extends LadaService {
             @PathParam("type") @Pattern(regexp = "img|map") String type
     ) {
         Site site = repository.getById(Site.class, id);
-        authorization.authorize(
-                site,
-                RequestMethod.PUT,
-                Site.class);
+        authorization.authorize(site, RequestMethod.PUT);
         if (type.equals("map")) {
             site.setMap(null);
         } else {

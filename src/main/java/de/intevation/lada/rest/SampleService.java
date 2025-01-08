@@ -28,15 +28,10 @@ import jakarta.ws.rs.PathParam;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import de.intevation.lada.factory.ProbeFactory;
-import de.intevation.lada.lock.LockConfig;
-import de.intevation.lada.lock.LockType;
-import de.intevation.lada.lock.ObjectLocker;
+import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
@@ -65,18 +60,10 @@ public class SampleService extends LadaService {
     private Repository repository;
 
     /**
-     * The authorization module.
-     */
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
-
-    /**
      * The object lock mechanism.
      */
     @Inject
-    @LockConfig(type = LockType.TIMESTAMP)
-    private ObjectLocker lock;
+    private TimestampLocker<Sample> lock;
 
     /**
      * The factory to create Sample objects.
@@ -139,9 +126,7 @@ public class SampleService extends LadaService {
     public Sample getById(
         @PathParam("id") Integer id
     ) {
-        return this.authorization.filter(
-            repository.getById(Sample.class, id),
-            Sample.class);
+        return repository.getById(Sample.class, id);
     }
 
     /**
@@ -157,16 +142,9 @@ public class SampleService extends LadaService {
     public Sample create(
         @Valid Sample probe
     ) throws BadRequestException {
-        authorization.authorize(
-                probe,
-                RequestMethod.POST,
-                Sample.class);
-
         setEnvAttrs(probe);
 
-        return authorization.filter(
-            repository.create(probe),
-            Sample.class);
+        return repository.create(probe);
     }
 
     /**
@@ -208,10 +186,8 @@ public class SampleService extends LadaService {
                 // authorize the user to create probe objects.
                 Sample testProbe = new Sample();
                 testProbe.setMeasFacilId(messprogramm.getMeasFacilId());
-                if (!authorization.isAuthorized(
-                        testProbe,
-                        RequestMethod.POST,
-                        Sample.class)
+                if (
+                    !authorization.isAuthorized(testProbe, RequestMethod.POST)
                 ) {
                     data.put("success", false);
                     data.put("message", StatusCodes.NOT_ALLOWED);
@@ -267,17 +243,11 @@ public class SampleService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Sample probe
     ) throws BadRequestException {
-        authorization.authorize(
-            probe,
-            RequestMethod.PUT,
-            Sample.class);
         lock.isLocked(probe);
 
         setEnvAttrs(probe);
 
-        return authorization.filter(
-            repository.update(probe),
-            Sample.class);
+        return repository.update(probe);
     }
 
     /**
@@ -291,10 +261,7 @@ public class SampleService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Sample probeObj = repository.getById(Sample.class, id);
-        authorization.authorize(
-            probeObj,
-            RequestMethod.DELETE,
-            Sample.class);
+        authorization.authorize(probeObj, RequestMethod.DELETE);
         repository.delete(probeObj);
     }
 

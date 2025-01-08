@@ -18,6 +18,9 @@ import org.hibernate.boot.spi.MetadataBuildingContext;
  * and snake_case (database) names.
  */
 public class NamingStrategy extends ImplicitNamingStrategyJpaCompliantImpl {
+
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected Identifier toIdentifier(
         String stringForm, MetadataBuildingContext buildingContext

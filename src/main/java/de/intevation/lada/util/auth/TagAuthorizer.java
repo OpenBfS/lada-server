@@ -8,7 +8,6 @@
 
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -19,66 +18,47 @@ import de.intevation.lada.util.rest.RequestMethod;
  *
  * @author Alexander Woestmann <awoestmann@intevation.de>
  */
-public class TagAuthorizer extends BaseAuthorizer {
+class TagAuthorizer extends Authorizer<Tag> {
 
-    public TagAuthorizer(Repository repository) {
-        super(repository);
+    TagAuthorizer(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        super(userInfo, repository);
     }
 
     @Override
-    public <T> String isAuthorizedReason(
-        Object data,
-        RequestMethod method,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        Tag tag = (Tag) data;
+    void authorize(
+        Tag tag,
+        RequestMethod method
+    ) throws AuthorizationException {
         if (tag.getNetworkId() != null) {
             // Netzbetreiber tags may only be edited by stamm users
             switch (method) {
             case GET:
             case POST:
-                return userInfo.getNetzbetreiber().contains(
-                    tag.getNetworkId())
-                    ? null : I18N_KEY_FORBIDDEN;
+                if (userInfo.getNetzbetreiber().contains(tag.getNetworkId())) {
+                    return;
+                }
+                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
             case PUT:
             case DELETE:
-                return userInfo.getFunktionenForNetzbetreiber(
+                if (userInfo.getFunktionenForNetzbetreiber(
                     tag.getNetworkId()).contains(4)
-                    ? null : I18N_KEY_FORBIDDEN;
+                ) {
+                    return;
+                }
+                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
             default:
-                return I18N_KEY_FORBIDDEN;
+                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
             }
-        } else if (tag.getMeasFacilId() != null) {
+        } else if (tag.getMeasFacilId() != null
             // Tags my only be edited by members of the referenced Messstelle
-            return userInfo.getMessstellen().contains(tag.getMeasFacilId())
-                ? null : I18N_KEY_FORBIDDEN;
-        } else {
-            // Global tags (and anything unknown) can not be edited
-            return I18N_KEY_FORBIDDEN;
+            && userInfo.getMessstellen().contains(tag.getMeasFacilId())
+        ) {
+            return;
         }
-    }
-
-    @Override
-    public <T> boolean isAuthorizedById(Object id, RequestMethod method,
-        UserInfo userInfo, Class<T> clazz) {
-        Tag tag = repository.getById(Tag.class, id);
-        return isAuthorized(tag, method, userInfo, clazz);
-    }
-
-    @Override
-    public <T extends BaseModel> void setAuthAttrs(
-        BaseModel data,
-        UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        if (data instanceof Tag) {
-            setAuthData(userInfo, (Tag) data);
-        }
-    }
-
-    private void setAuthData(UserInfo userInfo, Tag tag) {
-        tag.setReadonly(!isAuthorized(tag, RequestMethod.PUT,
-            userInfo, Tag.class));
+        // Global tags (and anything unknown) can not be edited
+        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
     }
 }

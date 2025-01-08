@@ -32,6 +32,7 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
@@ -133,6 +134,9 @@ public class LafObjectMapper {
 
     @Inject
     private Repository repository;
+
+    @Inject
+    private I18n i18n;
 
     @Inject
     private ProbeFactory factory;
@@ -256,9 +260,7 @@ public class LafObjectMapper {
         }
 
         // Check if the user is authorized to create the probe
-        if (
-            !authorizer.isAuthorized(probe, RequestMethod.POST, Sample.class)
-        ) {
+        if (!authorizer.isAuthorized(probe, RequestMethod.POST)) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
             err.setKey(userInfo.getName());
@@ -279,12 +281,13 @@ public class LafObjectMapper {
             Sample old = (Sample) probeIdentifier.getExisting();
             // Matching probe was found in the db. Update it!
             if (i == Identified.UPDATE) {
-                oldProbeIsReadonly = authorizer.isProbeReadOnly(old.getId());
                 if (
-                    // TODO: Should use RequestMethod.PUT?
-                    authorizer.isAuthorized(
-                        old, RequestMethod.GET, Sample.class)
+                    // Check if user belongs to matching measFacil
+                    authorizer.isAuthorized(old, RequestMethod.POST)
                 ) {
+                    // Check if sample is read-only due to status
+                    oldProbeIsReadonly = authorizer.isAuthorized(
+                        old, RequestMethod.PUT);
                     if (oldProbeIsReadonly) {
                         newProbe = old;
                         currentNotifications.add(
@@ -653,9 +656,7 @@ public class LafObjectMapper {
             addMessungAttribute(attribute, messung);
         }
         // Check if the user is authorized to create the object
-        if (
-            !authorizer.isAuthorized(messung, RequestMethod.POST, Measm.class)
-        ) {
+        if (!authorizer.isAuthorized(messung, RequestMethod.POST)) {
             ReportItem warn = new ReportItem();
             warn.setCode(StatusCodes.NOT_ALLOWED);
             warn.setKey(userInfo.getName());
@@ -677,13 +678,10 @@ public class LafObjectMapper {
             return;
         }
         Measm newMessung;
-        boolean oldMessungIsReadonly = false;
         Measm old = (Measm) messungIdentifier.getExisting();
         switch (ident) {
         case UPDATE:
-            oldMessungIsReadonly =
-                authorizer.isMessungReadOnly(old.getId());
-            if (oldMessungIsReadonly) {
+            if (!authorizer.isAuthorized(old, RequestMethod.PUT)) {
                 currentNotifications.add(
                     new ReportItem(
                         "messung",
@@ -1149,10 +1147,8 @@ public class LafObjectMapper {
             return false;
         }
         // get current status kombi
-        StatusProt currentStatus = repository.getById(
-            StatusProt.class, messung.getStatus());
         StatusMp currentKombi = repository.getById(
-            StatusMp.class, currentStatus.getStatusMpId());
+            StatusMp.class, messung.getStatusProt().getStatusMpId());
         // check if erreichbar
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)
@@ -1222,18 +1218,7 @@ public class LafObjectMapper {
         }
 
         // check auth
-        MeasFacil messStelle =
-            repository.getById(MeasFacil.class, mstId);
-        if ((statusStufe == 1
-                && userInfo.getFunktionenForMst(mstId).contains(1))
-            || (statusStufe == 2
-                && userInfo.getNetzbetreiber().contains(
-                    messStelle.getNetworkId())
-                && userInfo.getFunktionenForNetzbetreiber(
-                    messStelle.getNetworkId()).contains(2))
-            || (statusStufe == 3
-                && userInfo.getFunktionen().contains(3))
-        ) {
+        if (authorizer.isAuthorized(newStatus, RequestMethod.POST)) {
             //persist newStatus if authorized to do so
             repository.create(newStatus);
             if (newKombi == 0 || newKombi == 9 || newKombi == 13) {
@@ -1241,7 +1226,6 @@ public class LafObjectMapper {
             } else {
                 messung.setIsCompleted(true);
             }
-            messung.setStatus(newStatus.getId());
             repository.update(messung);
             return true;
         } else {
@@ -2045,7 +2029,8 @@ public class LafObjectMapper {
      */
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
-        this.authorizer = new HeaderAuthorization(userInfo, this.repository);
+        this.authorizer = new HeaderAuthorization(
+            userInfo, this.i18n, this.repository);
     }
 
     /**
