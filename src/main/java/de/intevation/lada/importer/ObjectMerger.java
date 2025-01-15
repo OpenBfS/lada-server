@@ -10,7 +10,6 @@ package de.intevation.lada.importer;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.persistence.PersistenceException;
 
 import org.jboss.logging.Logger;
 
@@ -206,22 +205,11 @@ public class ObjectMerger {
             }
             return this;
         }
-        try {
-            for (int i = 0; i < found.size(); i++) {
-                repository.delete(found.get(i));
-            }
-            for (int i = 0; i < messwerte.size(); i++) {
-                repository.create(messwerte.get(i));
-            }
-        } catch (SecurityException
-            | IllegalStateException
-            | PersistenceException e
-        ) {
-            // Restore messwerte.
-            logger.debug("exception: ", e);
-            for (int i = 0; i < found.size(); i++) {
-                repository.update(found.get(i));
-            }
+        for (int i = 0; i < found.size(); i++) {
+            repository.delete(found.get(i));
+        }
+        for (int i = 0; i < messwerte.size(); i++) {
+            repository.create(messwerte.get(i));
         }
         return this;
     }
@@ -246,21 +234,10 @@ public class ObjectMerger {
             repository.create(ort);
             return this;
         }
-        try {
-            for (int i = 0; i < found.size(); i++) {
-                repository.delete(found.get(i));
-            }
-            repository.create(ort);
-        } catch (SecurityException
-            | IllegalStateException
-            | PersistenceException e
-        ) {
-            // Restore orte.
-            logger.debug("exception: ", e);
-            for (int i = 0; i < found.size(); i++) {
-                repository.update(found.get(i));
-            }
+        for (int i = 0; i < found.size(); i++) {
+            repository.delete(found.get(i));
         }
+        repository.create(ort);
         return this;
     }
 
