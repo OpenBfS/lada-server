@@ -10,6 +10,7 @@ package de.intevation.lada.importer;
 import java.util.List;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
 
 import org.jboss.logging.Logger;
 
@@ -195,21 +196,16 @@ public class ObjectMerger {
         List<MeasVal> messwerte
     ) {
         QueryBuilder<MeasVal> builder =
-            repository.queryBuilder(MeasVal.class);
-        builder.and(MeasVal_.measmId, target.getId());
+            repository.queryBuilder(MeasVal.class)
+            .and(MeasVal_.measmId, target.getId());
         List<MeasVal> found =
             repository.filter(builder.getQuery());
-        if (found.isEmpty()) {
-            for (int i = 0; i < messwerte.size(); i++) {
-                repository.create(messwerte.get(i));
-            }
-            return this;
+        // Replace existing measVals, if any
+        for (MeasVal m: found) {
+            repository.delete(m);
         }
-        for (int i = 0; i < found.size(); i++) {
-            repository.delete(found.get(i));
-        }
-        for (int i = 0; i < messwerte.size(); i++) {
-            repository.create(messwerte.get(i));
+        for (MeasVal m: messwerte) {
+            repository.create(m);
         }
         return this;
     }
@@ -224,18 +220,16 @@ public class ObjectMerger {
         int probeId,
         Geolocat ort
     ) {
-        QueryBuilder<Geolocat> builder =
-            repository.queryBuilder(Geolocat.class);
-        builder.and(Geolocat_.sampleId, probeId);
-        builder.and(Geolocat_.typeRegulation, "E");
-        List<Geolocat> found =
-            repository.filter(builder.getQuery());
-        if (found.isEmpty()) {
-            repository.create(ort);
-            return this;
-        }
-        for (int i = 0; i < found.size(); i++) {
-            repository.delete(found.get(i));
+        try {
+            // Replace existing location
+            QueryBuilder<Geolocat> builder =
+                repository.queryBuilder(Geolocat.class)
+                .and(Geolocat_.sampleId, probeId)
+                .and(Geolocat_.typeRegulation, "E");
+            Geolocat found = repository.getSingle(builder.getQuery());
+            repository.delete(found);
+        } catch (NoResultException e) {
+            // Nothing to replace
         }
         repository.create(ort);
         return this;
