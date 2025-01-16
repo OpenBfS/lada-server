@@ -237,13 +237,13 @@ public class Site extends BaseModel implements Serializable {
     @JsonbTransient
     private Set<GeolocatMpg> geolocatMpgs;
 
-    // Let's hope that hibernate will always give master.site the alias "s1_0"
+    // "{alias}" will be replaced by hibernate with alias for master.site
     @Formula("""
         (SELECT count(DISTINCT s.id) FROM lada.geolocat g
         JOIN lada.sample s ON g.sample_id=s.id
         JOIN lada.measm m ON s.id=m.sample_id
         JOIN lada.status_prot sp ON m.status=sp.id
-        WHERE s1_0.id = g.site_id AND sp.status_mp_id IN (2,6,10))""")
+        WHERE {alias}.id = g.site_id AND sp.status_mp_id IN (2,6,10))""")
     private Integer plausibleReferenceCount;
 
 
