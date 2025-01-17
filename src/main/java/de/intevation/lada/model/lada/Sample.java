@@ -234,10 +234,19 @@ public class Sample extends BaseModel implements Serializable {
     private Set<CommSample> commSamples;
 
 
-    @OneToMany(mappedBy = SampleSpecifMeasVal_.SAMPLE, cascade = {
-            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = SampleSpecifMeasVal_.SAMPLE,
+        cascade = {
+            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE },
+            fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<SampleSpecifMeasVal> sampleSpecifMeasVals;
+
+    @OneToMany(mappedBy = Geolocat_.SAMPLE,
+        cascade = {
+            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE },
+            fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<Geolocat> geolocats;
 
     @Transient
     private boolean owner;
@@ -508,6 +517,15 @@ public class Sample extends BaseModel implements Serializable {
     public void setSampleSpecifMeasVals(
         Set<SampleSpecifMeasVal> sampleSpecifMeasVals) {
         this.sampleSpecifMeasVals = sampleSpecifMeasVals;
+    }
+
+    public Set<Geolocat> getGeolocats() {
+        return this.geolocats;
+    }
+
+    public void setGeolocats(
+            Set<Geolocat> geolocats) {
+        this.geolocats = geolocats;
     }
 
     public boolean isOwner() {

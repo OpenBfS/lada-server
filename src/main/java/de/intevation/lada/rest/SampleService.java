@@ -284,5 +284,6 @@ public class SampleService extends LadaService {
         probe.setMeasms(null);
         probe.setTags(null);
         probe.setSampleSpecifMeasVals(null);
+        probe.setGeolocats(null);
     }
 }
