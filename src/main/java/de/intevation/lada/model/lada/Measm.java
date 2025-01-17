@@ -121,6 +121,13 @@ public class Measm extends BelongsToSample implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<CommMeasm> commMeasms;
 
+    @OneToMany(mappedBy = MeasVal_.MEASM,
+        cascade = {
+            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE },
+        fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<MeasVal> measVals;
+
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date treeMod;
@@ -260,6 +267,14 @@ public class Measm extends BelongsToSample implements Serializable {
 
     public void setCommMeasms(Set<CommMeasm> commMeasms) {
         this.commMeasms = commMeasms;
+    }
+
+    public Set<MeasVal> getMeasVals() {
+        return this.measVals;
+    }
+
+    public void setMeasVals(Set<MeasVal> measVals) {
+        this.measVals = measVals;
     }
 }
 

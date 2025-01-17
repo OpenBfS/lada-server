@@ -181,6 +181,7 @@ public class MeasValService extends LadaService {
         MeasVal messwertObj = repository.getById(MeasVal.class, id);
         authorization.authorize(messwertObj, RequestMethod.DELETE);
         lock.isLocked(messwertObj);
+        messwertObj.getMeasm().getMeasVals().remove(messwertObj);
         repository.delete(messwertObj);
     }
 }

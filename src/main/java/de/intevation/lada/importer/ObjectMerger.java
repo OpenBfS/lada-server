@@ -202,6 +202,7 @@ public class ObjectMerger {
             repository.filter(builder.getQuery());
         // Replace existing measVals, if any
         for (MeasVal m: found) {
+            target.getMeasVals().remove(m);
             repository.delete(m);
         }
         for (MeasVal m: messwerte) {
