@@ -16,9 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
@@ -47,32 +44,11 @@ public class LafImportJob extends Job {
 
     private Map<String, String> files;
 
-    private JsonObject result;
-
     @Inject
     private TagUtil tagUtil;
 
     public void cleanup() {
         //Intentionally left blank
-    }
-
-    /**
-     * Create a result json using a status code and message.
-     * @param success True if import was successful
-     * @param status Status code
-     * @param data Message String
-     * @return Result as JsonObject
-     */
-    private JsonObject createResult(boolean success, int status, String data) {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add("success", success)
-        .add("status", status)
-        .add("data", data);
-        return builder.build();
-    }
-
-    public JsonObject getResult() {
-        return result;
     }
 
     public Map<String, Map<String, Object>> getImportData() {
