@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.test.land;
 
+import java.util.Optional;
 import java.util.Set;
 
 import jakarta.json.Json;
@@ -92,6 +93,8 @@ public class AssociationTest extends ServiceTest {
         site = create(sitePath, site, Site.class);
         Geolocat geolocat = getGeolocat(TYPE_REGULATION_E, site);
         Measm measm = getMeasm(mmtId);
+        MeasVal measValSample = getMeasVal(56, 207);
+        measm.setMeasVals(Set.of(measValSample));
         Tag tag = getTag(measFacilId);
         SampleSpecifMeasVal sampleSpecifMeasVal =
             getSampleSpecificMeasVal("A74");
@@ -112,6 +115,9 @@ public class AssociationTest extends ServiceTest {
         Set<SampleSpecifMeasVal> createdSampleSpecifMeasVals = created
             .getSampleSpecifMeasVals();
         Set<Geolocat> createdGeolocats = created.getGeolocats();
+        Optional<Measm> ms = createdMeasms.stream().findFirst();
+        Measm createdMeasm = ms.get();
+        Assert.assertEquals(1, createdMeasm.getMeasVals().size());
         assertRelatedObjectsArePresent(
             createdMeasms,
             createdTags,
@@ -133,8 +139,7 @@ public class AssociationTest extends ServiceTest {
         Measm newMeasm = new Measm();
         newMeasm.setMmtId(mmtId);
         newMeasm.setSample(created);
-        Measm createdMeasm = create(measmPath, newMeasm, Measm.class);
-
+        createdMeasm = create(measmPath, newMeasm, Measm.class);
         MeasVal measVal = getMeasVal(56, 208);
         measVal.setMeasm(createdMeasm);
         measVal = create(measValPath, measVal, MeasVal.class);
@@ -315,6 +320,10 @@ public class AssociationTest extends ServiceTest {
             "minSampleId", JsonValue.NULL, Json.createValue("XX"));
 
         // Associated objects can be deleted
+        for (MeasVal mv : createdMeasVals) {
+            delete(measValPath + mv.getId());
+        }
+
         for (Measm m: createdMeasms) {
             delete(measmPath + m.getId());
         }
