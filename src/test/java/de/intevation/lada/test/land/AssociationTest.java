@@ -85,8 +85,8 @@ public class AssociationTest extends ServiceTest {
         String commMeasmText = "Testkommentar";
         String TYPE_REGULATION_E = "E";
         String TYPE_REGULATION_U = "U";
-        String TYPE_REGULATION_R = "R";
 
+        // Setup Sample
         Sample sample = getSample(measFacilId);
         CommSample commSample = getCommSample(measFacilId, comment);
         Site site = createMinimalSite();
@@ -105,10 +105,14 @@ public class AssociationTest extends ServiceTest {
         sample.setSampleSpecifMeasVals(Set.of(sampleSpecifMeasVal));
         sample.setGeolocats(Set.of(geolocat));
 
+        // Create Sample via $samplePath
         Sample created = create(samplePath, sample, Sample.class);
         assertSampleServiceIgnoresRelatedObjects(created);
 
+        // Create Sample via $laf9Path
         created = create(laf9Path, sample, Sample.class);
+
+        // Extract properties to test for
         Set<Measm> createdMeasms = created.getMeasms();
         Set<Tag> createdTags = created.getTags();
         Set<CommSample> createdCommSamples = created.getCommSamples();
@@ -125,6 +129,7 @@ public class AssociationTest extends ServiceTest {
             createdSampleSpecifMeasVals,
             createdGeolocats);
 
+        // Retrieve Sample via $samplePath
         created = get(samplePath + created.getId(), Sample.class);
         assertAssociatedObjectsAreReturned(
             created,
@@ -137,17 +142,23 @@ public class AssociationTest extends ServiceTest {
 
         // Created measm is correctly associated
         Measm newMeasm = new Measm();
+        MeasVal measVal = getMeasVal(56, 208);
+        CommMeasm commMeasm = getCommMeasm(commMeasmText, measFacilId);
         newMeasm.setMmtId(mmtId);
         newMeasm.setSample(created);
+        newMeasm.setMeasVals(Set.of(measVal));
+        newMeasm.setCommMeasms(Set.of(commMeasm));
         createdMeasm = create(measmPath, newMeasm, Measm.class);
-        MeasVal measVal = getMeasVal(56, 208);
+
+        testMeasmAssociationsAreCleared(createdMeasm);
+
+        // Add associations to newly created Measm
         measVal.setMeasm(createdMeasm);
         measVal = create(measValPath, measVal, MeasVal.class);
         MeasVal measVal2 = getMeasVal(57, 207);
         measVal2.setMeasm(createdMeasm);
         measVal2 = create(measValPath, measVal2, MeasVal.class);
 
-        CommMeasm commMeasm = getCommMeasm(commMeasmText, measFacilId);
         commMeasm.setMeasm(createdMeasm);
         commMeasm = create(commMeasmPath, commMeasm, CommMeasm.class);
         CommMeasm commMeasm2 = getCommMeasm("new Comment", measFacilId);
@@ -155,6 +166,8 @@ public class AssociationTest extends ServiceTest {
         commMeasm2 = create(commMeasmPath, commMeasm2, CommMeasm.class);
         createdMeasm = get(measmPath + createdMeasm.getId(),
             Measm.class);
+
+        // Add associations to created Sample
         CommSample newCommSample = getCommSample(measFacilId, "new Comment");
         SampleSpecifMeasVal newSampleSpecifMeasVal =
             getSampleSpecificMeasVal("A75");
@@ -191,6 +204,298 @@ public class AssociationTest extends ServiceTest {
                 + "?measmId=" + createdMeasm.getId(),
                 new GenericType<Set<MeasVal>>() {
                 });
+
+        testOneToMany(
+            createdMeasms,
+            createdCommSamples,
+            createdSampleSpecifMeasVals,
+            createdGeolocats, createdMeasm,
+            measVal,
+            measVal2,
+            commMeasm,
+            commMeasm2,
+            newCommSample,
+            newSampleSpecifMeasVal,
+            newGeolocat,
+            createdCommMeasms,
+            createdMeasVals);
+
+        testManyToOne(
+            created,
+            createdMeasm,
+            measVal,
+            measVal2,
+            commMeasm,
+            commMeasm2,
+            newCommSample,
+            newSampleSpecifMeasVal,
+            newGeolocat);
+
+        // Associated objects in PUT payload should be ignored
+        created.setMainSampleId("X");
+        Sample updated = assertAssociatedUnchanged(
+            created,
+            createdMeasms,
+            createdTags,
+            createdCommSamples,
+            createdSampleSpecifMeasVals,
+            createdGeolocats);
+
+        addSecondMeasm(measFacilId, mmtId, site, updated);
+
+        updated = assertAssociatedUnchanged(
+            updated,
+            createdMeasms,
+            createdTags,
+            createdCommSamples,
+            createdSampleSpecifMeasVals,
+            createdGeolocats);
+
+        emptyingAssociations(updated);
+
+            updated = assertAssociatedUnchanged(
+            updated,
+            createdMeasms,
+            createdTags,
+            createdCommSamples,
+            createdSampleSpecifMeasVals,
+            createdGeolocats);
+
+        clearingAssociations(updated);
+
+        updated = assertAssociatedUnchanged(
+            updated,
+            createdMeasms,
+            createdTags,
+            createdCommSamples,
+            createdSampleSpecifMeasVals,
+            createdGeolocats);
+
+        // Associated measm can be updated
+        update(measmPath + createdMeasm.getId(),
+            "minSampleId", JsonValue.NULL, Json.createValue("XX"));
+
+        deleteAssociatedObjects(
+            createdMeasms,
+            createdTags,
+            createdCommSamples,
+            createdSampleSpecifMeasVals,
+            createdGeolocats,
+            createdMeasVals);
+
+        testAssociationsAreNotrestoredByUpdate(updated);
+
+        created = testSampleCouldBeDeleted(sample, tag);
+
+        testAssociationsAreDeleted(
+            created,
+            createdCommMeasms,
+            createdMeasVals);
+
+        testAssociatedTagsExist(created);
+    }
+
+    private void testMeasmAssociationsAreCleared(Measm createdMeasm) {
+        Assert.assertTrue(createdMeasm.getCommMeasms().isEmpty());
+        Assert.assertTrue(createdMeasm.getMeasVals().isEmpty());
+    }
+
+    private void testAssociatedTagsExist(Sample created) {
+        Assert.assertFalse(created.getTags().isEmpty());
+        for (Tag t: created.getTags()) {
+            get(tagPath + t.getId());
+        }
+    }
+
+    private Sample testSampleCouldBeDeleted(Sample sample, Tag tag) {
+        Sample created;
+        tag.setName("another association test");
+        created = create(laf9Path, sample, Sample.class);
+        delete(samplePath + created.getId());
+        return created;
+    }
+
+    private void testAssociationsAreNotrestoredByUpdate(Sample updated) {
+        Assert.assertFalse(updated.getMeasms().isEmpty());
+        Assert.assertFalse(updated.getTags().isEmpty());
+        Assert.assertFalse(updated.getCommSamples().isEmpty());
+        Assert.assertFalse(updated.getSampleSpecifMeasVals().isEmpty());
+        Assert.assertFalse(updated.getGeolocats().isEmpty());
+        updated.setMainSampleId("Y");
+        updated = target.path(samplePath)
+            .path(String.valueOf(updated.getId()))
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .put(Entity.entity(updated, MediaType.APPLICATION_JSON),
+                Sample.class);
+        Assert.assertTrue(updated.getMeasms().isEmpty());
+        Assert.assertTrue(updated.getTags().isEmpty());
+        Assert.assertTrue(updated.getCommSamples().isEmpty());
+        Assert.assertTrue(updated.getSampleSpecifMeasVals().isEmpty());
+        Assert.assertTrue(updated.getGeolocats().isEmpty());
+    }
+
+    private void testAssociationsAreDeleted(
+            Sample created,
+            Set<CommMeasm> createdCommMeasms,
+            Set<MeasVal> createdMeasVals) {
+        Assert.assertFalse(created.getMeasms().isEmpty());
+        Assert.assertFalse(created.getCommSamples().isEmpty());
+        Assert.assertFalse(created.getSampleSpecifMeasVals().isEmpty());
+        Assert.assertFalse(created.getGeolocats().isEmpty());
+
+        for (Measm m: created.getMeasms()) {
+            get(measmPath + m.getId(), Response.Status.NOT_FOUND);
+        }
+
+        for (CommSample cs : created.getCommSamples()) {
+            get(commSamplePath + cs.getId(), Response.Status.NOT_FOUND);
+        }
+
+        for (SampleSpecifMeasVal spm : created.getSampleSpecifMeasVals()) {
+            get(sampleSpecificMeasValPath + spm.getId(),
+                Response.Status.NOT_FOUND);
+        }
+
+        for (CommMeasm cm : createdCommMeasms) {
+            get(commMeasmPath + cm.getId(),
+                    Response.Status.NOT_FOUND);
+        }
+
+        for (Geolocat loc : created.getGeolocats()) {
+            get(geolocatPath + loc.getId(), Response.Status.NOT_FOUND);
+        }
+
+        for (MeasVal m : createdMeasVals) {
+            get(measValPath + m.getId(),
+                    Response.Status.NOT_FOUND);
+        }
+    }
+
+    private void deleteAssociatedObjects(
+            Set<Measm> createdMeasms,
+            Set<Tag> createdTags,
+            Set<CommSample> createdCommSamples,
+            Set<SampleSpecifMeasVal> createdSampleSpecifMeasVals,
+            Set<Geolocat> createdGeolocats,
+            Set<MeasVal> createdMeasVals) {
+        for (MeasVal mv : createdMeasVals) {
+            delete(measValPath + mv.getId());
+        }
+
+        for (Measm m: createdMeasms) {
+            delete(measmPath + m.getId());
+        }
+
+        for (Tag t: createdTags) {
+            delete(tagPath + t.getId());
+        }
+
+        for (CommSample cm: createdCommSamples){
+            delete(commSamplePath + cm.getId());
+        }
+
+        for (SampleSpecifMeasVal smsmv: createdSampleSpecifMeasVals){
+            delete(sampleSpecificMeasValPath + smsmv.getId());
+        }
+
+        for (Geolocat loc: createdGeolocats) {
+            delete(geolocatPath + loc.getId());
+        }
+    }
+
+    private void clearingAssociations(Sample updated) {
+        updated.setMeasms(null);
+        updated.setTags(null);
+        updated.setCommSamples(null);
+        updated.setSampleSpecifMeasVals(null);
+    }
+
+    private void emptyingAssociations(Sample updated) {
+        updated.getMeasms().clear();
+        updated.getTags().clear();
+        updated.getCommSamples().clear();
+        updated.getSampleSpecifMeasVals().clear();
+    }
+
+    private void addSecondMeasm(String measFacilId,
+            String mmtId,
+            Site site,
+            Sample updated) {
+        String TYPE_REGULATION_R = "R";
+        Measm measm2 = new Measm();
+        measm2.setMmtId(mmtId);
+        Tag tag2 = new Tag();
+        tag2.setName("another tag");
+        CommMeasm commMeasm3 = getCommMeasm("new Comment2", measFacilId);
+        MeasVal measVal3 = getMeasVal(56, 209);
+        measm2.setMeasVals(Set.of(measVal3));
+        CommSample commSample2 = getCommSample(measFacilId,
+            "new comment2");
+        SampleSpecifMeasVal sampleSpecifMeasVal2 =
+                getSampleSpecificMeasVal("A76");
+        Geolocat loc3 = getGeolocat(TYPE_REGULATION_R, site);
+        measm2.setCommMeasms(Set.of(commMeasm3));
+        updated.getMeasms().add(measm2);
+        updated.getTags().add(tag2);
+        updated.getCommSamples().add(commSample2);
+        updated.getSampleSpecifMeasVals().add(sampleSpecifMeasVal2);
+        updated.getGeolocats().add(loc3);
+    }
+
+    private void testManyToOne(
+            Sample created,
+            Measm createdMeasm,
+            MeasVal measVal,
+            MeasVal measVal2,
+            CommMeasm commMeasm,
+            CommMeasm commMeasm2,
+            CommSample newCommSample,
+            SampleSpecifMeasVal newSampleSpecifMeasVal,
+            Geolocat newGeolocat) {
+        Assert.assertEquals(created.getId().intValue(),
+            get(measmPath + createdMeasm.getId(), JsonObject.class)
+                .getInt("sampleId"));
+
+        Assert.assertEquals(created.getId().intValue(),
+            get(commSamplePath + newCommSample.getId(), JsonObject.class)
+                 .getInt("sampleId"));
+
+        String url = sampleSpecificMeasValPath + newSampleSpecifMeasVal.getId();
+        Assert.assertEquals(created.getId().intValue(),
+                get(url, JsonObject.class)
+                        .getInt("sampleId"));
+
+        Assert.assertEquals(createdMeasm.getId().intValue(),
+                get(commMeasmPath + commMeasm.getId(), JsonObject.class)
+                        .getInt("measmId"));
+        Assert.assertEquals(createdMeasm.getId().intValue(),
+                get(commMeasmPath + commMeasm2.getId(), JsonObject.class)
+                        .getInt("measmId"));
+        Assert.assertEquals(createdMeasm.getId().intValue(),
+                get(measValPath + measVal.getId(), JsonObject.class)
+                        .getInt("measmId"));
+        Assert.assertEquals(createdMeasm.getId().intValue(),
+                get(measValPath + measVal2.getId(), JsonObject.class)
+                        .getInt("measmId"));
+        Assert.assertEquals(created.getId().intValue(),
+                get(geolocatPath + newGeolocat.getId(), JsonObject.class)
+                        .getInt("sampleId"));
+    }
+
+    private void testOneToMany(
+            Set<Measm> createdMeasms,
+            Set<CommSample> createdCommSamples,
+            Set<SampleSpecifMeasVal> createdSampleSpecifMeasVals,
+            Set<Geolocat> createdGeolocats, Measm createdMeasm,
+            MeasVal measVal, MeasVal measVal2,
+            CommMeasm commMeasm, CommMeasm commMeasm2,
+            CommSample newCommSample,
+            SampleSpecifMeasVal newSampleSpecifMeasVal,
+            Geolocat newGeolocat,
+            Set<CommMeasm> createdCommMeasms,
+            Set<MeasVal> createdMeasVals) {
         Assert.assertEquals(2, createdCommMeasms.size());
         Assert.assertEquals(2, createdMeasVals.size());
         Assert.assertEquals(2, createdMeasms.size());
@@ -226,187 +531,6 @@ public class AssociationTest extends ServiceTest {
         MatcherAssert.assertThat(
                 createdGeolocats.stream().map(m -> m.getId()).toList(),
                 CoreMatchers.hasItem(newGeolocat.getId()));
-
-        // Check ManyToOne side
-        Assert.assertEquals(created.getId().intValue(),
-            get(measmPath + createdMeasm.getId(), JsonObject.class)
-                .getInt("sampleId"));
-
-        Assert.assertEquals(created.getId().intValue(),
-            get(commSamplePath + newCommSample.getId(), JsonObject.class)
-                 .getInt("sampleId"));
-
-        String url = sampleSpecificMeasValPath + newSampleSpecifMeasVal.getId();
-        Assert.assertEquals(created.getId().intValue(),
-                get(url, JsonObject.class)
-                        .getInt("sampleId"));
-
-        Assert.assertEquals(createdMeasm.getId().intValue(),
-                get(commMeasmPath + commMeasm.getId(), JsonObject.class)
-                        .getInt("measmId"));
-        Assert.assertEquals(createdMeasm.getId().intValue(),
-                get(commMeasmPath + commMeasm2.getId(), JsonObject.class)
-                        .getInt("measmId"));
-        Assert.assertEquals(createdMeasm.getId().intValue(),
-                get(measValPath + measVal.getId(), JsonObject.class)
-                        .getInt("measmId"));
-        Assert.assertEquals(createdMeasm.getId().intValue(),
-                get(measValPath + measVal2.getId(), JsonObject.class)
-                        .getInt("measmId"));
-        Assert.assertEquals(created.getId().intValue(),
-                get(geolocatPath + newGeolocat.getId(), JsonObject.class)
-                        .getInt("sampleId"));
-
-        // Associated objects in PUT payload should be ignored
-        created.setMainSampleId("X");
-        Sample updated = assertAssociatedUnchanged(
-            created,
-            createdMeasms,
-            createdTags,
-            createdCommSamples,
-            createdSampleSpecifMeasVals,
-            createdGeolocats);
-
-        Measm measm2 = new Measm();
-        measm2.setMmtId(mmtId);
-        Tag tag2 = new Tag();
-        tag2.setName("another tag");
-        CommMeasm commMeasm3 = getCommMeasm("new Comment2", measFacilId);
-        MeasVal measVal3 = getMeasVal(56, 209);
-        measm2.setMeasVals(Set.of(measVal3));
-        CommSample commSample2 = getCommSample(measFacilId,
-            "new comment2");
-        SampleSpecifMeasVal sampleSpecifMeasVal2 =
-                getSampleSpecificMeasVal("A76");
-        Geolocat loc3 = getGeolocat(TYPE_REGULATION_R, site);
-        measm2.setCommMeasms(Set.of(commMeasm3));
-        updated.getMeasms().add(measm2);
-        updated.getTags().add(tag2);
-        updated.getCommSamples().add(commSample2);
-        updated.getSampleSpecifMeasVals().add(sampleSpecifMeasVal2);
-        updated.getGeolocats().add(loc3);
-        updated = assertAssociatedUnchanged(
-            updated,
-            createdMeasms,
-            createdTags,
-            createdCommSamples,
-            createdSampleSpecifMeasVals,
-            createdGeolocats);
-        updated.getMeasms().clear();
-        updated.getTags().clear();
-        updated.getCommSamples().clear();
-        updated.getSampleSpecifMeasVals().clear();
-        updated = assertAssociatedUnchanged(
-            updated,
-            createdMeasms,
-            createdTags,
-            createdCommSamples,
-            createdSampleSpecifMeasVals,
-            createdGeolocats);
-        updated.setMeasms(null);
-        updated.setTags(null);
-        updated.setCommSamples(null);
-        updated.setSampleSpecifMeasVals(null);
-        updated = assertAssociatedUnchanged(
-            updated,
-            createdMeasms,
-            createdTags,
-            createdCommSamples,
-            createdSampleSpecifMeasVals,
-            createdGeolocats);
-
-        // Associated measm can be updated
-        update(measmPath + createdMeasm.getId(),
-            "minSampleId", JsonValue.NULL, Json.createValue("XX"));
-
-        // Associated objects can be deleted
-        for (MeasVal mv : createdMeasVals) {
-            delete(measValPath + mv.getId());
-        }
-
-        for (Measm m: createdMeasms) {
-            delete(measmPath + m.getId());
-        }
-
-        for (Tag t: createdTags) {
-            delete(tagPath + t.getId());
-        }
-
-        for (CommSample cm: createdCommSamples){
-            delete(commSamplePath + cm.getId());
-        }
-
-        for (SampleSpecifMeasVal smsmv: createdSampleSpecifMeasVals){
-            delete(sampleSpecificMeasValPath + smsmv.getId());
-        }
-
-        for (Geolocat loc: createdGeolocats) {
-            delete(geolocatPath + loc.getId());
-        }
-
-        // ... and are not restored by updating the associated sample
-        Assert.assertFalse(updated.getMeasms().isEmpty());
-        Assert.assertFalse(updated.getTags().isEmpty());
-        Assert.assertFalse(updated.getCommSamples().isEmpty());
-        Assert.assertFalse(updated.getSampleSpecifMeasVals().isEmpty());
-        Assert.assertFalse(updated.getGeolocats().isEmpty());
-        updated.setMainSampleId("Y");
-        updated = target.path(samplePath)
-            .path(String.valueOf(updated.getId()))
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .put(Entity.entity(updated, MediaType.APPLICATION_JSON),
-                Sample.class);
-        Assert.assertTrue(updated.getMeasms().isEmpty());
-        Assert.assertTrue(updated.getTags().isEmpty());
-        Assert.assertTrue(updated.getCommSamples().isEmpty());
-        Assert.assertTrue(updated.getSampleSpecifMeasVals().isEmpty());
-        Assert.assertTrue(updated.getGeolocats().isEmpty());
-
-        // Sample with associated objects can be deleted
-        tag.setName("another association test");
-        created = create(laf9Path, sample, Sample.class);
-        delete(samplePath + created.getId());
-
-        // Associated measms are deleted as well
-        Assert.assertFalse(created.getMeasms().isEmpty());
-        Assert.assertFalse(created.getCommSamples().isEmpty());
-        Assert.assertFalse(created.getSampleSpecifMeasVals().isEmpty());
-        Assert.assertFalse(created.getGeolocats().isEmpty());
-
-        for (Measm m: created.getMeasms()) {
-            get(measmPath + m.getId(), Response.Status.NOT_FOUND);
-        }
-
-        for (CommSample cs : created.getCommSamples()) {
-            get(commSamplePath + cs.getId(), Response.Status.NOT_FOUND);
-        }
-
-        for (SampleSpecifMeasVal spm : created.getSampleSpecifMeasVals()) {
-            get(sampleSpecificMeasValPath + spm.getId(),
-                Response.Status.NOT_FOUND);
-        }
-
-        for (CommMeasm cm : createdCommMeasms) {
-            get(commMeasmPath + cm.getId(),
-                    Response.Status.NOT_FOUND);
-        }
-
-        for (Geolocat loc : created.getGeolocats()) {
-            get(geolocatPath + loc.getId(), Response.Status.NOT_FOUND);
-        }
-
-        for (MeasVal m : createdMeasVals) {
-            get(measValPath + m.getId(),
-                    Response.Status.NOT_FOUND);
-        }
-
-        // Previously associated tags still exist
-        Assert.assertFalse(created.getTags().isEmpty());
-        for (Tag t: created.getTags()) {
-            get(tagPath + t.getId());
-        }
     }
 
     private void assertAssociatedObjectsAreReturned(

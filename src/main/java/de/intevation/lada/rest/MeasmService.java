@@ -86,6 +86,7 @@ public class MeasmService extends LadaService {
     public Measm create(
         @Valid Measm messung
     ) throws BadRequestException {
+        clearAssociations(messung);
         return repository.create(messung);
     }
 
@@ -102,7 +103,7 @@ public class MeasmService extends LadaService {
         @Valid Measm messung
     ) throws BadRequestException {
         lock.isLocked(messung);
-
+        clearAssociations(messung);
         return repository.update(messung);
     }
 
@@ -122,5 +123,17 @@ public class MeasmService extends LadaService {
 
         messungObj.getSample().getMeasms().remove(messungObj);
         repository.delete(messungObj);
+    }
+
+    /**
+     * Clears associated objects.
+     *
+     * Only laf9service allows importing of measms with associations.
+     *
+     * @param m the actual measm
+     */
+    public void clearAssociations(Measm m) {
+        m.setCommMeasms(null);
+        m.setMeasVals(null);
     }
 }
