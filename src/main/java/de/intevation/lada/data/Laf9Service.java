@@ -17,6 +17,7 @@ import jakarta.ws.rs.POST;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -24,8 +25,10 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.rest.LadaService;
 import de.intevation.lada.rest.TagLinkService;
+import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
 
@@ -39,7 +42,7 @@ public class Laf9Service extends LadaService {
     private Validator validator;
 
     @Inject
-    private TagLinkService<TagLinkSample> tagLinkService;
+    private TagLinkService<TagLinkSample> tagLinkSampleService;
 
     /**
      * @param sample sample to create
@@ -57,29 +60,48 @@ public class Laf9Service extends LadaService {
 
         // Handle associated tags
         // TODO: Authorize
+        handleSampleTags(sample);
+
+        return sample;
+    }
+
+    private void handleSampleTags(Sample sample) {
         Set<Tag> tags = sample.getTags();
         List<TagLinkSample> tagLinks = new ArrayList<>();
-        for (Tag tag: tags) {
-            if (validator.validate(tag, Default.class).isEmpty()) {
-                if (tag.getId() != null
-                    && repository.entityManager().find(Tag.class, tag.getId())
-                    != null
-                ) {
-                    repository.update(tag);
-                } else {
-                    repository.create(tag);
-                }
+        for (Tag tag : tags) {
+            Optional<Tag> currentTag = upsertTag(tag);
+            if (currentTag.isPresent()) {
                 TagLinkSample tagLink = new TagLinkSample();
                 tagLink.setSampleId(sample.getId());
-                tagLink.setTagId(tag.getId());
+                tagLink.setTagId(currentTag.get().getId());
                 tagLinks.add(tagLink);
             } else {
-                // TODO: report errors
                 tags.remove(tag);
             }
         }
-        tagLinkService.createTagReference(tagLinks);
+        tagLinkSampleService.createTagReference(tagLinks);
+    }
 
-        return sample;
+    private Optional<Tag> upsertTag(Tag tag) {
+        Optional<Tag> currentTag = findInDB(tag);
+        if (currentTag.isPresent()) {
+            return currentTag;
+        }
+        if (validator.validate(tag, Default.class).isEmpty()) {
+            currentTag = Optional.of(repository.create(tag));
+        }
+        return currentTag;
+    }
+
+     private Optional<Tag> findInDB(Tag tag) {
+        Optional<Tag> currentTag = Optional.empty();
+        QueryBuilder<Tag> builderTag = repository.queryBuilder(Tag.class)
+            .and(Tag_.measFacilId, tag.getMeasFacilId())
+            .and(Tag_.name, tag.getName());
+        List<Tag> foundTag = repository.filter(builderTag.getQuery());
+        if (foundTag.size() == 1) {
+            currentTag = Optional.of(foundTag.get(0));
+        }
+        return currentTag;
     }
 }
