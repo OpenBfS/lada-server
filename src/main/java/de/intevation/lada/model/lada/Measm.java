@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -108,9 +107,12 @@ public class Measm extends BelongsToSample implements Serializable {
 
     /* Cascade removal of Measm to referencing StatusProt entries, namely
        OneToOne-associated statusProt */
-    @OneToMany(mappedBy = StatusProt_.MEASM, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = StatusProt_.MEASM,
+         cascade = {
+            CascadeType.PERSIST, CascadeType.REFRESH,
+            CascadeType.REMOVE },
+            fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonbTransient
     private Set<StatusProt> statusProts;
 
 
@@ -259,6 +261,14 @@ public class Measm extends BelongsToSample implements Serializable {
 
     public StatusProt getStatusProt() {
         return this.statusProt;
+    }
+
+    public Set<StatusProt> getStatusProts() {
+        return this.statusProts;
+    }
+
+    public void setStatusProts(Set<StatusProt> statusProts) {
+        this.statusProts = statusProts;
     }
 
     public Set<CommMeasm> getCommMeasms() {

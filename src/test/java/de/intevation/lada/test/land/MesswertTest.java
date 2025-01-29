@@ -66,7 +66,7 @@ public class MesswertTest extends ServiceTest {
         // Assert that GET receives warnings in items of response array
         final String warningsKey = "warnings";
         final String[] expectedWarningKeys = {
-            "measUnitId", "measdId", "error" };
+            "measUnitId", "error" };
         MatcherAssert.assertThat(
             get("rest/measval?measmId=" + measmId).asJsonArray().getJsonObject(0)
                 .getJsonObject(warningsKey).keySet(),

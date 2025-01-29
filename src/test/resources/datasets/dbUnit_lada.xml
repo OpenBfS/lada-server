@@ -3,9 +3,31 @@
     <!-- authentication data -->
     <master.network id = "06" />
     <master.network id = "01" />
+    <master.network id = "07" />
     <master.meas_facil id = "06010" network_id = "06" />
     <master.meas_facil id = "01010" network_id = "01" />
+    <master.meas_facil id = "06011" network_id = "07" />
 
+    <master.auth
+        ldap_gr = "mst_06_status"
+        network_id = "07"
+        meas_facil_id = "06011"
+        auth_funct_id = "1" />
+    <master.auth
+        ldap_gr = "mst_06_status"
+        network_id = "07"
+        meas_facil_id = "06011"
+        auth_funct_id = "2" />
+    <master.auth
+        ldap_gr = "mst_06_status"
+        network_id = "07"
+        meas_facil_id = "06011"
+        auth_funct_id = "3" />
+    <master.auth
+        ldap_gr = "mst_06_status"
+        network_id = "07"
+        meas_facil_id = "06011"
+        auth_funct_id = "4" />
     <master.auth
         ldap_gr = "mst_06_status"
         network_id = "06"
@@ -50,22 +72,45 @@
         id = "2" lev = "1" lev_val = "11" pred_id = "1" name = "s01"/>
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
+    <master.env_medium id = "A3" name = "Mülldeponie" />
     <master.env_descrip_env_medium_mp
         id = "1"
         s00 = "1"
         s01 = "2"
         env_medium_id = "L6"
     />
+    <master.env_descrip_env_medium_mp
+        id = "2"
+        s00 = "1"
+        s01 = "2"
+        env_medium_id = "A3"
+    />
+
+    <master.measd_gr id = "15" name = "Test" />
+    <master.measd_gr id = "16" name = "Test2" />
 
     <master.measd id = "56" name = "Mangan" />
     <master.measd id = "57" name = "Mangan" />
+    <master.measd id = "58" name = "Eisen" />
+    <master.measd id = "59" name = "Eisen" />
+    <master.measd_gr_mp measd_gr_id = "15" measd_id = "56" />
+    <master.measd_gr_mp measd_gr_id = "15" measd_id = "57" />
+    <master.measd_gr_mp measd_gr_id = "15" measd_id = "58" />
+    <master.measd_gr_mp measd_gr_id = "15" measd_id = "59" />
+    <master.measd_gr_mp measd_gr_id = "16" measd_id = "56" />
+    <master.measd_gr_mp measd_gr_id = "16" measd_id = "57" />
+    <master.measd_gr_mp measd_gr_id = "16" measd_id = "58" />
+    <master.measd_gr_mp measd_gr_id = "16" measd_id = "59" />
     <master.mmt id = "A3" />
     <master.mmt id = "B3" />
+    <master.mmt_measd_gr_mp measd_gr_id = "15" mmt_id = "A3"/>
+    <master.mmt_measd_gr_mp measd_gr_id = "16" mmt_id = "A3" />
 
     <master.status_ord_mp id = "1" from_id = "1" to_id = "4" />
     <master.status_ord_mp id = "2" from_id = "1" to_id = "5" />
     <master.status_ord_mp id = "3" from_id = "4" to_id = "14" />
     <master.status_ord_mp id = "4" from_id = "14" to_id = "1" />
+    <master.status_ord_mp id = "5" from_id = "1" to_id = "9" />
 
     <master.sample_specif
         id = "A74"

@@ -133,6 +133,7 @@ public class MeasmService extends LadaService {
      * @param m the actual measm
      */
     public void clearAssociations(Measm m) {
+        m.setStatusProts(null);
         m.setCommMeasms(null);
         m.setMeasVals(null);
     }
