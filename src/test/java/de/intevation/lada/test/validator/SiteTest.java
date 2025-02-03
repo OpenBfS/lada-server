@@ -132,8 +132,8 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(outsideBorder);
 
         validator.validate(site);
-        assertHasWarnings(site, Site_.COORD_XEXT, GEO_POINT_OUTSIDE);
-        assertHasWarnings(site, Site_.COORD_YEXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, Site_.COORD_X_EXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, Site_.COORD_Y_EXT, GEO_POINT_OUTSIDE);
     }
 
     /**
@@ -150,8 +150,8 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(justOutsideBorder);
 
         validator.validate(site);
-        assertHasWarnings(site, Site_.COORD_XEXT, GEO_POINT_OUTSIDE);
-        assertHasWarnings(site, Site_.COORD_YEXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, Site_.COORD_X_EXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, Site_.COORD_Y_EXT, GEO_POINT_OUTSIDE);
     }
 
     /**
@@ -550,7 +550,7 @@ public class SiteTest extends ValidatorBaseTest {
     }
 
     private void assertCoordErrors(Site site) {
-        assertHasErrors(site, Site_.COORD_XEXT, valMessageCoords);
-        assertHasErrors(site, Site_.COORD_YEXT, valMessageCoords);
+        assertHasErrors(site, Site_.COORD_X_EXT, valMessageCoords);
+        assertHasErrors(site, Site_.COORD_Y_EXT, valMessageCoords);
     }
 }

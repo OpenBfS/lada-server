@@ -72,10 +72,10 @@ public class CoordinatesInAdminBorderValidator
             }
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(message)
-                .addPropertyNode(Site_.COORD_XEXT)
+                .addPropertyNode(Site_.COORD_X_EXT)
                 .addConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(message)
-                .addPropertyNode(Site_.COORD_YEXT)
+                .addPropertyNode(Site_.COORD_Y_EXT)
                 .addConstraintViolation();
             return false;
         }
