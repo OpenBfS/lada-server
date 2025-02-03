@@ -7,8 +7,8 @@
 <module name="org.hibernate" xmlns="urn:jboss:module:1.9">
 
     <resources>
-        <resource-root path="hibernate-core-6.6.1.Final.jar"/>
-        <resource-root path="hibernate-envers-6.6.1.Final.jar"/>
+        <resource-root path="hibernate-core-6.6.3.Final.jar"/>
+        <resource-root path="hibernate-envers-6.6.3.Final.jar"/>
         <!--Custom entries-->
         <resource-root path="hibernate-spatial.jar"/>
         <resource-root path="jts-core.jar"/>

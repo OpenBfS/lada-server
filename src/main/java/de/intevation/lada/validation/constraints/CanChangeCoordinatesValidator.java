@@ -44,14 +44,14 @@ public class CanChangeCoordinatesValidator
             isValid = false;
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(CanChangeCoordinates.MSG)
-                .addPropertyNode(Site_.COORD_XEXT)
+                .addPropertyNode(Site_.COORD_X_EXT)
                 .addConstraintViolation();
         }
         if (!dbSite.getCoordYExt().equals(value.getCoordYExt())) {
             isValid = false;
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(CanChangeCoordinates.MSG)
-                .addPropertyNode(Site_.COORD_YEXT)
+                .addPropertyNode(Site_.COORD_Y_EXT)
                 .addConstraintViolation();
         }
         return isValid;

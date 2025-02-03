@@ -41,10 +41,10 @@ public abstract class ValidCoordinatesBaseValidator<T>
         if (!valid) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(ValidCoordinates.MSG)
-                .addPropertyNode(Site_.COORD_XEXT)
+                .addPropertyNode(Site_.COORD_X_EXT)
                 .addConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(ValidCoordinates.MSG)
-                .addPropertyNode(Site_.COORD_YEXT)
+                .addPropertyNode(Site_.COORD_Y_EXT)
                 .addConstraintViolation();
         }
         return valid;
