@@ -393,12 +393,14 @@ public class BaseTest {
         GenericType<T> entityType,
         Response.Status expectedStatus
     ) {
-        T responseBody = response.readEntity(entityType);
-        Assert.assertEquals(
-            "Unexpected status code with response\n" + responseBody + "\n",
-            expectedStatus.getStatusCode(),
-            response.getStatus());
-        return responseBody;
+        if (expectedStatus.getStatusCode() != response.getStatus()) {
+            Assert.assertEquals(
+                    "Unexpected status code with response\n"
+                            + response.readEntity(String.class) + "\n",
+                    expectedStatus.getStatusCode(),
+                    response.getStatus());
+        }
+        return response.readEntity(entityType);
     }
 
     /**
