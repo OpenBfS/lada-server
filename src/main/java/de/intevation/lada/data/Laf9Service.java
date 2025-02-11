@@ -22,7 +22,9 @@ import java.util.Set;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
@@ -44,6 +46,9 @@ public class Laf9Service extends LadaService {
     @Inject
     private TagLinkService<TagLinkSample> tagLinkSampleService;
 
+    @Inject
+    private TagLinkService<TagLinkMeasm> tagLinkMeasmService;
+
     /**
      * @param sample sample to create
      * @return created sample
@@ -60,9 +65,40 @@ public class Laf9Service extends LadaService {
 
         // Handle associated tags
         // TODO: Authorize
-        handleSampleTags(sample);
+        handleTags(sample);
 
         return sample;
+    }
+
+    private void handleTags(Sample sample) {
+        // Handle associated tags
+        // TODO: Authorize
+        handleSampleTags(sample);
+        handleAssociatedMeasmsTags(sample);
+    }
+
+    private void handleAssociatedMeasmsTags(Sample sample) {
+        List<Measm> associatedMeasms = sample.getMeasms().stream().toList();
+        for (Measm m: associatedMeasms) {
+            handleMeasmTags(m);
+        }
+    }
+
+    private void handleMeasmTags(Measm measm) {
+        Set<Tag> tags = measm.getTags();
+        List<TagLinkMeasm> tagLinks = new ArrayList<>();
+        for (Tag tag : tags) {
+            Optional<Tag> currentTag = upsertTag(tag);
+            if (currentTag.isPresent()) {
+                TagLinkMeasm tagLink = new TagLinkMeasm();
+                tagLink.setMeasmId(measm.getId());
+                tagLink.setTagId(currentTag.get().getId());
+                tagLinks.add(tagLink);
+            } else {
+                tags.remove(tag);
+            }
+        }
+        tagLinkMeasmService.createTagReference(tagLinks);
     }
 
     private void handleSampleTags(Sample sample) {

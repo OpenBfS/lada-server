@@ -99,6 +99,7 @@ public class AssociationTest extends ServiceTest {
         Site site = createMinimalSite();
         site = create(sitePath, site, Site.class);
         Geolocat geolocat = getGeolocat(TYPE_REGULATION_E, site);
+        Tag tag = getTag(measFacilId, "association test");
         Measm measm = getMeasm(mmtId);
         measm.setMinSampleId("T100");
         StatusProt statusProtSampleMeasm = getStatusProt(
@@ -109,7 +110,7 @@ public class AssociationTest extends ServiceTest {
         measm.setStatusProts(Set.of(statusProtSampleMeasm));
         MeasVal measValSample = getMeasVal(56, 207);
         measm.setMeasVals(Set.of(measValSample));
-        Tag tag = getTag(measFacilId);
+        measm.setTags(Set.of(tag));
         SampleSpecifMeasVal sampleSpecifMeasVal =
             getSampleSpecificMeasVal("A74");
 
@@ -138,9 +139,13 @@ public class AssociationTest extends ServiceTest {
             .getSampleSpecifMeasVals();
         Set<Geolocat> createdGeolocats = created.getGeolocats();
         Optional<Measm> ms = createdMeasms.stream().findFirst();
-        Measm createdMeasm = ms.get();
-        Assert.assertEquals(2, createdMeasm.getStatusProts().size());
-        Assert.assertEquals(1, createdMeasm.getMeasVals().size());
+        Measm createdSampleMeasm = ms.get();
+        Optional<Tag> t = createdTags.stream().findFirst();
+        Tag createdTag = t.get();
+        String sampleMeasmId = "?measmId=" + createdSampleMeasm.getId();
+        Assert.assertEquals(2, createdSampleMeasm.getStatusProts().size());
+        Assert.assertEquals(1, createdSampleMeasm.getMeasVals().size());
+        Assert.assertEquals(1, createdSampleMeasm.getTags().size());
         assertRelatedObjectsArePresent(
             createdMeasms,
             createdTags,
@@ -176,7 +181,7 @@ public class AssociationTest extends ServiceTest {
         newMeasm.setSample(created);
         newMeasm.setMeasVals(Set.of(measVal));
         newMeasm.setCommMeasms(Set.of(commMeasm));
-        createdMeasm = create(measmPath, newMeasm, Measm.class);
+        Measm createdMeasm = create(measmPath, newMeasm, Measm.class);
 
         testMeasmAssociationsAreCleared(createdMeasm);
 
@@ -195,6 +200,8 @@ public class AssociationTest extends ServiceTest {
         commMeasm2 = create(commMeasmPath, commMeasm2, CommMeasm.class);
         createdMeasm = get(measmPath + createdMeasm.getId(),
             Measm.class);
+        createdSampleMeasm = get(measmPath + createdSampleMeasm.getId(),
+                Measm.class);
 
         // Add associations to created Sample
         created = get(samplePath + created.getId(), Sample.class);
@@ -244,6 +251,11 @@ public class AssociationTest extends ServiceTest {
                 + "?measmId=" + createdMeasm.getId(),
                 new GenericType<Set<StatusProt>>() {
                 });
+        Set<Tag> measmTags = get(
+                tagPath
+                + sampleMeasmId,
+                new GenericType<Set<Tag>>() {
+                });
 
         testOneToMany(
             createdMeasms,
@@ -260,7 +272,9 @@ public class AssociationTest extends ServiceTest {
             newGeolocat,
             createdCommMeasms,
             createdMeasVals,
-            createdStatusProts);
+            createdStatusProts,
+            createdSampleMeasm,
+            measmTags);
 
         testManyToOne(
             created,
@@ -272,7 +286,9 @@ public class AssociationTest extends ServiceTest {
             newCommSample,
             newSampleSpecifMeasVal,
             newGeolocat,
-            newStatusProt);
+            newStatusProt,
+            createdSampleMeasm,
+            createdTag);
 
         // Associated objects in PUT payload should be ignored
         created.setMainSampleId("X");
@@ -333,7 +349,8 @@ public class AssociationTest extends ServiceTest {
         testAssociationsAreDeleted(
             created,
             createdCommMeasms,
-            createdMeasVals);
+            createdMeasVals,
+            createdTags);
 
         testAssociatedTagsExist(created);
     }
@@ -383,7 +400,8 @@ public class AssociationTest extends ServiceTest {
     private void testAssociationsAreDeleted(
             Sample created,
             Set<CommMeasm> createdCommMeasms,
-            Set<MeasVal> createdMeasVals) {
+            Set<MeasVal> createdMeasVals,
+            Set<Tag> createdTags) {
         Assert.assertFalse(created.getMeasms().isEmpty());
         Assert.assertFalse(created.getCommSamples().isEmpty());
         Assert.assertFalse(created.getSampleSpecifMeasVals().isEmpty());
@@ -413,6 +431,11 @@ public class AssociationTest extends ServiceTest {
 
         for (MeasVal m : createdMeasVals) {
             get(measValPath + m.getId(),
+                    Response.Status.NOT_FOUND);
+        }
+
+        for (Tag t: createdTags) {
+            get(measValPath + t.getId(),
                     Response.Status.NOT_FOUND);
         }
     }
@@ -519,7 +542,9 @@ public class AssociationTest extends ServiceTest {
             CommSample newCommSample,
             SampleSpecifMeasVal newSampleSpecifMeasVal,
             Geolocat newGeolocat,
-            StatusProt newStatusProt) {
+            StatusProt newStatusProt,
+            Measm createdSampleMeasm,
+            Tag createdTag) {
         Assert.assertEquals(created.getId().intValue(),
             get(measmPath + createdMeasm.getId(), JsonObject.class)
                 .getInt("sampleId"));
@@ -551,21 +576,29 @@ public class AssociationTest extends ServiceTest {
         Assert.assertEquals(created.getId().intValue(),
                 get(geolocatPath + newGeolocat.getId(), JsonObject.class)
                         .getInt("sampleId"));
+        Optional<Tag> t = createdSampleMeasm.getTags().stream().findFirst();
+        Tag createdSampleMeasmTag = t.get();
+        Assert.assertEquals(createdSampleMeasmTag.getId(), createdTag.getId());
     }
 
     private void testOneToMany(
             Set<Measm> createdMeasms,
             Set<CommSample> createdCommSamples,
             Set<SampleSpecifMeasVal> createdSampleSpecifMeasVals,
-            Set<Geolocat> createdGeolocats, Measm createdMeasm,
-            MeasVal measVal, MeasVal measVal2,
-            CommMeasm commMeasm, CommMeasm commMeasm2,
+            Set<Geolocat> createdGeolocats,
+            Measm createdMeasm,
+            MeasVal measVal,
+            MeasVal measVal2,
+            CommMeasm commMeasm,
+            CommMeasm commMeasm2,
             CommSample newCommSample,
             SampleSpecifMeasVal newSampleSpecifMeasVal,
             Geolocat newGeolocat,
             Set<CommMeasm> createdCommMeasms,
             Set<MeasVal> createdMeasVals,
-            Set<StatusProt> createdStatusProts) {
+            Set<StatusProt> createdStatusProts,
+            Measm createdSampleMeasm,
+            Set<Tag> measmTags) {
         Assert.assertEquals(2, createdStatusProts.size());
         Assert.assertEquals(2, createdCommMeasms.size());
         Assert.assertEquals(2, createdMeasVals.size());
@@ -608,6 +641,11 @@ public class AssociationTest extends ServiceTest {
         MatcherAssert.assertThat(
                 createdStatusProts.stream().map(m -> m.getId()).toList(),
                 CoreMatchers.hasItem(createdStatusProt.getId()));
+        Optional<Tag> t = createdSampleMeasm.getTags().stream().findFirst();
+        Tag tag = t.get();
+        MatcherAssert.assertThat(
+                measmTags.stream().map(m -> m.getId()).toList(),
+                CoreMatchers.hasItem(tag.getId()));
     }
 
     private void assertAssociatedObjectsAreReturned(
@@ -653,9 +691,9 @@ public class AssociationTest extends ServiceTest {
         Assert.assertTrue(created.getSampleSpecifMeasVals().isEmpty());
     }
 
-    private Tag getTag(final String measFacilId) {
+    private Tag getTag(String measFacilId, String name) {
         Tag tag = new Tag();
-        tag.setName("association test");
+        tag.setName(name);
         tag.setMeasFacilId(measFacilId);
         return tag;
     }

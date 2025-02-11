@@ -10,7 +10,9 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,6 +37,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import de.intevation.lada.model.master.Mmt;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulation1;
 import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulationNot1;
 import de.intevation.lada.validation.constraints.HasMeasPdNotSampleMeth9OrRegulation1;
@@ -129,6 +132,15 @@ public class Measm extends BelongsToSample implements Serializable {
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<MeasVal> measVals;
+
+    /* Work around the fact that hibernate does not provide means to have
+    a ManyToMany association without cascading to the link table */
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "measm_id", insertable = false, updatable = false)
+    @JsonbTransient
+    private Set<TagLinkMeasm> tagLinks;
+    @Transient
+    private Set<Tag> tags;
 
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
@@ -285,6 +297,22 @@ public class Measm extends BelongsToSample implements Serializable {
 
     public void setMeasVals(Set<MeasVal> measVals) {
         this.measVals = measVals;
+    }
+
+    public Set<TagLinkMeasm> getTagLinks() {
+        return this.tagLinks;
+    }
+
+    public Set<Tag> getTags() {
+        if (this.tags == null && this.tagLinks != null) {
+            this.tags = this.tagLinks.stream().map(link -> link.tag)
+                .collect(Collectors.toSet());
+        }
+        return this.tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }
 
