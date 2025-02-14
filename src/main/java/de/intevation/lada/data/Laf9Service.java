@@ -65,23 +65,12 @@ public class Laf9Service extends LadaService {
 
         // Handle associated tags
         // TODO: Authorize
-        handleTags(sample);
-
-        return sample;
-    }
-
-    private void handleTags(Sample sample) {
-        // Handle associated tags
-        // TODO: Authorize
         handleSampleTags(sample);
-        handleAssociatedMeasmsTags(sample);
-    }
-
-    private void handleAssociatedMeasmsTags(Sample sample) {
-        List<Measm> associatedMeasms = sample.getMeasms().stream().toList();
-        for (Measm m: associatedMeasms) {
+        for (Measm m: sample.getMeasms()) {
             handleMeasmTags(m);
         }
+
+        return sample;
     }
 
     private void handleMeasmTags(Measm measm) {
