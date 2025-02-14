@@ -35,13 +35,13 @@ RUN curl -s https://www.postgresql.org/media/keys/ACCC4CF8.asc > \
         /etc/apt/trusted.gpg.d/apt.postgresql.asc
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-            postgresql-12-postgis-3 postgresql-12-postgis-3-scripts postgis
+            postgresql-13-postgis-3 postgresql-13-postgis-3-scripts postgis
 
 #
 # Set environment variables
 #
-ENV PGCONF=/etc/postgresql/12/main/postgresql.conf
-ENV PGDATA=/var/lib/postgresql/12/main
+ENV PGCONF=/etc/postgresql/13/main/postgresql.conf
+ENV PGDATA=/var/lib/postgresql/13/main
 
 #
 # Use user postgres to run the next commands
@@ -53,7 +53,7 @@ USER postgres
 # database are possible.
 #
 RUN echo "host all  all    0.0.0.0/0  md5" >> \
-    /etc/postgresql/12/main/pg_hba.conf
+    /etc/postgresql/13/main/pg_hba.conf
 RUN echo "listen_addresses='*'" >> $PGCONF &&\
     echo "shared_buffers = 1024MB" >> $PGCONF && \
     echo "maintenance_work_mem = 512MB" >> $PGCONF
@@ -81,13 +81,13 @@ WORKDIR /opt/lada_sql/
 # 'FATAL: the database system is starting up'.
 # It's because of the -w
 #
-RUN /usr/lib/postgresql/12/bin/pg_ctl start -wo "--config_file=$PGCONF" && \
+RUN /usr/lib/postgresql/13/bin/pg_ctl start -wo "--config_file=$PGCONF" && \
     /opt/lada_sql/setup-db.sh && \
     /opt/lada_sql/setup-db.sh -n lada_test && \
-    /usr/lib/postgresql/12/bin/pg_ctl stop
+    /usr/lib/postgresql/13/bin/pg_ctl stop
 
 #
 # Set the default command to run when starting the container
 #
-CMD ["/usr/lib/postgresql/12/bin/postgres", \
-     "--config_file=/etc/postgresql/12/main/postgresql.conf"]
+CMD ["/usr/lib/postgresql/13/bin/postgres", \
+     "--config_file=/etc/postgresql/13/main/postgresql.conf"]
