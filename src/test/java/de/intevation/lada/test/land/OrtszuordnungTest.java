@@ -56,13 +56,9 @@ public class OrtszuordnungTest extends ServiceTest {
         expectedSite = convertObject(filterJsonArrayById(
                 readXmlResource("datasets/dbUnit_lada.xml", Site.class),
                 expectedSiteId)).build();
-        // siteId cannot be converted correctly, thus exclude and re-add
-        //final String siteIdKey = "siteId";
         expectedById = convertObject(filterJsonArrayById(
                 readXmlResource("datasets/dbUnit_lada.xml", Geolocat.class),
-                expectedId)
-            ) //, siteIdKey)
-            // .add(siteIdKey, expectedSiteId)
+                expectedId))
             .add(Geolocat_.SITE, expectedSite)
             .add("readonly", JsonValue.FALSE)
             .add("owner", JsonValue.TRUE)
