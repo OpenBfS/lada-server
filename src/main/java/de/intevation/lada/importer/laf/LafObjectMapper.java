@@ -14,6 +14,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -724,7 +725,7 @@ public class LafObjectMapper {
         }
 
         // Add measVals
-        List<MeasVal> messwerte = new ArrayList<MeasVal>();
+        Collection<MeasVal> messwerte = new ArrayList<MeasVal>();
         List<Integer> messgroessenListe = new ArrayList<Integer>();
         for (Map<String, String> measValRaw: object.getMesswerte()) {
             MeasVal tmp =

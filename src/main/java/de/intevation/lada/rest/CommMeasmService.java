@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -22,9 +22,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.CommMeasm;
-import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -51,16 +49,13 @@ public class CommMeasmService extends LadaService {
      * @return filtered CommMeasm objects.
      */
     @GET
-    public List<CommMeasm> get(
+    public Set<CommMeasm> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getById(Measm.class, measmId);
         authorization.authorize(messung, RequestMethod.GET);
 
-        QueryBuilder<CommMeasm> builder =
-            repository.queryBuilder(CommMeasm.class)
-            .and(CommMeasm_.measm, messung);
-        return repository.filter(builder.getQuery());
+        return messung.getCommMeasms();
     }
 
     /**

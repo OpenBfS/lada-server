@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -22,9 +22,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.CommSample;
-import de.intevation.lada.model.lada.CommSample_;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -51,14 +49,11 @@ public class CommSampleService extends LadaService {
      * @return requested objects.
      */
     @GET
-    public List<CommSample> get(
+    public Set<CommSample> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
-        QueryBuilder<CommSample> builder = repository
-            .queryBuilder(CommSample.class)
-            .and(CommSample_.sample,
-                repository.getById(Sample.class, sampleId));
-        return repository.filter(builder.getQuery());
+        return repository.getById(Sample.class, sampleId).getCommSamples();
+
     }
 
     /**

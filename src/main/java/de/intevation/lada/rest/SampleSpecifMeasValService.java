@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -25,8 +25,6 @@ import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -60,14 +58,11 @@ public class SampleSpecifMeasValService extends LadaService {
      * @return requested objects.
      */
     @GET
-    public List<SampleSpecifMeasVal> get(
+    public Set<SampleSpecifMeasVal> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
-        QueryBuilder<SampleSpecifMeasVal> builder = repository
-            .queryBuilder(SampleSpecifMeasVal.class)
-            .and(SampleSpecifMeasVal_.sample,
-                repository.getById(Sample.class, sampleId));
-        return repository.filter(builder.getQuery());
+        return repository.getById(Sample.class, sampleId)
+            .getSampleSpecifMeasVals();
     }
 
     /**

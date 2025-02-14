@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -25,10 +25,8 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Site;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -61,13 +59,10 @@ public class GeolocatService extends LadaService {
      * @return requested objects.
      */
     @GET
-    public List<Geolocat> get(
+    public Set<Geolocat> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
-        QueryBuilder<Geolocat> builder = repository
-            .queryBuilder(Geolocat.class)
-            .and(Geolocat_.sample, repository.getById(Sample.class, sampleId));
-        return repository.filter(builder.getQuery());
+        return repository.getById(Sample.class, sampleId).getGeolocats();
     }
 
     /**

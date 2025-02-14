@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.importer;
 
+import java.util.Collection;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -193,7 +194,7 @@ public class ObjectMerger {
      */
     public ObjectMerger mergeMesswerte(
         Measm target,
-        List<MeasVal> messwerte
+        Collection<MeasVal> messwerte
     ) {
         QueryBuilder<MeasVal> builder =
             repository.queryBuilder(MeasVal.class)

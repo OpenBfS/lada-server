@@ -7,7 +7,8 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -27,14 +28,13 @@ import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.util.data.MesswertNormalizer;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
+
 
 /**
  * REST service for MeasVal objects.
@@ -71,17 +71,13 @@ public class MeasValService extends LadaService {
      * @return Filtered Messwert objects.
      */
     @GET
-    @SuppressWarnings("unchecked")
-    public List<MeasVal> get(
+    public Set<MeasVal> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getById(Measm.class, measmId);
         authorization.authorize(messung, RequestMethod.GET);
 
-        QueryBuilder<MeasVal> builder = repository
-            .queryBuilder(MeasVal.class)
-            .and(MeasVal_.measm, messung);
-        return repository.filter(builder.getQuery());
+        return messung.getMeasVals();
     }
 
     /**
@@ -137,7 +133,7 @@ public class MeasValService extends LadaService {
      */
     @PUT
     @Path("normalize")
-    public List<MeasVal> normalize(
+    public Collection<MeasVal> normalize(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         //Load messung, probe and umwelt to get MessEinheit to convert to
@@ -152,12 +148,9 @@ public class MeasValService extends LadaService {
         }
         EnvMedium umwelt = repository.getById(
             EnvMedium.class, probe.getEnvMediumId());
-        //Get all Messwert objects to convert
-        QueryBuilder<MeasVal> messwertBuilder =
-            repository.queryBuilder(MeasVal.class)
-            .and(MeasVal_.measm, messung);
-        List<MeasVal> messwerte = messwertNormalizer.normalizeMesswerte(
-            repository.filter(messwertBuilder.getQuery()),
+
+        Collection<MeasVal> messwerte = messwertNormalizer.normalizeMesswerte(
+            messung.getMeasVals(),
             umwelt.getId());
 
         for (MeasVal messwert: messwerte) {

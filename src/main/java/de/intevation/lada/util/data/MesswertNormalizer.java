@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.util.data;
 
+import java.util.Collection;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -50,8 +51,8 @@ public class MesswertNormalizer {
      * @param umwId UmweltId to get the standard unit from
      * @return List<Messwert> with converted units.
      */
-    public List<MeasVal> normalizeMesswerte(
-        List<MeasVal> messwerte,
+    public Collection<MeasVal> normalizeMesswerte(
+        Collection<MeasVal> messwerte,
         String umwId
     ) {
         if (umwId == null || umwId.equals("")) {
