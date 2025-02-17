@@ -23,9 +23,7 @@ import de.intevation.lada.model.lada.StatusProt_;
 public class StatusTest extends ValidatorBaseTest {
 
     //Other constants
-    private static final int ID1 = 1;
     private static final int ID3 = 3;
-    private static final int ID7 = 7;
 
     private static final int INVALID_STATUS_MP_ID = 42;
 
@@ -45,8 +43,6 @@ public class StatusTest extends ValidatorBaseTest {
     @Test
     public void checkKombiNegative() {
         StatusProt status = minimalStatusProt();
-        status.setStatusLev(2);
-        status.setStatusVal(ID7);
         status.setStatusMpId(INVALID_STATUS_MP_ID);
         validator.validate(status);
         Assert.assertTrue(status.hasErrors());
@@ -64,8 +60,6 @@ public class StatusTest extends ValidatorBaseTest {
     @Test
     public void checkKombiPositive() {
         StatusProt status = minimalStatusProt();
-        status.setStatusLev(ID1);
-        status.setStatusVal(ID1);
 
         validator.validate(status);
         assertNoMessages(status);
