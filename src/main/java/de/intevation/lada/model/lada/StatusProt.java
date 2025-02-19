@@ -18,7 +18,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -72,12 +71,6 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     @Temporal(TIMESTAMP)
     private Date treeMod;
 
-    @Transient
-    private Integer statusLev;
-
-    @Transient
-    private Integer statusVal;
-
 
     public Integer getId() {
         return this.id;
@@ -125,33 +118,5 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    /**
-     * @return the status level
-     */
-    public Integer getStatusLev() {
-        return statusLev;
-    }
-
-    /**
-     * @param statusLev the status level to set
-     */
-    public void setStatusLev(Integer statusLev) {
-        this.statusLev = statusLev;
-    }
-
-    /**
-     * @return the status value
-     */
-    public Integer getStatusVal() {
-        return statusVal;
-    }
-
-    /**
-     * @param statusVal the status value to set
-     */
-    public void setStatusVal(Integer statusVal) {
-        this.statusVal = statusVal;
     }
 }
