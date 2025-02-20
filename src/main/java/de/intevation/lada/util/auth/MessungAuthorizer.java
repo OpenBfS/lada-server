@@ -11,7 +11,6 @@ import java.util.List;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp;
 import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp_;
 import de.intevation.lada.model.master.MeasFacil;
@@ -164,10 +163,8 @@ class MessungAuthorizer extends Authorizer<Measm> {
     }
 
     private boolean isMeasmReadOnly(Integer measmId) {
-        StatusProt status = repository.getById(
-            Measm.class, measmId).getStatusProt();
-        int val = repository.getById(StatusMp.class, status.getStatusMpId())
-            .getStatusVal().getId();
+        int val = repository.getById(
+            Measm.class, measmId).getStatusProt().getStatusValId();
         return val != 0 && val != 4;
     }
 }

@@ -10,11 +10,14 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -62,6 +65,10 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = StatusMp.class)
     private Integer statusMpId;
+
+    @ManyToOne
+    @JoinColumn(insertable = false, updatable = false)
+    private StatusMp statusMp;
 
     @Size(max = 1024)
     @NotEmptyNorWhitespace
@@ -118,5 +125,15 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
+    }
+
+    /**
+     * @return the status value ID
+     */
+    @JsonbTransient
+    public Integer getStatusValId() {
+        return this.statusMp != null // null during client-side deserialization
+            ? this.statusMp.getStatusVal().getId()
+            : null;
     }
 }

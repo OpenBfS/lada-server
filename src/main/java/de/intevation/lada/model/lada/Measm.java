@@ -8,6 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,7 +23,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -102,10 +102,10 @@ public class Measm extends BelongsToSample implements Serializable {
     @NotBlank(groups = Notifications.class)
     private String minSampleId;
 
-    /* Latest StatusProt entry accessible via back reference foreign key
-       set by database trigger */
-    @OneToOne
-    @JoinColumn(name = "status", insertable = false, updatable = false)
+    /**
+     * Latest StatusProt entry
+     */
+    @Transient
     private StatusProt statusProt;
 
     /* Cascade removal of Measm to referencing StatusProt entries, namely
@@ -272,6 +272,22 @@ public class Measm extends BelongsToSample implements Serializable {
     }
 
     public StatusProt getStatusProt() {
+        if (this.statusProt == null) {
+            this.statusProt = this.statusProts.stream().sorted(
+                new Comparator<StatusProt>() {
+                    @Override
+                    public int compare(StatusProt arg0, StatusProt arg1) {
+                        int isAfter = - arg0.getDate().compareTo(arg1.getDate());
+                        return isAfter != 0
+                            ? isAfter
+                            // Try breaking ties using statusVal
+                            : arg0.getStatusValId() != null
+                            ? arg0.getStatusValId().compareTo(
+                                arg1.getStatusValId())
+                            : 0;
+                    }
+                }).findFirst().orElse(null);
+        }
         return this.statusProt;
     }
 
@@ -315,4 +331,3 @@ public class Measm extends BelongsToSample implements Serializable {
         this.tags = tags;
     }
 }
-
