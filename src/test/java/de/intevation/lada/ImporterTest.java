@@ -616,7 +616,6 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    @Ignore
     public final void testAsyncImportSampleSpecifMeasValImportConfTransform()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
