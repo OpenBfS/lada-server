@@ -11,8 +11,6 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 
-import javax.management.modelmbean.InvalidTargetObjectTypeException;
-
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -21,8 +19,7 @@ import de.intevation.lada.util.data.Repository;
 /**
  * Identifier for messung objects.
  */
-@IdentifierConfig(type = "Messung")
-public class MessungIdentifier implements Identifier {
+public class MessungIdentifier implements Identifier<Measm> {
 
     @Inject
     private Repository repository;
@@ -30,14 +27,8 @@ public class MessungIdentifier implements Identifier {
     private Measm found;
 
     @Override
-    public Identified find(Object object)
-    throws InvalidTargetObjectTypeException {
+    public Identified find(Measm messung) {
         found = null;
-        if (!(object instanceof Measm)) {
-            throw new InvalidTargetObjectTypeException(
-                "Object is not of type Messung");
-        }
-        Measm messung = (Measm) object;
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
 
         // externeMessungsId null and nebenprobenNr not null and mstId not null.
@@ -111,7 +102,7 @@ public class MessungIdentifier implements Identifier {
     }
 
     @Override
-    public Object getExisting() {
+    public Measm getExisting() {
         return found;
     }
 }

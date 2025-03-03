@@ -11,8 +11,6 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 
-import javax.management.modelmbean.InvalidTargetObjectTypeException;
-
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -21,8 +19,7 @@ import de.intevation.lada.util.data.Repository;
 /**
  * Class to identify a probe object.
  */
-@IdentifierConfig(type = "Sample")
-public class ProbeIdentifier implements Identifier {
+public class ProbeIdentifier implements Identifier<Sample> {
 
     @Inject
     private Repository repository;
@@ -30,14 +27,8 @@ public class ProbeIdentifier implements Identifier {
     private Sample found;
 
     @Override
-    public Identified find(Object object)
-    throws InvalidTargetObjectTypeException {
+    public Identified find(Sample probe) {
         found = null;
-        if (!(object instanceof Sample)) {
-            throw new InvalidTargetObjectTypeException(
-                "Object is not of type Sample");
-        }
-        Sample probe = (Sample) object;
         QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
 
         // extId null and mainSampleId not null and mstId not null.
@@ -105,7 +96,7 @@ public class ProbeIdentifier implements Identifier {
     /**
      * @return the found probe
      */
-    public Object getExisting() {
+    public Sample getExisting() {
         return found;
     }
 }

@@ -49,7 +49,6 @@ import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
-import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
@@ -114,12 +113,10 @@ public class ImporterTest extends BaseTest {
         + "%%ENDE%%\n";
 
     @Inject
-    @IdentifierConfig(type = "Sample")
-    Identifier probeIdentifier;
+    Identifier<Sample> probeIdentifier;
 
     @Inject
-    @IdentifierConfig(type = "Messung")
-    Identifier messungIdentifier;
+    Identifier<Measm> messungIdentifier;
 
     @Inject
     Repository repository;
