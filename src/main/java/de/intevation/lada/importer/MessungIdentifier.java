@@ -31,12 +31,11 @@ public class MessungIdentifier implements Identifier<Measm> {
         found = null;
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
 
-        // externeMessungsId null and nebenprobenNr not null and mstId not null.
         if (messung.getExtId() == null
             && messung.getMinSampleId() != null
         ) {
-            builder.and(Measm_.sampleId, messung.getSampleId());
-            builder.and(Measm_.minSampleId, messung.getMinSampleId());
+            builder.and(Measm_.sampleId, messung.getSampleId())
+                .and(Measm_.minSampleId, messung.getMinSampleId());
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
             if (messungen.size() > 1) {
@@ -48,29 +47,24 @@ public class MessungIdentifier implements Identifier<Measm> {
                 //TODO: QueryBuilder instance can not be reused here
                 //This may be a hibernate 6 bug, see:
                 //https://hibernate.atlassian.net/browse/HHH-15951
-                builder = repository.queryBuilder(Measm.class);
-                builder.and(Measm_.sampleId, messung.getSampleId());
-                builder.and(Measm_.mmtId, messung.getMmtId());
+                builder = repository.queryBuilder(Measm.class)
+                    .and(Measm_.sampleId, messung.getSampleId())
+                    .and(Measm_.mmtId, messung.getMmtId());
                 messungen =
                     repository.filter(builder.getQuery());
-                if (messungen.isEmpty()) {
-                    return Identified.NEW;
-                }
-                if (messungen.size() > 1) {
-                    return Identified.NEW;
-                }
-                if (messungen.get(0).getMinSampleId() == null) {
+                if (messungen.size() == 1
+                    && messungen.get(0).getMinSampleId() == null
+                ) {
                     found = messungen.get(0);
                     return Identified.UPDATE;
-                } else {
-                    return Identified.NEW;
                 }
+                return Identified.NEW;
             }
             found = messungen.get(0);
             return Identified.UPDATE;
         } else if (messung.getExtId() != null) {
-            builder.and(Measm_.sampleId, messung.getSampleId());
-            builder.and(Measm_.extId, messung.getExtId());
+            builder.and(Measm_.sampleId, messung.getSampleId())
+                .and(Measm_.extId, messung.getExtId());
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
             if (messungen.size() > 1) {
@@ -84,21 +78,17 @@ public class MessungIdentifier implements Identifier<Measm> {
             found = messungen.get(0);
             return Identified.UPDATE;
         } else if (messung.getMmtId() != null) {
-            builder.and(Measm_.sampleId, messung.getSampleId());
-            builder.and(Measm_.mmtId, messung.getMmtId());
+            builder.and(Measm_.sampleId, messung.getSampleId())
+                .and(Measm_.mmtId, messung.getMmtId());
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
-            if (messungen.isEmpty()) {
-                return Identified.NEW;
-            }
-            if (messungen.size() > 1) {
+            if (messungen.isEmpty() || messungen.size() > 1) {
                 return Identified.NEW;
             }
             found = messungen.get(0);
             return Identified.UPDATE;
-        } else {
-            return Identified.REJECT;
         }
+        return Identified.REJECT;
     }
 
     @Override

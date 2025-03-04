@@ -31,13 +31,12 @@ public class ProbeIdentifier implements Identifier<Sample> {
         found = null;
         QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
 
-        // extId null and mainSampleId not null and mstId not null.
         if (probe.getExtId() == null
             && probe.getMainSampleId() != null
             && probe.getMeasFacilId() != null
         ) {
-            builder.and(Sample_.measFacilId, probe.getMeasFacilId());
-            builder.and(Sample_.mainSampleId, probe.getMainSampleId());
+            builder.and(Sample_.measFacilId, probe.getMeasFacilId())
+                .and(Sample_.mainSampleId, probe.getMainSampleId());
             List<Sample> proben =
                 repository.filter(builder.getQuery());
             if (proben.size() > 1) {
@@ -67,30 +66,28 @@ public class ProbeIdentifier implements Identifier<Sample> {
             }
             found = proben.get(0);
             return Identified.UPDATE;
-        } else {
-            builder.and(Sample_.extId, probe.getExtId());
-            List<Sample> proben =
-                repository.filter(builder.getQuery());
-            if (proben.size() > 1) {
-                // Should never happen. DB has unique constraint for
-                // "sampleExtId"
-                return Identified.REJECT;
-            }
-            if (proben.isEmpty()) {
-                return Identified.NEW;
-            }
-            if (proben.get(0).getMainSampleId() == null
-                || proben.get(0).getMainSampleId().equals(
-                    probe.getMainSampleId())
-                || probe.getMainSampleId().isEmpty()
-                || proben.get(0).getMainSampleId().isEmpty()
-            ) {
-                found = proben.get(0);
-                return Identified.UPDATE;
-            } else {
-                return Identified.REJECT;
-            }
         }
+        builder.and(Sample_.extId, probe.getExtId());
+        List<Sample> proben =
+            repository.filter(builder.getQuery());
+        if (proben.size() > 1) {
+            // Should never happen. DB has unique constraint for
+            // "sampleExtId"
+            return Identified.REJECT;
+        }
+        if (proben.isEmpty()) {
+            return Identified.NEW;
+        }
+        if (proben.get(0).getMainSampleId() == null
+            || proben.get(0).getMainSampleId().equals(
+                probe.getMainSampleId())
+            || probe.getMainSampleId().isEmpty()
+            || proben.get(0).getMainSampleId().isEmpty()
+        ) {
+            found = proben.get(0);
+            return Identified.UPDATE;
+        }
+        return Identified.REJECT;
     }
 
     /**
