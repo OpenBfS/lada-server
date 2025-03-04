@@ -22,11 +22,9 @@ public class ProbeIdentifier implements Identifier<Sample> {
     @Inject
     private Repository repository;
 
-    private Sample found;
-
     @Override
-    public Identified find(Sample probe) {
-        found = null;
+    public Sample getExisting(Sample probe)
+        throws Identifier.IdentificationException {
         QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
 
         if (probe.getExtId() == null
@@ -36,10 +34,9 @@ public class ProbeIdentifier implements Identifier<Sample> {
             builder.and(Sample_.measFacilId, probe.getMeasFacilId())
                 .and(Sample_.mainSampleId, probe.getMainSampleId());
             try {
-                found = repository.getSingle(builder.getQuery());
-                return Identified.UPDATE;
+                return repository.getSingle(builder.getQuery());
             } catch (NoResultException e) {
-                return Identified.NEW;
+                return null;
             }
         } else if (probe.getExtId() != null
             && (probe.getMainSampleId() == null
@@ -47,33 +44,25 @@ public class ProbeIdentifier implements Identifier<Sample> {
         ) {
             builder.and(Sample_.extId, probe.getExtId());
             try {
-                found = repository.getSingle(builder.getQuery());
-                return Identified.UPDATE;
+                return repository.getSingle(builder.getQuery());
             } catch (NoResultException e) {
-                return Identified.NEW;
+                return null;
             }
         }
         builder.and(Sample_.extId, probe.getExtId());
         try {
-            found = repository.getSingle(builder.getQuery());
+            Sample found = repository.getSingle(builder.getQuery());
             if (found.getMainSampleId() == null
                 || found.getMainSampleId().equals(
                     probe.getMainSampleId())
                 || probe.getMainSampleId().isEmpty()
                 || found.getMainSampleId().isEmpty()
             ) {
-                return Identified.UPDATE;
+                return found;
             }
         } catch (NoResultException e) {
-            return Identified.NEW;
+            return null;
         }
-        return Identified.REJECT;
-    }
-
-    /**
-     * @return the found probe
-     */
-    public Sample getExisting() {
-        return found;
+        throw new Identifier.IdentificationException();
     }
 }

@@ -24,11 +24,9 @@ public class MessungIdentifier implements Identifier<Measm> {
     @Inject
     private Repository repository;
 
-    private Measm found;
-
     @Override
-    public Identified find(Measm messung) {
-        found = null;
+    public Measm getExisting(Measm messung)
+        throws Identifier.IdentificationException {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
 
         if (messung.getExtId() == null
@@ -37,8 +35,7 @@ public class MessungIdentifier implements Identifier<Measm> {
             builder.and(Measm_.sampleId, messung.getSampleId())
                 .and(Measm_.minSampleId, messung.getMinSampleId());
             try {
-                found = repository.getSingle(builder.getQuery());
-                return Identified.UPDATE;
+                return repository.getSingle(builder.getQuery());
             } catch (NoResultException e) {
                 //TODO: QueryBuilder instance can not be reused here
                 //This may be a hibernate 6 bug, see:
@@ -51,19 +48,17 @@ public class MessungIdentifier implements Identifier<Measm> {
                 if (messungen.size() == 1
                     && messungen.get(0).getMinSampleId() == null
                 ) {
-                    found = messungen.get(0);
-                    return Identified.UPDATE;
+                    return messungen.get(0);
                 }
-                return Identified.NEW;
+                return null;
             }
         } else if (messung.getExtId() != null) {
             builder.and(Measm_.sampleId, messung.getSampleId())
                 .and(Measm_.extId, messung.getExtId());
             try {
-                found = repository.getSingle(builder.getQuery());
-                return Identified.UPDATE;
+                return repository.getSingle(builder.getQuery());
             } catch (NoResultException e) {
-                return Identified.NEW;
+                return null;
             }
         } else if (messung.getMmtId() != null) {
             builder.and(Measm_.sampleId, messung.getSampleId())
@@ -71,16 +66,10 @@ public class MessungIdentifier implements Identifier<Measm> {
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
             if (messungen.isEmpty() || messungen.size() > 1) {
-                return Identified.NEW;
+                return null;
             }
-            found = messungen.get(0);
-            return Identified.UPDATE;
+            return messungen.get(0);
         }
-        return Identified.REJECT;
-    }
-
-    @Override
-    public Measm getExisting() {
-        return found;
+        throw new Identifier.IdentificationException();
     }
 }

@@ -14,15 +14,12 @@ package de.intevation.lada.importer;
 public interface Identifier<T> {
 
     /**
-     * Find and identify the object.
-     * @param object the object.
-     * @return Enum idicating the identification type.
+     * Get persistent entity identified by attributes of given object.
+     * @param object object carrying identifying attributes
+     * @return the found object or null
+     * @throws IdentificationException in case of ambiguous identifying attributes
      */
-    Identified find(T object);
+    T getExisting(T object) throws IdentificationException;
 
-    /**
-     * Get the object identified in "find", if any.
-     * @return the found object
-     */
-    T getExisting();
+    public class IdentificationException extends Exception { }
 }

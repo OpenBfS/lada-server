@@ -47,7 +47,6 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.data.requests.LafImportParameters;
-import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.model.lada.MeasVal;
@@ -152,8 +151,7 @@ public class ImporterTest extends BaseTest {
         probe.setMainSampleId("120510002");
         probe.setMeasFacilId(mstId);
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -167,8 +165,7 @@ public class ImporterTest extends BaseTest {
         probe.setMainSampleId("120510003");
         probe.setMeasFacilId(mstId);
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.NEW, found);
+        Assert.assertNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -182,8 +179,7 @@ public class ImporterTest extends BaseTest {
         Sample probe = new Sample();
         probe.setExtId("T001");
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -196,8 +192,7 @@ public class ImporterTest extends BaseTest {
         Sample probe = new Sample();
         probe.setExtId("T002");
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.NEW, found);
+        Assert.assertNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -212,8 +207,9 @@ public class ImporterTest extends BaseTest {
         probe.setMainSampleId("120510003");
         probe.setMeasFacilId(mstId);
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.REJECT, found);
+        Assert.assertThrows(
+            Identifier.IdentificationException.class,
+            () -> probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -228,8 +224,7 @@ public class ImporterTest extends BaseTest {
         probe.setMainSampleId("");
         probe.setMeasFacilId(mstId);
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -243,8 +238,7 @@ public class ImporterTest extends BaseTest {
         messung.setSampleId(PID1000);
         messung.setMinSampleId("06A0");
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -258,8 +252,7 @@ public class ImporterTest extends BaseTest {
         messung.setSampleId(PID1000);
         messung.setMinSampleId("06A1");
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.NEW, found);
+        Assert.assertNull(messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -273,8 +266,7 @@ public class ImporterTest extends BaseTest {
         messung.setSampleId(PID1000);
         messung.setExtId(1);
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -288,8 +280,7 @@ public class ImporterTest extends BaseTest {
         messung.setSampleId(PID1000);
         messung.setExtId(2);
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.NEW, found);
+        Assert.assertNull(messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -303,8 +294,9 @@ public class ImporterTest extends BaseTest {
         Measm messung = new Measm();
         messung.setSampleId(PID1000);
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.REJECT, found);
+        Assert.assertThrows(
+            Identifier.IdentificationException.class,
+            () -> messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -320,8 +312,7 @@ public class ImporterTest extends BaseTest {
         messung.setExtId(1);
         messung.setMinSampleId("");
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(messungIdentifier.getExisting(messung));
     }
 
     /**

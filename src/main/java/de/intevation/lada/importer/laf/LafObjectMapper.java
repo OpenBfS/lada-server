@@ -31,7 +31,6 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
@@ -271,41 +270,54 @@ public class LafObjectMapper {
         // Compare the probe with objects in the db
         Sample newProbe = null;
         boolean oldProbeIsReadonly = false;
-        Identified i = probeIdentifier.find(probe);
-        Sample old = probeIdentifier.getExisting();
-        // Matching probe was found in the db. Update it!
-        if (i == Identified.UPDATE) {
-            if (
-                // Check if user belongs to matching measFacil
-                authorizer.isAuthorized(old, RequestMethod.POST)
-            ) {
-                // Check if sample is read-only due to status
-                oldProbeIsReadonly = authorizer.isAuthorized(
-                    old, RequestMethod.PUT);
-                if (oldProbeIsReadonly) {
-                    newProbe = old;
-                    currentNotifications.add(
-                        new ReportItem(
-                            "probe",
-                            old.getExtId(),
-                            StatusCodes.IMP_UNCHANGABLE));
+        try {
+            Sample old = probeIdentifier.getExisting(probe);
+            if (old != null) {
+                // Matching probe was found in the db. Update it!
+                if (
+                    // Check if user belongs to matching measFacil
+                    authorizer.isAuthorized(old, RequestMethod.POST)
+                ) {
+                    // Check if sample is read-only due to status
+                    oldProbeIsReadonly = authorizer.isAuthorized(
+                        old, RequestMethod.PUT);
+                    if (oldProbeIsReadonly) {
+                        newProbe = old;
+                        currentNotifications.add(
+                            new ReportItem(
+                                "probe",
+                                old.getExtId(),
+                                StatusCodes.IMP_UNCHANGABLE));
+                    } else {
+                        merger.merge(old, probe);
+                        newProbe = old;
+                    }
                 } else {
-                    merger.merge(old, probe);
-                    newProbe = old;
+                    ReportItem err = new ReportItem();
+                    err.setCode(StatusCodes.NOT_ALLOWED);
+                    err.setKey(userInfo.getName());
+                    err.setValue("Messstelle " + old.getMeasFacilId());
+                    currentWarnings.clear();
+                    currentErrors.add(err);
+                    errors.put(
+                        object.getIdentifier(),
+                        new ArrayList<ReportItem>(currentErrors));
+                    return;
                 }
             } else {
-                ReportItem err = new ReportItem();
-                err.setCode(StatusCodes.NOT_ALLOWED);
-                err.setKey(userInfo.getName());
-                err.setValue("Messstelle " + old.getMeasFacilId());
-                currentWarnings.clear();
-                currentErrors.add(err);
-                errors.put(
-                    object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentErrors));
-                return;
+                // It is a brand new probe!
+                validator.validate(probe);
+                if (!probe.hasErrors()) {
+                    repository.create(probe);
+                    newProbe = probe;
+
+                    // Messages might be obsolete after importing other objects
+                    newProbe.clearMessages();
+                } else {
+                    validate(probe, "validation#probe", false, true);
+                }
             }
-        } else if (i == Identified.REJECT) {
+        } catch (Identifier.IdentificationException e) {
             // Sample was found but some data does not match
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.IMP_PRESENT);
@@ -325,18 +337,6 @@ public class LafObjectMapper {
                     new ArrayList<ReportItem>(currentNotifications));
             }
             return;
-        } else if (i == Identified.NEW) {
-            // It is a brand new probe!
-            validator.validate(probe);
-            if (!probe.hasErrors()) {
-                repository.create(probe);
-                newProbe = probe;
-
-                // Messages might be obsolete after importing other objects
-                newProbe.clearMessages();
-            } else {
-                validate(probe, "validation#probe", false, true);
-           }
         }
         if (newProbe != null) {
             importProbeIds.add(newProbe.getId());
@@ -640,48 +640,43 @@ public class LafObjectMapper {
         }
 
         // Compare with messung objects in the db
-        Identified ident = messungIdentifier.find(messung);
         Measm newMessung;
-        Measm old = messungIdentifier.getExisting();
-        switch (ident) {
-        case UPDATE:
-            if (!authorizer.isAuthorized(old, RequestMethod.PUT)) {
-                currentNotifications.add(
-                    new ReportItem(
-                        "messung",
-                        old.getExtId(),
-                        StatusCodes.IMP_UNCHANGABLE));
-                return;
+        try {
+            Measm old = messungIdentifier.getExisting(messung);
+            if (old != null) {
+                if (!authorizer.isAuthorized(old, RequestMethod.PUT)) {
+                    currentNotifications.add(
+                        new ReportItem(
+                            "messung",
+                            old.getExtId(),
+                            StatusCodes.IMP_UNCHANGABLE));
+                    return;
+                } else {
+                    merger.mergeMessung(old, messung);
+                    newMessung = old;
+                }
             } else {
-                merger.mergeMessung(old, messung);
-                newMessung = old;
+                // Check if Messung has all fields that have db constraints
+                // (validation rule?)
+                if (messung.getMmtId() == null) {
+                    ReportItem err2 = new ReportItem();
+                    err2.setCode(StatusCodes.VALUE_MISSING);
+                    err2.setKey("not valid (missing Messmethode)");
+                    err2.setValue("Messung: " + messung.getMinSampleId());
+                    currentErrors.add(err2);
+                    return;
+                }
+
+                // Create a new messung and the first status
+                newMessung = repository.create(messung);
             }
-            break;
-        case REJECT:
+        } catch (Identifier.IdentificationException e) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.VALUE_MISSING);
             err.setKey("identification");
             err.setValue("Messung");
             currentErrors.add(err);
             return;
-        case NEW:
-            // Check if Messung has all fields that have db constraints
-            // (validation rule?)
-            if (messung.getMmtId() == null) {
-                ReportItem err2 = new ReportItem();
-                err2.setCode(StatusCodes.VALUE_MISSING);
-                err2.setKey("not valid (missing Messmethode)");
-                err2.setValue("Messung: " + messung.getMinSampleId());
-                currentErrors.add(err2);
-                return;
-            }
-
-            // Create a new messung and the first status
-            newMessung = repository.create(messung);
-            break;
-        default:
-            throw new IllegalArgumentException(
-                "Identified with unexpected enum constant");
         }
 
         // Add commMeasms
