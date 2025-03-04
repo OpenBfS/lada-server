@@ -7,10 +7,8 @@
  */
 package de.intevation.lada.importer;
 
-import java.util.List;
-
 import jakarta.inject.Inject;
-
+import jakarta.persistence.NoResultException;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -37,55 +35,37 @@ public class ProbeIdentifier implements Identifier<Sample> {
         ) {
             builder.and(Sample_.measFacilId, probe.getMeasFacilId())
                 .and(Sample_.mainSampleId, probe.getMainSampleId());
-            List<Sample> proben =
-                repository.filter(builder.getQuery());
-            if (proben.size() > 1) {
-                // Should never happen. DB has unique constraint for
-                // "mainSampleId"
-                return Identified.REJECT;
-            }
-            if (proben.isEmpty()) {
+            try {
+                found = repository.getSingle(builder.getQuery());
+                return Identified.UPDATE;
+            } catch (NoResultException e) {
                 return Identified.NEW;
             }
-            found = proben.get(0);
-            return Identified.UPDATE;
         } else if (probe.getExtId() != null
             && (probe.getMainSampleId() == null
                 || probe.getMeasFacilId() == null)
         ) {
             builder.and(Sample_.extId, probe.getExtId());
-            List<Sample> proben =
-                repository.filter(builder.getQuery());
-            if (proben.size() > 1) {
-                // Should never happen. DB has unique constraint for
-                // "sampleExtId"
-                return Identified.REJECT;
-            }
-            if (proben.isEmpty()) {
+            try {
+                found = repository.getSingle(builder.getQuery());
+                return Identified.UPDATE;
+            } catch (NoResultException e) {
                 return Identified.NEW;
             }
-            found = proben.get(0);
-            return Identified.UPDATE;
         }
         builder.and(Sample_.extId, probe.getExtId());
-        List<Sample> proben =
-            repository.filter(builder.getQuery());
-        if (proben.size() > 1) {
-            // Should never happen. DB has unique constraint for
-            // "sampleExtId"
-            return Identified.REJECT;
-        }
-        if (proben.isEmpty()) {
+        try {
+            found = repository.getSingle(builder.getQuery());
+            if (found.getMainSampleId() == null
+                || found.getMainSampleId().equals(
+                    probe.getMainSampleId())
+                || probe.getMainSampleId().isEmpty()
+                || found.getMainSampleId().isEmpty()
+            ) {
+                return Identified.UPDATE;
+            }
+        } catch (NoResultException e) {
             return Identified.NEW;
-        }
-        if (proben.get(0).getMainSampleId() == null
-            || proben.get(0).getMainSampleId().equals(
-                probe.getMainSampleId())
-            || probe.getMainSampleId().isEmpty()
-            || proben.get(0).getMainSampleId().isEmpty()
-        ) {
-            found = proben.get(0);
-            return Identified.UPDATE;
         }
         return Identified.REJECT;
     }

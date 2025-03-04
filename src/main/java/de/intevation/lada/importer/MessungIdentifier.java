@@ -10,7 +10,7 @@ package de.intevation.lada.importer;
 import java.util.List;
 
 import jakarta.inject.Inject;
-
+import jakarta.persistence.NoResultException;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -36,21 +36,17 @@ public class MessungIdentifier implements Identifier<Measm> {
         ) {
             builder.and(Measm_.sampleId, messung.getSampleId())
                 .and(Measm_.minSampleId, messung.getMinSampleId());
-            List<Measm> messungen =
-                repository.filter(builder.getQuery());
-            if (messungen.size() > 1) {
-                // Should never happen. DB has unique constraint for
-                // "nebenprobenNr"
-                return Identified.REJECT;
-            }
-            if (messungen.isEmpty()) {
+            try {
+                found = repository.getSingle(builder.getQuery());
+                return Identified.UPDATE;
+            } catch (NoResultException e) {
                 //TODO: QueryBuilder instance can not be reused here
                 //This may be a hibernate 6 bug, see:
                 //https://hibernate.atlassian.net/browse/HHH-15951
                 builder = repository.queryBuilder(Measm.class)
                     .and(Measm_.sampleId, messung.getSampleId())
                     .and(Measm_.mmtId, messung.getMmtId());
-                messungen =
+                List<Measm> messungen =
                     repository.filter(builder.getQuery());
                 if (messungen.size() == 1
                     && messungen.get(0).getMinSampleId() == null
@@ -60,23 +56,15 @@ public class MessungIdentifier implements Identifier<Measm> {
                 }
                 return Identified.NEW;
             }
-            found = messungen.get(0);
-            return Identified.UPDATE;
         } else if (messung.getExtId() != null) {
             builder.and(Measm_.sampleId, messung.getSampleId())
                 .and(Measm_.extId, messung.getExtId());
-            List<Measm> messungen =
-                repository.filter(builder.getQuery());
-            if (messungen.size() > 1) {
-                // Should never happen. DB has unique constraint for
-                // "externeMessungsId"
-                return Identified.REJECT;
-            }
-            if (messungen.isEmpty()) {
+            try {
+                found = repository.getSingle(builder.getQuery());
+                return Identified.UPDATE;
+            } catch (NoResultException e) {
                 return Identified.NEW;
             }
-            found = messungen.get(0);
-            return Identified.UPDATE;
         } else if (messung.getMmtId() != null) {
             builder.and(Measm_.sampleId, messung.getSampleId())
                 .and(Measm_.mmtId, messung.getMmtId());
