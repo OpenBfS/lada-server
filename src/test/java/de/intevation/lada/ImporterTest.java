@@ -293,19 +293,15 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Identify messung object by external id for reject.
+     * Unidentifiable Measm object.
      * @throws Exception that can occur during the test.
      */
-    @Ignore
     @Test
     @Transactional
-    //TODO: This unexpectedly returns an update instead of an reject
-    public final void identifyMessungByExterneMessungsIdReject()
+    public final void identifyMessungReject()
     throws Exception {
         Measm messung = new Measm();
         messung.setSampleId(PID1000);
-        messung.setExtId(1);
-        messung.setMinSampleId("06A2");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.REJECT, found);
