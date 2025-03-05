@@ -150,6 +150,7 @@ public class ImporterTest extends BaseTest {
         Sample probe = new Sample();
         probe.setMainSampleId("120510002");
         probe.setMeasFacilId(mstId);
+        probe.setIsTest(false);
 
         Assert.assertNotNull(probeIdentifier.getExisting(probe));
     }

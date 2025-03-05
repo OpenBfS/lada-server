@@ -30,9 +30,11 @@ public class ProbeIdentifier implements Identifier<Sample> {
         if (probe.getExtId() == null
             && probe.getMainSampleId() != null
             && probe.getMeasFacilId() != null
+            && probe.getIsTest() != null
         ) {
             builder.and(Sample_.measFacilId, probe.getMeasFacilId())
-                .and(Sample_.mainSampleId, probe.getMainSampleId());
+                .and(Sample_.mainSampleId, probe.getMainSampleId())
+                .and(Sample_.isTest, probe.getIsTest());
             try {
                 return repository.getSingle(builder.getQuery());
             } catch (NoResultException e) {
