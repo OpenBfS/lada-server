@@ -96,7 +96,7 @@ import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.model.master.Tz;
 import de.intevation.lada.model.master.Tz_;
-import de.intevation.lada.util.auth.HeaderAuthorization;
+import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -113,7 +113,7 @@ public class LafObjectMapper {
     @Inject
     private Logger logger;
 
-    private HeaderAuthorization authorizer;
+    private Authorization authorizer;
 
     private Validator validator;
 
@@ -1988,7 +1988,7 @@ public class LafObjectMapper {
      */
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
-        this.authorizer = new HeaderAuthorization(
+        this.authorizer = new Authorization(
             userInfo, this.i18n, this.repository);
     }
 

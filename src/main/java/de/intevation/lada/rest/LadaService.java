@@ -23,9 +23,7 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.context.ThreadLocale;
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.groups.Warnings;
@@ -61,7 +59,6 @@ public abstract class LadaService {
     private HttpServletRequest request;
 
     @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
     protected Authorization authorization;
 
     /**

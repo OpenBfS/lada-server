@@ -121,7 +121,7 @@ public class AuthorizerTest extends BaseTest {
         try {
             final int userId = 2;
             transaction.begin();
-            authorization = new HeaderAuthorization(
+            authorization = new Authorization(
                 new UserInfo(
                     testUser,
                     userId,

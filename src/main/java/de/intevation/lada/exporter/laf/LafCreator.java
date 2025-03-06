@@ -46,7 +46,7 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.model.master.StatusMp;
-import de.intevation.lada.util.auth.HeaderAuthorization;
+import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -85,7 +85,7 @@ implements Creator {
     private static final String DEFAULT_FORMAT = "%s";
     private static final String CN = "\"%s\""; // cn, mcn, scn
 
-    private HeaderAuthorization authorization;
+    private Authorization authorization;
 
     /**
      * The repository used to read data.
@@ -605,7 +605,7 @@ implements Creator {
     @Override
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
-        this.authorization = new HeaderAuthorization(
+        this.authorization = new Authorization(
             userInfo, this.i18n, this.repository);
     }
 }
