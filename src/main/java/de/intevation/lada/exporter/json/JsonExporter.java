@@ -39,8 +39,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.data.requests.QueryExportParameters;
-import de.intevation.lada.exporter.ExportConfig;
-import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommMeasm_;
@@ -85,7 +83,6 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-@ExportConfig(format = ExportFormat.JSON)
 public class JsonExporter implements Exporter<QueryExportParameters> {
 
     private static final int ZEBS_COUNTER = 3;
