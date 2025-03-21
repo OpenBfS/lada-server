@@ -30,6 +30,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import de.intevation.lada.data.requests.CsvExportParameters;
+import de.intevation.lada.data.requests.Laf8ExportParameters;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportJobManager;
@@ -80,14 +81,30 @@ public class AsyncExportService extends AsyncLadaService {
 
     @POST
     @Path("laf")
-    @Operation(summary = "Create a LAF export job")
+    @Operation(summary = "Create a LAF 8.4 export job")
     public AsyncLadaService.AsyncJobResponse createLafExportJob(
-        @Valid LafExportParameters objects
+        @Valid Laf8ExportParameters objects
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
                 objects.getEncoding(),
+                objects,
+                i18n.getResourceBundle(),
+                userInfo);
+        return new AsyncLadaService.AsyncJobResponse(newJobId);
+    }
+
+    @POST
+    @Path("laf9")
+    @Operation(summary = "Create a LAF 9 export job")
+    public AsyncLadaService.AsyncJobResponse createLaf9ExportJob(
+        @Valid LafExportParameters objects
+    ) throws BadRequestException {
+        UserInfo userInfo = authorization.getInfo();
+        String newJobId =
+            exportJobManager.createExportJob(
+                StandardCharsets.UTF_8,
                 objects,
                 i18n.getResourceBundle(),
                 userInfo);

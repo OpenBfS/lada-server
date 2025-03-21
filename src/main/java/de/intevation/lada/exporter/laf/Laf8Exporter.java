@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import de.intevation.lada.data.requests.LafExportParameters;
+import de.intevation.lada.data.requests.Laf8ExportParameters;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.util.auth.UserInfo;
@@ -27,7 +27,7 @@ import de.intevation.lada.util.data.Repository;
 *
 * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
 */
-public class LafExporter implements Exporter<LafExportParameters> {
+public class Laf8Exporter implements Exporter<Laf8ExportParameters> {
 
     /**
      * The creator used to generate content.

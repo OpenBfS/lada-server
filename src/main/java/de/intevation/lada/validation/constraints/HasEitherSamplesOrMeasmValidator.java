@@ -7,16 +7,16 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import de.intevation.lada.data.requests.LafExportParameters;
+import de.intevation.lada.data.requests.Laf8ExportParameters;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class HasEitherSamplesOrMeasmValidator
-    implements ConstraintValidator<HasEitherSamplesOrMeasm, LafExportParameters> {
+    implements ConstraintValidator<HasEitherSamplesOrMeasm, Laf8ExportParameters> {
 
     @Override
     public boolean isValid(
-        LafExportParameters value,
+        Laf8ExportParameters value,
         ConstraintValidatorContext context
     ) {
         return value == null

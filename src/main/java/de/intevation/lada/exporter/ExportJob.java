@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import de.intevation.lada.data.requests.ExportParameters;
@@ -65,7 +64,7 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
     /**
      * Complete path to the output file.
      */
-    protected Path outputFilePath;
+    protected File outputFile;
 
     /**
      * Clean up after the export has finished.
@@ -101,11 +100,11 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
     }
 
     /**
-     * Get the export file's path.
-     * @return File path
+     * Get the export file.
+     * @return File
      */
-    public Path getOutputFilePath() {
-        return outputFilePath;
+    public File getOutputFile() {
+        return outputFile;
     }
 
     /**
@@ -136,9 +135,9 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
      * Remove the export's result file if present.
      */
     protected void removeResultFile() {
-        if (this.outputFilePath != null) {
+        if (this.outputFile != null) {
             try {
-                Files.delete(this.outputFilePath);
+                Files.delete(this.outputFile.toPath());
             } catch (NoSuchFileException nsfe) {
                 logger.debug("Can not remove result file: File not found");
             } catch (IOException ioe) {
@@ -158,10 +157,9 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
     protected void writeResultToFile(InputStream exported) {
         try {
             //Create file
-            this.outputFilePath =
-                File.createTempFile("export-", "." + this.format).toPath();
+            createTmpFile();
             logger.debug(String.format(
-                    "Writing result to file %s", outputFilePath));
+                    "Writing result to file %s", outputFile.toPath()));
 
             //Write to file
             ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -173,11 +171,19 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
             }
 
             try (BufferedWriter writer =
-                Files.newBufferedWriter(outputFilePath, encoding)) {
+                Files.newBufferedWriter(outputFile.toPath(), encoding)) {
                 writer.write(new String(result.toByteArray(), encoding));
             }
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
+        }
+    }
+
+    protected void createTmpFile() {
+        try {
+            this.outputFile = File.createTempFile("export-", "." + this.format);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not create tmp file", e);
         }
     }
 }

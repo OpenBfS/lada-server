@@ -19,7 +19,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
-import de.intevation.lada.data.requests.LafExportParameters;
+import de.intevation.lada.data.requests.Laf8ExportParameters;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
@@ -50,7 +50,7 @@ public class LafExportService extends LadaService {
      * The exporter.
      */
     @Inject
-    private Exporter<LafExportParameters> exporter;
+    private Exporter<Laf8ExportParameters> exporter;
 
     /**
      * Export objects as LAF 8.
@@ -63,7 +63,7 @@ public class LafExportService extends LadaService {
     @Path("laf")
     @Produces("application/octet-stream")
     public Response download(
-        @Valid LafExportParameters objects
+        @Valid Laf8ExportParameters objects
     ) throws BadRequestException {
         List<Integer> pIds = objects.getProben();
         List<Integer> mIds = objects.getMessungen();

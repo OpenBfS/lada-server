@@ -18,12 +18,15 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
+import jakarta.json.bind.JsonbBuilder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.SyncInvoker;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
@@ -34,6 +37,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.data.AsyncExportService;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Job.JobStatus;
@@ -50,6 +55,10 @@ public class ExporterTest extends BaseTest {
     private final String formatCsv = "csv";
     private final String formatJson = "json";
     private final String formatLaf = "laf";
+    private final String formatLaf9 = UriBuilder
+        .fromMethod(AsyncExportService.class, "createLaf9ExportJob")
+        .build()
+        .toString();
 
     @PersistenceContext
     EntityManager em;
@@ -373,11 +382,11 @@ public class ExporterTest extends BaseTest {
     }
 
     /**
-     * Test asynchronous LAF export of a Sample identified by ID.
+     * Test asynchronous LAF 8.4 export of a Sample identified by ID.
      */
     @Test
     @RunAsClient
-    public final void testLafExportProbeById()
+    public final void testLaf8ExportProbeById()
         throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
         final int probeId = 1000;
@@ -387,8 +396,28 @@ public class ExporterTest extends BaseTest {
 
         String result = runExportTest(formatLaf, requestJson);
         Assert.assertTrue(
-            "Unexpected LAF content",
+            "Unexpected LAF content: " + result,
             result.startsWith("%PROBE%") && result.endsWith("%ENDE%"));
+    }
+
+    /**
+     * Test asynchronous LAF 9 export of a Sample identified by ID.
+     */
+    @Test
+    @RunAsClient
+    public final void testLaf9ExportProbeById()
+        throws InterruptedException, CharacterCodingException {
+        final int probeId = 1000;
+        JsonObject requestJson = requestJsonBuilder
+            .add("proben", Json.createArrayBuilder().add(probeId))
+            .build();
+
+        String result = runExportTest(formatLaf9, requestJson);
+        List<Sample> jsonResult = JsonbBuilder.create().fromJson(
+            result, (new GenericType<List<Sample>>() { }).getType());
+        Assert.assertTrue(
+            "Unexpected LAF content: " + result,
+            jsonResult.size() == 1);
     }
 
     /**

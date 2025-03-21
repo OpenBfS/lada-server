@@ -13,7 +13,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import jakarta.enterprise.inject.Instance;
@@ -22,6 +21,7 @@ import jakarta.inject.Inject;
 
 import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.data.requests.ExportParameters;
+import de.intevation.lada.data.requests.Laf8ExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.util.auth.UserInfo;
@@ -68,13 +68,21 @@ public class ExportJobManager extends JobManager {
             job.setBundle(bundle);
             format = "csv";
             newJob = job;
+        } else if (params instanceof Laf8ExportParameters p) {
+            TypeLiteral<ExportJob<Laf8ExportParameters>> type
+                = new TypeLiteral<>() { };
+            ExportJob<Laf8ExportParameters> job
+                = exportJobProvider.select(type).get();
+            job.setExportParameter(p);
+            format = "laf";
+            newJob = job;
         } else if (params instanceof LafExportParameters p) {
             TypeLiteral<ExportJob<LafExportParameters>> type
                 = new TypeLiteral<>() { };
             ExportJob<LafExportParameters> job
                 = exportJobProvider.select(type).get();
             job.setExportParameter(p);
-            format = "laf";
+            format = "json";
             newJob = job;
         } else if (params instanceof QueryExportParameters p) {
             TypeLiteral<ExportJob<QueryExportParameters>> type
@@ -121,10 +129,9 @@ public class ExportJobManager extends JobManager {
         String id, UserInfo userInfo
     ) throws IOException {
         ExportJob<?> job = (ExportJob) getJobById(id, userInfo);
-        Path filePath = job.getOutputFilePath();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            Files.copy(filePath, outputStream);
+            Files.copy(job.getOutputFile().toPath(), outputStream);
             logger.debug(String.format("Returning result file for job %s", id));
             return new ByteArrayInputStream(outputStream.toByteArray());
         } finally {

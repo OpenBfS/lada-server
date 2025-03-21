@@ -11,7 +11,7 @@ package de.intevation.lada.exporter.laf;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import de.intevation.lada.data.requests.LafExportParameters;
+import de.intevation.lada.data.requests.Laf8ExportParameters;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.exporter.ExportJob;
 
@@ -20,15 +20,15 @@ import de.intevation.lada.exporter.ExportJob;
  *
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-public class LafExportJob extends ExportJob<LafExportParameters> {
+public class Laf8ExportJob extends ExportJob<Laf8ExportParameters> {
 
     /**
      * The laf exporter.
      */
     @Inject
-    private Exporter<LafExportParameters> exporter;
+    private Exporter<Laf8ExportParameters> exporter;
 
-    public LafExportJob() {
+    public Laf8ExportJob() {
         this.format = "laf";
         this.downloadFileName = "export.laf";
     }
