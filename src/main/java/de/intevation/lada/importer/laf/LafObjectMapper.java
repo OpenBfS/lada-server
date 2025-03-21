@@ -27,16 +27,12 @@ import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.metamodel.SingularAttribute;
 
-import javax.management.modelmbean.InvalidTargetObjectTypeException;
-
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
-import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.BaseModel;
@@ -101,7 +97,7 @@ import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.model.master.Tz;
 import de.intevation.lada.model.master.Tz_;
-import de.intevation.lada.util.auth.HeaderAuthorization;
+import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -118,17 +114,15 @@ public class LafObjectMapper {
     @Inject
     private Logger logger;
 
-    private HeaderAuthorization authorizer;
+    private Authorization authorizer;
 
     private Validator validator;
 
     @Inject
-    @IdentifierConfig(type = "Sample")
-    private Identifier probeIdentifier;
+    private Identifier<Sample> probeIdentifier;
 
     @Inject
-    @IdentifierConfig(type = "Messung")
-    private Identifier messungIdentifier;
+    private Identifier<Measm> messungIdentifier;
 
     @Inject
     private ObjectMerger merger;
@@ -278,10 +272,9 @@ public class LafObjectMapper {
         Sample newProbe = null;
         boolean oldProbeIsReadonly = false;
         try {
-            Identified i = probeIdentifier.find(probe);
-            Sample old = (Sample) probeIdentifier.getExisting();
-            // Matching probe was found in the db. Update it!
-            if (i == Identified.UPDATE) {
+            Sample old = probeIdentifier.getExisting(probe);
+            if (old != null) {
+                // Matching probe was found in the db. Update it!
                 if (
                     // Check if user belongs to matching measFacil
                     authorizer.isAuthorized(old, RequestMethod.POST)
@@ -312,27 +305,7 @@ public class LafObjectMapper {
                         new ArrayList<ReportItem>(currentErrors));
                     return;
                 }
-            } else if (i == Identified.REJECT) {
-                // Sample was found but some data does not match
-                ReportItem err = new ReportItem();
-                err.setCode(StatusCodes.IMP_PRESENT);
-                err.setKey("duplicate");
-                err.setValue("");
-                currentErrors.add(err);
-                if (!currentErrors.isEmpty()) {
-                    errors.put(object.getIdentifier(),
-                        new ArrayList<ReportItem>(currentErrors));
-                }
-                if (!currentWarnings.isEmpty()) {
-                    warnings.put(object.getIdentifier(),
-                        new ArrayList<ReportItem>(currentWarnings));
-                }
-                if (!currentNotifications.isEmpty()) {
-                    notifications.put(object.getIdentifier(),
-                        new ArrayList<ReportItem>(currentNotifications));
-                }
-                return;
-            } else if (i == Identified.NEW) {
+            } else {
                 // It is a brand new probe!
                 validator.validate(probe);
                 if (!probe.hasErrors()) {
@@ -345,16 +318,12 @@ public class LafObjectMapper {
                     validate(probe, "validation#probe", false, true);
                 }
             }
-            if (newProbe != null) {
-                importProbeIds.add(newProbe.getId());
-            } else if (probe != null) {
-                importProbeIds.add(probe.getId());
-            }
-        } catch (InvalidTargetObjectTypeException e) {
+        } catch (Identifier.IdentificationException e) {
+            // Sample was found but some data does not match
             ReportItem err = new ReportItem();
-            err.setCode(StatusCodes.ERROR_VALIDATION);
-            err.setKey("not known");
-            err.setValue("No valid Sample Object");
+            err.setCode(StatusCodes.IMP_PRESENT);
+            err.setKey("duplicate");
+            err.setValue("");
             currentErrors.add(err);
             if (!currentErrors.isEmpty()) {
                 errors.put(object.getIdentifier(),
@@ -369,6 +338,11 @@ public class LafObjectMapper {
                     new ArrayList<ReportItem>(currentNotifications));
             }
             return;
+        }
+        if (newProbe != null) {
+            importProbeIds.add(newProbe.getId());
+        } else if (probe != null) {
+            importProbeIds.add(probe.getId());
         }
 
         if (newProbe != null) {
@@ -665,58 +639,43 @@ public class LafObjectMapper {
         }
 
         // Compare with messung objects in the db
-        Identified ident;
-        try {
-            ident = messungIdentifier.find(messung);
-        } catch (InvalidTargetObjectTypeException e) {
-            ReportItem err = new ReportItem();
-            err.setCode(StatusCodes.ERROR_VALIDATION);
-            err.setKey("not valid");
-            err.setValue("Messung: " + messung.getMinSampleId());
-            currentErrors.add(err);
-            return;
-        }
         Measm newMessung;
-        Measm old = (Measm) messungIdentifier.getExisting();
-        switch (ident) {
-        case UPDATE:
-            if (!authorizer.isAuthorized(old, RequestMethod.PUT)) {
-                currentNotifications.add(
-                    new ReportItem(
-                        "messung",
-                        old.getExtId(),
-                        StatusCodes.IMP_UNCHANGABLE));
-                return;
+        try {
+            Measm old = messungIdentifier.getExisting(messung);
+            if (old != null) {
+                if (!authorizer.isAuthorized(old, RequestMethod.PUT)) {
+                    currentNotifications.add(
+                        new ReportItem(
+                            "messung",
+                            old.getExtId(),
+                            StatusCodes.IMP_UNCHANGABLE));
+                    return;
+                } else {
+                    merger.mergeMessung(old, messung);
+                    newMessung = old;
+                }
             } else {
-                merger.mergeMessung(old, messung);
-                newMessung = old;
+                // Check if Messung has all fields that have db constraints
+                // (validation rule?)
+                if (messung.getMmtId() == null) {
+                    ReportItem err2 = new ReportItem();
+                    err2.setCode(StatusCodes.VALUE_MISSING);
+                    err2.setKey("not valid (missing Messmethode)");
+                    err2.setValue("Messung: " + messung.getMinSampleId());
+                    currentErrors.add(err2);
+                    return;
+                }
+
+                // Create a new messung and the first status
+                newMessung = repository.create(messung);
             }
-            break;
-        case REJECT:
+        } catch (Identifier.IdentificationException e) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.VALUE_MISSING);
             err.setKey("identification");
             err.setValue("Messung");
             currentErrors.add(err);
             return;
-        case NEW:
-            // Check if Messung has all fields that have db constraints
-            // (validation rule?)
-            if (messung.getMmtId() == null) {
-                ReportItem err2 = new ReportItem();
-                err2.setCode(StatusCodes.VALUE_MISSING);
-                err2.setKey("not valid (missing Messmethode)");
-                err2.setValue("Messung: " + messung.getMinSampleId());
-                currentErrors.add(err2);
-                return;
-            }
-
-            // Create a new messung and the first status
-            newMessung = repository.create(messung);
-            break;
-        default:
-            throw new IllegalArgumentException(
-                "Identified with unexpected enum constant");
         }
 
         // Add commMeasms
@@ -2028,7 +1987,7 @@ public class LafObjectMapper {
      */
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
-        this.authorizer = new HeaderAuthorization(
+        this.authorizer = new Authorization(
             userInfo, this.i18n, this.repository);
     }
 

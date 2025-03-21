@@ -31,8 +31,6 @@ import org.apache.commons.csv.CSVPrinter;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.data.requests.CsvExportParameters;
-import de.intevation.lada.exporter.ExportConfig;
-import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.master.GridColMp;
 import de.intevation.lada.model.master.GridColMp_;
@@ -47,7 +45,6 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-@ExportConfig(format = ExportFormat.CSV)
 public class CsvExporter implements Exporter<CsvExportParameters> {
 
     @Inject Logger logger;
