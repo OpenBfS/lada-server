@@ -19,6 +19,7 @@ import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.rest.JSONBConfig;
 import de.intevation.lada.exporter.ExportJob;
 
 /**
@@ -47,7 +48,8 @@ public class Laf9ExportJob extends ExportJob<LafExportParameters> {
         createTmpFile();
         try (FileWriter writer = new FileWriter(
                 this.outputFile, StandardCharsets.UTF_8)) {
-            JsonbBuilder.create().toJson(samples, writer);
+            JsonbBuilder.create(JSONBConfig.getJsonbConfig())
+                .toJson(samples, writer);
         } catch(IOException e) {
             throw new RuntimeException("Failed writing JSON to file", e);
         }
