@@ -5,22 +5,18 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.data;
+package de.intevation.lada.importer.laf;
 
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.POST;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
@@ -28,14 +24,12 @@ import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
-import de.intevation.lada.rest.LadaService;
 import de.intevation.lada.rest.TagLinkService;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
 
-@Path(LadaService.PATH_DATA + "laf9")
-public class Laf9Service extends LadaService {
+public class Laf9ImportJob extends ImportJob<List<Sample>> {
 
     @Inject
     private Repository repository;
@@ -50,27 +44,39 @@ public class Laf9Service extends LadaService {
     private TagLinkService<TagLinkMeasm> tagLinkMeasmService;
 
     /**
-     * @param sample sample to create
-     * @return created sample
-     * @throws BadRequestException if any constraint violations are detected.
+     * Run the import job.
      */
-    @Operation(description =
-        "Provisional service for testing upload of samples "
-        + "including associated objects.")
-    @POST
-    public Sample upload(
-        @Valid Sample sample
-    ) throws BadRequestException {
-        repository.create(sample);
+    @Override
+    public void runWithTx() {
+        // IDs of all imported samples
+        List<Integer> importedSampleIds = new ArrayList<>();
 
-        // Handle associated tags
-        // TODO: Authorize
-        handleSampleTags(sample);
-        for (Measm m: sample.getMeasms()) {
-            handleMeasmTags(m);
-        }
+        // Import each file
+        Map<String, Object> fileResponseData = new HashMap<>();
+        this.files.forEach((fileName, content) -> {
+            // TODO: Authorize
+            for (Sample sample: content) {
+                repository.create(sample);
 
-        return sample;
+                // Handle associated tags
+                // TODO: Handle tag links outside request scope
+                // handleSampleTags(sample);
+                // for (Measm m: sample.getMeasms()) {
+                //     handleMeasmTags(m);
+                // }
+
+                // TODO: Handle geolocat.site_id
+
+                // TODO: Avoid duplicating statusProt entries
+
+                importedSampleIds.add(sample.getId());
+            }
+            fileResponseData.put(SUCCESS_KEY, !currentStatus.getErrors());
+            fileResponseData.put(SAMPLE_IDS_KEY, importedSampleIds);
+            importData.put(fileName, fileResponseData);
+        });
+
+        tagImportedData(importedSampleIds, this.mst);
     }
 
     private void handleMeasmTags(Measm measm) {

@@ -16,14 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
-import de.intevation.lada.data.requests.LafImportParameters;
+import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
-import de.intevation.lada.model.master.MeasFacil;
-import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.TagUtil;
 
 
 /**
@@ -31,29 +27,12 @@ import de.intevation.lada.util.data.TagUtil;
  *
  * @author Alexander Woestmann <awoestmann@intevation.de>
  */
-public class LafImportJob extends Job {
+public class Laf8ImportJob extends ImportJob<String> {
 
     @Inject
     private LafImporter importer;
 
-    private Map<String, Map<String, Object>> importData = new HashMap<>();
-
-    private LafImportParameters importParams;
-
-    private MeasFacil mst;
-
-    private Map<String, String> files;
-
-    @Inject
-    private TagUtil tagUtil;
-
-    public void cleanup() {
-        //Intentionally left blank
-    }
-
-    public Map<String, Map<String, Object>> getImportData() {
-        return importData;
-    }
+    private Laf8ImportParameters importParams;
 
     /**
      * Run the import job.
@@ -62,7 +41,7 @@ public class LafImportJob extends Job {
     public void runWithTx() {
         logger.debug("Starting LAF import");
 
-        //Ids of alle imported probe records
+        // IDs of all imported probe records
         List<Integer> importedProbeids = new ArrayList<Integer>();
 
         //Import each file
@@ -92,38 +71,20 @@ public class LafImportJob extends Job {
                     "notifications", importer.getNotifications());
                 this.currentStatus.setNotifications(true);
             }
-            fileResponseData.put("success", !currentStatus.getErrors());
-            fileResponseData.put("probeIds", importer.getImportedIds());
+            fileResponseData.put(SUCCESS_KEY, !currentStatus.getErrors());
+            fileResponseData.put(SAMPLE_IDS_KEY, importer.getImportedIds());
             importData.put(fileName, fileResponseData);
             importedProbeids.addAll(importer.getImportedIds());
             logger.debug(
                 String.format("Finished import of file \"%s\"", fileName));
         });
 
-        // If import created at least a new record
-        if (importedProbeids.size() > 0) {
-            //Generate a tag for the imported probe records
-            Tag newTag = tagUtil.generateTag("IMP", mst.getNetworkId());
-            tagUtil.setTagsByProbeIds(
-                importedProbeids, newTag.getId());
+        tagImportedData(importedProbeids, mst);
 
-            //Put new tag in import response
-            importData.forEach((file, responseData) -> {
-                responseData.put("tag", newTag.getName());
-            });
-        }
         logger.debug("Finished LAF import");
     }
 
-    public void setImportParameters(LafImportParameters importParameters) {
+    public void setImportParameters(Laf8ImportParameters importParameters) {
          this.importParams = importParameters;
-    }
-
-    public void setMst(MeasFacil mst) {
-        this.mst = mst;
-    }
-
-    public void setFiles(Map<String, String> files) {
-        this.files = files;
     }
 }

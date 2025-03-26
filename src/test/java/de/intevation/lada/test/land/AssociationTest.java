@@ -10,6 +10,9 @@ package de.intevation.lada.test.land;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,7 +31,9 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
-import de.intevation.lada.data.Laf9Service;
+import de.intevation.lada.ImporterTest;
+import de.intevation.lada.data.requests.Laf9ImportParameters;
+import de.intevation.lada.importer.laf.ImportJob;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
@@ -60,8 +65,6 @@ public class AssociationTest extends ServiceTest {
         .fromResource(MeasmService.class).build() + "/";
     private final String tagPath = UriBuilder
         .fromResource(TagService.class).build() + "/";
-    private final String laf9Path = UriBuilder
-        .fromResource(Laf9Service.class).build() + "/";
     private final String commSamplePath = UriBuilder
             .fromResource(CommSampleService.class).build() + "/";
     private final String sampleSpecificMeasValPath = UriBuilder
@@ -77,6 +80,8 @@ public class AssociationTest extends ServiceTest {
     private final String statusProtPath = UriBuilder
             .fromResource(StatusProtService.class).build() + "/";
 
+    private final String measFacilId = "06011";
+
     @Override
     public void init(WebTarget t) {
         super.init(t);
@@ -86,7 +91,6 @@ public class AssociationTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        String measFacilId = "06011";
         String mmtId = "A3";
         String comment = "test association with comment";
         String commMeasmText = "Testkommentar";
@@ -128,8 +132,7 @@ public class AssociationTest extends ServiceTest {
 
         delete(samplePath + created.getId());
 
-        // Create Sample via $laf9Path
-        created = create(laf9Path, sample, Sample.class);
+        created = importSample(sample);
 
         // Extract properties to test for
         Set<Measm> createdMeasms = created.getMeasms();
@@ -369,9 +372,8 @@ public class AssociationTest extends ServiceTest {
     }
 
     private Sample testSampleCouldBeDeleted(Sample sample, Tag tag) {
-        Sample created;
         tag.setName("another association test");
-        created = create(laf9Path, sample, Sample.class);
+        Sample created = importSample(sample);
         delete(samplePath + created.getId());
         return created;
     }
@@ -783,6 +785,24 @@ public class AssociationTest extends ServiceTest {
         m.setMeasUnitId(measUnitId);
         m.setMeasVal(1.0d);
         return m;
+    }
+
+    private Sample importSample(Sample sample) {
+        // Create Sample via LAF 9 import
+        Laf9ImportParameters params = new Laf9ImportParameters();
+        final String fileName = "dummy";
+        params.setFiles(Map.of(fileName, List.of(sample)));
+        params.setMeasFacilId(measFacilId);
+        try {
+            int sampleId = ImporterTest.runAsyncImport(
+                target, "laf9", Locale.getDefault(), params, true)
+                .getJsonObject(fileName)
+                .getJsonArray(ImportJob.SAMPLE_IDS_KEY)
+                .getInt(0);
+            return get(samplePath + sampleId, Sample.class);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Sample assertAssociatedUnchanged(

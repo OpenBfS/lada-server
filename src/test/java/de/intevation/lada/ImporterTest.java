@@ -29,6 +29,7 @@ import jakarta.json.JsonValue;
 import jakarta.transaction.UserTransaction;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.SyncInvoker;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -46,9 +47,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
+import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.ObjectMerger;
+import de.intevation.lada.importer.laf.ImportJob;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
@@ -744,73 +747,21 @@ public class ImporterTest extends BaseTest {
         final String fileName = "test.laf";
 
         /* Request asynchronous import */
-        var requestJson = new LafImportParameters();
+        var requestJson = new Laf8ImportParameters();
         requestJson.setEncoding(StandardCharsets.UTF_8);
         requestJson.setMeasFacilId(mstId);
         requestJson.setFiles(Map.of(fileName, Base64.getEncoder()
                 .encodeToString(lafData.getBytes(StandardCharsets.UTF_8))));
 
-        Response importCreated = target.path(ASYNC_IMPORT_URL + "laf")
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .acceptLanguage(locale)
-            .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON));
-        String jobId = parseResponse(importCreated, AsyncJobResponse.class)
-            .getJobId();
-
-        /* Request status of asynchronous import */
-        SyncInvoker statusRequest = target
-            .path(ASYNC_IMPORT_URL + "status/" + jobId)
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles);
-        JobStatus importStatusObject;
-        boolean done = false;
-        final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
-        final int waitASecond = 1000;
-        do {
-            Response response = statusRequest.get();
-            importStatusObject =
-                parseResponse(response, JobStatus.class);
-            done = importStatusObject.isDone();
-            Assert.assertTrue(
-                "Import not done within one minute",
-                waitUntil.isAfter(Instant.now()));
-            Thread.sleep(waitASecond);
-        } while (!done);
-
-        Assert.assertEquals(
-            Job.Status.FINISHED.name(),
-            importStatusObject.getStatus().name());
-
-        /* Fetch import result report */
-        Response reportResponse = target
-            .path(ASYNC_IMPORT_URL + "result/" + jobId)
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
-        JsonObject report = parseResponse(reportResponse).asJsonObject();
-
-        assertContains(report, fileName);
-        JsonObject fileReport = report.getJsonObject(fileName);
-
-        final String successKey = "success";
-        assertContains(fileReport, successKey);
-        boolean success = fileReport.getBoolean(successKey);
-        final String sampleIdsKey = "probeIds";
-        assertContains(fileReport, sampleIdsKey);
+        JsonObject fileReport = runAsyncImport(
+            target, "laf", locale, requestJson, expectSuccess)
+            .getJsonObject(fileName);
         if (!expectSuccess) {
-            Assert.assertFalse(
-                "Unexpectedly successful import: " + fileReport, success);
             return fileReport;
         }
-        Assert.assertTrue(
-            "Unsuccessful import: " + fileReport, success);
 
         // Test if data correctly entered database
-        final int sampleId = fileReport.getJsonArray(sampleIdsKey)
+        final int sampleId = fileReport.getJsonArray(ImportJob.SAMPLE_IDS_KEY)
             .getJsonNumber(0).intValue();
         Response importedSampleResponse = target
             .path("rest/sample/" + sampleId)
@@ -870,4 +821,74 @@ public class ImporterTest extends BaseTest {
         final int probeIdLength = 16;
         return UUID.randomUUID().toString().substring(0, probeIdLength);
    }
+
+    public static JsonObject runAsyncImport(
+        WebTarget target,
+        String path,
+        Locale locale,
+        LafImportParameters<?> requestJson,
+        boolean expectSuccess
+    ) throws InterruptedException {
+        Response importCreated = target.path(ASYNC_IMPORT_URL)
+            .path(path)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .acceptLanguage(locale)
+            .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON));
+        String jobId = parseResponse(importCreated, AsyncJobResponse.class)
+            .getJobId();
+
+        /* Request status of asynchronous import */
+        SyncInvoker statusRequest = target
+            .path(ASYNC_IMPORT_URL + "status/" + jobId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles);
+        JobStatus importStatusObject;
+        boolean done = false;
+        final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
+        final int waitASecond = 1000;
+        do {
+            Response response = statusRequest.get();
+            importStatusObject =
+                parseResponse(response, JobStatus.class);
+            done = importStatusObject.isDone();
+            Assert.assertTrue(
+                "Import not done within one minute",
+                waitUntil.isAfter(Instant.now()));
+            Thread.sleep(waitASecond);
+        } while (!done);
+
+        Assert.assertEquals(
+            Job.Status.FINISHED.name(),
+            importStatusObject.getStatus().name());
+
+        /* Fetch import result report */
+        Response reportResponse = target
+            .path(ASYNC_IMPORT_URL + "result/" + jobId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject report = parseResponse(reportResponse).asJsonObject();
+
+        for (String fileName: requestJson.getFiles().keySet()) {
+            assertContains(report, fileName);
+            JsonObject fileReport = report.getJsonObject(fileName);
+
+            final String successKey = "success";
+            assertContains(fileReport, successKey);
+            boolean success = fileReport.getBoolean(successKey);
+            assertContains(fileReport, ImportJob.SAMPLE_IDS_KEY);
+            if (!expectSuccess) {
+                Assert.assertFalse(
+                    "Unexpectedly successful import: " + fileReport, success);
+                return report;
+            }
+            Assert.assertTrue(
+                "Unsuccessful import: " + fileReport, success);
+        }
+        return report;
+    }
 }

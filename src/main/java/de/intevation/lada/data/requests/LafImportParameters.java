@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.data.requests;
 
-import java.nio.charset.Charset;
 import java.util.Map;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -19,13 +18,10 @@ import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 
 
-public class LafImportParameters {
-
-    @NotNull
-    private Charset encoding;
+public abstract class LafImportParameters<T> {
 
     @NotEmpty
-    private Map<String, String> files;
+    private Map<String, T> files;
 
     @NotNull
     @NotEmptyNorWhitespace
@@ -33,19 +29,11 @@ public class LafImportParameters {
     @IsValidPrimaryKey(clazz = MeasFacil.class)
     private String measFacilId;
 
-    public Charset getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(Charset encoding) {
-        this.encoding = encoding;
-    }
-
-    public Map<String, String> getFiles() {
+    public Map<String, T> getFiles() {
         return files;
     }
 
-    public void setFiles(Map<String, String> files) {
+    public void setFiles(Map<String, T> files) {
         this.files = files;
     }
 

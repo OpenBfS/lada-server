@@ -24,7 +24,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
-import de.intevation.lada.data.requests.LafImportParameters;
+import de.intevation.lada.data.requests.Laf8ImportParameters;
+import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
@@ -54,9 +55,9 @@ public class AsyncImportService extends AsyncLadaService {
 
     @POST
     @Path("laf")
-    @Operation(summary = "Import a LAF document")
+    @Operation(summary = "Import LAF 8.4 documents")
     public AsyncLadaService.AsyncJobResponse createAsyncImport(
-        @Valid LafImportParameters lafImportParameters
+        @Valid Laf8ImportParameters lafImportParameters
     ) throws BadRequestException {
         MeasFacil mst = repository.getById(
                 MeasFacil.class, lafImportParameters.getMeasFacilId());
@@ -79,8 +80,22 @@ public class AsyncImportService extends AsyncLadaService {
             throw new BadRequestException();
         }
 
-        String newJobId = importJobManager.createImportJob(
+        String newJobId = importJobManager.createLaf8ImportJob(
             authorization.getInfo(), lafImportParameters, mst, files);
+        return new AsyncLadaService.AsyncJobResponse(newJobId);
+    }
+
+    @POST
+    @Path("laf9")
+    @Operation(summary = "Import LAF 9 documents")
+    public AsyncLadaService.AsyncJobResponse createAsyncLaf9Import(
+        @Valid Laf9ImportParameters importParameters
+    ) throws BadRequestException {
+        MeasFacil mst = repository.getById(
+                MeasFacil.class, importParameters.getMeasFacilId());
+
+        String newJobId = importJobManager.createLaf9ImportJob(
+            authorization.getInfo(), mst, importParameters.getFiles());
         return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
