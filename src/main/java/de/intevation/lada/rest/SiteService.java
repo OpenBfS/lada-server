@@ -284,12 +284,26 @@ public class SiteService extends LadaService {
 
         byte[] img = Base64.getDecoder().decode(
                 dataUrl.substring(contentStartIndex));
+        String sql = getQueryForType(type);
+        updateDataColumn(site.getId(), img, sql);
+
+    }
+
+    private void updateDataColumn(Integer id, byte[] img, String sql) {
+        Query q = repository.entityManager().createQuery(sql);
+        q.setParameter("data", img);
+        q.setParameter("siteId", id);
+        q.executeUpdate();
+    }
+
+    private String getQueryForType(String type) {
+        String sql;
         if (type.equals("map")) {
-            site.setMap(img);
+            sql = "UPDATE Site s SET s.map = :data WHERE s.id = :siteId";
         } else {
-            site.setImg(img);
+            sql = "UPDATE Site s SET s.img = :data WHERE s.id = :siteId";
         }
-        repository.update(site);
+        return sql;
     }
 
     /**
@@ -307,11 +321,7 @@ public class SiteService extends LadaService {
     ) {
         Site site = repository.getById(Site.class, id);
         authorization.authorize(site, RequestMethod.PUT);
-        if (type.equals("map")) {
-            site.setMap(null);
-        } else {
-            site.setImg(null);
-        }
-        repository.update(site);
+        String sql = getQueryForType(type);
+        updateDataColumn(site.getId(), null, sql);
     }
 }
