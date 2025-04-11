@@ -95,6 +95,8 @@ RUN mvn -q package && \
        $JBOSS_HOME/standalone/deployments/lada-server.war && \
     touch $JBOSS_HOME/standalone/deployments/lada-server.war.dodeploy
 
+HEALTHCHECK CMD [ $(curl -sfw '%{http_code}' http://localhost:8080/lada-server/rest/version) = 401 ] || exit 1
+
 #
 # This will boot WildFly in the standalone mode and bind to all interface
 #

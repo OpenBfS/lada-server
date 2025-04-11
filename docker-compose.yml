@@ -26,8 +26,11 @@ services:
   client:
     image: "koala/lada_client"
     depends_on:
-      - server
-      - printer
+      server:
+        condition: service_healthy
+      printer:
+        condition: service_started
+        required: false
     volumes:
       - ../client:/usr/local/lada # Assumes client checkout in ../client
     ports:
