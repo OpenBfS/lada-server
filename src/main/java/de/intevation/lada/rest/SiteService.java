@@ -35,8 +35,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.QueryParam;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.Repository;
@@ -52,8 +50,8 @@ import de.intevation.lada.validation.Validator;
 @Path(LadaService.PATH_REST + "site")
 public class SiteService extends LadaService {
 
-    @Inject
-    private Logger logger;
+    private static final String UPDATE_QUERY_TPL =
+        "UPDATE Site s SET s.%s = :data WHERE s.id = :siteId";
 
     /**
      * The data repository granting read/write access.
@@ -284,26 +282,15 @@ public class SiteService extends LadaService {
 
         byte[] img = Base64.getDecoder().decode(
                 dataUrl.substring(contentStartIndex));
-        String sql = getQueryForType(type);
-        updateDataColumn(site.getId(), img, sql);
-
+        updateDataColumn(site.getId(), img, type);
     }
 
-    private void updateDataColumn(Integer id, byte[] img, String sql) {
-        Query q = repository.entityManager().createQuery(sql);
-        q.setParameter("data", img);
-        q.setParameter("siteId", id);
-        q.executeUpdate();
-    }
-
-    private String getQueryForType(String type) {
-        String sql;
-        if (type.equals("map")) {
-            sql = "UPDATE Site s SET s.map = :data WHERE s.id = :siteId";
-        } else {
-            sql = "UPDATE Site s SET s.img = :data WHERE s.id = :siteId";
-        }
-        return sql;
+    private void updateDataColumn(Integer id, byte[] img, String type) {
+        String sql = String.format(UPDATE_QUERY_TPL, type);
+        repository.entityManager().createQuery(sql)
+            .setParameter("data", img)
+            .setParameter("siteId", id)
+            .executeUpdate();
     }
 
     /**
@@ -321,7 +308,6 @@ public class SiteService extends LadaService {
     ) {
         Site site = repository.getById(Site.class, id);
         authorization.authorize(site, RequestMethod.PUT);
-        String sql = getQueryForType(type);
-        updateDataColumn(site.getId(), null, sql);
+        updateDataColumn(site.getId(), null, type);
     }
 }
