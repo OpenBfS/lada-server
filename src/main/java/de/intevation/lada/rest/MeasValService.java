@@ -71,7 +71,6 @@ public class MeasValService extends LadaService {
      * @return Filtered Messwert objects.
      */
     @GET
-    @SuppressWarnings("unchecked")
     public List<MeasVal> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
