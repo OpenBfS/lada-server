@@ -10,8 +10,10 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -31,6 +34,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.DatasetCreator;
@@ -200,6 +205,12 @@ public class Sample extends BaseModel implements Serializable {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = NuclFacilGr.class)
     private Integer nuclFacilGrId;
+
+    // Cascade removal of Sample to referencing Measm entries
+    @OneToMany(mappedBy = Measm_.SAMPLE, cascade = CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonbTransient
+    private Set<Measm> measms;
 
     @Transient
     private boolean owner;

@@ -167,5 +167,7 @@ public class ProbeTest extends ServiceTest {
             updateFieldKey,
             newValue);
         delete(SAMPLE_SERVICE_URL + created.get("id"));
+        final int sampleWithMeasmAndMeasVals = 999;
+        delete(SAMPLE_SERVICE_URL + sampleWithMeasmAndMeasVals);
     }
 }
