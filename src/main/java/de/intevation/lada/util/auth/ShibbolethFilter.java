@@ -25,9 +25,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.i18n.I18n;
+import de.intevation.lada.rest.LadaService;
+
 
 /** ServletFilter used for Shibboleth authentification. */
-@WebFilter({"/rest/*", "/data/*"})
+@WebFilter({"/" + LadaService.PATH_REST + "*",
+            "/" + LadaService.PATH_DATA + "*"})
 public class ShibbolethFilter implements Filter {
 
     @Inject
