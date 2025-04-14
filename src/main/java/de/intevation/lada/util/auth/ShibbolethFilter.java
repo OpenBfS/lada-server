@@ -58,12 +58,14 @@ public class ShibbolethFilter implements Filter {
         if (user == null || "".equals(user)) {
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                 i18n.getString("no_valid_user_found"));
+            return;
         }
 
         Set<String> rolesValue = extractRoles(roles);
         if (rolesValue == null || rolesValue.isEmpty()) {
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                 i18n.getString("no_valid_role_found"));
+            return;
         }
 
         httpRequest.setAttribute("lada.user.roles", rolesValue);
