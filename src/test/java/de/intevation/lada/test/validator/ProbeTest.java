@@ -11,7 +11,9 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 
@@ -690,6 +692,7 @@ public class ProbeTest extends ValidatorBaseTest {
     public void sampleSpecifMesValWithMatchingEnvMedium() {
         Sample sample = createMinimumValidSample();
         sample.setId(ID1000);
+        sample.setExtId("sample_ext_id");
         validator.validate(sample);
         assertNoMessages(sample);
     }
@@ -702,13 +705,10 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setExtId("sample_ext_id");
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasErrors());
-        Assert.assertTrue(sample.getErrors()
-            .containsKey(Sample_.EXT_ID));
-        MatcherAssert.assertThat(
-            sample.getErrors().get(Sample_.EXT_ID),
-            CoreMatchers.hasItem(valMessageUniqueExtId));
+        assertHasErrors(
+            validator.validate(sample),
+            Sample_.EXT_ID,
+            valMessageUniqueExtId);
     }
 
     /**
@@ -717,10 +717,29 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void uniqueExtId() {
         Sample sample = createMinimumValidSample();
+        sample.setId(null);
         sample.setExtId("SomethingUnique");
 
         validator.validate(sample);
-        assertNoMessages(sample);
+        Assert.assertFalse(sample.hasErrors());
+        Assert.assertFalse(sample.hasNotifications());
+        // Inevitable warning for new samples
+        Assert.assertEquals(
+            Map.of("geolocats", Set.of(MSG_NO_SAMPLING_LOC)),
+            sample.getWarnings());
+    }
+
+    /**
+     * Test immutability of extId.
+     */
+    @Test
+    public void immutableExtId() {
+        Sample sample = createMinimumValidSample();
+        sample.setExtId("edit");
+
+        validator.validate(sample);
+        assertHasErrors(sample,
+            Sample_.EXT_ID, "Field is immutable");
     }
 
     /**
@@ -732,6 +751,7 @@ public class ProbeTest extends ValidatorBaseTest {
         final int regulationId = 1;
         Sample sample = new Sample();
         sample.setId(sampleId);
+        sample.setExtId("regulation_9");
         sample.setMainSampleId("test");
         sample.setApprLabId(EXISTING_APPR_LAB_ID);
         sample.setMeasFacilId(MST_06010);
@@ -754,6 +774,7 @@ public class ProbeTest extends ValidatorBaseTest {
         final int sampleId = 25001;
         Sample sample = createMinimumValidSample();
         sample.setId(sampleId);
+        sample.setExtId("rei_sample");
         sample.setRegulationId(REGULATION_ID_REI);
         sample.setReiAgGrId(EXAMPLE_REI_AG_GR_ID);
         sample.setNuclFacilGrId(EXAMPLE_NUCL_FACIL_ID);
