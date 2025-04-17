@@ -743,6 +743,32 @@ public class ProbeTest extends ValidatorBaseTest {
     }
 
     /**
+     * Notification about missing business type for regulation LFGB.
+     */
+    @Test
+    public void missingBusinessTypeLFGB() {
+        Sample sample = createMinimumValidSample();
+        final int lfgbRegId = 15;
+        sample.setRegulationId(lfgbRegId);
+        final String envDescripTpl = "D: %s 01 00 00 00 00 00 00 00 00 00 %s";
+
+        sample.setEnvDescripDisplay(String.format(envDescripTpl, "01", "00"));
+        assertHasNotifications(validator.validate(sample),
+            Sample_.ENV_DESCRIP_DISPLAY,
+            "S11 (type of business) not given");
+
+        sample.clearMessages();
+
+        // Business type given as S11
+        sample.setEnvDescripDisplay(String.format(envDescripTpl, "01", "01"));
+        assertNoNotifications(validator.validate(sample));
+
+        // Constraint not for this value of S00
+        sample.setEnvDescripDisplay(String.format(envDescripTpl, "10", "00"));
+        assertNoNotifications(validator.validate(sample));
+    }
+
+    /**
      * Create a minimum valid sample.
      * @return sample
      */

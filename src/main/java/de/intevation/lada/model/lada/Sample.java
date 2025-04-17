@@ -61,6 +61,7 @@ import de.intevation.lada.validation.constraints.HasSamplingLocation;
 import de.intevation.lada.validation.constraints.Immutable;
 import de.intevation.lada.validation.constraints.IsReiComplete;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.LFGBEnvDescripHasS11;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.NoUnnecessaryReiAttributes;
 import de.intevation.lada.validation.constraints.OrigDateVsStartDate;
@@ -91,6 +92,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @HasSamplingLocation(groups = Warnings.class)
 @EnvDescripMatchesEnvMedium(groups = Warnings.class)
 @EnvDescripMatchesEnvMediumReiOr161(groups = Notifications.class)
+@LFGBEnvDescripHasS11(groups = Notifications.class)
 public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
