@@ -15,6 +15,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.hamcrest.CoreMatchers;
@@ -23,6 +24,8 @@ import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
+import de.intevation.lada.rest.SampleService;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -30,6 +33,11 @@ import de.intevation.lada.test.ServiceTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class ProbeTest extends ServiceTest {
+
+    private static final String SAMPLE_SERVICE_URL =
+        UriBuilder.fromResource(SampleService.class).build() + "/";
+
+    private static final int SAMPLE_ID = 1000;
 
     private JsonObject expectedById;
     private JsonObject create;
@@ -40,22 +48,22 @@ public class ProbeTest extends ServiceTest {
 
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "lastMod",
-            "sampleStartDate",
-            "schedStartDate",
-            "schedEndDate",
-            "treeMod"
+            Sample_.LAST_MOD,
+            Sample_.SAMPLE_START_DATE,
+            Sample_.SCHED_START_DATE,
+            Sample_.SCHED_END_DATE,
+            Sample_.TREE_MOD
         });
 
         // Prepare expected probe object
         JsonObject probe = filterJsonArrayById(
             readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
-            1000);
+            SAMPLE_ID);
         expectedById = convertObject(probe)
-            .addNull("midSampleDate")
-            .addNull("sampleEndDate")
-            .addNull("datasetCreatorId")
-            .addNull("mpgCategId")
+            .addNull(Sample_.MID_SAMPLE_DATE)
+            .addNull(Sample_.SAMPLE_END_DATE)
+            .addNull(Sample_.DATASET_CREATOR_ID)
+            .addNull(Sample_.MPG_CATEG_ID)
             .add("readonly", false)
             .add("owner", true)
             .build();
@@ -69,35 +77,36 @@ public class ProbeTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("rest/sample", Status.METHOD_NOT_ALLOWED);
+        get(SAMPLE_SERVICE_URL, Status.METHOD_NOT_ALLOWED);
 
         final String warningsKey = "warnings";
         final String expectedWarningKey = "geolocats";
 
         // Assert that GET receives validation warnings in response
         MatcherAssert.assertThat(
-            getById("rest/sample/1000", expectedById)
+            getById(SAMPLE_SERVICE_URL + SAMPLE_ID, expectedById)
                 .getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
-        JsonObject created = create("rest/sample", create);
+        JsonObject created = create(SAMPLE_SERVICE_URL, create);
         // Assert that POST receives validation warnings in response
         MatcherAssert.assertThat(
             created.getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
-        final String updateFieldKey = "mainSampleId";
+        final String updateFieldKey = Sample_.MAIN_SAMPLE_ID;
         final String newValue = "130510002";
         // Assert that PUT receives validation warnings in response
         MatcherAssert.assertThat(
-            update("rest/sample/1000", updateFieldKey, "120510002", newValue)
+            update(SAMPLE_SERVICE_URL + SAMPLE_ID,
+                updateFieldKey, "120510002", newValue)
                 .asJsonObject().getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         // Ensure invalid envDescripDisplay is rejected
         update(
-            "rest/sample/1000",
-            "envDescripDisplay",
+            SAMPLE_SERVICE_URL + SAMPLE_ID,
+            Sample_.ENV_DESCRIP_DISPLAY,
             Json.createValue("D: 59 04 01 00 05 05 01 02 00 00 00 00"),
             Json.createValue(""),
             Status.BAD_REQUEST);
@@ -107,17 +116,17 @@ public class ProbeTest extends ServiceTest {
         Map<Locale, String> msgs = Map.of(
             Locale.GERMAN, "Größe muss zwischen 0 und 3 sein",
             Locale.US, "size must be between 0 and 3");
-        final String envMediumId = "envMediumId";
+        final String envMediumId = Sample_.ENV_MEDIUM_ID;
         JsonObject payload = Json.createObjectBuilder()
             .add(envMediumId, "too much text for envMediumId")
-            .add("regulationId", 1)
-            .add("sampleMethId", 1)
-            .add("isTest", false)
-            .add("oprModeId", 1)
+            .add(Sample_.REGULATION_ID, 1)
+            .add(Sample_.SAMPLE_METH_ID, 1)
+            .add(Sample_.IS_TEST, false)
+            .add(Sample_.OPR_MODE_ID, 1)
             .build();
         for (Locale language: msgs.keySet()) {
             JsonArray violations = create(
-                "rest/sample", payload, language, Status.BAD_REQUEST)
+                SAMPLE_SERVICE_URL, payload, language, Status.BAD_REQUEST)
                 .getJsonArray("parameterViolations");
             violations.forEach(val -> {
                 JsonObject obj = (JsonObject) val;
@@ -135,28 +144,30 @@ public class ProbeTest extends ServiceTest {
             Locale.US, "No value provided");
         final String measFacilId = "06010";
         JsonObject wrngPayload = Json.createObjectBuilder()
-            .add("measFacilId", measFacilId)
-            .add("apprLabId", measFacilId)
-            .add("regulationId", 2)
-            .add("sampleMethId", 1)
-            .add("isTest", false)
-            .add("oprModeId", 1)
+            .add(Sample_.MEAS_FACIL_ID, measFacilId)
+            .add(Sample_.APPR_LAB_ID, measFacilId)
+            .add(Sample_.REGULATION_ID, 2)
+            .add(Sample_.SAMPLE_METH_ID, 1)
+            .add(Sample_.IS_TEST, false)
+            .add(Sample_.OPR_MODE_ID, 1)
             .build();
         for (Locale language: wrngs.keySet()) {
             JsonObject response = create(
-                "rest/sample", wrngPayload, language, Status.OK);
+                SAMPLE_SERVICE_URL, wrngPayload, language, Status.OK);
             final String wrngsKey = "warnings";
             BaseTest.assertContains(response, wrngsKey);
             String violation = response.getJsonObject(wrngsKey)
-                .getJsonArray("sampleStartDate")
+                .getJsonArray(Sample_.SAMPLE_START_DATE)
                 .getString(0);
             Assert.assertEquals(wrngs.get(language), violation);
         }
 
         getAuditTrail(
-            "rest/audit/probe/1000",
+            "rest/audit/probe/" + SAMPLE_ID,
             updateFieldKey,
             newValue);
-        delete("rest/sample/" + created.get("id"));
+        delete(SAMPLE_SERVICE_URL + created.get("id"));
+        final int sampleWithMeasmAndMeasVals = 999;
+        delete(SAMPLE_SERVICE_URL + sampleWithMeasmAndMeasVals);
     }
 }

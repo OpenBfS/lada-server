@@ -61,6 +61,7 @@ import de.intevation.lada.validation.constraints.EnvMediumForReiAgGr;
 import de.intevation.lada.validation.constraints.HasEndDate;
 import de.intevation.lada.validation.constraints.HasOneSiteOfOrigin;
 import de.intevation.lada.validation.constraints.HasSamplingLocation;
+import de.intevation.lada.validation.constraints.Immutable;
 import de.intevation.lada.validation.constraints.IsReiComplete;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
@@ -79,6 +80,8 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Unique(fields = {"mainSampleId", "isTest", "measFacilId"},
     groups = DatabaseConstraints.class, clazz = Sample.class)
 @Unique(fields = {"extId"},
+    groups = DatabaseConstraints.class, clazz = Sample.class)
+@Immutable(fields = {"extId"},
     groups = DatabaseConstraints.class, clazz = Sample.class)
 @BeginBeforeEnd(groups = Warnings.class)
 @DatesVsSampleMeth(groups = Warnings.class)

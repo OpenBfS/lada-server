@@ -210,6 +210,7 @@ public class Site extends BaseModel implements Serializable {
     private Point geom;
 
     @Lob
+    @Column(updatable = false)
     @JdbcTypeCode(value = SqlTypes.BINARY)
     @JsonbTransient
     private byte[] img;
@@ -217,6 +218,7 @@ public class Site extends BaseModel implements Serializable {
     @Lob
     @JdbcTypeCode(value = SqlTypes.BINARY)
     @JsonbTransient
+    @Column(updatable = false)
     private byte[] map;
 
     @NotEmptyNorWhitespace
