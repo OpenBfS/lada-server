@@ -769,6 +769,31 @@ public class ProbeTest extends ValidatorBaseTest {
     }
 
     /**
+     * Notification about missing species for regulation LFGB.
+     */
+    @Test
+    public void missingSpeciesLFGB() {
+        Sample sample = createMinimumValidSample();
+        final int lfgbRegId = 15;
+        sample.setRegulationId(lfgbRegId);
+        final String envDescripTpl = "D: %s 01 01 %s 00 02 00 00 00 00 00 21";
+        String defectiveDescription = String.format(envDescripTpl, "02", "00");
+        String workingDescription = String.format(envDescripTpl, "02", "01");
+        sample.setEnvDescripDisplay(defectiveDescription);
+        validator.validate(sample);
+        assertHasNotifications(validator.validate(sample),
+            Sample_.ENV_DESCRIP_DISPLAY,
+            "S03 (species) not given");
+
+        sample.clearMessages();
+        sample.setEnvDescripDisplay(workingDescription);
+        assertNoNotifications(validator.validate(sample));
+        // Constraint not for this value of S00
+        sample.setEnvDescripDisplay(String.format(envDescripTpl, "10", "00"));
+        assertNoNotifications(validator.validate(sample));
+    }
+
+    /**
      * Create a minimum valid sample.
      * @return sample
      */

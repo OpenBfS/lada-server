@@ -24,19 +24,17 @@ import de.intevation.lada.util.data.Repository;
 /**
  * Validates if descriptor S11 is given for regulation "LFGB".
  */
-public class LFGBEnvDescripHasS11Validator
-    implements ConstraintValidator<LFGBEnvDescripHasS11, Sample> {
+public class LFGBEnvDescripHasS3Validator
+    implements ConstraintValidator<LFGBEnvDescripHasS3, Sample> {
 
     private static final int REG_LFGB = 15;
     private static final int FUTTERMITTEL = 2;
     private static final int FUTTERMITTEL_NACH_LFGB = 18;
-    private static final int ZEBS = 1;
-
 
     private String message;
 
     @Override
-    public void initialize(LFGBEnvDescripHasS11 constraintAnnotation) {
+    public void initialize(LFGBEnvDescripHasS3 constraintAnnotation) {
         this.message = constraintAnnotation.message();
     }
 
@@ -74,10 +72,10 @@ public class LFGBEnvDescripHasS11Validator
         EnvDescrip s0 = CDI.current().getBeanContainer()
             .createInstance().select(Repository.class).get()
             .entityManager().find(EnvDescrip.class, s0Id);
-        boolean isFutterMittelOrZEBS = List.of(ZEBS, FUTTERMITTEL, FUTTERMITTEL_NACH_LFGB).contains(s0.getLevVal());
+        boolean isFutterMittel = List.of(FUTTERMITTEL, FUTTERMITTEL_NACH_LFGB).contains(s0.getLevVal());
         boolean isS0Set = s0 != null;
-        boolean hasS11Set = media.get("s11") != null;
-        if (isS0Set && isFutterMittelOrZEBS && !hasS11Set
+        boolean hasS3Set = media.get("s3") != null;
+        if (isS0Set && isFutterMittel && !hasS3Set
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
