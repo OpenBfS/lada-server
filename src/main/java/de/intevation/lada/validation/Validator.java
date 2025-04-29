@@ -84,19 +84,19 @@ public class Validator {
         for (Class<?> group: groups.length == 0 ? defaultGroups : groups) {
             Set<ConstraintViolation<T>> beanViolations =
                 beanValidator.validate(object, group);
-            if (group.equals(Default.class)) {
+            if (Default.class.isAssignableFrom(group)) {
                 for (ConstraintViolation<T> violation: beanViolations) {
                     object.addError(
                         violation.getPropertyPath().toString(),
                         violation.getMessage());
                 }
-            } else if (group.equals(Warnings.class)) {
+            } else if (Warnings.class.isAssignableFrom(group)) {
                 for (ConstraintViolation<T> violation: beanViolations) {
                     object.addWarning(
                         violation.getPropertyPath().toString(),
                         violation.getMessage());
                 }
-            } else if (group.equals(Notifications.class)) {
+            } else if (Notifications.class.isAssignableFrom(group)) {
                 for (ConstraintViolation<T> violation: beanViolations) {
                     object.addNotification(
                         violation.getPropertyPath().toString(),

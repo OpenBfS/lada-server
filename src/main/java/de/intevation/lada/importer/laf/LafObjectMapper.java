@@ -104,6 +104,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
+import de.intevation.lada.validation.groups.CreateErrors;
 
 /**
  * Create database objects and map the attributes from laf raw data.
@@ -306,7 +307,7 @@ public class LafObjectMapper {
                 }
             } else {
                 // It is a brand new probe!
-                validator.validate(probe);
+                validator.validate(probe, CreateErrors.class);
                 if (!probe.hasErrors()) {
                     repository.create(probe);
                     newProbe = probe;
