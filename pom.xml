@@ -377,10 +377,7 @@
             <artifactId>jackson-databind</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
+
         <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
