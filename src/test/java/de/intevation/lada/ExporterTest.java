@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
@@ -24,6 +25,7 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.SyncInvoker;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
@@ -34,6 +36,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.data.AsyncExportService;
+import de.intevation.lada.data.JsonExportService;
+import de.intevation.lada.data.LafExportService;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Job.JobStatus;
@@ -45,7 +50,8 @@ import de.intevation.lada.util.data.Job.JobStatus;
 @RunWith(Arquillian.class)
 public class ExporterTest extends BaseTest {
 
-    private static final String ASYNC_EXPORT_URL = "data/asyncexport/";
+    private static final String ASYNC_EXPORT_URL =
+        UriBuilder.fromResource(AsyncExportService.class).build() + "/";
 
     private final String formatCsv = "csv";
     private final String formatJson = "json";
@@ -136,6 +142,51 @@ public class ExporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
+    }
+
+    /**
+     * Test JSON export of a Sample identified by ID.
+     */
+    @Test
+    @RunAsClient
+    public final void testJsonExportProbeById()
+        throws InterruptedException, CharacterCodingException {
+        final int probeId = 1000;
+        JsonArray result = target
+            .path(UriBuilder.fromResource(JsonExportService.class)
+                .path(JsonExportService.class, "downloadSamples")
+                .build().toString())
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(List.of(probeId), MediaType.APPLICATION_JSON),
+                JsonArray.class);
+        Assert.assertEquals("Unexpected JSON content", 1, result.size());
+    }
+
+    /**
+     * Test LAF export of a Sample identified by ID.
+     */
+    @Test
+    @RunAsClient
+    public final void testLafExportProbeById()
+        throws InterruptedException, CharacterCodingException {
+        final int probeId = 1000;
+        JsonObject requestJson = requestJsonBuilder
+            .add("proben", Json.createArrayBuilder().add(probeId))
+            .build();
+
+        String result = target
+            .path(UriBuilder.fromResource(LafExportService.class)
+                .path(LafExportService.class, "download").build().toString())
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON),
+                String.class);
+        Assert.assertTrue(
+            "Unexpected LAF content",
+            result.startsWith("%PROBE%") && result.endsWith("%ENDE%"));
     }
 
     /**
@@ -301,9 +352,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testJsonExportProbeById()
+    public final void testAsyncJsonExportProbeById()
         throws InterruptedException, CharacterCodingException {
-        /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "main_sample_id")
             .add("idFilter", Json.createArrayBuilder().add("120510002"))
@@ -377,9 +427,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testLafExportProbeById()
+    public final void testAsyncLafExportProbeById()
         throws InterruptedException, CharacterCodingException {
-        /* Request asynchronous export */
         final int probeId = 1000;
         JsonObject requestJson = requestJsonBuilder
             .add("proben", Json.createArrayBuilder().add(probeId))
