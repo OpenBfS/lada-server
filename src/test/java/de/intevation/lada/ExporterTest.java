@@ -19,6 +19,7 @@ import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
+import jakarta.json.bind.JsonbBuilder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.ws.rs.client.Entity;
@@ -39,9 +40,11 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.data.AsyncExportService;
 import de.intevation.lada.data.JsonExportService;
 import de.intevation.lada.data.LafExportService;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Job.JobStatus;
+
 
 /**
  * Test export services.
@@ -162,6 +165,12 @@ public class ExporterTest extends BaseTest {
             .post(Entity.entity(List.of(probeId), MediaType.APPLICATION_JSON),
                 JsonArray.class);
         Assert.assertEquals("Unexpected JSON content", 1, result.size());
+
+        // Returned JSON represents expected sample
+        Sample sample = JsonbBuilder.create().fromJson(
+            result.getJsonObject(0).toString(), Sample.class);
+        Assert.assertEquals(
+            "Unexpected sample exported", probeId, sample.getId().intValue());
     }
 
     /**
