@@ -673,6 +673,26 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Ensure setting status with warning in measVal fails.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncImportStatusWarningMeasVal()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        testAsyncImportProbe(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId,
+                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                // Measurand does not match measuring method
+                "Mangan", measUnit,
+                "BEARBEITUNGSSTATUS 1000\n"),
+            lafSampleId,
+            false);
+    }
+
+    /**
      * Test "Zeitbasis" handling in LAF8 import.
      */
     @Test
