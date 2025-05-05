@@ -106,6 +106,8 @@
     <master.env_descrip
         id = "5" lev = "1" lev_val = "1" pred_id = "4" name = "ZEBS 1"/>
     <master.env_descrip
+        id = "6" lev = "1" lev_val = "1" pred_id = "1" name = "6"/>
+    <master.env_descrip
         id = "11" lev = "0" lev_val = "2" name = "s00 2"/>
     <master.env_descrip
         id = "13" lev = "11" lev_val = "1" pred_id = "5" name = "A business type"/>
@@ -151,6 +153,20 @@
         s03 = "45"
         env_medium_id = "N71"
     />
+    <master.env_descrip_env_medium_mp
+        id = "5"
+        s00 = "4"
+        s01 = "5"
+        s11 = "13"
+        env_medium_id = "N71"
+    />
+    <master.env_descrip_env_medium_mp
+        id = "6"
+        s00 = "1"
+        s01 = "6"
+        env_medium_id = "N71"
+    />
+
     <master.admin_unit
         id = "11000000"
         state_id = "11000000"

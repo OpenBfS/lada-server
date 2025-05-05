@@ -761,11 +761,11 @@ public class ProbeTest extends ValidatorBaseTest {
 
         // Business type given as S11
         sample.setEnvDescripDisplay(String.format(envDescripTpl, "01", "01"));
-        assertNoNotifications(validator.validate(sample));
+        assertNoMessages(validator.validate(sample));
 
         // Constraint not for this value of S00
         sample.setEnvDescripDisplay(String.format(envDescripTpl, "10", "00"));
-        assertNoNotifications(validator.validate(sample));
+        assertNoMessages(validator.validate(sample));
     }
 
     /**
