@@ -776,21 +776,22 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         final int lfgbRegId = 15;
         sample.setRegulationId(lfgbRegId);
-        final String envDescripTpl = "D: %s 01 01 %s 00 02 00 00 00 00 00 21";
+        final String envDescripTpl = "D: %s 01 00 %s 00 00 00 00 00 00 00 01";
         String defectiveDescription = String.format(envDescripTpl, "02", "00");
         String workingDescription = String.format(envDescripTpl, "02", "01");
         sample.setEnvDescripDisplay(defectiveDescription);
-        validator.validate(sample);
-        assertHasNotifications(validator.validate(sample),
+        String errorMsg = "S03 (species) not given";
+        assertHasNotifications(
+            validator.validate(sample),
             Sample_.ENV_DESCRIP_DISPLAY,
-            "S03 (species) not given");
-
+            errorMsg);
         sample.clearMessages();
         sample.setEnvDescripDisplay(workingDescription);
-        assertNoNotifications(validator.validate(sample));
+        assertNoMessages(validator.validate(sample));
         // Constraint not for this value of S00
-        sample.setEnvDescripDisplay(String.format(envDescripTpl, "10", "00"));
-        assertNoNotifications(validator.validate(sample));
+        sample.setEnvDescripDisplay(VALID_ENV_DESCRIP_DISPLAY_FOR_N71);
+        validator.validate(sample);
+        assertNoMessages(validator.validate(sample));
     }
 
     /**

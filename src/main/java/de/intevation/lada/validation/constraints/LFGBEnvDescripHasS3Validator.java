@@ -74,7 +74,7 @@ public class LFGBEnvDescripHasS3Validator
             .entityManager().find(EnvDescrip.class, s0Id);
         boolean isFutterMittel = List.of(FUTTERMITTEL, FUTTERMITTEL_NACH_LFGB).contains(s0.getLevVal());
         boolean isS0Set = s0 != null;
-        boolean hasS3Set = media.get("s3") != null;
+        boolean hasS3Set = media.get("s03") != null;
         if (isS0Set && isFutterMittel && !hasS3Set
         ) {
             ctx.disableDefaultConstraintViolation();

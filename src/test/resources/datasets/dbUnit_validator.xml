@@ -120,11 +120,9 @@
     <master.env_descrip
         id = "43" lev = "1" lev_val = "1" pred_id = "11" name = "43"/>
     <master.env_descrip
-        id = "44" lev = "2" lev_val = "1" pred_id = "43" name = "44"/>
+        id = "44" lev = "11" lev_val = "1" pred_id = "43" name = "44"/>
     <master.env_descrip
-        id = "45" lev = "5" lev_val = "2" pred_id = "43" name = "45"/>
-    <master.env_descrip
-        id = "46" lev = "11" lev_val = "21" pred_id = "43" name = "46"/>
+        id = "45" lev = "3" lev_val = "1" pred_id = "43" name = "45"/>
     <master.env_descrip_env_medium_mp
         id = "1"
         s00 = "1"
@@ -145,7 +143,14 @@
         s02 = "42"
         env_medium_id = "L42"
     />
-
+    <master.env_descrip_env_medium_mp
+        id = "4"
+        s00 = "11"
+        s11 = "44"
+        s01 = "43"
+        s03 = "45"
+        env_medium_id = "N71"
+    />
     <master.admin_unit
         id = "11000000"
         state_id = "11000000"
