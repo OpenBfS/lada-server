@@ -790,8 +790,25 @@ public class ProbeTest extends ValidatorBaseTest {
         assertNoMessages(validator.validate(sample));
         // Constraint not for this value of S00
         sample.setEnvDescripDisplay(VALID_ENV_DESCRIP_DISPLAY_FOR_N71);
-        validator.validate(sample);
         assertNoMessages(validator.validate(sample));
+    }
+
+    /**
+     * Warning about missing SampleSpecificMeasVal for regulation LFGB.
+     */
+    @Test
+    public void missingSampleSpecificMeasVal() {
+        Sample sample = createMinimumValidSample();
+        int lfgbRegId = 15;
+        sample.setRegulationId(lfgbRegId);
+        assertNoMessages(validator.validate(sample));
+        // case it is missing
+        sample.setId(30000);
+        sample.setExtId("X");
+        assertHasNotifications(
+            validator.validate(sample),
+            "sampleSpecifMeasVals",
+            "Value must be provided");
     }
 
     /**
