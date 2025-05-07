@@ -55,6 +55,7 @@ import de.intevation.lada.validation.constraints.EnvDescripDisplay;
 import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMedium;
 import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMediumReiOr161;
 import de.intevation.lada.validation.constraints.EnvMediumForReiAgGr;
+import de.intevation.lada.validation.constraints.ExtIdLFGB;
 import de.intevation.lada.validation.constraints.HasEndDate;
 import de.intevation.lada.validation.constraints.HasOneSiteOfOrigin;
 import de.intevation.lada.validation.constraints.HasSampleSpecificMeasVal;
@@ -98,6 +99,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @EnvDescripMatchesEnvMediumReiOr161(groups = Notifications.class)
 @LFGBEnvDescripHasS11(groups = Notifications.class)
 @LFGBEnvDescripHasS3(groups = Notifications.class)
+@ExtIdLFGB(groups = CreateErrors.class)
 public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

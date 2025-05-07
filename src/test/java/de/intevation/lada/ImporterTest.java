@@ -96,7 +96,7 @@ public class ImporterTest extends BaseTest {
     private final String lafTemplate = "%%PROBE%%\n"
         + "UEBERTRAGUNGSFORMAT 7\n"
         + "VERSION \"0084\"\n"
-        + "PROBE_ID \"%s\"\n"
+        + "HAUPTPROBENNUMMER \"%s\"\n"
         + "PROBENART \"E\"\n"
         + "TESTDATEN 0\n"
         + "MESSPROGRAMM_S 1\n"
@@ -665,7 +665,7 @@ public class ImporterTest extends BaseTest {
             String.format(
                 lafTemplate, lafSampleId,
                 regulation, sampleSpecifId,
-                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                "PROBE_ID \"" + lafSampleId + "\"\nP_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
                 measd, measUnit,
                 "BEARBEITUNGSSTATUS 1000\n"),
             lafSampleId,
@@ -859,7 +859,8 @@ public class ImporterTest extends BaseTest {
             .get();
         Sample importedSample =
             parseResponse(importedSampleResponse, Sample.class);
-        Assert.assertEquals(lafSampleId, importedSample.getExtId());
+        Assert.assertEquals(lafSampleId, importedSample.getMainSampleId());
+        Assert.assertFalse(importedSample.getIsTest());
         Assert.assertEquals(mstId, importedSample.getMeasFacilId());
         Assert.assertEquals(1, (int) importedSample.getRegulationId());
 

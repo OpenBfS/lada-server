@@ -47,6 +47,7 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final Integer EXAMPLE_NUCL_FACIL_ID = 1;
     private static final String MST_06010 = "06010";
     private static final Integer REGULATION_ID_REI = 4;
+    private static final Integer REGULATION_ID_LFGB = 15;
     private static final Integer SAMPLE_METH_ID_INDIVIDUAL = 1;
     private static final Integer SAMPLE_METH_ID_CONT = 9;
     private static final String EXISTING_APPR_LAB_ID = MST_06010;
@@ -749,8 +750,7 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void missingBusinessTypeLFGB() {
         Sample sample = createMinimumValidSample();
-        final int lfgbRegId = 15;
-        sample.setRegulationId(lfgbRegId);
+        sample.setRegulationId(REGULATION_ID_LFGB);
         final String envDescripTpl = "D: %s 01 00 00 00 00 00 00 00 00 00 %s";
 
         sample.setEnvDescripDisplay(String.format(envDescripTpl, "01", "00"));
@@ -775,8 +775,7 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void missingSpeciesLFGB() {
         Sample sample = createMinimumValidSample();
-        final int lfgbRegId = 15;
-        sample.setRegulationId(lfgbRegId);
+        sample.setRegulationId(REGULATION_ID_LFGB);
         final String envDescripTpl = "D: %s 01 00 %s 00 00 00 00 00 00 00 01";
         String defectiveDescription = String.format(envDescripTpl, "02", "00");
         String workingDescription = String.format(envDescripTpl, "02", "01");
@@ -800,8 +799,7 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void missingSampleSpecificMeasVal() {
         Sample sample = createMinimumValidSample();
-        int lfgbRegId = 15;
-        sample.setRegulationId(lfgbRegId);
+        sample.setRegulationId(REGULATION_ID_LFGB);
         assertNoMessages(validator.validate(sample));
         // case it is missing
         sample.setId(30000);
@@ -810,6 +808,24 @@ public class ProbeTest extends ValidatorBaseTest {
             validator.validate(sample),
             "sampleSpecifMeasVals",
             "Value must be provided");
+    }
+
+    /**
+     * Test allowing ExtId only for LFGB type samples
+     */
+    @Test
+    public void extIdOnCreate() {
+        // case regulation id is not LFGB
+        Sample sample = createMinimumValidSample();
+        sample.setId(null);
+        assertHasErrors(validator.validate(sample, CreateErrors.class),
+            Sample_.EXT_ID, "ExtId only for LFGB");
+        // case regulation id is LFGB
+        sample = createMinimumValidSample();
+        sample.setId(null);
+        sample.setExtId("1234567890123456");
+        sample.setRegulationId(REGULATION_ID_LFGB);
+        assertNoMessages(validator.validate(sample, CreateErrors.class));
     }
 
     /**
