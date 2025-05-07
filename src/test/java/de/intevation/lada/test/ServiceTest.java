@@ -484,6 +484,26 @@ public class ServiceTest {
 
     /**
      * Test the CREATE Service.
+     * @param <T> Expected response entity type
+     * @param parameter the parameters used in the request.
+     * @param create the object to create, embedded in POST body.
+     * @param expectedStatus Expected HTTP status code
+     * @param entityType Expected response entity type
+     * @return The resulting json object.
+     *
+     */
+    public <T> T create(
+        String parameter,
+        Object create,
+        Response.Status expectedStatus,
+        Class<T> entityType
+    ) {
+        return create(
+            parameter, create, Locale.GERMAN, expectedStatus, entityType);
+    }
+
+    /**
+     * Test the CREATE Service.
      * @param parameter the parameters used in the request.
      * @param create the object to create, embedded in POST body.
      * @param acceptLanguage Acceptable language

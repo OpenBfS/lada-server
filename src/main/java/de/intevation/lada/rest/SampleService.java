@@ -16,6 +16,8 @@ import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.ConvertGroup;
+import jakarta.validation.groups.Default;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
@@ -37,6 +39,7 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 
 
@@ -140,7 +143,9 @@ public class SampleService extends LadaService {
      */
     @POST
     public Sample create(
-        @Valid Sample probe
+        @Valid
+        @ConvertGroup(from = Default.class, to = CreateErrors.class)
+        Sample probe
     ) throws BadRequestException {
         setEnvAttrs(probe);
 

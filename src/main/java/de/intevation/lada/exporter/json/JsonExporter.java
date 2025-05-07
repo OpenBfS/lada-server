@@ -400,7 +400,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
 
     private void addMessungen(JsonNode probe) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
-        builder.and(Measm_.id, probe.get("id").asInt());
+        builder.and(Measm_.sampleId, probe.get("id").asInt());
         List<Measm> messungen =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -428,7 +428,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     private void addKommentare(JsonNode probe) {
         QueryBuilder<CommSample> builder =
             repository.queryBuilder(CommSample.class);
-        builder.and(CommSample_.id, probe.get("id").asInt());
+        builder.and(CommSample_.sampleId, probe.get("id").asInt());
         List<CommSample> kommentare =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();

@@ -654,6 +654,45 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test creating new sample with forbidden extId.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncImportForbiddenExtId()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = "ZDB123456789012Y";
+        testAsyncImportProbe(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId,
+                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                measd, measUnit,
+                "BEARBEITUNGSSTATUS 1000\n"),
+            lafSampleId,
+            false);
+    }
+
+    /**
+     * Ensure setting status with warning in measVal fails.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncImportStatusWarningMeasVal()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        testAsyncImportProbe(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId,
+                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                // Measurand does not match measuring method
+                "Mangan", measUnit,
+                "BEARBEITUNGSSTATUS 1000\n"),
+            lafSampleId,
+            false);
+    }
+
+    /**
      * Test "Zeitbasis" handling in LAF8 import.
      */
     @Test

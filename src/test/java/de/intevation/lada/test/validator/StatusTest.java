@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
+import de.intevation.lada.validation.groups.PostAuthorization;
 
 
 /**
@@ -113,7 +114,7 @@ public class StatusTest extends ValidatorBaseTest {
         final int invalidMeasmId = 1201;
         status.setMeasmId(invalidMeasmId);
         assertHasErrors(
-            validator.validate(status),
+            validator.validate(status, PostAuthorization.class),
             MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Errors:\n"
@@ -147,7 +148,7 @@ public class StatusTest extends ValidatorBaseTest {
         final int invalidMeasmId = 1202;
         status.setMeasmId(invalidMeasmId);
         assertHasErrors(
-            validator.validate(status),
+            validator.validate(status, PostAuthorization.class),
             MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Warnings:\n"
@@ -182,7 +183,7 @@ public class StatusTest extends ValidatorBaseTest {
         final int measmId = 1210;
         status.setMeasmId(measmId);
         assertHasErrors(
-            validator.validate(status),
+            validator.validate(status, PostAuthorization.class),
             MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Warnings:\n"
@@ -200,7 +201,7 @@ public class StatusTest extends ValidatorBaseTest {
         final int measmId = 1211;
         status.setMeasmId(measmId);
         assertHasErrors(
-            validator.validate(status),
+            validator.validate(status, PostAuthorization.class),
             MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Warnings:\n"

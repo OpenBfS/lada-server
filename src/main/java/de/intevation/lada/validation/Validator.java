@@ -8,13 +8,17 @@
 package de.intevation.lada.validation;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.groups.Default;
+import jakarta.ws.rs.core.MediaType;
 
 import org.hibernate.validator.HibernateValidator;
+import org.jboss.resteasy.api.validation.ResteasyViolationException;
+import org.jboss.resteasy.plugins.validation.ResteasyViolationExceptionImpl;
 
 import de.intevation.lada.context.ThreadLocale;
 import de.intevation.lada.model.BaseModel;
@@ -74,8 +78,10 @@ public class Validator {
      * @param <T> Type of object to be validated
      * @param object The object to be validated
      * @param groups Restrict validation to given groups. Defaults to
-     * Default, Warnings and Notifications and only a subset of these
-     * should be given.
+     * Default, Warnings and Notifications. Violations of constraints
+     * with group Warnings or Notifications or groups extending these
+     * classes are considered as warnings and notifications, respectively.
+     * All other violations are considered as errors.
      * @return The validated object
      */
     public <T extends BaseModel> T validate(T object, Class<?>... groups) {
@@ -84,21 +90,21 @@ public class Validator {
         for (Class<?> group: groups.length == 0 ? defaultGroups : groups) {
             Set<ConstraintViolation<T>> beanViolations =
                 beanValidator.validate(object, group);
-            if (group.equals(Default.class)) {
-                for (ConstraintViolation<T> violation: beanViolations) {
-                    object.addError(
-                        violation.getPropertyPath().toString(),
-                        violation.getMessage());
-                }
-            } else if (group.equals(Warnings.class)) {
+            if (Warnings.class.isAssignableFrom(group)) {
                 for (ConstraintViolation<T> violation: beanViolations) {
                     object.addWarning(
                         violation.getPropertyPath().toString(),
                         violation.getMessage());
                 }
-            } else if (group.equals(Notifications.class)) {
+            } else if (Notifications.class.isAssignableFrom(group)) {
                 for (ConstraintViolation<T> violation: beanViolations) {
                     object.addNotification(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage());
+                }
+            } else {
+                for (ConstraintViolation<T> violation: beanViolations) {
+                    object.addError(
                         violation.getPropertyPath().toString(),
                         violation.getMessage());
                 }
@@ -106,5 +112,27 @@ public class Validator {
         }
 
         return object;
+    }
+
+    /**
+     * Validate object of type T with Bean Validation constraints.
+     *
+     * @param <T> Type of object to be validated
+     * @param object The object to be validated
+     * @param groups the group or list of groups targeted for validation
+     * (defaults to {@link Default})
+     * @throws ResteasyViolationException if any constraint is violated.
+     * The exception is mapped to a response with
+     * {@link org.jboss.resteasy.api.validation.ViolationReport} by RESTEasy
+     */
+    public <T> void validateAndThrow(T object, Class<?>... groups)
+        throws ResteasyViolationException {
+        Set<ConstraintViolation<T>> violations =
+            beanValidator.validate(object, groups);
+        if (violations.isEmpty()) {
+            return;
+        }
+        throw new ResteasyViolationExceptionImpl(
+            violations, List.of(MediaType.APPLICATION_JSON_TYPE));
     }
 }

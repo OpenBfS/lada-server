@@ -260,7 +260,7 @@ CREATE TABLE mpg_mmt_mp_measd (
 CREATE TABLE sample (
     id serial PRIMARY KEY,
     ext_id character varying(16) UNIQUE NOT NULL CHECK (trim(both ' ' from ext_id) <> '')
-        DEFAULT 'sss'
+        DEFAULT 'ZDB'
             || lpad(nextval('lada.sample_sample_id_seq')::varchar, 12, '0')
             || 'Y',
     is_test boolean DEFAULT false NOT NULL,

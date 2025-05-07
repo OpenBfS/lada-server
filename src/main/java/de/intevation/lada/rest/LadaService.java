@@ -28,6 +28,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.groups.Warnings;
 import de.intevation.lada.validation.groups.Notifications;
+import de.intevation.lada.validation.groups.PostAuthorization;
 
 
 /**
@@ -81,11 +82,16 @@ public abstract class LadaService {
         LOG.debug("Set locale from request");
         ThreadLocale.set(request.getLocale());
 
+        // Create validator with request/thread locale
+        Validator validator = new Validator();
+
         // Authorize input model instances
         for (Object param: ctx.getParameters()) {
             if (param instanceof BaseModel p) {
                 authorization.authorize(
                     p, RequestMethod.valueOf(request.getMethod()));
+
+                validator.validateAndThrow(p, PostAuthorization.class);
             }
         }
 
@@ -100,7 +106,7 @@ public abstract class LadaService {
                         (Collection<BaseModel>) listResult;
                     authorization.filter(bmList);
 
-                    new Validator().validate(
+                    validator.validate(
                         bmList,
                         Warnings.class,
                         Notifications.class);
@@ -108,7 +114,7 @@ public abstract class LadaService {
             } else if (result instanceof BaseModel r) {
                 authorization.filter(r);
 
-                new Validator().validate(
+                validator.validate(
                     r, Warnings.class, Notifications.class);
             }
         }

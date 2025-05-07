@@ -26,6 +26,7 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.validation.groups.CreateErrors;
 
 
 /**
@@ -809,6 +810,19 @@ public class ProbeTest extends ValidatorBaseTest {
             validator.validate(sample),
             "sampleSpecifMeasVals",
             "Value must be provided");
+    }
+
+    /**
+     * Test default pattern on creation.
+     */
+    @Test
+    public void extIdMatchingDefaultPattern() {
+        Sample sample = createMinimumValidSample();
+        sample.setId(null);
+        sample.setExtId("ZDB123456789012Y");
+
+        assertHasErrors(validator.validate(sample, CreateErrors.class),
+            Sample_.EXT_ID, "must match \"^(?!ZDB\\d{12}Y$).*$\"");
     }
 
     /**
