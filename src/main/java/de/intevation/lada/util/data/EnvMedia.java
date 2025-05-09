@@ -91,7 +91,7 @@ public class EnvMedia {
 
     /**
      * Find EnvMedium ID referenced by EnvDescripEnvMediumMp, which
-     * has closest match to fiven map of EnvDescrip IDs.
+     * has closest match to given map of EnvDescrip IDs.
      *
      * @param envDescripIds Map as returned by findEnvDescripIds
      * @param mappings List of EnvDescripEnvMediumMp instances

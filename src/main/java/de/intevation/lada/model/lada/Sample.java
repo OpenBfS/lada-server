@@ -55,12 +55,16 @@ import de.intevation.lada.validation.constraints.EnvDescripDisplay;
 import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMedium;
 import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMediumReiOr161;
 import de.intevation.lada.validation.constraints.EnvMediumForReiAgGr;
+import de.intevation.lada.validation.constraints.ExtIdLFGB;
 import de.intevation.lada.validation.constraints.HasEndDate;
 import de.intevation.lada.validation.constraints.HasOneSiteOfOrigin;
+import de.intevation.lada.validation.constraints.HasSampleSpecificMeasVal;
 import de.intevation.lada.validation.constraints.HasSamplingLocation;
 import de.intevation.lada.validation.constraints.Immutable;
 import de.intevation.lada.validation.constraints.IsReiComplete;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.LFGBEnvDescripHasS11;
+import de.intevation.lada.validation.constraints.LFGBEnvDescripHasS3;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.NoUnnecessaryReiAttributes;
 import de.intevation.lada.validation.constraints.OrigDateVsStartDate;
@@ -90,8 +94,12 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @HasEndDate(groups = Warnings.class)
 @HasOneSiteOfOrigin(groups = Warnings.class)
 @HasSamplingLocation(groups = Warnings.class)
+@HasSampleSpecificMeasVal(groups = Notifications.class)
 @EnvDescripMatchesEnvMedium(groups = Warnings.class)
 @EnvDescripMatchesEnvMediumReiOr161(groups = Notifications.class)
+@LFGBEnvDescripHasS11(groups = Notifications.class)
+@LFGBEnvDescripHasS3(groups = Notifications.class)
+@ExtIdLFGB(groups = CreateErrors.class)
 public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

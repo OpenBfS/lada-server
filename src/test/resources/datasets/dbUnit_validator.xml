@@ -9,6 +9,7 @@
     <master.regulation id = "2" />
     <master.regulation id = "4" />
     <master.regulation id = "9" />
+    <master.regulation id = "15" />
     <master.type_regulation id = "E" />
     <master.type_regulation id = "U" />
     <master.type_regulation id = "R" />
@@ -101,7 +102,15 @@
     <master.env_descrip
         id = "1" lev = "0" lev_val = "10" name = "s00"/>
     <master.env_descrip
+        id = "4" lev = "0" lev_val = "1" name = "ZEBS 0"/>
+    <master.env_descrip
+        id = "5" lev = "1" lev_val = "1" pred_id = "4" name = "ZEBS 1"/>
+    <master.env_descrip
+        id = "6" lev = "1" lev_val = "1" pred_id = "1" name = "6"/>
+    <master.env_descrip
         id = "11" lev = "0" lev_val = "2" name = "s00 2"/>
+    <master.env_descrip
+        id = "13" lev = "11" lev_val = "1" pred_id = "5" name = "A business type"/>
     <master.env_descrip
         id = "2" lev = "1" lev_val = "11" pred_id = "1" name = "s01"/>
     <master.env_descrip
@@ -110,6 +119,12 @@
         id = "3" lev = "2" lev_val = "12" pred_id = "2" name = "s02"/>
     <master.env_descrip
         id = "42" lev = "2" lev_val = "42" pred_id = "22" name = "42"/>
+    <master.env_descrip
+        id = "43" lev = "1" lev_val = "1" pred_id = "11" name = "43"/>
+    <master.env_descrip
+        id = "44" lev = "11" lev_val = "1" pred_id = "43" name = "44"/>
+    <master.env_descrip
+        id = "45" lev = "3" lev_val = "1" pred_id = "43" name = "45"/>
     <master.env_descrip_env_medium_mp
         id = "1"
         s00 = "1"
@@ -129,6 +144,27 @@
         s01 = "22"
         s02 = "42"
         env_medium_id = "L42"
+    />
+    <master.env_descrip_env_medium_mp
+        id = "4"
+        s00 = "11"
+        s11 = "44"
+        s01 = "43"
+        s03 = "45"
+        env_medium_id = "N71"
+    />
+    <master.env_descrip_env_medium_mp
+        id = "5"
+        s00 = "4"
+        s01 = "5"
+        s11 = "13"
+        env_medium_id = "N71"
+    />
+    <master.env_descrip_env_medium_mp
+        id = "6"
+        s00 = "1"
+        s01 = "6"
+        env_medium_id = "N71"
     />
 
     <master.admin_unit
@@ -223,6 +259,12 @@
         tree_mod = "2012-05-08 10:00:00"
         ext_id = "regulation_9"
     />
+
+    <lada.sample_specif_meas_val
+        id="1"
+        sample_id="25000"
+        sample_specif_id="A74"
+    />
     <lada.geolocat
         id = "25000"
         type_regulation = "E"
@@ -239,6 +281,33 @@
         add_site_text = "Test"
         last_mod = "2012-05-07 09:00:00"
     />
+
+    <lada.sample
+        id = "30000"
+        opr_mode_id = "1"
+        regulation_id = "1"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 10 11 12 00 00 00 00 00 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "9"
+        is_test = "false"
+        env_medium_id = "N71"
+        main_sample_id = "220510002"
+        sampler_id = "726"
+        sched_start_date = "2013-05-01 16:00:00"
+        sched_end_date = "2013-05-05 16:00:00"
+        ext_id = "X"
+    />
+    <lada.geolocat
+        id = "30000"
+        type_regulation = "E"
+        sample_id = "30000"
+        site_id = "1000"
+        add_site_text = "Test"
+    />
+
     <!--Rei sample-->
     <lada.sample
         id = "25001"

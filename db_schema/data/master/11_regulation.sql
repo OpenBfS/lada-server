@@ -34,6 +34,7 @@ COPY regulation (id, descr, name) FROM stdin;
 2	§162-Daten	§162
 1	§161-Daten	§161
 10	§161-Daten/SPARS	§162/SPARSE
+15	LFGB	LFGB
 \.
 
 
@@ -43,7 +44,8 @@ COPY regulation (id, descr, name) FROM stdin;
 -- Name: regulation_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
-SELECT pg_catalog.setval('regulation_id_seq', 14, true);
+SELECT pg_catalog.setval(
+    'regulation_id_seq', (SELECT max(id) FROM regulation), true);
 
 
 -- Completed on 2018-02-20 08:42:19 CET
