@@ -33,7 +33,14 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
     public Jsonb getContext(Class<?> type) {
         // Return regardless of type in order to use the same config for
         // de-/serializing any object
-        return JsonbBuilder.create(new JsonbConfig()
+        return JsonbBuilder.create(getJsonbConfig());
+    }
+
+    /**
+     * @return The JSON binding configuration for the LADA application
+     */
+    public static JsonbConfig getJsonbConfig() {
+        return new JsonbConfig()
             .withNullValues(true)
 
             // The API-doc says "Custom date format as specified in
@@ -57,7 +64,6 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
                     ) throws Exception {
                         return charset.name();
                     }
-                })
-        );
+                });
     }
 }
