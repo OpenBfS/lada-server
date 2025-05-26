@@ -21,7 +21,6 @@ services:
   printer:
     image: "koala/lada_print_templates"
     volumes:
-      # Assumes checkout in ../gis_print_templates/:
       - ../lada_print_templates/:/usr/local/tomcat/webapps/bfs-printservice/print-apps
   client:
     image: "koala/lada_client"
