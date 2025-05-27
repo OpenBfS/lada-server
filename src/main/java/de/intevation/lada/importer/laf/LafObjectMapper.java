@@ -280,7 +280,7 @@ public class LafObjectMapper {
                     authorizer.isAuthorized(old, RequestMethod.POST)
                 ) {
                     // Check if sample is read-only due to status
-                    oldProbeIsReadonly = authorizer.isAuthorized(
+                    oldProbeIsReadonly = !authorizer.isAuthorized(
                         old, RequestMethod.PUT);
                     if (oldProbeIsReadonly) {
                         newProbe = old;
