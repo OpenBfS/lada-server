@@ -102,7 +102,7 @@ public class ImmutableValidator
             }
             return isValid;
         } catch (ReflectiveOperationException e) {
-            return false;
+            throw new RuntimeException(e);
         }
     }
 }
