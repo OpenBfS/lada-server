@@ -8,7 +8,6 @@
 package de.intevation.lada.util.auth;
 
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.ws.rs.ForbiddenException;
@@ -60,9 +59,6 @@ public class Authorization {
     private Authorizer<BelongsToMeasm> mIdAuthorizer;
     private Authorizer<BelongsToMpg> mpgIdAuthorizer;
     private Authorizer<BelongsToNetwork> netzAuthorizer;
-
-    @Inject
-    private Instance<Authorizer<?>> authorizer;
 
     /**
      * No-args constructor to make class proxyable.

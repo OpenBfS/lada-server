@@ -26,8 +26,6 @@ import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.metamodel.SingularAttribute;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.i18n.I18n;
@@ -111,9 +109,6 @@ import de.intevation.lada.validation.groups.CreateErrors;
  */
 public class LafObjectMapper {
 
-    @Inject
-    private Logger logger;
-
     private Authorization authorizer;
 
     private Validator validator;
@@ -155,7 +150,6 @@ public class LafObjectMapper {
 
     private String measFacilId;
 
-    private List<ImportConf> config;
     private ImportConfigMapper configMapper;
 
     /**
@@ -1997,7 +1991,6 @@ public class LafObjectMapper {
      * @param config the config to set
      */
     public void setConfig(List<ImportConf> config) {
-        this.config = config;
         this.configMapper = new ImportConfigMapper(config);
     }
 

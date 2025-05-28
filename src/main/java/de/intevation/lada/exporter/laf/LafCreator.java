@@ -64,17 +64,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 public class LafCreator
 implements Creator {
 
-    private static final int LAND_RESET = 15;
-    private static final int MST_RESET = 14;
-    private static final int LAND_QUERY = 9;
-    private static final int LAND_UNPLAUS = 8;
-    private static final int LAND_NOT_REPR = 7;
-    private static final int LAND_PLAUS = 6;
-    private static final int MST_NOT_DELIV = 5;
-    private static final int MST_NOT_PLAUS = 4;
-    private static final int MST_NOT_REPR = 3;
-    private static final int MST_PLAUS = 2;
-    private static final int NOT_SET = 1;
     private static final int MP6 = 6;
     private static final int BAID3 = 3;
     private static final int MP5 = 5;
