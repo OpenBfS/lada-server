@@ -441,12 +441,12 @@ public class ServiceTest {
         /* Verify the response*/
         JsonObject object = BaseTest.parseResponse(response).asJsonObject();
         for (Entry<String, JsonValue> entry : expected.entrySet()) {
-            if (entry.getKey().equals("parentModified")
-                || entry.getKey().equals(Sample_.TREE_MOD)
-                || entry.getKey().equals(Sample_.LAST_MOD)) {
+            String key = entry.getKey();
+            if (key.equals("parentModified")
+                || key.equals(Sample_.TREE_MOD)
+                || key.equals(Sample_.LAST_MOD)) {
                 continue;
             }
-            String key = entry.getKey();
             Assert.assertEquals(
                 String.format("%s:", key),
                 entry.getValue(),
