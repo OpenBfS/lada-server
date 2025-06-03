@@ -37,7 +37,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.model.master.Site;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 
@@ -48,16 +47,10 @@ import de.intevation.lada.validation.Validator;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "site")
-public class SiteService extends LadaService {
+public class SiteService extends LadaIntegerIdEntityService {
 
     private static final String UPDATE_QUERY_TPL =
         "UPDATE Site s SET s.%s = :data WHERE s.id = :siteId";
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
 
     @Inject
     private OrtFactory ortFactory;
@@ -166,14 +159,11 @@ public class SiteService extends LadaService {
     /**
      * Get a single Site object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single Site.
      */
     @GET
     @Path("{id}")
-    public Site getById(
-        @PathParam("id") Integer id
-    ) {
+    public Site getById() {
         return repository.getById(Site.class, id);
     }
 
@@ -209,7 +199,6 @@ public class SiteService extends LadaService {
     @PUT
     @Path("{id}")
     public Site update(
-        @PathParam("id") Integer id,
         @Valid Site ort
     ) throws BadRequestException {
         ortFactory.completeSite(ort);
@@ -219,14 +208,10 @@ public class SiteService extends LadaService {
 
     /**
      * Delete an existing Site object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         Site ort = repository.getById(Site.class, id);
         authorization.authorize(ort, RequestMethod.DELETE);
         repository.delete(ort);
@@ -235,7 +220,6 @@ public class SiteService extends LadaService {
     /**
      * Retrieve image associated with site.
      *
-     * @param id ID of site
      * @param type Type of image (img or map)
      * @return Image for given site of given type
      * @throws NotFoundException if no site exists with given ID
@@ -244,7 +228,6 @@ public class SiteService extends LadaService {
     @Path("{id}/{type}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public byte[] getSiteImage(
-            @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type
     ) {
         Site site = repository.getById(Site.class, id);
@@ -254,7 +237,6 @@ public class SiteService extends LadaService {
     /**
      * Associate image with site.
      *
-     * @param id ID of site
      * @param type Type of image (img or map)
      * @param request The upload request
      * @throws ForbiddenException if updating the site is not allowed
@@ -265,7 +247,6 @@ public class SiteService extends LadaService {
     @Path("{id}/{type}")
     @Consumes(MediaType.TEXT_PLAIN)
     public void uploadSiteImage(
-            @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type,
             @Context HttpServletRequest request,
             @NotBlank String dataUrl
@@ -296,14 +277,12 @@ public class SiteService extends LadaService {
     /**
      * Delete image associated with site.
      *
-     * @param id ID of site
      * @param type Type of image (img or map)
      * @throws ForbiddenException if updating the site is not allowed
      */
     @DELETE
     @Path("{id}/{type}")
     public void deleteSiteImage(
-            @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type
     ) {
         Site site = repository.getById(Site.class, id);

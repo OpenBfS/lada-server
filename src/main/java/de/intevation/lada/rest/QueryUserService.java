@@ -27,13 +27,11 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.QueryMeasFacilMp;
 import de.intevation.lada.model.master.QueryMeasFacilMp_;
 import de.intevation.lada.model.master.QueryUser;
@@ -46,10 +44,7 @@ import de.intevation.lada.model.master.QueryUser_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "queryuser")
-public class QueryUserService extends LadaService {
-
-    @Inject
-    private Repository repository;
+public class QueryUserService extends LadaIntegerIdEntityService {
 
     @Inject
     Logger logger;
@@ -109,12 +104,11 @@ public class QueryUserService extends LadaService {
      *
      * Does only return objects owned by the requesting user.
      *
-     * @param id ID of requested QueryUser object
      * @return requested QueryUser object
      */
     @GET
     @Path("{id}")
-    public QueryUser getById(@PathParam("id") Integer id) {
+    public QueryUser getById() {
         QueryUser query = repository.getById(QueryUser.class, id);
         // TODO: Move to authorization
         if (!authorization.getInfo().getUserId().equals(
@@ -232,9 +226,7 @@ public class QueryUserService extends LadaService {
 
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         UserInfo userInfo = authorization.getInfo();
         QueryUser query = repository.getById(QueryUser.class, id);
         // TODO: Move to authorization

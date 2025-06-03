@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.inject.Inject;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
@@ -24,7 +23,6 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkMeasm_;
@@ -32,30 +30,24 @@ import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.lada.TagLinkSample_;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
+
 
 /**
  * REST-Service for tags.
  */
-
 @Path(LadaService.PATH_REST + "tag")
-public class TagService extends LadaService {
-
-    @Inject
-    private Repository repository;
+public class TagService extends LadaIntegerIdEntityService {
 
     /**
      * Get a single tag by id.
-     * @param id Tag id
+     *
      * @return the tag
      */
     @GET
     @Path("{id}")
-    public Tag getById(
-        @PathParam("id") Integer id
-    ) {
+    public Tag getById() {
         return repository.getById(Tag.class, id);
     }
 
@@ -123,14 +115,12 @@ public class TagService extends LadaService {
      * Update an existing tag object.
      *
      * @param tag Tag to update using payload like
-     * @param id Tag id
      * @return the updated tag object
      * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public Tag update(
-        @PathParam("id") String id,
         @Valid Tag tag
     ) throws BadRequestException {
         // Drop validity for network-tags
@@ -169,13 +159,10 @@ public class TagService extends LadaService {
 
     /**
      * Delete a tag.
-     * @param id Tag id
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         Tag tag = repository.getById(Tag.class, id);
         authorization.authorize(tag, RequestMethod.DELETE);
         repository.delete(tag);

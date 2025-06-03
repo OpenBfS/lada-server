@@ -15,6 +15,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.test.land.ValidationTest;
 import de.intevation.lada.test.land.GeolocatMpgTest;
 import de.intevation.lada.test.land.KommentarMTest;
 import de.intevation.lada.test.land.KommentarPTest;
@@ -56,6 +57,7 @@ public class LandTest extends BaseTest {
     private PepGenerationTest pepGenerationTest;
     private GeolocatMpgTest geolocatMpgTest;
     private TimestampTest timestampTest;
+    private ValidationTest validationTest;
 
     public LandTest() {
         probeTest = new ProbeTest();
@@ -72,6 +74,7 @@ public class LandTest extends BaseTest {
         pepGenerationTest = new PepGenerationTest();
         geolocatMpgTest = new GeolocatMpgTest();
         timestampTest = new TimestampTest();
+        validationTest = new ValidationTest();
         verboseLogging = false;
 
         testDatasetName = "datasets/dbUnit_lada.xml";
@@ -256,5 +259,12 @@ public class LandTest extends BaseTest {
             throws Exception {
         timestampTest.init(this.target);
         timestampTest.execute();
+    }
+
+    @Test
+    @RunAsClient
+    public final void testValidation() {
+        validationTest.init(this.target);
+        validationTest.execute();
     }
 }

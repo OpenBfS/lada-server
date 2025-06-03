@@ -9,13 +9,11 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.State;
+
 
 /**
  * REST service for State objects.
@@ -23,13 +21,7 @@ import de.intevation.lada.model.master.State;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "state")
-public class StateService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class StateService extends LadaIntegerIdEntityService {
 
     /**
      * Get all State objects.
@@ -44,14 +36,11 @@ public class StateService extends LadaService {
     /**
      * Get a single State object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single State.
      */
     @GET
     @Path("{id}")
-    public State getById(
-        @PathParam("id") Integer id
-    ) {
+    public State getById() {
         return repository.getById(State.class, id);
     }
 }

@@ -10,13 +10,10 @@ package de.intevation.lada.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.UnitConvers;
 
@@ -26,13 +23,7 @@ import de.intevation.lada.model.master.UnitConvers;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "measunit")
-public class MeasUnitService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class MeasUnitService extends LadaIntegerIdEntityService {
 
     /**
      * Get MeasUnit objects.
@@ -96,14 +87,11 @@ public class MeasUnitService extends LadaService {
     /**
      * Get a single MeasUnit object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single MeasUnit.
      */
     @GET
     @Path("{id}")
-    public MeasUnit getById(
-        @PathParam("id") Integer id
-    ) {
+    public MeasUnit getById() {
         return repository.getById(MeasUnit.class, id);
     }
 }

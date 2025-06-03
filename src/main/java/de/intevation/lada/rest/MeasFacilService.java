@@ -9,12 +9,9 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.MeasFacil;
 
 /**
@@ -23,13 +20,7 @@ import de.intevation.lada.model.master.MeasFacil;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "measfacil")
-public class MeasFacilService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class MeasFacilService extends LadaStringIdEntityService {
 
     /**
      * Get all MeasFacil objects.
@@ -44,14 +35,11 @@ public class MeasFacilService extends LadaService {
     /**
      * Get a single MeasFacil object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single MeasFacil.
      */
     @GET
     @Path("{id}")
-    public MeasFacil getById(
-        @PathParam("id") String id
-    ) {
+    public MeasFacil getById() {
         return repository.getById(MeasFacil.class, id);
     }
 }

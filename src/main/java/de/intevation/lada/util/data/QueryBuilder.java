@@ -70,6 +70,17 @@ public class QueryBuilder<T> {
     }
 
     /**
+     * Restrict result to identity of given entity.
+     *
+     * @param entity
+     * @return The builder itself.
+     */
+    public QueryBuilder<T> identity(Object entity) {
+        Predicate p = this.builder.equal(this.root, entity);
+        return and(p);
+    }
+
+    /**
      * Logical AND operation for null values.
      * @param <X> Column datatype
      *

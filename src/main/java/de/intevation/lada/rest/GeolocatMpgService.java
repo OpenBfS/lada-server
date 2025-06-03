@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
@@ -18,13 +17,11 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.GeolocatMpg_;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 /**
@@ -33,13 +30,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "geolocatmpg")
-public class GeolocatMpgService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class GeolocatMpgService extends LadaIntegerIdEntityService {
 
     /**
      * Get GeolocatMpg objects.
@@ -62,14 +53,11 @@ public class GeolocatMpgService extends LadaService {
     /**
      * Get single object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return GeolocatMpg object
      */
     @GET
     @Path("{id}")
-    public GeolocatMpg getById(
-        @PathParam("id") Integer id
-    ) {
+    public GeolocatMpg getById() {
         return repository.getById(GeolocatMpg.class, id);
     }
 
@@ -95,7 +83,6 @@ public class GeolocatMpgService extends LadaService {
     @PUT
     @Path("{id}")
     public GeolocatMpg update(
-        @PathParam("id") Integer id,
         @Valid GeolocatMpg ort
     ) throws BadRequestException {
         return repository.update(ort);
@@ -108,9 +95,7 @@ public class GeolocatMpgService extends LadaService {
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         GeolocatMpg ortObj = repository.getById(
             GeolocatMpg.class, id);
         authorization.authorize(ortObj, RequestMethod.DELETE);

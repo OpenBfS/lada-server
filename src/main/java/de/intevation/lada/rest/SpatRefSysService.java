@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,10 +16,8 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.data.KdaUtil;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.SpatRefSys;
 import de.intevation.lada.validation.constraints.SupportedSpatRefSysId;
 import de.intevation.lada.validation.constraints.ValidCoordinates;
@@ -31,13 +28,7 @@ import de.intevation.lada.validation.constraints.ValidCoordinates;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "spatrefsys")
-public class SpatRefSysService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class SpatRefSysService extends LadaIntegerIdEntityService {
 
     /**
      * Expected format for the payload in POST request to recalculate().
@@ -75,14 +66,11 @@ public class SpatRefSysService extends LadaService {
     /**
      * Get a single SpatRefSys object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single SpatRefSys.
      */
     @GET
     @Path("{id}")
-    public SpatRefSys getById(
-        @PathParam("id") Integer id
-    ) {
+    public SpatRefSys getById() {
         return repository.getById(SpatRefSys.class, id);
     }
 

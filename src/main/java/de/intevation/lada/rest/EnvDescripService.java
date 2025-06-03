@@ -9,15 +9,12 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescrip_;
 
@@ -29,13 +26,7 @@ import de.intevation.lada.model.master.EnvDescrip_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "envdescrip")
-public class EnvDescripService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class EnvDescripService extends LadaIntegerIdEntityService {
 
     /**
      * Get EnvDescrip objects.
@@ -68,14 +59,11 @@ public class EnvDescripService extends LadaService {
     /**
      * Get a single EnvDescrip object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single EnvDescrip.
      */
     @GET
     @Path("{id}")
-    public EnvDescrip getById(
-        @PathParam("id") Integer id
-    ) {
+    public EnvDescrip getById() {
         return repository.getById(EnvDescrip.class, id);
     }
 }
