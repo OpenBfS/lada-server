@@ -18,24 +18,24 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-class ProbeAuthorizer extends Authorizer<Sample> {
+class SampleAuthorizer extends Authorizer<Sample> {
 
     private Authorizer<Measm> messungAuthorizer;
 
-    ProbeAuthorizer(
+    SampleAuthorizer(
         UserInfo userInfo,
         Repository repository
     ) {
         super(userInfo, repository);
 
-        this.messungAuthorizer = new MessungAuthorizer(
+        this.messungAuthorizer = new MeasmAuthorizer(
             this.userInfo, this.repository, this);
     }
 
     /**
      * Constructor to be used in MessungAuthorizer.
      */
-    ProbeAuthorizer(
+    SampleAuthorizer(
         UserInfo userInfo,
         Repository repository,
         Authorizer<Measm> messungAuthorizer

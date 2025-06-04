@@ -29,7 +29,7 @@ class TagLinkSampleAuthorizer extends Authorizer<TagLinkSample> {
     ) {
         super(userInfo, repository);
 
-        this.probeAuthorizer = new ProbeAuthorizer(
+        this.probeAuthorizer = new SampleAuthorizer(
             this.userInfo, this.repository);
     }
 

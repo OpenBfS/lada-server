@@ -26,7 +26,7 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
     ) {
         super(userInfo, repository);
 
-        this.messungAuthorizer = new MessungAuthorizer(userInfo, repository);
+        this.messungAuthorizer = new MeasmAuthorizer(userInfo, repository);
     }
 
     @Override

@@ -29,7 +29,7 @@ class TagLinkMeasmAuthorizer extends Authorizer<TagLinkMeasm> {
     ) {
         super(userInfo, repository);
 
-        this.messungAuthorizer = new MessungAuthorizer(
+        this.messungAuthorizer = new MeasmAuthorizer(
             this.userInfo, this.repository);
     }
 
