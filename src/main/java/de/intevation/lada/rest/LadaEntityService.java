@@ -86,6 +86,9 @@ abstract class LadaEntityService<I> extends LadaService {
                         if (!pathId.equals(payloadId)) {
                             throw new BadRequestException();
                         }
+                    } catch(IllegalStateException e) {
+                        // ID in payload is null
+                        throw new BadRequestException();
                     } catch(NoResultException e) {
                         // 404 if resource does not exist at all
                         repository.getById(p.getClass(), pathId);
