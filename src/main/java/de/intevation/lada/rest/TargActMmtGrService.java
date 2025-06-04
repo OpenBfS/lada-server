@@ -9,12 +9,11 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.TargActMmtGr;
+
 
 /**
  * REST service for TargActMmtGr objects.
@@ -22,13 +21,7 @@ import de.intevation.lada.model.master.TargActMmtGr;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "targactmmtgr")
-public class TargActMmtGrService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class TargActMmtGrService extends LadaIntegerIdEntityService {
 
     /**
      * Get all TargActMmtGr objects.

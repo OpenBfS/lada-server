@@ -8,18 +8,16 @@
 package de.intevation.lada.rest;
 
 import java.util.List;
-import jakarta.inject.Inject;
 import jakarta.persistence.Query;
 import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.SampleSpecif_;
+
 
 /**
  * REST service for SampleSpecif objects.
@@ -27,13 +25,7 @@ import de.intevation.lada.model.master.SampleSpecif_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "samplespecif")
-public class SampleSpecifService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class SampleSpecifService extends LadaStringIdEntityService {
 
     /**
      * Get SampleSpecif objects.
@@ -71,14 +63,11 @@ public class SampleSpecifService extends LadaService {
     /**
      * Get a single SampleSpecif object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single SampleSpecif.
      */
     @GET
     @Path("{id}")
-    public SampleSpecif getById(
-        @PathParam("id") String id
-    ) {
+    public SampleSpecif getById() {
         return repository.getById(SampleSpecif.class, id);
     }
 }

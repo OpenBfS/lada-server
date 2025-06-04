@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
+import de.intevation.lada.validation.groups.PostAuthorization;
 
 
 /**
@@ -23,9 +24,7 @@ import de.intevation.lada.model.lada.StatusProt_;
 public class StatusTest extends ValidatorBaseTest {
 
     //Other constants
-    private static final int ID1 = 1;
     private static final int ID3 = 3;
-    private static final int ID7 = 7;
 
     private static final int INVALID_STATUS_MP_ID = 42;
 
@@ -45,8 +44,6 @@ public class StatusTest extends ValidatorBaseTest {
     @Test
     public void checkKombiNegative() {
         StatusProt status = minimalStatusProt();
-        status.setStatusLev(2);
-        status.setStatusVal(ID7);
         status.setStatusMpId(INVALID_STATUS_MP_ID);
         validator.validate(status);
         Assert.assertTrue(status.hasErrors());
@@ -64,8 +61,6 @@ public class StatusTest extends ValidatorBaseTest {
     @Test
     public void checkKombiPositive() {
         StatusProt status = minimalStatusProt();
-        status.setStatusLev(ID1);
-        status.setStatusVal(ID1);
 
         validator.validate(status);
         assertNoMessages(status);
@@ -119,7 +114,7 @@ public class StatusTest extends ValidatorBaseTest {
         final int invalidMeasmId = 1201;
         status.setMeasmId(invalidMeasmId);
         assertHasErrors(
-            validator.validate(status),
+            validator.validate(status, PostAuthorization.class),
             MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Errors:\n"
@@ -153,7 +148,7 @@ public class StatusTest extends ValidatorBaseTest {
         final int invalidMeasmId = 1202;
         status.setMeasmId(invalidMeasmId);
         assertHasErrors(
-            validator.validate(status),
+            validator.validate(status, PostAuthorization.class),
             MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Warnings:\n"
@@ -188,7 +183,7 @@ public class StatusTest extends ValidatorBaseTest {
         final int measmId = 1210;
         status.setMeasmId(measmId);
         assertHasErrors(
-            validator.validate(status),
+            validator.validate(status, PostAuthorization.class),
             MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Warnings:\n"
@@ -206,7 +201,7 @@ public class StatusTest extends ValidatorBaseTest {
         final int measmId = 1211;
         status.setMeasmId(measmId);
         assertHasErrors(
-            validator.validate(status),
+            validator.validate(status, PostAuthorization.class),
             MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Warnings:\n"

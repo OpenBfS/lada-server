@@ -18,9 +18,7 @@ import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.data.requests.QueryExportParameters;
-import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
-import de.intevation.lada.exporter.ExportFormat;
 
 
 /**
@@ -41,7 +39,6 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
      * The JSON exporter.
      */
     @Inject
-    @ExportConfig(format = ExportFormat.JSON)
     private Exporter<QueryExportParameters> exporter;
 
     public JsonExportJob() {

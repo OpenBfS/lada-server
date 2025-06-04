@@ -18,7 +18,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,12 +32,13 @@ import de.intevation.lada.validation.constraints.HaveDependenciesNotifications;
 import de.intevation.lada.validation.constraints.ValidDependenciesFinalStatus;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import de.intevation.lada.validation.groups.Notifications;
+import de.intevation.lada.validation.groups.PostAuthorization;
 
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ StatusProt.class, DatabaseConstraints.class })
-@ValidDependenciesFinalStatus(groups = DatabaseConstraints.class)
+@ValidDependenciesFinalStatus(groups = PostAuthorization.class)
 @HaveDependenciesNotifications(groups = Notifications.class)
 @StatusOrder(groups = DatabaseConstraints.class)
 public class StatusProt extends BelongsToMeasm implements Serializable {
@@ -71,12 +71,6 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date treeMod;
-
-    @Transient
-    private Integer statusLev;
-
-    @Transient
-    private Integer statusVal;
 
 
     public Integer getId() {
@@ -125,33 +119,5 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    /**
-     * @return the status level
-     */
-    public Integer getStatusLev() {
-        return statusLev;
-    }
-
-    /**
-     * @param statusLev the status level to set
-     */
-    public void setStatusLev(Integer statusLev) {
-        this.statusLev = statusLev;
-    }
-
-    /**
-     * @return the status value
-     */
-    public Integer getStatusVal() {
-        return statusVal;
-    }
-
-    /**
-     * @param statusVal the status value to set
-     */
-    public void setStatusVal(Integer statusVal) {
-        this.statusVal = statusVal;
     }
 }

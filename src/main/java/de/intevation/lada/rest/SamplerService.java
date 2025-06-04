@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
@@ -17,10 +16,8 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.model.master.Sampler;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 /**
@@ -29,13 +26,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "sampler")
-public class SamplerService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class SamplerService extends LadaIntegerIdEntityService {
 
     /**
      * Get all Sampler objects.
@@ -50,14 +41,11 @@ public class SamplerService extends LadaService {
     /**
      * Get a single Sampler object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single object.
      */
     @GET
     @Path("{id}")
-    public Sampler getById(
-        @PathParam("id") Integer id
-    ) {
+    public Sampler getById() {
         return repository.getById(Sampler.class, id);
     }
 
@@ -76,7 +64,7 @@ public class SamplerService extends LadaService {
 
     /**
      * Update a sampler
-     * @param id Sampler id
+     *
      * @param probenehmer Sampler to update
      * @return Updated sampler
      * @throws BadRequestException if any constraint violations are detected.
@@ -84,7 +72,6 @@ public class SamplerService extends LadaService {
     @PUT
     @Path("{id}")
     public Sampler update(
-        @PathParam("id") Integer id,
         @Valid Sampler probenehmer
     ) throws BadRequestException {
         return repository.update(probenehmer);
@@ -92,9 +79,7 @@ public class SamplerService extends LadaService {
 
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         Sampler probenehmer = repository.getById(
             Sampler.class, id);
         authorization.authorize(probenehmer, RequestMethod.DELETE);

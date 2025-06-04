@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.AttributeConverter;
@@ -19,14 +18,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -41,8 +38,6 @@ import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.validation.constraints.CanChangeCoordinates;
 import de.intevation.lada.validation.constraints.CoordinatesInAdminBorder;
 import de.intevation.lada.validation.constraints.HasCoordsOrAdminUnitOrState;
@@ -209,6 +204,7 @@ public class Site extends BaseModel implements Serializable {
     private Point geom;
 
     @Lob
+    @Column(updatable = false)
     @JdbcTypeCode(value = SqlTypes.BINARY)
     @JsonbTransient
     private byte[] img;
@@ -216,6 +212,7 @@ public class Site extends BaseModel implements Serializable {
     @Lob
     @JdbcTypeCode(value = SqlTypes.BINARY)
     @JsonbTransient
+    @Column(updatable = false)
     private byte[] map;
 
     @NotEmptyNorWhitespace
@@ -227,23 +224,23 @@ public class Site extends BaseModel implements Serializable {
     @Transient
     private Double latitude;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "site_id", insertable = false, updatable = false)
-    @JsonbTransient
-    private Set<Geolocat> geolocats;
+    @Formula("""
+        (SELECT count(*) FROM lada.geolocat g WHERE {alias}.id = g.site_id)
+        """)
+    private int referenceCount;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "site_id", insertable = false, updatable = false)
-    @JsonbTransient
-    private Set<GeolocatMpg> geolocatMpgs;
+    @Formula("""
+        (SELECT count(*) FROM lada.geolocat_mpg g WHERE {alias}.id = g.site_id)
+        """)
+    private int referenceCountMp;
 
-    // Let's hope that hibernate will always give master.site the alias "s1_0"
+    // "{alias}" will be replaced by hibernate with alias for master.site
     @Formula("""
         (SELECT count(DISTINCT s.id) FROM lada.geolocat g
         JOIN lada.sample s ON g.sample_id=s.id
         JOIN lada.measm m ON s.id=m.sample_id
         JOIN lada.status_prot sp ON m.status=sp.id
-        WHERE s1_0.id = g.site_id AND sp.status_mp_id IN (2,6,10))""")
+        WHERE {alias}.id = g.site_id AND sp.status_mp_id IN (2,6,10))""")
     private Integer plausibleReferenceCount;
 
 
@@ -489,8 +486,7 @@ public class Site extends BaseModel implements Serializable {
     }
 
     public Integer getReferenceCount() {
-        return this.geolocats != null
-        ? this.geolocats.size() : 0;
+        return this.referenceCount;
     }
 
     public Integer getPlausibleReferenceCount() {
@@ -498,8 +494,7 @@ public class Site extends BaseModel implements Serializable {
     }
 
     public Integer getReferenceCountMp() {
-        return this.geolocatMpgs != null
-        ? this.geolocatMpgs.size() : 0;
+        return this.referenceCountMp;
     }
 
     public byte[] getImg() {

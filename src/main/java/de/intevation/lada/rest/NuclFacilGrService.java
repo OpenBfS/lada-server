@@ -10,18 +10,16 @@ package de.intevation.lada.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.NuclFacilGr;
 import de.intevation.lada.model.master.NuclFacilGrMp;
 import de.intevation.lada.model.master.NuclFacilGrMp_;
 import de.intevation.lada.model.master.NuclFacilGr_;
+
 
 /**
  * REST service for NuclFacilGr objects.
@@ -29,13 +27,7 @@ import de.intevation.lada.model.master.NuclFacilGr_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "nuclfacilgr")
-public class NuclFacilGrService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class NuclFacilGrService extends LadaIntegerIdEntityService {
 
     /**
      * Get NuclFacilGr objects.
@@ -71,14 +63,11 @@ public class NuclFacilGrService extends LadaService {
     /**
      * Get a single NuclFacilGr object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single NuclFacilGr.
      */
     @GET
     @Path("{id}")
-    public NuclFacilGr getById(
-        @PathParam("id") Integer id
-    ) {
+    public NuclFacilGr getById() {
         return repository.getById(NuclFacilGr.class, id);
     }
 }

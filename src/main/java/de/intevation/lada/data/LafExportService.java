@@ -20,12 +20,10 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import de.intevation.lada.data.requests.LafExportParameters;
-import de.intevation.lada.exporter.ExportConfig;
-import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.rest.LadaService;
+
 
 /**
  * REST service to export probe objects and the child objects associated with
@@ -45,14 +43,10 @@ import de.intevation.lada.rest.LadaService;
 @Path(LadaService.PATH_DATA + "export")
 public class LafExportService extends LadaService {
 
-    @Inject
-    private Repository repository;
-
     /**
      * The exporter.
      */
     @Inject
-    @ExportConfig(format = ExportFormat.LAF)
     private Exporter<LafExportParameters> exporter;
 
     /**

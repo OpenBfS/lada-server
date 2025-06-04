@@ -206,4 +206,19 @@ public class Repository {
         }
         return item;
     }
+
+    /**
+     * Get ID of an entity.
+     *
+     * @param entity
+     * @return ID of the entity
+     * @throws IllegalArgumentException if entity is not managed
+     */
+    public Object getIdentifier(Object entity) {
+        if (em.contains(entity)) {
+            return em.getEntityManagerFactory().getPersistenceUnitUtil()
+                .getIdentifier(entity);
+        }
+        throw new IllegalArgumentException("Entity not managed");
+    }
 }

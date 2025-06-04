@@ -9,15 +9,13 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.Network;
+
 
 /**
  * REST service for Network objects.
@@ -25,13 +23,7 @@ import de.intevation.lada.model.master.Network;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "network")
-public class NetworkService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class NetworkService extends LadaStringIdEntityService {
 
     /**
      * Get all Network objects.
@@ -46,14 +38,11 @@ public class NetworkService extends LadaService {
     /**
      * Get a single Network object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single Network.
      */
     @GET
     @Path("{id}")
-    public Network getById(
-        @PathParam("id") String id
-    ) {
+    public Network getById() {
         UserInfo userInfo = authorization.getInfo();
         if (userInfo.getNetzbetreiber().contains(id)) {
             return repository.getById(Network.class, id);

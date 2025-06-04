@@ -57,6 +57,7 @@ public class OrtTest extends ServiceTest {
         expectedById = convertObject(erzeuger)
             .add("referenceCount", 2)
             .add("plausibleReferenceCount", 1)
+            .add("referenceCountMp", 1)
             .build();
 
         // Load object to test POST request

@@ -7,26 +7,19 @@
  */
 package de.intevation.lada.importer;
 
-import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 /**
  * Interface for object identifier.
  */
-public interface Identifier {
+public interface Identifier<T> {
 
     /**
-     * Find and identify the object.
-     * @param object the object.
-     * @return Enum idicating the identification type.
-     * @throws InvalidTargetObjectTypeException if the given object has an
-     *                                          invalid type.
+     * Get persistent entity identified by attributes of given object.
+     * @param object object carrying identifying attributes
+     * @return the found object or null
+     * @throws IdentificationException in case of ambiguous identifying attributes
      */
-    Identified find(Object object)
-        throws InvalidTargetObjectTypeException;
+    T getExisting(T object) throws IdentificationException;
 
-    /**
-     * Get the object identified in "find", if any.
-     * @return the found object
-     */
-    Object getExisting();
+    public class IdentificationException extends Exception { }
 }

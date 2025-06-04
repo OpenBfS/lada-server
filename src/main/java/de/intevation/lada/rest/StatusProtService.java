@@ -18,7 +18,6 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.TimestampLocker;
@@ -30,7 +29,6 @@ import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
@@ -40,13 +38,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "statusprot")
-public class StatusProtService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class StatusProtService extends LadaIntegerIdEntityService {
 
     /**
      * The object lock mechanism.
@@ -78,14 +70,11 @@ public class StatusProtService extends LadaService {
     /**
      * Get a single StatusProt object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single StatusProt.
      */
     @GET
     @Path("{id}")
-    public StatusProt getById(
-        @PathParam("id") Integer id
-    ) {
+    public StatusProt getById() {
         return authorization.authorize(
             repository.getById(StatusProt.class, id),
             RequestMethod.GET);

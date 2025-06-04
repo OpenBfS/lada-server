@@ -441,12 +441,12 @@ public class ServiceTest {
         /* Verify the response*/
         JsonObject object = BaseTest.parseResponse(response).asJsonObject();
         for (Entry<String, JsonValue> entry : expected.entrySet()) {
-            if (entry.getKey().equals("parentModified")
-                || entry.getKey().equals(Sample_.TREE_MOD)
-                || entry.getKey().equals(Sample_.LAST_MOD)) {
+            String key = entry.getKey();
+            if (key.equals("parentModified")
+                || key.equals(Sample_.TREE_MOD)
+                || key.equals(Sample_.LAST_MOD)) {
                 continue;
             }
-            String key = entry.getKey();
             Assert.assertEquals(
                 String.format("%s:", key),
                 entry.getValue(),
@@ -480,6 +480,26 @@ public class ServiceTest {
     ) {
         return create(
             parameter, create, Locale.GERMAN, Response.Status.OK, entityType);
+    }
+
+    /**
+     * Test the CREATE Service.
+     * @param <T> Expected response entity type
+     * @param parameter the parameters used in the request.
+     * @param create the object to create, embedded in POST body.
+     * @param expectedStatus Expected HTTP status code
+     * @param entityType Expected response entity type
+     * @return The resulting json object.
+     *
+     */
+    public <T> T create(
+        String parameter,
+        Object create,
+        Response.Status expectedStatus,
+        Class<T> entityType
+    ) {
+        return create(
+            parameter, create, Locale.GERMAN, expectedStatus, entityType);
     }
 
     /**

@@ -47,9 +47,7 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.data.requests.LafImportParameters;
-import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
-import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
@@ -98,7 +96,7 @@ public class ImporterTest extends BaseTest {
     private final String lafTemplate = "%%PROBE%%\n"
         + "UEBERTRAGUNGSFORMAT 7\n"
         + "VERSION \"0084\"\n"
-        + "PROBE_ID \"%s\"\n"
+        + "HAUPTPROBENNUMMER \"%s\"\n"
         + "PROBENART \"E\"\n"
         + "TESTDATEN 0\n"
         + "MESSPROGRAMM_S 1\n"
@@ -114,12 +112,10 @@ public class ImporterTest extends BaseTest {
         + "%%ENDE%%\n";
 
     @Inject
-    @IdentifierConfig(type = "Sample")
-    Identifier probeIdentifier;
+    Identifier<Sample> probeIdentifier;
 
     @Inject
-    @IdentifierConfig(type = "Messung")
-    Identifier messungIdentifier;
+    Identifier<Measm> messungIdentifier;
 
     @Inject
     Repository repository;
@@ -154,9 +150,9 @@ public class ImporterTest extends BaseTest {
         Sample probe = new Sample();
         probe.setMainSampleId("120510002");
         probe.setMeasFacilId(mstId);
+        probe.setIsTest(false);
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -170,8 +166,7 @@ public class ImporterTest extends BaseTest {
         probe.setMainSampleId("120510003");
         probe.setMeasFacilId(mstId);
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.NEW, found);
+        Assert.assertNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -185,8 +180,7 @@ public class ImporterTest extends BaseTest {
         Sample probe = new Sample();
         probe.setExtId("T001");
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -199,8 +193,7 @@ public class ImporterTest extends BaseTest {
         Sample probe = new Sample();
         probe.setExtId("T002");
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.NEW, found);
+        Assert.assertNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -215,8 +208,9 @@ public class ImporterTest extends BaseTest {
         probe.setMainSampleId("120510003");
         probe.setMeasFacilId(mstId);
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.REJECT, found);
+        Assert.assertThrows(
+            Identifier.IdentificationException.class,
+            () -> probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -231,8 +225,7 @@ public class ImporterTest extends BaseTest {
         probe.setMainSampleId("");
         probe.setMeasFacilId(mstId);
 
-        Identified found = probeIdentifier.find(probe);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(probeIdentifier.getExisting(probe));
     }
 
     /**
@@ -246,8 +239,7 @@ public class ImporterTest extends BaseTest {
         messung.setSampleId(PID1000);
         messung.setMinSampleId("06A0");
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -261,8 +253,7 @@ public class ImporterTest extends BaseTest {
         messung.setSampleId(PID1000);
         messung.setMinSampleId("06A1");
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.NEW, found);
+        Assert.assertNull(messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -276,8 +267,7 @@ public class ImporterTest extends BaseTest {
         messung.setSampleId(PID1000);
         messung.setExtId(1);
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -291,27 +281,23 @@ public class ImporterTest extends BaseTest {
         messung.setSampleId(PID1000);
         messung.setExtId(2);
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.NEW, found);
+        Assert.assertNull(messungIdentifier.getExisting(messung));
     }
 
     /**
-     * Identify messung object by external id for reject.
+     * Unidentifiable Measm object.
      * @throws Exception that can occur during the test.
      */
-    @Ignore
     @Test
     @Transactional
-    //TODO: This unexpectedly returns an update instead of an reject
-    public final void identifyMessungByExterneMessungsIdReject()
+    public final void identifyMessungReject()
     throws Exception {
         Measm messung = new Measm();
         messung.setSampleId(PID1000);
-        messung.setExtId(1);
-        messung.setMinSampleId("06A2");
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.REJECT, found);
+        Assert.assertThrows(
+            Identifier.IdentificationException.class,
+            () -> messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -327,8 +313,7 @@ public class ImporterTest extends BaseTest {
         messung.setExtId(1);
         messung.setMinSampleId("");
 
-        Identified found = messungIdentifier.find(messung);
-        Assert.assertEquals(Identified.UPDATE, found);
+        Assert.assertNotNull(messungIdentifier.getExisting(messung));
     }
 
     /**
@@ -619,7 +604,6 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    @Ignore
     public final void testAsyncImportSampleSpecifMeasValImportConfTransform()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
@@ -667,6 +651,45 @@ public class ImporterTest extends BaseTest {
                 "BEARBEITUNGSSTATUS 1000\n"),
             lafSampleId,
             true);
+    }
+
+    /**
+     * Test creating new sample with forbidden extId.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncImportForbiddenExtId()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = "ZDB123456789012Y";
+        testAsyncImportProbe(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId,
+                "PROBE_ID \"" + lafSampleId + "\"\nP_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                measd, measUnit,
+                "BEARBEITUNGSSTATUS 1000\n"),
+            lafSampleId,
+            false);
+    }
+
+    /**
+     * Ensure setting status with warning in measVal fails.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncImportStatusWarningMeasVal()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        testAsyncImportProbe(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId,
+                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                // Measurand does not match measuring method
+                "Mangan", measUnit,
+                "BEARBEITUNGSSTATUS 1000\n"),
+            lafSampleId,
+            false);
     }
 
     /**
@@ -836,7 +859,8 @@ public class ImporterTest extends BaseTest {
             .get();
         Sample importedSample =
             parseResponse(importedSampleResponse, Sample.class);
-        Assert.assertEquals(lafSampleId, importedSample.getExtId());
+        Assert.assertEquals(lafSampleId, importedSample.getMainSampleId());
+        Assert.assertFalse(importedSample.getIsTest());
         Assert.assertEquals(mstId, importedSample.getMeasFacilId());
         Assert.assertEquals(1, (int) importedSample.getRegulationId());
 

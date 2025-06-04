@@ -21,16 +21,15 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+
 
 /**
  * REST service for Mpg objects.
@@ -38,13 +37,7 @@ import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "mpg")
-public class MpgService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class MpgService extends LadaIntegerIdEntityService {
 
     @Inject
     private ProbeFactory factory;
@@ -78,14 +71,11 @@ public class MpgService extends LadaService {
     /**
      * Get a Mpg object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single Mpg.
      */
     @GET
     @Path("{id}")
-    public Mpg getById(
-        @PathParam("id") Integer id
-    ) {
+    public Mpg getById() {
         return repository.getById(Mpg.class, id);
     }
 
@@ -113,7 +103,6 @@ public class MpgService extends LadaService {
     @PUT
     @Path("{id}")
     public Mpg update(
-        @PathParam("id") Integer id,
         @Valid Mpg messprogramm
     ) throws BadRequestException {
         setEnvAttrs(messprogramm);
@@ -160,14 +149,10 @@ public class MpgService extends LadaService {
 
     /**
      * Delete an existing Mpg object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         Mpg messprogrammObj = repository.getById(
             Mpg.class, id);
         authorization.authorize(messprogrammObj, RequestMethod.DELETE);

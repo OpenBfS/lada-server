@@ -10,8 +10,10 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -31,6 +34,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.DatasetCreator;
@@ -50,17 +55,23 @@ import de.intevation.lada.validation.constraints.EnvDescripDisplay;
 import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMedium;
 import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMediumReiOr161;
 import de.intevation.lada.validation.constraints.EnvMediumForReiAgGr;
+import de.intevation.lada.validation.constraints.ExtIdLFGB;
 import de.intevation.lada.validation.constraints.HasEndDate;
 import de.intevation.lada.validation.constraints.HasOneSiteOfOrigin;
+import de.intevation.lada.validation.constraints.HasSampleSpecificMeasVal;
 import de.intevation.lada.validation.constraints.HasSamplingLocation;
+import de.intevation.lada.validation.constraints.Immutable;
 import de.intevation.lada.validation.constraints.IsReiComplete;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.LFGBEnvDescripHasS11;
+import de.intevation.lada.validation.constraints.LFGBEnvDescripHasS3;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.NoUnnecessaryReiAttributes;
 import de.intevation.lada.validation.constraints.OrigDateVsStartDate;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
+import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
@@ -72,6 +83,8 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     groups = DatabaseConstraints.class, clazz = Sample.class)
 @Unique(fields = {"extId"},
     groups = DatabaseConstraints.class, clazz = Sample.class)
+@Immutable(fields = {"extId"},
+    groups = DatabaseConstraints.class, clazz = Sample.class)
 @BeginBeforeEnd(groups = Warnings.class)
 @DatesVsSampleMeth(groups = Warnings.class)
 @OrigDateVsStartDate(groups = Warnings.class)
@@ -81,8 +94,12 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @HasEndDate(groups = Warnings.class)
 @HasOneSiteOfOrigin(groups = Warnings.class)
 @HasSamplingLocation(groups = Warnings.class)
+@HasSampleSpecificMeasVal(groups = Notifications.class)
 @EnvDescripMatchesEnvMedium(groups = Warnings.class)
 @EnvDescripMatchesEnvMediumReiOr161(groups = Notifications.class)
+@LFGBEnvDescripHasS11(groups = Notifications.class)
+@LFGBEnvDescripHasS3(groups = Notifications.class)
+@ExtIdLFGB(groups = CreateErrors.class)
 public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -110,6 +127,7 @@ public class Sample extends BaseModel implements Serializable {
 
     @NotEmptyNorWhitespace
     @Size(max = 16)
+    @Pattern(regexp = "^(?!ZDB\\d{12}Y$).*$", groups = CreateErrors.class)
     private String extId;
 
     @NotBlank
@@ -200,6 +218,12 @@ public class Sample extends BaseModel implements Serializable {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = NuclFacilGr.class)
     private Integer nuclFacilGrId;
+
+    // Cascade removal of Sample to referencing Measm entries
+    @OneToMany(mappedBy = Measm_.SAMPLE, cascade = CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonbTransient
+    private Set<Measm> measms;
 
     @Transient
     private boolean owner;

@@ -22,16 +22,14 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.i18n.I18n;
+import de.intevation.lada.rest.LadaService;
+
 
 /** ServletFilter used for Shibboleth authentification. */
-@WebFilter({"/rest/*", "/data/*"})
+@WebFilter({"/" + LadaService.PATH_REST + "*",
+            "/" + LadaService.PATH_DATA + "*"})
 public class ShibbolethFilter implements Filter {
-
-    @Inject
-    private Logger logger = Logger.getLogger(ShibbolethFilter.class);
 
     @Inject
     private I18n i18n;
@@ -55,12 +53,14 @@ public class ShibbolethFilter implements Filter {
         if (user == null || "".equals(user)) {
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                 i18n.getString("no_valid_user_found"));
+            return;
         }
 
         Set<String> rolesValue = extractRoles(roles);
         if (rolesValue == null || rolesValue.isEmpty()) {
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                 i18n.getString("no_valid_role_found"));
+            return;
         }
 
         httpRequest.setAttribute("lada.user.roles", rolesValue);

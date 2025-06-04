@@ -46,7 +46,7 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.model.master.StatusMp;
-import de.intevation.lada.util.auth.HeaderAuthorization;
+import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -64,17 +64,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 public class LafCreator
 implements Creator {
 
-    private static final int LAND_RESET = 15;
-    private static final int MST_RESET = 14;
-    private static final int LAND_QUERY = 9;
-    private static final int LAND_UNPLAUS = 8;
-    private static final int LAND_NOT_REPR = 7;
-    private static final int LAND_PLAUS = 6;
-    private static final int MST_NOT_DELIV = 5;
-    private static final int MST_NOT_PLAUS = 4;
-    private static final int MST_NOT_REPR = 3;
-    private static final int MST_PLAUS = 2;
-    private static final int NOT_SET = 1;
     private static final int MP6 = 6;
     private static final int BAID3 = 3;
     private static final int MP5 = 5;
@@ -85,7 +74,7 @@ implements Creator {
     private static final String DEFAULT_FORMAT = "%s";
     private static final String CN = "\"%s\""; // cn, mcn, scn
 
-    private HeaderAuthorization authorization;
+    private Authorization authorization;
 
     /**
      * The repository used to read data.
@@ -605,7 +594,7 @@ implements Creator {
     @Override
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
-        this.authorization = new HeaderAuthorization(
+        this.authorization = new Authorization(
             userInfo, this.i18n, this.repository);
     }
 }

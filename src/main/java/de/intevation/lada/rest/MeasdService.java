@@ -9,16 +9,13 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.persistence.Query;
 import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.Measd_;
 
@@ -28,13 +25,7 @@ import de.intevation.lada.model.master.Measd_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "measd")
-public class MeasdService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class MeasdService extends LadaIntegerIdEntityService {
 
     /**
      * Get Measd objects.
@@ -69,14 +60,11 @@ public class MeasdService extends LadaService {
     /**
      * Get a single Measd object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single Measd.
      */
     @GET
     @Path("{id}")
-    public Measd getById(
-        @PathParam("id") Integer id
-    ) {
+    public Measd getById() {
         return repository.getById(Measd.class, id);
     }
 }

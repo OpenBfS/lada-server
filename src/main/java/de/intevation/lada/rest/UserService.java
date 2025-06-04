@@ -45,8 +45,7 @@ import org.jboss.logging.Logger;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-//@Path(LadaService.PATH_REST + "user")
-@Path("rest/user")
+@Path(LadaService.PATH_REST + "user")
 public class UserService extends LadaService {
 
     @Inject

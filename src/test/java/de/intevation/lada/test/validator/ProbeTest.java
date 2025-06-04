@@ -11,7 +11,9 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 
@@ -24,6 +26,7 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.validation.groups.CreateErrors;
 
 
 /**
@@ -44,6 +47,7 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final Integer EXAMPLE_NUCL_FACIL_ID = 1;
     private static final String MST_06010 = "06010";
     private static final Integer REGULATION_ID_REI = 4;
+    private static final Integer REGULATION_ID_LFGB = 15;
     private static final Integer SAMPLE_METH_ID_INDIVIDUAL = 1;
     private static final Integer SAMPLE_METH_ID_CONT = 9;
     private static final String EXISTING_APPR_LAB_ID = MST_06010;
@@ -690,6 +694,7 @@ public class ProbeTest extends ValidatorBaseTest {
     public void sampleSpecifMesValWithMatchingEnvMedium() {
         Sample sample = createMinimumValidSample();
         sample.setId(ID1000);
+        sample.setExtId("sample_ext_id");
         validator.validate(sample);
         assertNoMessages(sample);
     }
@@ -702,13 +707,10 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setExtId("sample_ext_id");
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasErrors());
-        Assert.assertTrue(sample.getErrors()
-            .containsKey(Sample_.EXT_ID));
-        MatcherAssert.assertThat(
-            sample.getErrors().get(Sample_.EXT_ID),
-            CoreMatchers.hasItem(valMessageUniqueExtId));
+        assertHasErrors(
+            validator.validate(sample),
+            Sample_.EXT_ID,
+            valMessageUniqueExtId);
     }
 
     /**
@@ -717,10 +719,126 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void uniqueExtId() {
         Sample sample = createMinimumValidSample();
+        sample.setId(null);
         sample.setExtId("SomethingUnique");
 
         validator.validate(sample);
-        assertNoMessages(sample);
+        Assert.assertFalse(sample.hasErrors());
+        Assert.assertFalse(sample.hasNotifications());
+        // Inevitable warning for new samples
+        Assert.assertEquals(
+            Map.of("geolocats", Set.of(MSG_NO_SAMPLING_LOC)),
+            sample.getWarnings());
+    }
+
+    /**
+     * Test immutability of extId.
+     */
+    @Test
+    public void immutableExtId() {
+        Sample sample = createMinimumValidSample();
+        sample.setExtId("edit");
+
+        validator.validate(sample);
+        assertHasErrors(sample,
+            Sample_.EXT_ID, "Field is immutable");
+    }
+
+    /**
+     * Notification about missing business type for regulation LFGB.
+     */
+    @Test
+    public void missingBusinessTypeLFGB() {
+        Sample sample = createMinimumValidSample();
+        sample.setRegulationId(REGULATION_ID_LFGB);
+        final String envDescripTpl = "D: %s 01 00 00 00 00 00 00 00 00 00 %s";
+
+        sample.setEnvDescripDisplay(String.format(envDescripTpl, "01", "00"));
+        assertHasNotifications(validator.validate(sample),
+            Sample_.ENV_DESCRIP_DISPLAY,
+            "S11 (type of business) not given");
+
+        sample.clearMessages();
+
+        // Business type given as S11
+        sample.setEnvDescripDisplay(String.format(envDescripTpl, "01", "01"));
+        assertNoMessages(validator.validate(sample));
+
+        // Constraint not for this value of S00
+        sample.setEnvDescripDisplay(String.format(envDescripTpl, "10", "00"));
+        assertNoMessages(validator.validate(sample));
+    }
+
+    /**
+     * Notification about missing species for regulation LFGB.
+     */
+    @Test
+    public void missingSpeciesLFGB() {
+        Sample sample = createMinimumValidSample();
+        sample.setRegulationId(REGULATION_ID_LFGB);
+        final String envDescripTpl = "D: %s 01 00 %s 00 00 00 00 00 00 00 01";
+        String defectiveDescription = String.format(envDescripTpl, "02", "00");
+        String workingDescription = String.format(envDescripTpl, "02", "01");
+        sample.setEnvDescripDisplay(defectiveDescription);
+        String errorMsg = "S03 (species) not given";
+        assertHasNotifications(
+            validator.validate(sample),
+            Sample_.ENV_DESCRIP_DISPLAY,
+            errorMsg);
+        sample.clearMessages();
+        sample.setEnvDescripDisplay(workingDescription);
+        assertNoMessages(validator.validate(sample));
+        // Constraint not for this value of S00
+        sample.setEnvDescripDisplay(VALID_ENV_DESCRIP_DISPLAY_FOR_N71);
+        assertNoMessages(validator.validate(sample));
+    }
+
+    /**
+     * Warning about missing SampleSpecificMeasVal for regulation LFGB.
+     */
+    @Test
+    public void missingSampleSpecificMeasVal() {
+        Sample sample = createMinimumValidSample();
+        sample.setRegulationId(REGULATION_ID_LFGB);
+        assertNoMessages(validator.validate(sample));
+        // case it is missing
+        sample.setId(30000);
+        sample.setExtId("X");
+        assertHasNotifications(
+            validator.validate(sample),
+            "sampleSpecifMeasVals",
+            "Value must be provided");
+    }
+
+    /**
+     * Test allowing ExtId only for LFGB type samples
+     */
+    @Test
+    public void extIdOnCreate() {
+        // case regulation id is not LFGB
+        Sample sample = createMinimumValidSample();
+        sample.setId(null);
+        assertHasErrors(validator.validate(sample, CreateErrors.class),
+            Sample_.EXT_ID, "ExtId only for LFGB");
+        // case regulation id is LFGB
+        sample = createMinimumValidSample();
+        sample.setId(null);
+        sample.setExtId("1234567890123456");
+        sample.setRegulationId(REGULATION_ID_LFGB);
+        assertNoMessages(validator.validate(sample, CreateErrors.class));
+    }
+
+    /**
+     * Test default pattern on creation.
+     */
+    @Test
+    public void extIdMatchingDefaultPattern() {
+        Sample sample = createMinimumValidSample();
+        sample.setId(null);
+        sample.setExtId("ZDB123456789012Y");
+
+        assertHasErrors(validator.validate(sample, CreateErrors.class),
+            Sample_.EXT_ID, "must match \"^(?!ZDB\\d{12}Y$).*$\"");
     }
 
     /**
@@ -732,6 +850,7 @@ public class ProbeTest extends ValidatorBaseTest {
         final int regulationId = 1;
         Sample sample = new Sample();
         sample.setId(sampleId);
+        sample.setExtId("regulation_9");
         sample.setMainSampleId("test");
         sample.setApprLabId(EXISTING_APPR_LAB_ID);
         sample.setMeasFacilId(MST_06010);
@@ -754,6 +873,7 @@ public class ProbeTest extends ValidatorBaseTest {
         final int sampleId = 25001;
         Sample sample = createMinimumValidSample();
         sample.setId(sampleId);
+        sample.setExtId("rei_sample");
         sample.setRegulationId(REGULATION_ID_REI);
         sample.setReiAgGrId(EXAMPLE_REI_AG_GR_ID);
         sample.setNuclFacilGrId(EXAMPLE_NUCL_FACIL_ID);

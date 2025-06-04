@@ -10,15 +10,12 @@ package de.intevation.lada.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
 import de.intevation.lada.model.master.ReiAgGrEnvMediumMp_;
@@ -32,13 +29,7 @@ import de.intevation.lada.model.master.ReiAgGr_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "reiaggr")
-public class ReiAgGrService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class ReiAgGrService extends LadaIntegerIdEntityService {
 
     /**
      * Get ReiAgGr objects.
@@ -100,14 +91,11 @@ public class ReiAgGrService extends LadaService {
     /**
      * Get a single ReiAgGr object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single ReiAgGr.
      */
     @GET
     @Path("{id}")
-    public ReiAgGr getById(
-        @PathParam("id") Integer id
-    ) {
+    public ReiAgGr getById() {
         return repository.getById(ReiAgGr.class, id);
     }
 }

@@ -10,14 +10,11 @@ package de.intevation.lada.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.EnvMedium_;
 import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
@@ -29,13 +26,7 @@ import de.intevation.lada.model.master.ReiAgGrEnvMediumMp_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "envmedium")
-public class EnvMediumService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class EnvMediumService extends LadaStringIdEntityService {
 
     /**
      * Get Umwelt objects.
@@ -72,14 +63,11 @@ public class EnvMediumService extends LadaService {
     /**
      * Get a single EnvMedium object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single EnvMedium.
      */
     @GET
     @Path("{id}")
-    public EnvMedium getById(
-        @PathParam("id") String id
-    ) {
+    public EnvMedium getById() {
         return repository.getById(EnvMedium.class, id);
     }
 }

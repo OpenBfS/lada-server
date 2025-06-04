@@ -18,7 +18,6 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.TimestampLocker;
@@ -26,7 +25,6 @@ import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
@@ -36,13 +34,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "samplespecifmeasval")
-public class SampleSpecifMeasValService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class SampleSpecifMeasValService extends LadaIntegerIdEntityService {
 
     /**
      * The object lock mechanism.
@@ -71,14 +63,11 @@ public class SampleSpecifMeasValService extends LadaService {
     /**
      * Get a SampleSpecifMeasVal object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single SampleSpecifMeasVal.
      */
     @GET
     @Path("{id}")
-    public SampleSpecifMeasVal getById(
-        @PathParam("id") Integer id
-    ) {
+    public SampleSpecifMeasVal getById() {
         return repository.getById(SampleSpecifMeasVal.class, id);
     }
 
@@ -104,7 +93,6 @@ public class SampleSpecifMeasValService extends LadaService {
     @PUT
     @Path("{id}")
     public SampleSpecifMeasVal update(
-        @PathParam("id") Integer id,
         @Valid SampleSpecifMeasVal zusatzwert
     ) throws BadRequestException {
         lock.isLocked(zusatzwert);
@@ -114,14 +102,10 @@ public class SampleSpecifMeasValService extends LadaService {
 
     /**
      * Delete an existing SampleSpecifMeasVal object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         SampleSpecifMeasVal obj = repository.getById(
             SampleSpecifMeasVal.class, id);
         authorization.authorize(obj, RequestMethod.DELETE);

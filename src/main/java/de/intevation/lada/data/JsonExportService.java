@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.data;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -15,16 +14,10 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
-import org.apache.commons.io.IOUtils;
-
 import de.intevation.lada.data.requests.QueryExportParameters;
-import de.intevation.lada.exporter.ExportConfig;
-import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.rest.LadaService;
 
@@ -47,13 +40,10 @@ import de.intevation.lada.rest.LadaService;
 @Path(LadaService.PATH_DATA + "export/json")
 public class JsonExportService extends LadaService {
 
-    private static final String ERROR_MSG = "Failed exporting JSON data";
-
     /**
      * The exporter.
      */
     @Inject
-    @ExportConfig(format = ExportFormat.JSON)
     private Exporter<QueryExportParameters> exporter;
 
     /**
@@ -67,14 +57,14 @@ public class JsonExportService extends LadaService {
      */
     @POST
     @Path("samples")
-    public String downloadSamples(
+    public InputStream downloadSamples(
         @NotEmpty List<Integer> ids
     ) {
-        return createResultString(exporter.exportProben(
-                ids,
-                new ArrayList<Integer>(),
-                StandardCharsets.UTF_8,
-                authorization.getInfo()));
+        return exporter.exportProben(
+            ids,
+            new ArrayList<Integer>(),
+            StandardCharsets.UTF_8,
+            authorization.getInfo());
     }
 
     /**
@@ -88,29 +78,13 @@ public class JsonExportService extends LadaService {
      */
     @POST
     @Path("measms")
-    public String downloadMeasms(
+    public InputStream downloadMeasms(
         @NotEmpty List<Integer> ids
     ) {
-        return createResultString(exporter.exportMessungen(
-                new ArrayList<Integer>(),
-                ids,
-                StandardCharsets.UTF_8,
-                authorization.getInfo()));
-    }
-
-    private String createResultString(InputStream exported) {
-        if (exported == null) {
-            throw new InternalServerErrorException(
-                Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(ERROR_MSG).build());
-        }
-        try {
-            return IOUtils.toString(exported, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new InternalServerErrorException(
-                Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(ERROR_MSG).build(),
-                e);
-        }
+        return exporter.exportMessungen(
+            new ArrayList<Integer>(),
+            ids,
+            StandardCharsets.UTF_8,
+            authorization.getInfo());
     }
 }
