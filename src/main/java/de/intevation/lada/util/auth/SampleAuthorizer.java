@@ -46,7 +46,7 @@ class SampleAuthorizer extends Authorizer<Sample> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         Sample probe,
         RequestMethod method
     ) throws AuthorizationException {
@@ -82,7 +82,8 @@ class SampleAuthorizer extends Authorizer<Sample> {
             .and(Measm_.sampleId, sampleId);
         List<Measm> measms = repository.filter(builder.getQuery());
         for (Measm measm: measms) {
-            if (!messungAuthorizer.isAuthorized(measm, RequestMethod.PUT)) {
+            if (!messungAuthorizer.isMethodAuthorized(
+                    measm, RequestMethod.PUT)) {
                 return true;
             }
         }

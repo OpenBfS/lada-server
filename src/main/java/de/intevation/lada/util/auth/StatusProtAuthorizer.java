@@ -30,7 +30,7 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         StatusProt status,
         RequestMethod method
     ) throws AuthorizationException {
@@ -60,7 +60,7 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
             }
             throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         default:
-            messungAuthorizer.authorize(
+            messungAuthorizer.authorizeMethod(
                 repository.getById(Measm.class, status.getMeasmId()),
                 method);
         }

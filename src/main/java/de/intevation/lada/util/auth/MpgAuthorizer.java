@@ -23,7 +23,7 @@ class MpgAuthorizer extends Authorizer<Mpg> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         Mpg messprogramm,
         RequestMethod method
     ) throws AuthorizationException {

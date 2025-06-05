@@ -24,7 +24,7 @@ class BelongsToMpgAuthorizer extends Authorizer<BelongsToMpg> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         BelongsToMpg object,
         RequestMethod method
     ) throws AuthorizationException {

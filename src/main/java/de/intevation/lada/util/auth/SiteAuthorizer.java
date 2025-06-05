@@ -22,7 +22,7 @@ class SiteAuthorizer extends Authorizer<Site> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         Site site,
         RequestMethod method
     ) throws AuthorizationException {

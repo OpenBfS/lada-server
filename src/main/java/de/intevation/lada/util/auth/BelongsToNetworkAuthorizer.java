@@ -22,7 +22,7 @@ class BelongsToNetworkAuthorizer extends Authorizer<BelongsToNetwork> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         BelongsToNetwork data,
         RequestMethod method
     ) throws AuthorizationException {

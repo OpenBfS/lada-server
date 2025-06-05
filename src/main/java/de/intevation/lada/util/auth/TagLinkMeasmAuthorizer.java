@@ -35,7 +35,7 @@ class TagLinkMeasmAuthorizer extends Authorizer<TagLinkMeasm> {
 
     @Override
     @SuppressWarnings("fallthrough")
-    void authorize(
+    void authorizeMethod(
         TagLinkMeasm zuordnung,
         RequestMethod method
     ) throws AuthorizationException {
@@ -45,7 +45,7 @@ class TagLinkMeasmAuthorizer extends Authorizer<TagLinkMeasm> {
             Tag tag = repository.getById(Tag.class, zuordnung.getTagId());
 
             if (tag.getNetworkId() == null && tag.getMeasFacilId() == null) {
-                messungAuthorizer.authorize(
+                messungAuthorizer.authorizeMethod(
                     repository.getById(
                         Measm.class, zuordnung.getMeasmId()),
                     RequestMethod.PUT

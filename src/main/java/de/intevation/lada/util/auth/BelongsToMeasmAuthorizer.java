@@ -30,11 +30,11 @@ class BelongsToMeasmAuthorizer extends Authorizer<BelongsToMeasm> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         BelongsToMeasm data,
         RequestMethod method
     ) throws AuthorizationException {
-        messungAuthorizer.authorize(
+        messungAuthorizer.authorizeMethod(
             repository.getById(Measm.class, data.getMeasmId()),
             // Allow reading if measm is readable, everything else corresponds
             // to editing the measm

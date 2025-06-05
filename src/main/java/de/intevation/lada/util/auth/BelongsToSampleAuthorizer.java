@@ -29,12 +29,12 @@ class BelongsToSampleAuthorizer extends Authorizer<BelongsToSample> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         BelongsToSample data,
         RequestMethod method
     ) throws AuthorizationException {
         // Authorized if editing associated sample is authorized
-        probeAuthorizer.authorize(
+        probeAuthorizer.authorizeMethod(
             repository.getById(Sample.class, data.getSampleId()),
             RequestMethod.PUT);
     }
