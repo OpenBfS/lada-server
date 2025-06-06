@@ -538,7 +538,7 @@ CREATE TRIGGER last_mod_mmt BEFORE UPDATE ON master.mmt FOR EACH ROW EXECUTE PRO
 CREATE TABLE measd (
     id serial PRIMARY KEY,
     descr character varying(300) CHECK (trim(both ' ' from descr) <> ''),
-    name character varying(50) NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    name character varying(50) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
     def_color character varying(9) CHECK (trim(both ' ' from def_color) <> ''),
     idf_ext_id character varying(6) CHECK (trim(both ' ' from idf_ext_id) <> ''),
     is_ref_nucl boolean NOT NULL DEFAULT false,

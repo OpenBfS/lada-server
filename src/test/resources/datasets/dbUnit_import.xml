@@ -23,7 +23,7 @@
     <master.meas_unit id = "1" unit_symbol = "Bq/kgFM"/>
 
     <master.measd id = "56" name = "Mangan" />
-    <master.measd id = "57" name = "Mangan" />
+    <master.measd id = "57" name = "Iron" />
     <master.measd id = "1" name = "H-3" />
     <master.mmt id = "A3" />
     <master.measd_gr id = "1" />

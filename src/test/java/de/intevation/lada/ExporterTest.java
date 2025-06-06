@@ -294,7 +294,7 @@ public class ExporterTest extends BaseTest {
             "\r\n",
             "messungId,id,measVal,measUnitId,measdId",
             "1200,1000,\"1,1E00\",Sv,test",
-            "1200,1001,,Sv,test");
+            "1200,1001,,Sv,test1");
     }
 
     /**
@@ -353,7 +353,7 @@ public class ExporterTest extends BaseTest {
             "\r\n",
             "messungId,id,measVal,measUnitId,measdId",
             "1200,1000,1.1E00,Sv,test",
-            "1200,1001,,Sv,test");
+            "1200,1001,,Sv,test1");
     }
 
     /**
@@ -425,7 +425,7 @@ public class ExporterTest extends BaseTest {
                     + "\"measVal\":1.1,"
                     + "\"id\":1000},{"
                     + "\"measUnitId\":\"Sv\","
-                    + "\"measdId\":\"test\","
+                    + "\"measdId\":\"test1\","
                     + "\"measVal\":null,"
                     + "\"id\":1001}]}}")).readObject(),
             runJSONExportTest(measmRequestJsonBuilder.build()));
