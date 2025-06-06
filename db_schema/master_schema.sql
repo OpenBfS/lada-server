@@ -297,8 +297,8 @@ CREATE TRIGGER last_mod_spat_ref_sys BEFORE UPDATE ON spat_ref_sys FOR EACH ROW 
 
 CREATE TABLE meas_unit (
     id serial PRIMARY KEY,
-    name character varying(50) CHECK (trim(both ' ' from name) <> ''),
-    unit_symbol character varying(12) CHECK (trim(both ' ' from unit_symbol) <> ''),
+    name character varying(50) UNIQUE CHECK (trim(both ' ' from name) <> ''),
+    unit_symbol character varying(12) UNIQUE CHECK (trim(both ' ' from unit_symbol) <> ''),
     eudf_unit_id character varying(8) CHECK (trim(both ' ' from eudf_unit_id) <> ''),
     eudf_convers_factor bigint,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
