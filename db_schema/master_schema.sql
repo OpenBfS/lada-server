@@ -633,7 +633,7 @@ CREATE TRIGGER last_mod_rei_ag_gr_env_medium_mp BEFORE UPDATE ON master.rei_ag_g
 
 CREATE TABLE nucl_facil (
   ext_id char(4) PRIMARY KEY CHECK (trim(both ' ' from ext_id) <> ''),
-  name character varying(80) CHECK (trim(both ' ' from name) <> ''),
+  name character varying(80) UNIQUE CHECK (trim(both ' ' from name) <> ''),
   last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 COMMENT ON TABLE nucl_facil
