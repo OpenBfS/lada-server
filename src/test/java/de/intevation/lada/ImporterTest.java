@@ -427,20 +427,20 @@ public class ImporterTest extends BaseTest {
         transaction.begin();
         Measm messung =
             repository.getById(Measm.class, MID1200);
-        List<MeasVal> messwerte = new ArrayList<MeasVal>();
+        QueryBuilder<MeasVal> builder = repository
+            .queryBuilder(MeasVal.class)
+            .and(MeasVal_.measmId, messung.getId());
+        // Measm has two measVals before
+        Assert.assertEquals(2, repository.filter(builder.getQuery()).size());
+
         MeasVal wert1 = new MeasVal();
         wert1.setMeasmId(MID1200);
         wert1.setMeasUnitId(MEHID207);
         wert1.setMeasdId(MGID56);
         wert1.setMeasVal(MESS15D);
-        messwerte.add(wert1);
-
-        merger.mergeMesswerte(messung, messwerte);
-        QueryBuilder<MeasVal> builder =
-            repository.queryBuilder(MeasVal.class);
-        builder.and(MeasVal_.measmId, messung.getId());
-        List<MeasVal> dbWerte =
-            repository.filter(builder.getQuery());
+        merger.mergeMesswerte(messung, List.of(wert1));
+        List<MeasVal> dbWerte = repository.filter(builder.getQuery());
+        // Only the "merged" measVal is kept
         Assert.assertEquals(1, dbWerte.size());
         transaction.commit();
 
