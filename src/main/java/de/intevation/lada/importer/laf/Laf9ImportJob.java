@@ -52,8 +52,9 @@ public class Laf9ImportJob extends ImportJob<List<Sample>> {
         List<Integer> importedSampleIds = new ArrayList<>();
 
         // Import each file
-        Map<String, Object> fileResponseData = new HashMap<>();
         this.files.forEach((fileName, content) -> {
+            List<Integer> sampleIds = new ArrayList<>();
+
             // TODO: Authorize
             for (Sample sample: content) {
                 repository.create(sample);
@@ -69,11 +70,13 @@ public class Laf9ImportJob extends ImportJob<List<Sample>> {
 
                 // TODO: Avoid duplicating statusProt entries
 
-                importedSampleIds.add(sample.getId());
+                sampleIds.add(sample.getId());
             }
+            Map<String, Object> fileResponseData = new HashMap<>();
             fileResponseData.put(SUCCESS_KEY, !currentStatus.getErrors());
-            fileResponseData.put(SAMPLE_IDS_KEY, importedSampleIds);
+            fileResponseData.put(SAMPLE_IDS_KEY, sampleIds);
             importData.put(fileName, fileResponseData);
+            importedSampleIds.addAll(sampleIds);
         });
 
         tagImportedData(importedSampleIds, this.mst);
