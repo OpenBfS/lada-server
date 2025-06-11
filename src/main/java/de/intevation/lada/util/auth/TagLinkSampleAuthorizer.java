@@ -29,13 +29,13 @@ class TagLinkSampleAuthorizer extends Authorizer<TagLinkSample> {
     ) {
         super(userInfo, repository);
 
-        this.probeAuthorizer = new ProbeAuthorizer(
+        this.probeAuthorizer = new SampleAuthorizer(
             this.userInfo, this.repository);
     }
 
     @Override
     @SuppressWarnings("fallthrough")
-    void authorize(
+    void authorizeMethod(
         TagLinkSample zuordnung,
         RequestMethod method
     ) throws AuthorizationException {
@@ -45,7 +45,7 @@ class TagLinkSampleAuthorizer extends Authorizer<TagLinkSample> {
             Tag tag = repository.getById(Tag.class, zuordnung.getTagId());
 
             if (tag.getNetworkId() == null && tag.getMeasFacilId() == null) {
-                probeAuthorizer.authorize(
+                probeAuthorizer.authorizeMethod(
                     repository.getById(
                         Sample.class, zuordnung.getSampleId()),
                     RequestMethod.PUT

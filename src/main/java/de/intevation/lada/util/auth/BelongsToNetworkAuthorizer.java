@@ -12,9 +12,9 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-class NetzbetreiberAuthorizer extends Authorizer<BelongsToNetwork> {
+class BelongsToNetworkAuthorizer extends Authorizer<BelongsToNetwork> {
 
-    NetzbetreiberAuthorizer(
+    BelongsToNetworkAuthorizer(
         UserInfo userInfo,
         Repository repository
     ) {
@@ -22,7 +22,7 @@ class NetzbetreiberAuthorizer extends Authorizer<BelongsToNetwork> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         BelongsToNetwork data,
         RequestMethod method
     ) throws AuthorizationException {

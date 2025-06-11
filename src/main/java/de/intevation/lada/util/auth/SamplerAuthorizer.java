@@ -22,7 +22,7 @@ class SamplerAuthorizer extends Authorizer<Sampler> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         Sampler sampler,
         RequestMethod method
     ) throws AuthorizationException {

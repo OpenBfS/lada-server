@@ -15,26 +15,26 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-class MessungIdAuthorizer extends Authorizer<BelongsToMeasm> {
+class BelongsToMeasmAuthorizer extends Authorizer<BelongsToMeasm> {
 
-    protected MessungAuthorizer messungAuthorizer;
+    protected MeasmAuthorizer messungAuthorizer;
 
-    MessungIdAuthorizer(
+    BelongsToMeasmAuthorizer(
         UserInfo userInfo,
         Repository repository
     ) {
         super(userInfo, repository);
 
-        this.messungAuthorizer = new MessungAuthorizer(
+        this.messungAuthorizer = new MeasmAuthorizer(
             this.userInfo, this.repository);
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         BelongsToMeasm data,
         RequestMethod method
     ) throws AuthorizationException {
-        messungAuthorizer.authorize(
+        messungAuthorizer.authorizeMethod(
             repository.getById(Measm.class, data.getMeasmId()),
             // Allow reading if measm is readable, everything else corresponds
             // to editing the measm

@@ -48,6 +48,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.NotSupportedException;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.UserTransaction;
@@ -67,12 +68,12 @@ public class AuthorizerTest extends BaseTest {
 
     private static Repository repository;
 
+    private static EntityManager em;
+
     private static UserTransaction transaction;
 
     //Constants
-    private static final int TAG_ID_GLOBAL = 103;
     private static final String NETWORK_ID_AUTHORIZED = "06";
-    private static final String NETWORK_ID_UNAUTHORIZED = "01";
     private static final int MEASM_ID_LOCKED_BY_SAMPLE = 1201;
     private static final int MEASM_ID_STATUS_LOCKED = 1212;
     private static final int MEASM_ID_STATUS_EDITABLE = 1209;
@@ -81,14 +82,14 @@ public class AuthorizerTest extends BaseTest {
     private static final int SAMPLE_ID_UNAUTORIZED = 1001;
     private static final int SAMPLE_ID_LOCKED_BY_STATUS = 1100;
     private static final int MPG_ID_AUTHORIZED = 1000;
-    private static final int MPG_ID_UNAUTHORIZED = 1001;
-    private static final String MEAS_FACIL_ID_01010 = "01010";
-    private static final String MEAS_FACIL_ID_06010 = "06010";
+    private static final String MEAS_FACIL_AUTHORIZED = "06010";
 
     //Record used to store expected test results in.
     public record TestConfig(
         boolean getResult, boolean postResult,
         boolean putResult, boolean deleteResult,
+        // Whether BaseModel.readonly can be derived from putResult
+        boolean readOnlyViaPut,
         String testDescription) { }
 
     /**
@@ -108,6 +109,7 @@ public class AuthorizerTest extends BaseTest {
     @Inject
     private void init(Repository repo, I18n localizer, UserTransaction tx) {
         repository = repo;
+        em = repo.entityManager();
         i18n = localizer;
         transaction = tx;
     }
@@ -257,6 +259,7 @@ public class AuthorizerTest extends BaseTest {
             return createTestData()
                 .entrySet()
                 .stream()
+                .filter(entry -> entry.getValue().readOnlyViaPut())
                 //Expected readonly is the inverted put authorization result
                 .map(entry -> {
                     return new Object[]{
@@ -296,6 +299,7 @@ public class AuthorizerTest extends BaseTest {
         testData.putAll(createMeasmIdTestData());
         testData.putAll(createStatusTestData());
         testData.putAll(createNetworkTestData());
+        testData.putAll(createSiteTestData());
         testData.putAll(createSampleTestData());
         testData.putAll(createSampleIdTestData());
         testData.putAll(createTagTestData());
@@ -306,83 +310,103 @@ public class AuthorizerTest extends BaseTest {
 
     private static Map<Object, TestConfig> createMpgTestData() {
         //Test mpg that should be editable
-        Mpg authorized = new Mpg();
-        authorized.setMeasFacilId(MEAS_FACIL_ID_06010);
+        final int authorizedId = 1000;
+        Mpg authorized = em.find(Mpg.class, authorizedId);
         //Test mpg that should not be editable
-        Mpg unauth = new Mpg();
-        unauth.setMeasFacilId(MEAS_FACIL_ID_01010);
+        final int unauthId = 1001;
+        Mpg unauth = em.find(Mpg.class, unauthId);
+        Mpg hijacked = em.find(Mpg.class, unauthId);
+        hijacked.setMeasFacilId(MEAS_FACIL_AUTHORIZED);
 
         return Map.of(
-            authorized, new TestConfig(true, true, true, true, "mpgAuthorized"),
-            unauth, new TestConfig(true, false, false, false, "mpgUnauthorzed")
+            authorized, new TestConfig(true, true, true, true, true,
+                "mpgAuthorized"),
+            unauth, new TestConfig(true, false, false, false, true,
+                "mpgUnauthorzed"),
+            hijacked, new TestConfig(true, true, false, true, false,
+                "mpgHijacked")
         );
     }
 
     private static Map<Object, TestConfig> createMpgIdTestData() {
         //Test geolocatMpg attached to editable mpg
-        GeolocatMpg authorized = new GeolocatMpg();
-        authorized.setMpgId(MPG_ID_AUTHORIZED);
+        final int authId = 1000;
+        GeolocatMpg authorized = em.find(GeolocatMpg.class, authId);
         //Test geolocatMpg attached to non editable mpg
-        GeolocatMpg unauth = new GeolocatMpg();
-        unauth.setMpgId(MPG_ID_UNAUTHORIZED);
+        final int unauthId = 1001;
+        GeolocatMpg unauth = em.find(GeolocatMpg.class, unauthId);
+        GeolocatMpg hijacked = em.find(GeolocatMpg.class, unauthId);
+        hijacked.setMpgId(MPG_ID_AUTHORIZED);
 
         return Map.of(
-            authorized, new TestConfig(true, true, true, true,
+            authorized, new TestConfig(true, true, true, true, true,
                 "mpgIdAuthorized"),
-            unauth, new TestConfig(false, false, false, false,
-                "mpgIdUnauthorized")
+            unauth, new TestConfig(false, false, false, false, true,
+                "mpgIdUnauthorized"),
+            hijacked, new TestConfig(true, true, false, true, false,
+                "belongsToMpgHijacked")
         );
     }
 
     private static Map<Object, TestConfig> createMeasmTestData() {
         //Test editable measm without status
-        Measm noStatus = repository.entityManager().find(
+        Measm noStatus = em.find(
             Measm.class, MEASM_ID_NO_STATUS);
         //Test measm with editable status
-        Measm editableStatus = repository.entityManager().find(
+        Measm editableStatus = em.find(
             Measm.class, MEASM_ID_STATUS_EDITABLE);
         //Test measm locked by status
-        Measm lockedByStatus = repository.entityManager().find(
+        Measm lockedByStatus = em.find(
             Measm.class, MEASM_ID_STATUS_LOCKED);
         //Test measm locked by connected sample
-        Measm lockedBySample = repository.entityManager().find(
+        Measm lockedBySample = em.find(
             Measm.class, MEASM_ID_LOCKED_BY_SAMPLE);
+        Measm hijackedBySample = em.find(
+            Measm.class, MEASM_ID_LOCKED_BY_SAMPLE);
+        hijackedBySample.setSampleId(SAMPLE_ID_AUTHORIZED);
 
         return Map.of(
-            noStatus, new TestConfig(true, true, true, true,
+            noStatus, new TestConfig(true, true, true, true, true,
                 "measmNoStatus"),
-            editableStatus, new TestConfig(true, true, true, true,
+            editableStatus, new TestConfig(true, true, true, true, true,
                 "measmEditableStatus"),
-            lockedByStatus, new TestConfig(true, true, false, false,
+            lockedByStatus, new TestConfig(true, true, false, false, true,
                 "measmLockedByStatus"),
-            lockedBySample, new TestConfig(false, false, false, false,
-                "measmLockedBySample")
+            lockedBySample, new TestConfig(false, false, false, false, true,
+                "measmLockedBySample"),
+            hijackedBySample, new TestConfig(true, true, false, true, false,
+                "measmHijackedBySample")
         );
     }
 
     private static Map<Object, TestConfig> createMeasmIdTestData() {
         //Test editable measm without status
-        CommMeasm noStatus = new CommMeasm();
-        noStatus.setMeasmId(MEASM_ID_NO_STATUS);
+        final int noStatusId = 1000;
+        CommMeasm noStatus = em.find(CommMeasm.class, noStatusId);
         //Test measm with editable status
-        CommMeasm editableStatus = new CommMeasm();
-        editableStatus.setMeasmId(MEASM_ID_STATUS_EDITABLE);
+        final int editableId = 1001;
+        CommMeasm editableStatus = em.find(CommMeasm.class, editableId);
         //Test measm locked by status
-        CommMeasm lockedByStatus = new CommMeasm();
-        lockedByStatus.setMeasmId(MEASM_ID_STATUS_LOCKED);
+        final int lockedByStatusId = 1002;
+        CommMeasm lockedByStatus = em.find(CommMeasm.class, lockedByStatusId);
         //Test measm locked by connected sample
-        CommMeasm lockedBySample = new CommMeasm();
-        lockedBySample.setMeasmId(MEASM_ID_LOCKED_BY_SAMPLE);
+        final int lockedBySampleId = 1003;
+        CommMeasm lockedBySample = em.find(CommMeasm.class, lockedBySampleId);
+        CommMeasm hijacked = em.find(CommMeasm.class, lockedBySampleId);
+        final int authorizedMeasmId = 1200;
+        hijacked.setMeasmId(authorizedMeasmId);
 
         return Map.of(
-            noStatus, new TestConfig(true, true, true, true,
+            noStatus, new TestConfig(true, true, true, true, true,
                 "measmIdNoStatus"),
-            editableStatus, new TestConfig(true, true, true, true,
+            editableStatus, new TestConfig(true, true, true, true, true,
                 "measmIdEditableStatus"),
-            lockedByStatus, new TestConfig(true, false, false, false,
+            lockedByStatus, new TestConfig(true, false, false, false, true,
                 "measmIdLockedByStatus"),
-            lockedBySample, new TestConfig(false, false, false, false,
-                "measmIDLockedBySample")
+            lockedBySample, new TestConfig(false, false, false, false, true,
+                "measmIDLockedBySample"),
+            hijacked, new TestConfig(true, true, false, true, false,
+                "belongsToMeasmHijacked")
         );
     }
 
@@ -390,163 +414,209 @@ public class AuthorizerTest extends BaseTest {
         return Map.of(
             // Status of associated Measm instance can be set
             newStatusProt(MEASM_ID_STATUS_EDITABLE),
-            new TestConfig(true, true, false, false, "statusEditableStatus"),
+            new TestConfig(true, true, false, false, true,
+                "statusEditableStatus"),
 
             // Associated Measm instance is read-only due to status
             newStatusProt(MEASM_ID_STATUS_LOCKED),
-            new TestConfig(true, false, false, false, "statusReadonlyByStatus"),
+            new TestConfig(true, false, false, false, true,
+                "statusReadonlyByStatus"),
 
             // Associated Measm instance belongs to foreign network and cannot
             // be read due to status
             newStatusProt(MEASM_ID_LOCKED_BY_SAMPLE),
-            new TestConfig(false, false, false, false, "statusLockedBySample")
+            new TestConfig(false, false, false, false, true,
+                "statusLockedBySample")
         );
     }
 
     private static StatusProt newStatusProt(Integer measmId) {
-        StatusProt status = new StatusProt();
+        final int statusProtId = 1000;
+        StatusProt status = em.find(StatusProt.class, statusProtId);
         status.setMeasmId(measmId);
         status.setStatusMpId(2);
-        status.setMeasFacilId("06010");
+        status.setMeasFacilId(MEAS_FACIL_AUTHORIZED);
         return status;
     }
 
     private static Map<Object, TestConfig> createNetworkTestData() {
-        DatasetCreator authorized = new DatasetCreator();
-        authorized.setNetworkId(NETWORK_ID_AUTHORIZED);
-        DatasetCreator unauth = new DatasetCreator();
-        unauth.setNetworkId(NETWORK_ID_UNAUTHORIZED);
+        final int authorizedId = 1000;
+        DatasetCreator authorized = em.find(DatasetCreator.class, authorizedId);
+        final int unauthId = 1001;
+        DatasetCreator unauth = em.find(DatasetCreator.class, unauthId);
+        DatasetCreator hijackedCreator =
+            em.find(DatasetCreator.class, unauthId);
+        hijackedCreator.setNetworkId(NETWORK_ID_AUTHORIZED);
 
         //Test authorized sampler
-        Sampler authorizedSampler = new Sampler();
-        authorizedSampler.setNetworkId(NETWORK_ID_AUTHORIZED);
+        final int linkedSamplerId = 726;
+        Sampler authorizedLinkedSampler = em.find(
+            Sampler.class, linkedSamplerId);
+        final int samplerId = 727;
+        Sampler authorizedSampler = em.find(Sampler.class, samplerId);
         //Test unauthorized sampler
-        Sampler unauthSampler = new Sampler();
-        unauthSampler.setNetworkId(NETWORK_ID_UNAUTHORIZED);
-
-        //Test Site special handling
-        //Test authorized site
-        Site authorizedSite = new Site();
-        authorizedSite.setNetworkId(NETWORK_ID_AUTHORIZED);
-        //Test unauthorized site
-        Site unauthSite = new Site();
-        unauthSite.setNetworkId(NETWORK_ID_UNAUTHORIZED);
+        final int unauthSamplerId = 728;
+        Sampler unauthSampler = em.find(Sampler.class, unauthSamplerId);
+        Sampler hijackedSampler = em.find(Sampler.class, unauthSamplerId);
+        hijackedSampler.setNetworkId(NETWORK_ID_AUTHORIZED);
 
         return Map.of(
-            authorized, new TestConfig(true, true, true, true,
+            authorized, new TestConfig(true, true, true, true, true,
                  "networkAuthorizer"),
-            unauth, new TestConfig(false, false, false, false,
+            unauth, new TestConfig(false, false, false, false, true,
                 "networkUnauthorized"),
-            authorizedSampler, new TestConfig(true, true, true, true,
+            hijackedCreator, new TestConfig(true, true, false, true, false,
+                "belongsToNetworkHijacked"),
+            authorizedLinkedSampler, new TestConfig(true, true, true, false, true,
+                 "authorizedLinkedSampler"),
+            authorizedSampler, new TestConfig(true, true, true, true, true,
                  "authorizedSampler"),
-            unauthSampler, new TestConfig(false, false, false, false,
+            unauthSampler, new TestConfig(false, false, false, false, true,
                 "unauthorizedSampler"),
-            authorizedSite, new TestConfig(true, true, true, true,
+            hijackedSampler, new TestConfig(true, true, false, true, false,
+                 "hijackedSampler")
+        );
+    }
+
+    private static Map<Object, TestConfig> createSiteTestData() {
+        //Test authorized site
+        final int linkedSiteId = 1000;
+        Site authorizedLinkedSite = em.find(Site.class, linkedSiteId);
+        final int siteId = 1001;
+        Site authorizedSite = em.find(Site.class, siteId);
+        //Test unauthorized site
+        final int unauthSiteId = 1002;
+        Site unauthSite = em.find(Site.class, unauthSiteId);
+        Site hijackedSite = em.find(Site.class, unauthSiteId);
+        hijackedSite.setNetworkId(NETWORK_ID_AUTHORIZED);
+
+        return Map.of(
+            authorizedLinkedSite, new TestConfig(true, true, true, false, true,
+                "authorizedLinkedSite"),
+            authorizedSite, new TestConfig(true, true, true, true, true,
                 "authorizedSite"),
-            unauthSite, new TestConfig(true, false, false, false,
-                "unauthorizedSite")
+            unauthSite, new TestConfig(true, false, false, false, true,
+                "unauthorizedSite"),
+            hijackedSite, new TestConfig(true, true, false, true, false,
+                "hijackedSite")
         );
     }
 
     private static Map<Object, TestConfig> createSampleTestData() {
         //Test authorized sample
-        Sample authorized = repository.entityManager().find(
-            Sample.class, SAMPLE_ID_AUTHORIZED);
+        Sample authorized = em.find(Sample.class, SAMPLE_ID_AUTHORIZED);
         //Test unauthorized sample
-        Sample unauthorized = repository.entityManager().find(
-            Sample.class, SAMPLE_ID_UNAUTORIZED);
+        Sample unauthorized = em.find(Sample.class, SAMPLE_ID_UNAUTORIZED);
+        final int unauthNoMeasmsId = 1002;
+        Sample hijacked = em.find(Sample.class, unauthNoMeasmsId);
+        hijacked.setMeasFacilId(MEAS_FACIL_AUTHORIZED);
         //Test sample locked by measm status
-        Sample statusLocked = repository.entityManager().find(
+        Sample statusLocked = em.find(
             Sample.class, SAMPLE_ID_LOCKED_BY_STATUS);
 
         return Map.of(
-            authorized, new TestConfig(true, true, true, true,
+            authorized, new TestConfig(true, true, true, true, true,
                 "sampleAuthorized"),
-            unauthorized, new TestConfig(false, false, false, false,
+            unauthorized, new TestConfig(false, false, false, false, true,
                 "sampleUnauthorized"),
-            statusLocked, new TestConfig(true, true, false, false,
+            hijacked, new TestConfig(true, true, false, true, false,
+                "sampleHijacked"),
+            statusLocked, new TestConfig(true, true, false, false, true,
                 "sampleStatusLocked")
         );
     }
 
     private static Map<Object, TestConfig> createSampleIdTestData() {
         //Test authorized sample id
-        CommSample authorized = new CommSample();
-        authorized.setSampleId(SAMPLE_ID_AUTHORIZED);
+        final int commSampleId = 1000;
+        CommSample authorized = em.find(CommSample.class, commSampleId);
         //Test unauthorized sample id
-        CommSample unauthorized = new CommSample();
-        unauthorized.setSampleId(SAMPLE_ID_UNAUTORIZED);
+        final int unauthId = 1001;
+        CommSample unauthorized = em.find(CommSample.class, unauthId);
+        CommSample hijacked = em.find(CommSample.class, unauthId);
+        hijacked.setSampleId(SAMPLE_ID_AUTHORIZED);
         //Test sample id locked by measm status
-        CommSample statusLocked = new CommSample();
-            statusLocked.setSampleId(SAMPLE_ID_LOCKED_BY_STATUS);
+        CommSample statusLocked = em.find(CommSample.class, commSampleId);
+        statusLocked.setSampleId(SAMPLE_ID_LOCKED_BY_STATUS);
 
         return Map.of(
-            authorized, new TestConfig(true, true, true, true,
+            authorized, new TestConfig(true, true, true, true, true,
                 "sampleIdAuthorized"),
-            unauthorized, new TestConfig(false, false, false, false,
+            unauthorized, new TestConfig(false, false, false, false, true,
                 "sampleIdUnauthorized"),
-            statusLocked, new TestConfig(false, false, false, false,
+            hijacked, new TestConfig(true, true, false, true, false,
+                "belongsToSampleHijacked"),
+            statusLocked, new TestConfig(false, false, false, false, true,
                 "sampleIdStatusLocked")
         );
     }
 
     private static Map<Object, TestConfig> createTagTestData() {
         //Test that global tags are never authorized
-        Tag global = new Tag();
+        final int globalTagId = 103;
+        Tag global = em.find(Tag.class, globalTagId);
         //Test meas facil tag of own meas facil
-        Tag authorizedMeasFacil = new Tag();
-        authorizedMeasFacil.setMeasFacilId(MEAS_FACIL_ID_06010);
+        final int mstTagId = 101;
+        Tag authorizedMeasFacil = em.find(Tag.class, mstTagId);
         //Test meas facil tag of other meas facil
-        Tag unauthorizedMeasFacil = new Tag();
-        unauthorizedMeasFacil.setMeasFacilId(MEAS_FACIL_ID_01010);
+        final int mstTagUnauthId = 111;
+        Tag unauthorizedMeasFacil = em.find(Tag.class, mstTagUnauthId);
+        Tag hijackedByMeasFacil = em.find(Tag.class, mstTagUnauthId);
+        hijackedByMeasFacil.setMeasFacilId(MEAS_FACIL_AUTHORIZED);
         //Test authorized network tag
-        Tag authorizedNetwork = new Tag();
-        authorizedNetwork.setNetworkId(NETWORK_ID_AUTHORIZED);
+        final int networkTagId = 102;
+        Tag authorizedNetwork = em.find(Tag.class, networkTagId);
         //Test unauthorized network tag
-        Tag unauthorizedNetwork = new Tag();
-        unauthorizedNetwork.setNetworkId(NETWORK_ID_UNAUTHORIZED);
+        final int networkTagUnauthId = 112;
+        Tag unauthorizedNetwork = em.find(Tag.class, networkTagUnauthId);
+        Tag hijackedByNetwork = em.find(Tag.class, networkTagUnauthId);
+        hijackedByNetwork.setNetworkId(NETWORK_ID_AUTHORIZED);
 
         return Map.of(
-            global, new TestConfig(false, false, false, false,
-                "tabGlobasl"),
-            authorizedMeasFacil, new TestConfig(true, true, true, true,
-                "tabAuthorizedMeasFacil"),
+            global, new TestConfig(false, false, false, false, true,
+                "tagGlobal"),
+            authorizedMeasFacil, new TestConfig(true, true, true, true, true,
+                "tagAuthorizedMeasFacil"),
             unauthorizedMeasFacil,
-                new TestConfig(false, false, false, false,
+                new TestConfig(false, false, false, false, true,
                 "tagUnauthorizedMeasFacil"),
-            authorizedNetwork, new TestConfig(true, true, true, true,
+            hijackedByMeasFacil, new TestConfig(true, true, false, true, false,
+                "tagHijackedByMeasFacil"),
+            authorizedNetwork, new TestConfig(true, true, true, true, true,
                 "tagAuthorizedNetwork"),
-            unauthorizedNetwork, new TestConfig(false, false, false, false,
-                "tagUnauthorizedNetwork")
+            unauthorizedNetwork, new TestConfig(false, false, false, false, true,
+                "tagUnauthorizedNetwork"),
+            hijackedByNetwork, new TestConfig(true, true, false, true, false,
+                "tagHijackedByNetwork")
         );
     }
 
     private static Map<Object, TestConfig> createTagLinkTestData() {
+        final int authorizedTagLinkId = 1;
         //Test global tag and authorized sample
-        TagLinkSample authorizedSample = new TagLinkSample();
-        authorizedSample.setTagId(TAG_ID_GLOBAL);
-        authorizedSample.setSampleId(SAMPLE_ID_AUTHORIZED);
+        TagLinkSample authorizedSample = em.find(
+            TagLinkSample.class, authorizedTagLinkId);
         //Test global tag and authorized sample
-        TagLinkSample unauthorizedSample = new TagLinkSample();
-        unauthorizedSample.setTagId(TAG_ID_GLOBAL);
+        TagLinkSample unauthorizedSample = em.find(
+            TagLinkSample.class, authorizedTagLinkId);
         unauthorizedSample.setSampleId(SAMPLE_ID_UNAUTORIZED);
         //Test global tag and authorized measm
-        TagLinkMeasm authorizedMeasm = new TagLinkMeasm();
-        authorizedMeasm.setTagId(TAG_ID_GLOBAL);
+        TagLinkMeasm authorizedMeasm = em.find(
+            TagLinkMeasm.class, authorizedTagLinkId);
         authorizedMeasm.setMeasmId(MEASM_ID_NO_STATUS);
         //Test global tag and authorized measm
-        TagLinkMeasm unauthorizedMeasm = new TagLinkMeasm();
-        unauthorizedMeasm.setTagId(TAG_ID_GLOBAL);
+        TagLinkMeasm unauthorizedMeasm = em.find(
+            TagLinkMeasm.class, authorizedTagLinkId);
         unauthorizedMeasm.setMeasmId(MEASM_ID_STATUS_LOCKED);
 
         return Map.of(
-            authorizedSample, new TestConfig(false, true, false, true,
+            authorizedSample, new TestConfig(false, true, false, true, true,
                 "tagLinkAuthorizedSample"),
-            unauthorizedSample, new TestConfig(false, false, false, false,
+            unauthorizedSample, new TestConfig(false, false, false, false, true,
                 "tagLinkUnauthorizedSample"),
-            authorizedMeasm, new TestConfig(false, true, false, true,
+            authorizedMeasm, new TestConfig(false, true, false, true, true,
                 "tagLinkAuthorizedMeasm"),
-            unauthorizedMeasm, new TestConfig(false, false, false, false,
+            unauthorizedMeasm, new TestConfig(false, false, false, false, true,
                 "tagLinkUnauthorizedMeasm")
         );
     }

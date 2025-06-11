@@ -14,27 +14,27 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-class ProbeIdAuthorizer extends Authorizer<BelongsToSample> {
+class BelongsToSampleAuthorizer extends Authorizer<BelongsToSample> {
 
     Authorizer<Sample> probeAuthorizer;
 
-    ProbeIdAuthorizer(
+    BelongsToSampleAuthorizer(
         UserInfo userInfo,
         Repository repository
     ) {
         super(userInfo, repository);
 
-        this.probeAuthorizer = new ProbeAuthorizer(
+        this.probeAuthorizer = new SampleAuthorizer(
             this.userInfo, this.repository);
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         BelongsToSample data,
         RequestMethod method
     ) throws AuthorizationException {
         // Authorized if editing associated sample is authorized
-        probeAuthorizer.authorize(
+        probeAuthorizer.authorizeMethod(
             repository.getById(Sample.class, data.getSampleId()),
             RequestMethod.PUT);
     }

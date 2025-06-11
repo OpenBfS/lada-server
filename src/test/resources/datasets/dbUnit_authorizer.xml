@@ -23,16 +23,49 @@
         id = "2"
         name = "testeins"
     />
+
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "9" />
+    <master.type_regulation id = "U" name = "TestU"/>
+
     <master.sampler
         id = "726"
         network_id = "06"
-        ext_id = "prn"
+        ext_id = "linked"
         descr = "test"
         short_text = "test"
     />
+    <master.sampler
+        id = "727"
+        network_id = "06"
+        ext_id = "notLinked"
+        descr = "test"
+        short_text = "test"
+    />
+    <master.sampler
+        id = "728"
+        network_id = "01"
+        ext_id = "unauth"
+        descr = "test"
+        short_text = "test"
+    />
+
+    <master.dataset_creator
+        id = "1000"
+        descr = "Testbezeichnung"
+        network_id = "06"
+        meas_facil_id = "06010"
+        ext_id = "06"
+    />
+    <master.dataset_creator
+        id = "1001"
+        descr = "Testbezeichnung"
+        network_id = "01"
+        meas_facil_id = "01010"
+        ext_id = "01"
+    />
+
     <master.meas_unit id = "207" />
     <master.meas_unit id = "208" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
@@ -60,6 +93,46 @@
         is_gov_dist = "false"
         geom_center = "POINT(32487017 5519769)"
     />
+    <master.site
+        id = "1000"
+        network_id = "06"
+        ext_id = "D_00191"
+        long_text = "Langer Text"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "49.83021"
+        coord_y_ext = "8.81948"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        site_class_id = "1"
+        short_text = "kurz"
+    />
+    <master.site
+        id = "1001"
+        network_id = "06"
+        ext_id = "D_00192"
+        long_text = "Langer Text"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "49.83021"
+        coord_y_ext = "8.81948"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        site_class_id = "1"
+        short_text = "kurz"
+    />
+    <master.site
+        id = "1002"
+        network_id = "01"
+        ext_id = "D_00192"
+        long_text = "Langer Text"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "49.83021"
+        coord_y_ext = "8.81948"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        site_class_id = "1"
+        short_text = "kurz"
+    />
+
     <!--Data for mpg id authorizer-->
     <lada.mpg
         id = "1000"
@@ -79,6 +152,13 @@
         valid_start_date = "1"
         valid_end_date = "365"
     />
+    <lada.geolocat_mpg
+        id = "1000"
+        type_regulation = "U"
+        mpg_id = "1000"
+        site_id = "1000"
+    />
+
     <lada.mpg
         id = "1001"
         is_test = "false"
@@ -97,6 +177,13 @@
         valid_start_date = "1"
         valid_end_date = "365"
     />
+    <lada.geolocat_mpg
+        id = "1001"
+        type_regulation = "U"
+        mpg_id = "1001"
+        site_id = "1000"
+    />
+
     <!-- Data for measm authorizer tests-->
     <lada.sample
         id = "1000"
@@ -130,6 +217,12 @@
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
     />
+    <lada.comm_measm
+        id = "1000"
+        meas_facil_id = "06010"
+        text = "Testkommentar"
+        measm_id = "1200"
+    />
     <lada.measm
         id = "1209"
         sample_id = "1000"
@@ -143,6 +236,12 @@
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
     />
+    <lada.comm_measm
+        id = "1001"
+        meas_facil_id = "06010"
+        text = "Testkommentar"
+        measm_id = "1209"
+    />
     <lada.measm
         id = "1212"
         sample_id = "1000"
@@ -155,6 +254,12 @@
         last_mod = "2012-05-08 12:00:00"
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.comm_measm
+        id = "1002"
+        meas_facil_id = "06010"
+        text = "Testkommentar"
+        measm_id = "1212"
     />
     <lada.status_prot
         id = "1000"
@@ -202,6 +307,12 @@
         sched_end_date = "2012-05-05 16:00:00"
         tree_mod = "2012-05-08 10:00:00"
     />
+    <lada.comm_sample
+        id = "1001"
+        meas_facil_id = "01010"
+        text = "Testkommentar"
+        sample_id = "1001"
+    />
     <lada.measm
         id = "1201"
         sample_id = "1001"
@@ -215,6 +326,24 @@
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
     />
+    <lada.comm_measm
+        id = "1003"
+        meas_facil_id = "06010"
+        text = "Testkommentar"
+        measm_id = "1201"
+    />
+
+    <!-- Unauthorized sample with no measms -->
+    <lada.sample
+        id = "1002"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        meas_facil_id = "01010"
+        appr_lab_id = "01010"
+        is_test = "false"
+        sample_meth_id = "1"
+    />
+
     <!--Data for sample id tests-->
     <!--Authorized sample-->
     <lada.sample
@@ -236,6 +365,12 @@
         sched_end_date = "2012-05-05 16:00:00"
         tree_mod = "2012-05-08 10:00:00"
     />
+    <lada.comm_sample
+        id = "1000"
+        meas_facil_id = "06010"
+        text = "Testkommentar"
+        sample_id = "1099"
+        />
     <!--Sample locked by measm status-->
     <lada.sample
         id = "1100"
@@ -278,6 +413,7 @@
         status_mp_id = "12"
         tree_mod = "2012-05-09 12:00:00"
     />
+
     <!--TagLink test data-->
     <master.tag
         id = "101"
@@ -303,7 +439,7 @@
     <master.tag
         id = "112"
         name = "networkUnAuth"
-        network_id = "06"
+        network_id = "01"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />
@@ -312,5 +448,15 @@
         name = "global"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
+    />
+    <lada.tag_link_sample
+        id = "1"
+        tag_id = "103"
+        sample_id = "1099"
+    />
+    <lada.tag_link_measm
+        id = "1"
+        tag_id = "103"
+        measm_id = "1200"
     />
 </dataset>

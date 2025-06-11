@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <master.network id = "06" />
+    <master.meas_facil id = "06010" network_id = "06" />
+
+    <master.meas_unit id = "207" />
+    <master.meas_unit id = "208" />
+    <master.measd id = "56" name = "Mangan" />
+    <master.measd id = "57" name = "Iron" />
+
+    <master.mmt id = "A3" />
+
+    <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
+    <master.regulation id = "9" />
+    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.sample_meth id = "2" ext_id = "S" eudf_sample_meth_id = "B" />
+    <master.env_medium id = "A6" name = "Umweltbereich für test" />
+    <master.env_medium id = "L6" name = "Spurenmessung Luft" />
+
+    <master.sample_specif
+        id = "A74"
+        name = "Volumenstrom"
+        ext_id = "VOLSTR"
+    />
+
+    <master.sampler
+        id = "726"
+        network_id = "06"
+        ext_id = "prn"
+        descr = "test"
+        short_text = "test"
+    />
+
+    <lada.mpg
+        id = "1000"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        valid_start_date = "1"
+        valid_end_date = "100"
+        sample_pd = "M"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "30"
+    />
+    <lada.sample
+        id = "1000"
+        ext_id = "T001"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "120510002"
+        mpg_id = "1000"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+    />
+    <lada.measm
+        id = "1200"
+        sample_id = "1000"
+        min_sample_id = "06A0"
+        ext_id = "1"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.sample_specif_meas_val
+        id = "1000"
+        sample_id = "1000"
+        sample_specif_id = "A74"
+        meas_val = "1.8"
+        error = "0.2"
+    />
+    <lada.meas_val
+        id = "1000"
+        measm_id = "1200"
+        measd_id = "56"
+        meas_val = "1000.8"
+        meas_unit_id = "207"
+    />
+    <lada.meas_val
+        id = "1001"
+        measm_id = "1200"
+        measd_id = "57"
+        meas_val = "1000.8"
+        meas_unit_id = "208"
+    />
+</dataset>

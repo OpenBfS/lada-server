@@ -100,6 +100,13 @@ public class ValidationTest extends ServiceTest {
         assertNoValidationError(responseNonExistant);
         BaseTest.parseResponse(responseNonExistant, Status.BAD_REQUEST);
         get(SAMPLE_SERVICE_URL + nonExistantID, Status.NOT_FOUND);
+
+        // No ID in payload
+        sample.setId(null);
+        final Response responseNoId = builder
+            .put(Entity.entity(sample, MediaType.APPLICATION_JSON));
+        assertNoValidationError(responseNoId);
+        BaseTest.parseResponse(responseNoId, Status.BAD_REQUEST);
     }
 
     private void assertNoValidationError(Response response) {
