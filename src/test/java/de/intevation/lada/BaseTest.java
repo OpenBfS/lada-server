@@ -19,6 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -414,6 +417,36 @@ public class BaseTest {
             "Response does not contain expected key '" + key + "': "
             + json.toString(),
             json.containsKey(key));
+    }
+
+    /**
+     * Verify recursively that entries in expected appear also in actual and
+     * have the same values.
+     *
+     * @param expected object with expected attributes
+     * @param actual object to be verified
+     * @param exclude keys of entries to exclude from verification
+     */
+    public static void verify(
+        JsonObject expected,
+        JsonObject actual,
+        String... exclude
+    ) {
+        List<String> exclusions = Arrays.asList(exclude);
+        for (Map.Entry<String, JsonValue> entry : expected.entrySet()) {
+            String key = entry.getKey();
+            if (exclusions.contains(key)) {
+                continue;
+            }
+            if (entry.getValue() instanceof JsonObject expectedChild) {
+                verify(expectedChild, actual.get(key).asJsonObject(), exclude);
+            } else {
+                Assert.assertEquals(
+                    String.format("%s:", key),
+                    entry.getValue(),
+                    actual.get(key));
+            }
+        }
     }
 
     protected static void assertJsonContainsValidationMessage(JsonObject json,

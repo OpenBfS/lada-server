@@ -426,11 +426,13 @@ public class ServiceTest {
      * Test the GET Service by requesting a single object by id.
      * @param parameter the parameters used in the request.
      * @param expected the expected json result.
+     * @param exclude additional keys of entries to exclude from verification
      * @return The resulting json object.
      */
     public JsonObject getById(
         String parameter,
-        JsonObject expected
+        JsonObject expected,
+        String... exclude
     ) {
         /* Request a object by id*/
         Response response = target.path(parameter).request()
@@ -440,18 +442,11 @@ public class ServiceTest {
             .get();
         /* Verify the response*/
         JsonObject object = BaseTest.parseResponse(response).asJsonObject();
-        for (Entry<String, JsonValue> entry : expected.entrySet()) {
-            String key = entry.getKey();
-            if (key.equals("parentModified")
-                || key.equals(Sample_.TREE_MOD)
-                || key.equals(Sample_.LAST_MOD)) {
-                continue;
-            }
-            Assert.assertEquals(
-                String.format("%s:", key),
-                entry.getValue(),
-                object.get(key));
-        }
+        List<String> defaultExcludes = List.of(
+            "parentModified", Sample_.TREE_MOD, Sample_.LAST_MOD);
+        List<String> excludes = new ArrayList<>(Arrays.asList(exclude));
+        excludes.addAll(defaultExcludes);
+        BaseTest.verify(expected, object, excludes.toArray(exclude));
         return object;
     }
 
