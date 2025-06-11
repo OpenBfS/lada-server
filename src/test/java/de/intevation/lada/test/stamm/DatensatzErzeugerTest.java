@@ -15,6 +15,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.test.ServiceTest;
 
@@ -37,7 +38,7 @@ public class DatensatzErzeugerTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject erzeuger =
-            readXmlResource("datasets/dbUnit_master.xml", DatasetCreator.class)
+            BaseTest.readXmlResource("datasets/dbUnit_master.xml", DatasetCreator.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();

@@ -7,13 +7,8 @@
  */
 package de.intevation.lada.test;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.lang.reflect.ParameterizedType;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -32,13 +27,10 @@ import java.util.Scanner;
 
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Table;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
@@ -46,12 +38,6 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.ITableMetaData;
-import org.dbunit.dataset.NoSuchColumnException;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.junit.Assert;
 
 import org.locationtech.jts.io.ParseException;
@@ -129,121 +115,6 @@ public class ServiceTest {
         String raw = scanner.next();
         scanner.close();
         return raw;
-    }
-
-    /**
-     * Read the given xml resource and return as JSON.
-     * @param resource Name of resource with DbUnit XML dataset
-     * @param clazz Model class for which data are extracted from resource
-     * @return Array of objcets from the given resource corresponding to
-     * clazz as JSON
-     * @throws RuntimeException if resource cannot be read as DbUnit dataset
-     * or bean introspection of clazz fails
-     */
-    protected JsonArray readXmlResource(String resource, Class<?> clazz) {
-        try {
-            IDataSet xml = new FlatXmlDataSetBuilder()
-                .setColumnSensing(true)
-                .build(getClass().getClassLoader()
-                    .getResourceAsStream(resource));
-
-            BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
-            String tablename = clazz.getAnnotation(Table.class).schema() + "."
-                + NamingStrategy.camelToSnake(
-                    beanInfo.getBeanDescriptor().getName());
-            ITable table = xml.getTable(tablename);
-            ITableMetaData datasetMetadata = xml.getTableMetaData(tablename);
-
-            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-            for (int row = 0; row < table.getRowCount(); row++) {
-                JsonObjectBuilder builder = Json.createObjectBuilder();
-                for (
-                    PropertyDescriptor column: beanInfo.getPropertyDescriptors()
-                ) {
-                    //Check if column is present in dataset
-                    String key = column.getName();
-                    String columnName = NamingStrategy.camelToSnake(key);
-                    try {
-                        datasetMetadata.getColumnIndex(columnName);
-                    } catch (NoSuchColumnException nsce) {
-                        continue;
-                    }
-                    String rawValue = (String) table.getValue(row, columnName);
-                    if (rawValue == null) {
-                        continue;
-                    }
-
-                    // Get entity attribute type
-                    Class<?> type =
-                        column.getWriteMethod().getParameterTypes()[0];
-                    Object value;
-
-                    // Apply JPA conversion, if any
-                    Convert convert = null;
-                    Class<?> declaringClass = clazz;
-                    do {
-                        try {
-                            convert = declaringClass.getDeclaredField(key)
-                                .getAnnotation(Convert.class);
-                            break;
-                        } catch (NoSuchFieldException e) {
-                            declaringClass = declaringClass.getSuperclass();
-                        }
-                    } while (declaringClass != null);
-                    if (convert != null) {
-                        Class<?> converter = convert.converter();
-                        // Get database attribute type from AttributeConverter
-                        Class<?> attributeType = (Class<?>) (
-                            (ParameterizedType) converter
-                            .getGenericInterfaces()[0])
-                            .getActualTypeArguments()[1];
-                        value = converter
-                            .getMethod(
-                                "convertToEntityAttribute", attributeType)
-                            .invoke(
-                                converter.getDeclaredConstructor()
-                                    .newInstance(),
-                                parseXMLAttr(rawValue, attributeType));
-                    } else {
-                        value = parseXMLAttr(rawValue, type);
-                    }
-
-                    if (type.isAssignableFrom(Integer.class)) {
-                        builder.add(key, (Integer) value);
-                    } else if (type.isAssignableFrom(Double.class)
-                        || type.isAssignableFrom(Float.class)
-                    ) {
-                        builder.add(key, (Double) value);
-                    } else if (type.isAssignableFrom(Boolean.class)) {
-                        builder.add(key, (Boolean) value);
-                    } else {
-                        builder.add(key, value.toString());
-                    }
-                }
-                arrayBuilder.add(builder);
-            }
-            return arrayBuilder.build();
-        } catch (DataSetException
-            | IntrospectionException
-            | ReflectiveOperationException e
-        ) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Object parseXMLAttr(String value, Class<?> type) {
-        if (type.isAssignableFrom(Integer.class)) {
-            return Integer.parseInt(value);
-        }
-        if (type.isAssignableFrom(Double.class)
-            || type.isAssignableFrom(Float.class)
-        ) {
-            return Double.parseDouble(value);
-        }
-        if (type.isAssignableFrom(Boolean.class)) {
-            return Boolean.parseBoolean(value);
-        }
-        return value;
     }
 
     /**

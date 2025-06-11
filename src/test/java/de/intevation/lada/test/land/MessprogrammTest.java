@@ -44,7 +44,7 @@ public class MessprogrammTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject messprogramm =
-            readXmlResource("datasets/dbUnit_lada.xml", Mpg.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", Mpg.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogramm);
         builder.add("oprModeId", 1);

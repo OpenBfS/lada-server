@@ -16,6 +16,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.test.ServiceTest;
 
@@ -36,7 +37,7 @@ public class GeolocatMpgTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject geolocat =
-            readXmlResource("datasets/dbUnit_lada.xml", GeolocatMpg.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", GeolocatMpg.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(geolocat);
         builder.add("parentModified", TS1);

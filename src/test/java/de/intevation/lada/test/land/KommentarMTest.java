@@ -16,6 +16,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.test.ServiceTest;
 
@@ -41,7 +42,7 @@ public class KommentarMTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject messung =
-            readXmlResource("datasets/dbUnit_lada.xml", CommMeasm.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", CommMeasm.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);
         builder.add("parentModified", TS1);

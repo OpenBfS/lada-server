@@ -46,7 +46,7 @@ public class MesswertTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject messwert =
-            readXmlResource("datasets/dbUnit_lada.xml", MeasVal.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", MeasVal.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messwert);
         builder.add("readonly", JsonValue.FALSE);

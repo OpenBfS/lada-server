@@ -15,6 +15,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.test.ServiceTest;
 
@@ -34,7 +35,7 @@ public class MunicDivTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject municDiv =
-            readXmlResource("datasets/dbUnit_master.xml", MunicDiv.class)
+            BaseTest.readXmlResource("datasets/dbUnit_master.xml", MunicDiv.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(municDiv);
         expectedById = builder.build();

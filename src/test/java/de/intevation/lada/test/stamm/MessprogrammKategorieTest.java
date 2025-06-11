@@ -15,6 +15,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.test.ServiceTest;
 
@@ -38,7 +39,7 @@ public class MessprogrammKategorieTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject erzeuger =
-            readXmlResource("datasets/dbUnit_master.xml", MpgCateg.class)
+            BaseTest.readXmlResource("datasets/dbUnit_master.xml", MpgCateg.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();

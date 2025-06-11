@@ -16,6 +16,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.test.ServiceTest;
 
@@ -40,7 +41,7 @@ public class ZusatzwertTest extends ServiceTest {
         });
 
         // Prepare expected probe object
-        JsonObject content = readXmlResource(
+        JsonObject content = BaseTest.readXmlResource(
             "datasets/dbUnit_lada.xml", SampleSpecifMeasVal.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(content);

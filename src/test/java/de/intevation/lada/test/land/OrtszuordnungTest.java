@@ -15,6 +15,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.test.ServiceTest;
 
@@ -38,7 +39,7 @@ public class OrtszuordnungTest extends ServiceTest {
         });
 
         expectedById = convertObject(
-            readXmlResource("datasets/dbUnit_lada.xml", Geolocat.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", Geolocat.class)
                 .getJsonObject(0))
             .add("parentModified", TS1)
             .add("readonly", JsonValue.FALSE)

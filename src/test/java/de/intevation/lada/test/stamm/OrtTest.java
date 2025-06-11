@@ -52,7 +52,7 @@ public class OrtTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject erzeuger =
-            readXmlResource("datasets/dbUnit_master.xml", Site.class)
+            BaseTest.readXmlResource("datasets/dbUnit_master.xml", Site.class)
             .getJsonObject(0);
         expectedById = convertObject(erzeuger)
             .add("referenceCount", 2)

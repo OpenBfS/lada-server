@@ -63,7 +63,7 @@ public class ProbeTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject probe = filterJsonArrayById(
-            readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
             SAMPLE_ID);
         expectedById = convertObject(probe)
             .addNull(Sample_.MID_SAMPLE_DATE)

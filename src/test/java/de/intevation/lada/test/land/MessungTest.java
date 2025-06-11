@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.Response;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.test.ServiceTest;
 
@@ -44,7 +45,7 @@ public class MessungTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject messung =
-            readXmlResource("datasets/dbUnit_lada.xml", Measm.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", Measm.class)
             .getJsonObject(0);
         expectedById = convertObject(messung)
             .add("parentModified", TS1)
