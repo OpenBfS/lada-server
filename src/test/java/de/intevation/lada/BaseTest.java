@@ -629,6 +629,20 @@ public class BaseTest {
     }
 
     /**
+     * Filter the given JsonArray for an object with the given id.
+     * @param array Array to filter
+     * @param id Id to search for
+     * @return JsonObject with the given id
+     */
+    public static JsonObject filterJsonArrayById(JsonArray array, int id) {
+        return array
+            .stream()
+            .filter(val -> id == val.asJsonObject().getInt("id"))
+            .findFirst().get()
+            .asJsonObject();
+    }
+
+    /**
      * Check if given table matches the expected dataset.
      *
      * The expected datasets must contain all of the tables columns to ensure

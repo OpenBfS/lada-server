@@ -41,7 +41,7 @@ public class ProbenehmerTest extends ServiceTest {
         create = readJsonResource("/datasets/probenehmer.json");
 
         // Prepare expected object
-        JsonObject probenehmer = filterJsonArrayById(
+        JsonObject probenehmer = BaseTest.filterJsonArrayById(
             BaseTest.readXmlResource("datasets/dbUnit_master.xml", Sampler.class),
             1000);
 
