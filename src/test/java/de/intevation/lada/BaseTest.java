@@ -9,6 +9,10 @@ package de.intevation.lada;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -80,6 +85,10 @@ import de.intevation.lada.util.rest.JSONBConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class BaseTest {
+
+    public static final DateTimeFormatter TIMESTAMP_FORMATTER =
+        DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT)
+        .withZone(ZoneId.of("UTC"));
 
     /**
      * Name of the test archive output file.
@@ -598,6 +607,9 @@ public class BaseTest {
                         builder.add(key, (Double) value);
                     } else if (type.isAssignableFrom(Boolean.class)) {
                         builder.add(key, (Boolean) value);
+                    } else if (type.isAssignableFrom(Date.class)) {
+                        builder.add(key, BaseTest.TIMESTAMP_FORMATTER
+                            .format((Instant) value));
                     } else {
                         builder.add(key, value.toString());
                     }
@@ -624,6 +636,9 @@ public class BaseTest {
         }
         if (type.isAssignableFrom(Boolean.class)) {
             return Boolean.parseBoolean(value);
+        }
+        if (type.isAssignableFrom(Date.class)) {
+            return Timestamp.valueOf(value).toInstant();
         }
         return value;
     }

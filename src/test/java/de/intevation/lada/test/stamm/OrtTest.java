@@ -41,10 +41,6 @@ public class OrtTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung"
-        });
         // Attributes with point geometries
         geomPointAttributes = Arrays.asList(new String[]{
                 "geom"

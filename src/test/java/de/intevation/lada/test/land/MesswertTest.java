@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.util.Arrays;
-
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
@@ -37,12 +35,6 @@ public class MesswertTest extends ServiceTest {
     @Override
     public void init(WebTarget t) {
         super.init(t);
-
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "lastMod",
-            "treeMod"
-        });
 
         // Prepare expected probe object
         JsonObject messwert =

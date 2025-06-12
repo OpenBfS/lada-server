@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.util.Arrays;
-
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -30,11 +28,6 @@ public class MessprogrammMmtTest extends ServiceTest {
     @Override
     public void init(WebTarget t) {
         super.init(t);
-
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung"
-        });
 
         // Prepare expected object
         JsonObject messprogrammMmt =

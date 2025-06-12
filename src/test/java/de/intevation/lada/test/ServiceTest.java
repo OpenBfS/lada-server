@@ -11,11 +11,8 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Date;
@@ -49,7 +46,7 @@ import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.NamingStrategy;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.test.land.ProbeTest;
-import de.intevation.lada.util.rest.JSONBConfig;
+
 
 /**
  * Class for Lada service tests.
@@ -60,14 +57,6 @@ public class ServiceTest {
 
     private static final String LAT_KEY = "latitude";
     private static final String LONG_KEY = "longitude";
-
-    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
-        DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT);
-
-    /**
-     * Timestamp attributes.
-     */
-    protected List<String> timestampAttributes = new ArrayList<String>();
 
     /**
      * Geometry attributes.
@@ -156,15 +145,7 @@ public class ServiceTest {
             }
 
             String key = entry.getKey();
-            if (timestampAttributes.contains(key)) {
-                Timestamp timestamp = Timestamp.valueOf(
-                    entry.getValue().toString().replaceAll("\"", ""));
-
-                String dateString = TIMESTAMP_FORMATTER
-                    .withZone(ZoneId.of("UTC"))
-                    .format(timestamp.toInstant());
-                builder.add(key, dateString);
-            } else if (geomPointAttributes.contains(key)) {
+            if (geomPointAttributes.contains(key)) {
                 // Convert EWKT to latitude and longitude
                 String wkt = entry.getValue().toString().split(";")[1];
                 try {
@@ -521,9 +502,11 @@ public class ServiceTest {
         final String modTimeKey = Sample_.LAST_MOD;
         if (oldObject.containsKey(modTimeKey)) {
             var oldLastMod = ZonedDateTime.parse(
-                oldObject.getString(modTimeKey), TIMESTAMP_FORMATTER);
+                oldObject.getString(modTimeKey),
+                BaseTest.TIMESTAMP_FORMATTER);
             var updatedLastMod = ZonedDateTime.parse(
-                updatedObject.getString(modTimeKey), TIMESTAMP_FORMATTER);
+                updatedObject.getString(modTimeKey),
+                BaseTest.TIMESTAMP_FORMATTER);
             Assert.assertTrue(
                 "Object modification timestamp did not increase",
                 updatedLastMod.isAfter(oldLastMod)
@@ -618,7 +601,8 @@ public class ServiceTest {
      * @return Difference in days as long
      */
     protected long getDaysFromNow(String to) {
-        ZonedDateTime toDate = ZonedDateTime.parse(to, TIMESTAMP_FORMATTER);
+        ZonedDateTime toDate = ZonedDateTime.parse(
+            to, BaseTest.TIMESTAMP_FORMATTER);
         return getDaysFromNow(toDate.toInstant());
     }
 

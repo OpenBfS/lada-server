@@ -8,7 +8,6 @@
 package de.intevation.lada.test.land;
 
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -51,15 +50,6 @@ public class ProbeTest extends ServiceTest {
     @Override
     public void init(WebTarget t) {
         super.init(t);
-
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            Sample_.LAST_MOD,
-            Sample_.SAMPLE_START_DATE,
-            Sample_.SCHED_START_DATE,
-            Sample_.SCHED_END_DATE,
-            Sample_.TREE_MOD
-        });
 
         // Prepare expected probe object
         JsonObject probe = BaseTest.filterJsonArrayById(

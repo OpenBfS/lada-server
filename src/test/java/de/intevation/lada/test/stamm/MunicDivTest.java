@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.util.Arrays;
-
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.WebTarget;
@@ -27,11 +25,6 @@ public class MunicDivTest extends ServiceTest {
     @Override
     public void init(WebTarget t) {
         super.init(t);
-
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "lastMod"
-        });
 
         // Prepare expected object
         JsonObject municDiv =
