@@ -20,7 +20,6 @@ import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
-import jakarta.json.bind.JsonbBuilder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.ws.rs.client.Entity;
@@ -41,6 +40,8 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.data.AsyncExportService;
 import de.intevation.lada.data.JsonExportService;
 import de.intevation.lada.data.LafExportService;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
@@ -167,13 +168,45 @@ public class ExporterTest extends BaseTest {
             .post(Entity.entity(List.of(probeId), MediaType.APPLICATION_JSON),
                 JsonArray.class);
         Assert.assertEquals("Unexpected JSON content", 1, result.size());
+        assertJsonExportAsExpected(probeId, result, false);
+    }
+
+    /**
+     * Test JSON export of a Sample identified by ID.
+     */
+    @Test
+    @RunAsClient
+    public final void testJsonExportMeasmById()
+        throws InterruptedException, CharacterCodingException {
+        final int measmId = 1200;
+        JsonArray result = target
+            .path(UriBuilder.fromResource(JsonExportService.class)
+                .path(JsonExportService.class, "downloadMeasms")
+                .build().toString())
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(List.of(measmId), MediaType.APPLICATION_JSON),
+                JsonArray.class);
+        Assert.assertEquals("Unexpected JSON content", 1, result.size());
+        assertJsonExportAsExpected(measmId, result, true);
+    }
+
+    private void assertJsonExportAsExpected(
+        int id, JsonArray result, boolean isMeasmExport
+    ) {
+        Integer sampleId = isMeasmExport
+            ? BaseTest.filterJsonArrayById(
+                BaseTest.readXmlResource(this.testDatasetName, Measm.class),
+                id).getInt(Measm_.SAMPLE_ID)
+            : id;
 
         // Returned JSON represents expected sample
+        JsonObject expectedSample = BaseTest.filterJsonArrayById(
+            BaseTest.readXmlResource(this.testDatasetName, Sample.class),
+            sampleId);
         JsonObject jsonSample = result.getJsonObject(0);
-        Sample sample = JsonbBuilder.create().fromJson(
-            jsonSample.toString(), Sample.class);
-        Assert.assertEquals(
-            "Unexpected sample exported", probeId, sample.getId().intValue());
+        BaseTest.verify(expectedSample, jsonSample);
 
         // Check for additional attributes expected in JSON export
         Map<String, String> extraAttrs = Map.ofEntries(
@@ -212,8 +245,10 @@ public class ExporterTest extends BaseTest {
                 "unit", "Sv"));
 
         final String measmsKey = "measms";
-        final int measmId = 1200;
-        assertHasAssociated(jsonSample, measmsKey, 2, measmId, Map.of(
+        final int measmId = isMeasmExport ? id : 1200;
+        // Sample export contains all measms, Measm export only the selected one
+        final int measmsSize = isMeasmExport ? 1 : 2;
+        assertHasAssociated(jsonSample, measmsKey, measmsSize, measmId, Map.of(
                 "mmt", "mmt A3"));
         JsonObject measm = BaseTest.filterJsonArrayById(
             jsonSample.getJsonArray(measmsKey), measmId);
