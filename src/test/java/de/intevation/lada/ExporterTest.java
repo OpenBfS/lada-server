@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
@@ -41,6 +42,7 @@ import de.intevation.lada.data.AsyncExportService;
 import de.intevation.lada.data.JsonExportService;
 import de.intevation.lada.data.LafExportService;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Job.JobStatus;
@@ -167,10 +169,117 @@ public class ExporterTest extends BaseTest {
         Assert.assertEquals("Unexpected JSON content", 1, result.size());
 
         // Returned JSON represents expected sample
+        JsonObject jsonSample = result.getJsonObject(0);
         Sample sample = JsonbBuilder.create().fromJson(
-            result.getJsonObject(0).toString(), Sample.class);
+            jsonSample.toString(), Sample.class);
         Assert.assertEquals(
             "Unexpected sample exported", probeId, sample.getId().intValue());
+
+        // Check for additional attributes expected in JSON export
+        Map<String, String> extraAttrs = Map.ofEntries(
+            Map.entry("sampleMethExtId", "E"),
+            Map.entry("regulation", "nine"),
+            Map.entry("envMediumName", "Spurenmessung Luft"),
+            Map.entry("oprModeName", "Normal-/Routinebetrieb"),
+            Map.entry("mpgCategExtId", "MC1"),
+            Map.entry("mpgCategName", "mpgCateg1"),
+            Map.entry("samplerExtId", "prn"),
+            Map.entry("samplerDescr", "test"),
+            Map.entry("samplerNetworkId", "06"),
+            Map.entry("samplerShortText", "test"),
+            Map.entry("reiAgGrDescr", "REI Ag Gr"),
+            Map.entry("reiAgGrName", "reiAgGr")
+        );
+        for (String key : extraAttrs.keySet()) {
+            assertContains(jsonSample, key);
+            Assert.assertEquals(extraAttrs.get(key), jsonSample.getString(key));
+        }
+
+        final String[] measFacilAttrs = { "measFacil", "apprLab" };
+        JsonObject measFacil = BaseTest.readXmlResource(
+            this.testDatasetName, MeasFacil.class).getJsonObject(0);
+        for (String key : measFacilAttrs) {
+            assertContains(jsonSample, key);
+            BaseTest.verify(measFacil, jsonSample.getJsonObject(key));
+        }
+
+        final String measFacilName = measFacil.getString("name");
+        assertHasAssociated(jsonSample, "commSamples", 1, Map.of(
+                measFacilAttrs[0], measFacilName));
+
+        assertHasAssociated(jsonSample, "sampleSpecifMeasVals", 1, Map.of(
+                "sampleSpecifName", "Volumenstrom",
+                "unit", "Sv"));
+
+        final String measmsKey = "measms";
+        final int measmId = 1200;
+        assertHasAssociated(jsonSample, measmsKey, 2, measmId, Map.of(
+                "mmt", "mmt A3"));
+        JsonObject measm = BaseTest.filterJsonArrayById(
+            jsonSample.getJsonArray(measmsKey), measmId);
+        final int measValId = 1000;
+        assertHasAssociated(measm, "measVals", 2, measValId, Map.of(
+                "unit", "Sv",
+                "measd", "test"));
+        assertHasAssociated(measm, "commMeasms", 1, Map.of(
+                measFacilAttrs[0], measFacilName));
+        assertHasAssociated(measm, "statusProtocol", 1, Map.of(
+                "statusLev", "MST",
+                "statusVal", "nicht vergeben",
+                measFacilAttrs[0], measFacilName));
+
+        final String envDescripKey = "envDescrip";
+        assertContains(jsonSample, envDescripKey);
+        JsonObject envDescrip = jsonSample.getJsonObject(envDescripKey);
+        final String s0Key = "S0";
+        assertContains(envDescrip, s0Key);
+        Assert.assertEquals("test", envDescrip.getString(s0Key));
+
+        final String geolocatsKey = "geolocat";
+        assertHasAssociated(jsonSample, geolocatsKey, 1, Map.of());
+        JsonObject geolocat = jsonSample.getJsonArray(geolocatsKey)
+            .getJsonObject(0);
+        final String siteKey = "site";
+        assertContains(geolocat, siteKey);
+        JsonObject site = geolocat.getJsonObject(siteKey);
+        Map<String, String> siteAttrs = Map.of(
+            "adminUnit", "Berlin",
+            "state", "Deutschland"
+        );
+        for (String key : siteAttrs.keySet()) {
+            assertContains(site, key);
+            Assert.assertEquals(siteAttrs.get(key), site.getString(key));
+        }
+    }
+
+    private void assertHasAssociated(
+        JsonObject jsonSample,
+        String associationKey,
+        int size,
+        Map<String, String> expectedAttrs
+    ) {
+        assertHasAssociated(
+            jsonSample, associationKey, size, null, expectedAttrs);
+    }
+
+    private void assertHasAssociated(
+        JsonObject jsonObject,
+        String associationKey,
+        int size,
+        Integer id,
+        Map<String, String> expectedAttrs
+    ) {
+        assertContains(jsonObject, associationKey);
+        JsonArray associations = jsonObject.getJsonArray(associationKey);
+        Assert.assertEquals(size, associations.size());
+        JsonObject associated = id == null
+            ? associations.getJsonObject(0)
+            : BaseTest.filterJsonArrayById(associations, id);
+        for (String key : expectedAttrs.keySet()) {
+            assertContains(associated, key);
+            Assert.assertEquals(
+                expectedAttrs.get(key), associated.getString(key));
+        }
     }
 
     /**
