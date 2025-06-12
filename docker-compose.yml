@@ -21,7 +21,7 @@ services:
   printer:
     image: "koala/lada_print_templates"
     volumes:
-      - ../lada_print_templates/:/usr/local/tomcat/webapps/bfs-printservice/print-apps
+      - ../lada_print_templates/:/usr/local/tomcat/webapps/ROOT/print-apps
   client:
     image: "koala/lada_client"
     depends_on:
