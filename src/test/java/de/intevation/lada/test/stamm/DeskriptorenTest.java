@@ -13,6 +13,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.test.ServiceTest;
 
@@ -30,7 +31,7 @@ public class DeskriptorenTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject content =
-            readXmlResource("datasets/dbUnit_master.xml", EnvDescrip.class)
+            BaseTest.readXmlResource("datasets/dbUnit_master.xml", EnvDescrip.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(content);
         expectedById = builder.build();

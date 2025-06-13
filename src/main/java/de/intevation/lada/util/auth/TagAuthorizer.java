@@ -28,7 +28,7 @@ class TagAuthorizer extends Authorizer<Tag> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         Tag tag,
         RequestMethod method
     ) throws AuthorizationException {

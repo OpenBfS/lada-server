@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.util.Arrays;
-
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
@@ -16,6 +14,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.test.ServiceTest;
 
@@ -33,15 +32,9 @@ public class KommentarPTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "date",
-            "treeModified"
-        });
-
         // Prepare expected probe object
         JsonObject content =
-            readXmlResource("datasets/dbUnit_lada.xml", CommSample.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", CommSample.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(content);
         builder.add("parentModified", TS1);

@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.util.Arrays;
-
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
@@ -16,6 +14,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.test.ServiceTest;
 
@@ -29,14 +28,9 @@ public class GeolocatMpgTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "lastMod"
-        });
-
         // Prepare expected probe object
         JsonObject geolocat =
-            readXmlResource("datasets/dbUnit_lada.xml", GeolocatMpg.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", GeolocatMpg.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(geolocat);
         builder.add("parentModified", TS1);

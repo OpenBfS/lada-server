@@ -27,8 +27,6 @@ import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.metamodel.SingularAttribute;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.i18n.I18n;
@@ -105,14 +103,12 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
+import de.intevation.lada.validation.groups.CreateErrors;
 
 /**
  * Create database objects and map the attributes from laf raw data.
  */
 public class LafObjectMapper {
-
-    @Inject
-    private Logger logger;
 
     private Authorization authorizer;
 
@@ -155,7 +151,6 @@ public class LafObjectMapper {
 
     private String measFacilId;
 
-    private List<ImportConf> config;
     private ImportConfigMapper configMapper;
 
     /**
@@ -280,7 +275,7 @@ public class LafObjectMapper {
                     authorizer.isAuthorized(old, RequestMethod.POST)
                 ) {
                     // Check if sample is read-only due to status
-                    oldProbeIsReadonly = authorizer.isAuthorized(
+                    oldProbeIsReadonly = !authorizer.isAuthorized(
                         old, RequestMethod.PUT);
                     if (oldProbeIsReadonly) {
                         newProbe = old;
@@ -307,7 +302,7 @@ public class LafObjectMapper {
                 }
             } else {
                 // It is a brand new probe!
-                validator.validate(probe);
+                validator.validate(probe, CreateErrors.class);
                 if (!probe.hasErrors()) {
                     repository.create(probe);
                     newProbe = probe;
@@ -1995,7 +1990,6 @@ public class LafObjectMapper {
      * @param config the config to set
      */
     public void setConfig(List<ImportConf> config) {
-        this.config = config;
         this.configMapper = new ImportConfigMapper(config);
     }
 

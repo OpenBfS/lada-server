@@ -22,8 +22,6 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.rest.LadaService;
 
@@ -32,9 +30,6 @@ import de.intevation.lada.rest.LadaService;
 @WebFilter({"/" + LadaService.PATH_REST + "*",
             "/" + LadaService.PATH_DATA + "*"})
 public class ShibbolethFilter implements Filter {
-
-    @Inject
-    private Logger logger = Logger.getLogger(ShibbolethFilter.class);
 
     @Inject
     private I18n i18n;

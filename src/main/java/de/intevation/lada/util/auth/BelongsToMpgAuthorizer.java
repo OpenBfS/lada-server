@@ -14,9 +14,9 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.data.Repository;
 
 
-class MpgIdAuthorizer extends Authorizer<BelongsToMpg> {
+class BelongsToMpgAuthorizer extends Authorizer<BelongsToMpg> {
 
-    MpgIdAuthorizer(
+    BelongsToMpgAuthorizer(
         UserInfo userInfo,
         Repository repository
     ) {
@@ -24,7 +24,7 @@ class MpgIdAuthorizer extends Authorizer<BelongsToMpg> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         BelongsToMpg object,
         RequestMethod method
     ) throws AuthorizationException {

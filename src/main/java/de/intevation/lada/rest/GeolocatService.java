@@ -19,7 +19,6 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.TimestampLocker;
@@ -27,8 +26,8 @@ import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Site;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
+
 
 /**
  * REST service for Geolocat objects.
@@ -36,13 +35,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "geolocat")
-public class GeolocatService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class GeolocatService extends LadaIntegerIdEntityService {
 
     /**
      * The object lock mechanism.
@@ -68,14 +61,11 @@ public class GeolocatService extends LadaService {
     /**
      * Get a Geolocat object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single Geolocat.
      */
     @GET
     @Path("{id}")
-    public Geolocat getById(
-        @PathParam("id") Integer id
-    ) {
+    public Geolocat getById() {
         return repository.getById(Geolocat.class, id);
     }
 
@@ -104,7 +94,6 @@ public class GeolocatService extends LadaService {
     @PUT
     @Path("{id}")
     public Geolocat update(
-        @PathParam("id") Integer id,
         @Valid Geolocat ort
     ) throws BadRequestException, NotFoundException {
         siteExists(ort);
@@ -114,14 +103,10 @@ public class GeolocatService extends LadaService {
 
     /**
      * Delete an existing Geolocat object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         Geolocat ortObj = repository.getById(Geolocat.class, id);
         authorization.authorize(ortObj, RequestMethod.DELETE);
         lock.isLocked(ortObj);

@@ -297,8 +297,8 @@ CREATE TRIGGER last_mod_spat_ref_sys BEFORE UPDATE ON spat_ref_sys FOR EACH ROW 
 
 CREATE TABLE meas_unit (
     id serial PRIMARY KEY,
-    name character varying(50) CHECK (trim(both ' ' from name) <> ''),
-    unit_symbol character varying(12) CHECK (trim(both ' ' from unit_symbol) <> ''),
+    name character varying(50) UNIQUE CHECK (trim(both ' ' from name) <> ''),
+    unit_symbol character varying(12) UNIQUE CHECK (trim(both ' ' from unit_symbol) <> ''),
     eudf_unit_id character varying(8) CHECK (trim(both ' ' from eudf_unit_id) <> ''),
     eudf_convers_factor bigint,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
@@ -538,7 +538,7 @@ CREATE TRIGGER last_mod_mmt BEFORE UPDATE ON master.mmt FOR EACH ROW EXECUTE PRO
 CREATE TABLE measd (
     id serial PRIMARY KEY,
     descr character varying(300) CHECK (trim(both ' ' from descr) <> ''),
-    name character varying(50) NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    name character varying(50) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
     def_color character varying(9) CHECK (trim(both ' ' from def_color) <> ''),
     idf_ext_id character varying(6) CHECK (trim(both ' ' from idf_ext_id) <> ''),
     is_ref_nucl boolean NOT NULL DEFAULT false,
@@ -633,7 +633,7 @@ CREATE TRIGGER last_mod_rei_ag_gr_env_medium_mp BEFORE UPDATE ON master.rei_ag_g
 
 CREATE TABLE nucl_facil (
   ext_id char(4) PRIMARY KEY CHECK (trim(both ' ' from ext_id) <> ''),
-  name character varying(80) CHECK (trim(both ' ' from name) <> ''),
+  name character varying(80) UNIQUE CHECK (trim(both ' ' from name) <> ''),
   last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 COMMENT ON TABLE nucl_facil

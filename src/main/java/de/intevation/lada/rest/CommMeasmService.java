@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import java.util.Set;
 
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
@@ -18,13 +17,12 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
+
 
 /**
  * REST service for CommMeasm objects.
@@ -32,13 +30,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "commmeasm")
-public class CommMeasmService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class CommMeasmService extends LadaIntegerIdEntityService {
 
     /**
      * Get CommMeasm objects.
@@ -61,14 +53,11 @@ public class CommMeasmService extends LadaService {
     /**
      * Get a single CommMeasm object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single CommMeasm.
      */
     @GET
     @Path("{id}")
-    public CommMeasm getById(
-        @PathParam("id") Integer id
-    ) {
+    public CommMeasm getById() {
         return authorization.authorize(
             repository.getById(CommMeasm.class, id),
             RequestMethod.GET);
@@ -95,7 +84,6 @@ public class CommMeasmService extends LadaService {
     @PUT
     @Path("{id}")
     public CommMeasm update(
-        @PathParam("id") Integer id,
         @Valid CommMeasm kommentar
     ) throws BadRequestException {
         return repository.update(kommentar);
@@ -103,14 +91,10 @@ public class CommMeasmService extends LadaService {
 
     /**
      * Delete an existing CommMeasm object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         CommMeasm kommentarObj = repository.getById(CommMeasm.class, id);
         authorization.authorize(kommentarObj, RequestMethod.DELETE);
         kommentarObj.getMeasm().getCommMeasms().remove(kommentarObj);

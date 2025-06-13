@@ -751,7 +751,9 @@
         from_id = "1"
         to_id = "3"
         />
-    <!-- Reference site for testing authorization of deletion -->
+
+    <!-- Reference site for testing reference counts
+         and authorization of deletion -->
     <master.type_regulation id = "E" name = "TestE"/>
     <master.type_regulation id = "U" name = "TestU"/>
     <lada.geolocat
@@ -766,6 +768,13 @@
         id = "1001"
         type_regulation = "U"
         sample_id = "1902"
+        site_id = "1000"
+        add_site_text = "Test"
+    />
+    <lada.geolocat_mpg
+        id = "1000"
+        type_regulation = "U"
+        mpg_id = "1000"
         site_id = "1000"
         add_site_text = "Test"
     />

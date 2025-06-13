@@ -9,15 +9,12 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.AdminUnit_;
 
@@ -27,13 +24,7 @@ import de.intevation.lada.model.master.AdminUnit_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "adminunit")
-public class AdminUnitService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class AdminUnitService extends LadaStringIdEntityService {
 
     /**
      * Get AdminUnit objects.
@@ -60,14 +51,11 @@ public class AdminUnitService extends LadaService {
     /**
      * Get a single AdminUnit object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single AdminUnit.
      */
     @GET
     @Path("{id}")
-    public AdminUnit getById(
-        @PathParam("id") String id
-    ) {
+    public AdminUnit getById() {
         return repository.getById(AdminUnit.class, id);
     }
 }

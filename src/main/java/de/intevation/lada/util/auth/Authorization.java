@@ -8,7 +8,6 @@
 package de.intevation.lada.util.auth;
 
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.ws.rs.ForbiddenException;
@@ -61,9 +60,6 @@ public class Authorization {
     private Authorizer<BelongsToMpg> mpgIdAuthorizer;
     private Authorizer<BelongsToNetwork> netzAuthorizer;
 
-    @Inject
-    private Instance<Authorizer<?>> authorizer;
-
     /**
      * No-args constructor to make class proxyable.
      */
@@ -82,11 +78,11 @@ public class Authorization {
         this.i18n = i18n;
 
         this.probeAuthorizer =
-            new ProbeAuthorizer(userInfo, repository);
+            new SampleAuthorizer(userInfo, repository);
         this.messungAuthorizer =
-            new MessungAuthorizer(userInfo, repository);
+            new MeasmAuthorizer(userInfo, repository);
         this.messprogrammAuthorizer =
-            new MessprogrammAuthorizer(userInfo, repository);
+            new MpgAuthorizer(userInfo, repository);
         this.tagAuthorizer =
             new TagAuthorizer(userInfo, repository);
         this.tagZuordnungAuthorizer =
@@ -100,13 +96,13 @@ public class Authorization {
         this.statusAuthorizer =
             new StatusProtAuthorizer(userInfo, repository);
         this.pIdAuthorizer =
-            new ProbeIdAuthorizer(userInfo, repository);
+            new BelongsToSampleAuthorizer(userInfo, repository);
         this.mIdAuthorizer =
-            new MessungIdAuthorizer(userInfo, repository);
+            new BelongsToMeasmAuthorizer(userInfo, repository);
         this.mpgIdAuthorizer =
-            new MpgIdAuthorizer(userInfo, repository);
+            new BelongsToMpgAuthorizer(userInfo, repository);
         this.netzAuthorizer =
-            new NetzbetreiberAuthorizer(userInfo, repository);
+            new BelongsToNetworkAuthorizer(userInfo, repository);
     }
 
     /**

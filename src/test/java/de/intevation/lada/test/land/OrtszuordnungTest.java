@@ -49,15 +49,16 @@ public class OrtszuordnungTest extends ServiceTest {
         super.init(t);
 
         // Attributes to be converted
-        timestampAttributes = List.of("lastMod");
         geomPointAttributes = List.of("geom");
 
         final int expectedSiteId = 1000;
-        expectedSite = convertObject(filterJsonArrayById(
-                readXmlResource("datasets/dbUnit_lada.xml", Site.class),
+        expectedSite = convertObject(BaseTest.filterJsonArrayById(
+                BaseTest.readXmlResource(
+                    "datasets/dbUnit_lada.xml", Site.class),
                 expectedSiteId)).build();
-        expectedById = convertObject(filterJsonArrayById(
-                readXmlResource("datasets/dbUnit_lada.xml", Geolocat.class),
+        expectedById = convertObject(BaseTest.filterJsonArrayById(
+                BaseTest.readXmlResource(
+                    "datasets/dbUnit_lada.xml", Geolocat.class),
                 expectedId))
             .add(Geolocat_.SITE, expectedSite)
             .add("readonly", JsonValue.FALSE)
@@ -98,8 +99,9 @@ public class OrtszuordnungTest extends ServiceTest {
             urlPath + expectedId,
             Geolocat_.SITE,
             expectedSite,
-            convertObject(filterJsonArrayById(
-                    readXmlResource("datasets/dbUnit_lada.xml", Site.class),
+            convertObject(BaseTest.filterJsonArrayById(
+                    BaseTest.readXmlResource(
+                        "datasets/dbUnit_lada.xml", Site.class),
                     newSiteId)).build());
 
         delete(urlPath + newId);

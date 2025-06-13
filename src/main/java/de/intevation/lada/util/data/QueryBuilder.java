@@ -70,6 +70,17 @@ public class QueryBuilder<T> {
     }
 
     /**
+     * Restrict result to identity of given entity.
+     *
+     * @param entity
+     * @return The builder itself.
+     */
+    public QueryBuilder<T> identity(Object entity) {
+        Predicate p = this.builder.equal(this.root, entity);
+        return and(p);
+    }
+
+    /**
      * Logical AND operation for null values.
      * @param <X> Column datatype
      *
@@ -99,12 +110,7 @@ public class QueryBuilder<T> {
         } else {
             p = this.builder.equal(this.root.get(id), value);
         }
-        if (this.filter != null) {
-            this.filter = this.builder.and(this.filter, p);
-        } else {
-            this.filter = this.builder.and(p);
-        }
-        return this;
+        return and(p);
     }
 
     /**
@@ -132,12 +138,7 @@ public class QueryBuilder<T> {
         Path<String> path = this.root.get(id);
         Predicate p =
             this.builder.like(this.builder.lower(path), value.toLowerCase());
-        if (this.filter != null) {
-            this.filter = this.builder.and(this.filter, p);
-        } else {
-            this.filter = this.builder.and(p);
-        }
-        return this;
+        return and(p);
     }
 
     /**
@@ -155,12 +156,7 @@ public class QueryBuilder<T> {
         } else {
             p = this.builder.equal(this.root.get(id), value);
         }
-        if (this.filter != null) {
-            this.filter = this.builder.or(this.filter, p);
-        } else {
-            this.filter = this.builder.or(p);
-        }
-        return this;
+        return or(p);
     }
 
     /**
@@ -176,12 +172,7 @@ public class QueryBuilder<T> {
         Path<String> path = this.root.get(id);
         Predicate p =
             this.builder.like(this.builder.lower(path), value.toLowerCase());
-        if (this.filter != null) {
-            this.filter = this.builder.or(this.filter, p);
-        } else {
-            this.filter = this.builder.or(p);
-        }
-        return this;
+        return or(p);
     }
 
     /**
@@ -197,12 +188,7 @@ public class QueryBuilder<T> {
     ) {
         if (values == null) {
             Predicate p = this.builder.isNull(this.root.get(id));
-            if (this.filter != null) {
-                this.filter = this.builder.and(this.filter, p);
-            } else {
-                this.filter = p;
-            }
-            return this;
+            return and(p);
         }
         for (String v : values) {
             this.and(id, v);
@@ -223,12 +209,7 @@ public class QueryBuilder<T> {
     ) {
         if (values == null) {
             Predicate p = this.builder.isNull(this.root.get(id));
-            if (this.filter != null) {
-                this.filter = this.builder.or(this.filter, p);
-            } else {
-                this.filter = p;
-            }
-            return this;
+            return or(p);
         }
         this.orIn(id, values);
         return this;
@@ -263,12 +244,7 @@ public class QueryBuilder<T> {
         if (b == null || b.filter == null) {
             return this;
         }
-        if (this.filter != null) {
-            this.filter = this.builder.and(this.filter, b.filter);
-        } else {
-            this.filter = this.builder.and(b.filter);
-        }
-        return this;
+        return and(b.filter);
     }
 
     /**
@@ -283,12 +259,7 @@ public class QueryBuilder<T> {
         if (b == null || b.filter == null) {
             return this;
         }
-        if (this.filter != null) {
-            this.filter = this.builder.or(this.filter, b.filter);
-        } else {
-            this.filter = this.builder.or(b.filter);
-        }
-        return this;
+        return or(b.filter);
     }
 
     /**
@@ -306,12 +277,7 @@ public class QueryBuilder<T> {
     ) {
         Expression<M> exp = this.root.get(key);
         Predicate p = exp.in(values);
-        if (this.filter == null) {
-            this.filter = this.builder.or(p);
-        } else {
-            this.filter = this.builder.or(this.filter, p);
-        }
-        return this;
+        return or(p);
     }
 
     /**
@@ -329,10 +295,35 @@ public class QueryBuilder<T> {
     ) {
         Expression<M> exp = this.root.get(key);
         Predicate p = exp.in(values);
+        return and(p);
+    }
+
+    /**
+     * Logical AND operation.
+     *
+     * @param p {@link Predicate} to be combined with current filter
+     * @return The builder itself.
+     */
+    public QueryBuilder<T> and(Predicate p) {
         if (this.filter == null) {
-            this.filter = this.builder.and(p);
+            this.filter = p;
         } else {
             this.filter = this.builder.and(this.filter, p);
+        }
+        return this;
+    }
+
+    /**
+     * Logical OR operation.
+     *
+     * @param p {@link Predicate} to be combined with current filter
+     * @return The builder itself.
+     */
+    public QueryBuilder<T> or(Predicate p) {
+        if (this.filter == null) {
+            this.filter = p;
+        } else {
+            this.filter = this.builder.or(this.filter, p);
         }
         return this;
     }

@@ -9,10 +9,8 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.Measm;
@@ -22,7 +20,7 @@ import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.model.master.StatusVal;
 import de.intevation.lada.model.master.StatusVal_;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
+
 
 /**
  * REST service for StatusVal objects.
@@ -31,13 +29,7 @@ import de.intevation.lada.util.data.Repository;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "statusval")
-public class StatusValService extends LadaService {
-
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+public class StatusValService extends LadaIntegerIdEntityService {
 
     /**
      * Get StatusVal objects.
@@ -63,9 +55,7 @@ public class StatusValService extends LadaService {
      */
     @GET
     @Path("{id}")
-    public StatusVal getById(
-        @PathParam("id") Integer id
-    ) {
+    public StatusVal getById() {
         return repository.getById(StatusVal.class, id);
     }
 

@@ -21,5 +21,7 @@ public interface Identifier<T> {
      */
     T getExisting(T object) throws IdentificationException;
 
-    public class IdentificationException extends Exception { }
+    public class IdentificationException extends Exception {
+        private static final long serialVersionUID = 1L;
+    }
 }

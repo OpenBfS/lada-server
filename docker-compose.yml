@@ -19,10 +19,9 @@ services:
       - 8787 # Remote debugging of server code
       - 5005 # Remote debugging of test code
   printer:
-    image: "koala/gis_print_templates"
+    image: "koala/lada_print_templates"
     volumes:
-      # Assumes checkout in ../gis_print_templates/:
-      - ../gis_print_templates/:/usr/local/tomcat/webapps/bfs-printservice/print-apps
+      - ../lada_print_templates/:/usr/local/tomcat/webapps/ROOT/print-apps
   client:
     image: "koala/lada_client"
     depends_on:

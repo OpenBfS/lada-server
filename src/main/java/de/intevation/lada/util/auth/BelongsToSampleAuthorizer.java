@@ -7,52 +7,48 @@
  */
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.lada.BelongsToMeasm;
+import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-class MessungIdAuthorizer extends Authorizer<BelongsToMeasm> {
+class BelongsToSampleAuthorizer extends Authorizer<BelongsToSample> {
 
-    protected MessungAuthorizer messungAuthorizer;
+    Authorizer<Sample> probeAuthorizer;
 
-    MessungIdAuthorizer(
+    BelongsToSampleAuthorizer(
         UserInfo userInfo,
         Repository repository
     ) {
         super(userInfo, repository);
 
-        this.messungAuthorizer = new MessungAuthorizer(
+        this.probeAuthorizer = new SampleAuthorizer(
             this.userInfo, this.repository);
     }
 
     @Override
-    void authorize(
-        BelongsToMeasm data,
+    void authorizeMethod(
+        BelongsToSample data,
         RequestMethod method
     ) throws AuthorizationException {
-        messungAuthorizer.authorize(
-            data.getMeasm(),
-            // Allow reading if measm is readable, everything else corresponds
-            // to editing the measm
-            method == RequestMethod.GET
-            ? RequestMethod.GET
-            : RequestMethod.PUT);
+        // Authorized if editing associated sample is authorized
+        probeAuthorizer.authorizeMethod(data.getSample(), RequestMethod.PUT);
     }
 
     @Override
-    void setAuthAttrs(BelongsToMeasm object) {
+    void setAuthAttrs(BelongsToSample object) {
         // Set readonly flag
         super.setAuthAttrs(object);
 
-        Sample probe = object.getMeasm().getSample();
-        MeasFacil mst = repository.getById(
-            MeasFacil.class, probe.getMeasFacilId());
+        Sample sample = object.getSample();
+
+        String mfId = sample.getMeasFacilId();
+        MeasFacil mst = repository.getById(MeasFacil.class, mfId);
+
         object.setOwner(
             userInfo.getNetzbetreiber().contains(mst.getNetworkId())
-            && userInfo.belongsTo(
-                probe.getMeasFacilId(), probe.getApprLabId()));
+            && userInfo.belongsTo(mfId, sample.getApprLabId()));
     }
 }

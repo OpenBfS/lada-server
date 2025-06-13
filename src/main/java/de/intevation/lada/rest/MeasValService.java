@@ -21,7 +21,6 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.i18n.I18n;
@@ -32,7 +31,6 @@ import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.util.data.MesswertNormalizer;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
@@ -42,13 +40,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "measval")
-public class MeasValService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class MeasValService extends LadaIntegerIdEntityService {
 
     /**
      * The object lock mechanism.
@@ -83,14 +75,11 @@ public class MeasValService extends LadaService {
     /**
      * Get a MeasVal object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single MeasVal.
      */
     @GET
     @Path("{id}")
-    public MeasVal getById(
-        @PathParam("id") Integer id
-    ) {
+    public MeasVal getById() {
         return authorization.authorize(
             repository.getById(MeasVal.class, id),
             RequestMethod.GET);
@@ -118,7 +107,6 @@ public class MeasValService extends LadaService {
     @PUT
     @Path("{id}")
     public MeasVal update(
-        @PathParam("id") Integer id,
         @Valid MeasVal messwert
     ) throws BadRequestException {
         lock.isLocked(messwert);
@@ -168,9 +156,7 @@ public class MeasValService extends LadaService {
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         MeasVal messwertObj = repository.getById(MeasVal.class, id);
         authorization.authorize(messwertObj, RequestMethod.DELETE);
         lock.isLocked(messwertObj);

@@ -13,9 +13,9 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
-class MessprogrammAuthorizer extends Authorizer<Mpg> {
+class MpgAuthorizer extends Authorizer<Mpg> {
 
-    MessprogrammAuthorizer(
+    MpgAuthorizer(
         UserInfo userInfo,
         Repository repository
     ) {
@@ -23,7 +23,7 @@ class MessprogrammAuthorizer extends Authorizer<Mpg> {
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         Mpg messprogramm,
         RequestMethod method
     ) throws AuthorizationException {

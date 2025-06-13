@@ -26,11 +26,11 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
     ) {
         super(userInfo, repository);
 
-        this.messungAuthorizer = new MessungAuthorizer(userInfo, repository);
+        this.messungAuthorizer = new MeasmAuthorizer(userInfo, repository);
     }
 
     @Override
-    void authorize(
+    void authorizeMethod(
         StatusProt status,
         RequestMethod method
     ) throws AuthorizationException {
@@ -60,7 +60,7 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
             }
             throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         default:
-            messungAuthorizer.authorize(
+            messungAuthorizer.authorizeMethod(
                 status.getMeasm(),
                 method);
         }

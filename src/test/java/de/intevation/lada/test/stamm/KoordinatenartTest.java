@@ -38,7 +38,7 @@ public class KoordinatenartTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject erzeuger =
-            readXmlResource("datasets/dbUnit_master.xml", SpatRefSys.class)
+            BaseTest.readXmlResource("datasets/dbUnit_master.xml", SpatRefSys.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();

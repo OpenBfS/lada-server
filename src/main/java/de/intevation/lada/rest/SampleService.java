@@ -16,6 +16,8 @@ import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.ConvertGroup;
+import jakarta.validation.groups.Default;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
@@ -23,7 +25,6 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
@@ -32,11 +33,11 @@ import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 
 
@@ -51,13 +52,7 @@ import de.intevation.lada.validation.constraints.BeginBeforeEnd;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "sample")
-public class SampleService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class SampleService extends LadaIntegerIdEntityService {
 
     /**
      * The object lock mechanism.
@@ -118,14 +113,11 @@ public class SampleService extends LadaService {
     /**
      * Get a single Sample object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single Sample.
      */
     @GET
     @Path("{id}")
-    public Sample getById(
-        @PathParam("id") Integer id
-    ) {
+    public Sample getById() {
         return repository.getById(Sample.class, id);
     }
 
@@ -138,7 +130,9 @@ public class SampleService extends LadaService {
      */
     @POST
     public Sample create(
-        @Valid Sample probe
+        @Valid
+        @ConvertGroup(from = Default.class, to = CreateErrors.class)
+        Sample probe
     ) throws BadRequestException {
         clearAssociations(probe);
 
@@ -238,7 +232,6 @@ public class SampleService extends LadaService {
     @PUT
     @Path("{id}")
     public Sample update(
-        @PathParam("id") Integer id,
         @Valid Sample probe
     ) throws BadRequestException {
         clearAssociations(probe);
@@ -252,14 +245,10 @@ public class SampleService extends LadaService {
 
     /**
      * Delete an existing Sample object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         Sample probeObj = repository.getById(Sample.class, id);
         authorization.authorize(probeObj, RequestMethod.DELETE);
         repository.delete(probeObj);

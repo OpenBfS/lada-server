@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -25,11 +24,9 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.GridColConf_;
 import de.intevation.lada.model.master.GridColMp;
@@ -46,10 +43,7 @@ import de.intevation.lada.model.master.QueryUser_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "gridcolconf")
-public class GridColConfService extends LadaService {
-
-    @Inject
-    private Repository repository;
+public class GridColConfService extends LadaIntegerIdEntityService {
 
     /**
      * Request user defined GridColConf objects.
@@ -154,13 +148,10 @@ public class GridColConfService extends LadaService {
 
     /**
      * Delete the given GridColConf.
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         UserInfo userInfo = authorization.getInfo();
         GridColConf gridColumnValue = repository.getById(
             GridColConf.class, id);

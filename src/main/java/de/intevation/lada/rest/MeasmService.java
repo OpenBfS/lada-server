@@ -18,14 +18,12 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
@@ -35,13 +33,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "measm")
-public class MeasmService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class MeasmService extends LadaIntegerIdEntityService {
 
     /**
      * The object lock mechanism.
@@ -65,14 +57,11 @@ public class MeasmService extends LadaService {
     /**
      * Get a Measm object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single Measm.
      */
     @GET
     @Path("{id}")
-    public Measm getById(
-        @PathParam("id") Integer id
-    ) {
+    public Measm getById() {
         return repository.getById(Measm.class, id);
     }
 
@@ -99,7 +88,6 @@ public class MeasmService extends LadaService {
     @PUT
     @Path("{id}")
     public Measm update(
-        @PathParam("id") Integer id,
         @Valid Measm messung
     ) throws BadRequestException {
         lock.isLocked(messung);
@@ -114,9 +102,7 @@ public class MeasmService extends LadaService {
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         Measm messungObj = repository.getById(Measm.class, id);
         authorization.authorize(messungObj, RequestMethod.DELETE);
         lock.isLocked(messungObj);

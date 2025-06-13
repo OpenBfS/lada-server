@@ -58,6 +58,7 @@
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "2" name = "reg-2"/>
     <master.regulation id = "9" name = "reg-9"/>
+    <master.regulation id = "10" name = "reg-10"/>
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
     <master.meas_unit id = "207" unit_symbol = "u207"/>
     <master.meas_unit id = "208" unit_symbol = "u208"/>
@@ -90,9 +91,9 @@
     <master.measd_gr id = "16" name = "Test2" />
 
     <master.measd id = "56" name = "Mangan" />
-    <master.measd id = "57" name = "Mangan" />
-    <master.measd id = "58" name = "Eisen" />
-    <master.measd id = "59" name = "Eisen" />
+    <master.measd id = "57" name = "Iron" />
+    <master.measd id = "58" name = "Tritium" />
+    <master.measd id = "59" name = "Silizium" />
     <master.measd_gr_mp measd_gr_id = "15" measd_id = "56" />
     <master.measd_gr_mp measd_gr_id = "15" measd_id = "57" />
     <master.measd_gr_mp measd_gr_id = "15" measd_id = "58" />

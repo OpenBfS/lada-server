@@ -22,13 +22,6 @@ import de.intevation.lada.rest.SampleService.PostData;
 public class BeginBeforeEndSampleServicePostDataValidator
     implements ConstraintValidator<BeginBeforeEnd, PostData> {
 
-    private String message;
-
-    @Override
-    public void initialize(BeginBeforeEnd constraintAnnotation) {
-        this.message = constraintAnnotation.message();
-    }
-
     @Override
     public boolean isValid(
         PostData postData,

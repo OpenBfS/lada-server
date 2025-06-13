@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import java.util.Set;
 
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
@@ -18,13 +17,12 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
+
 
 /**
  * REST service to operate on CommSample objects.
@@ -32,13 +30,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "commsample")
-public class CommSampleService extends LadaService {
-
-    /**
-     * The data repository granting read/write access.
-     */
-    @Inject
-    private Repository repository;
+public class CommSampleService extends LadaIntegerIdEntityService {
 
     /**
      * Get CommSample objects.
@@ -59,14 +51,11 @@ public class CommSampleService extends LadaService {
     /**
      * Get a single CommSample object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single CommSample.
      */
     @GET
     @Path("{id}")
-    public CommSample getById(
-        @PathParam("id") Integer id
-    ) {
+    public CommSample getById() {
         return repository.getById(CommSample.class, id);
     }
 
@@ -92,7 +81,6 @@ public class CommSampleService extends LadaService {
     @PUT
     @Path("{id}")
     public CommSample update(
-        @PathParam("id") Integer id,
         @Valid CommSample kommentar
     ) throws BadRequestException {
         return repository.update(kommentar);
@@ -100,14 +88,10 @@ public class CommSampleService extends LadaService {
 
     /**
      * Delete an existing CommSample by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")
-    public void delete(
-        @PathParam("id") Integer id
-    ) {
+    public void delete() {
         CommSample kommentarObj = repository.getById(CommSample.class, id);
         authorization.authorize(kommentarObj, RequestMethod.DELETE);
         kommentarObj.getSample().getCommSamples().remove(kommentarObj);

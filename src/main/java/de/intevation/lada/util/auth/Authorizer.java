@@ -33,30 +33,72 @@ abstract class Authorizer<T extends BaseModel> {
     }
 
     /**
-     * Authorize applying a method to data.
+     * Authorize whether current user is allowed to
+     * create (RequestMethod.POST), read (RequestMethod.GET),
+     * update (RequestMethod.PUT) or delete (RequestMethod.DELETE)
+     * the given entity instance.
      *
-     * @param data object to authorize
+     * If given {@link RequestMethod} is PUT, requested changes have to be
+     * applied to the given instance, before. The implementation ensures
+     * to check whether the persistent state of the instance is allowed to be
+     * changed as well as whether the requested changes are allowed to be
+     * persisted.
+     * The caller is responsible for providing identifiable data.
+     *
+     * @param data entity instance to authorize
      * @param method method to authorize
      * @throws AuthorizationException if authorization does not succeed
      */
-    abstract void authorize(
+    final void authorize(
+        T data,
+        RequestMethod method
+    ) throws AuthorizationException {
+        if (RequestMethod.PUT.equals(method)) {
+            // Authorize that persistent state can be changed
+            @SuppressWarnings("unchecked")
+            Class<T> entityClass = (Class<T>) data.getClass();
+            T persistent = repository.getSingle(repository
+                .queryBuilder(entityClass)
+                .identity(data)
+                .getQuery());
+            authorizeMethod(persistent, RequestMethod.PUT);
+
+            // Authorize requested changes
+            authorizeMethod(data, RequestMethod.POST);
+        } else {
+            authorizeMethod(data, method);
+        }
+    }
+
+    /**
+     * Authorize whether the given entity instance in its given state
+     * is allowed to be read (RequestMethod.GET), changed (RequestMethod.PUT),
+     * persisted (RequestMethod.POST) or deleted (RequestMethod.DELETE).
+     *
+     * @param data entity instance to authorize
+     * @param method method to authorize
+     * @throws AuthorizationException if authorization does not succeed
+     */
+    abstract void authorizeMethod(
         T data,
         RequestMethod method
     ) throws AuthorizationException;
 
     /**
-     * Authorize applying a method to data.
+     * Authorize whether the given entity instance in its given state
+     * is allowed to be read (RequestMethod.GET), changed (RequestMethod.PUT),
+     * persisted (RequestMethod.POST) or deleted (RequestMethod.DELETE).
      *
-     * @param data object to authorize
+     * @param data entity instance to authorize
      * @param method method to authorize
      * @return true if authorization succeeds
      */
-    boolean isAuthorized(
+    boolean isMethodAuthorized(
         T data,
         RequestMethod method
     ) {
         try {
-            authorize(data, method);
+            authorizeMethod(data, method);
             return true;
         } catch (AuthorizationException ae) {
             return false;
@@ -69,6 +111,6 @@ abstract class Authorizer<T extends BaseModel> {
      * @param data object at which attributes should be set
      */
     void setAuthAttrs(T data) {
-        data.setReadonly(!isAuthorized(data, RequestMethod.PUT));
+        data.setReadonly(!isMethodAuthorized(data, RequestMethod.PUT));
     }
 }

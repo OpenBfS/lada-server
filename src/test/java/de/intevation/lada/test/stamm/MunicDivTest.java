@@ -7,14 +7,13 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.util.Arrays;
-
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.test.ServiceTest;
 
@@ -27,14 +26,9 @@ public class MunicDivTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "lastMod"
-        });
-
         // Prepare expected object
         JsonObject municDiv =
-            readXmlResource("datasets/dbUnit_master.xml", MunicDiv.class)
+            BaseTest.readXmlResource("datasets/dbUnit_master.xml", MunicDiv.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(municDiv);
         expectedById = builder.build();

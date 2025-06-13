@@ -42,7 +42,6 @@ import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.validation.constraints.CanChangeCoordinates;
 import de.intevation.lada.validation.constraints.CoordinatesInAdminBorder;
@@ -234,10 +233,15 @@ public class Site extends BaseModel implements Serializable {
     @JsonbTransient
     private Set<Geolocat> geolocats;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "site_id", insertable = false, updatable = false)
-    @JsonbTransient
-    private Set<GeolocatMpg> geolocatMpgs;
+    @Formula("""
+        (SELECT count(*) FROM lada.geolocat g WHERE {alias}.id = g.site_id)
+        """)
+    private int referenceCount;
+
+    @Formula("""
+        (SELECT count(*) FROM lada.geolocat_mpg g WHERE {alias}.id = g.site_id)
+        """)
+    private int referenceCountMp;
 
     // "{alias}" will be replaced by hibernate with alias for master.site
     @Formula("""
@@ -491,8 +495,7 @@ public class Site extends BaseModel implements Serializable {
     }
 
     public Integer getReferenceCount() {
-        return this.geolocats != null
-        ? this.geolocats.size() : 0;
+        return this.referenceCount;
     }
 
     public Integer getPlausibleReferenceCount() {
@@ -500,8 +503,7 @@ public class Site extends BaseModel implements Serializable {
     }
 
     public Integer getReferenceCountMp() {
-        return this.geolocatMpgs != null
-        ? this.geolocatMpgs.size() : 0;
+        return this.referenceCountMp;
     }
 
     public byte[] getImg() {

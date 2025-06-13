@@ -260,7 +260,7 @@ CREATE TABLE mpg_mmt_mp_measd (
 CREATE TABLE sample (
     id serial PRIMARY KEY,
     ext_id character varying(16) UNIQUE NOT NULL CHECK (trim(both ' ' from ext_id) <> '')
-        DEFAULT 'sss'
+        DEFAULT 'ZDB'
             || lpad(nextval('lada.sample_sample_id_seq')::varchar, 12, '0')
             || 'Y',
     is_test boolean DEFAULT false NOT NULL,
@@ -447,7 +447,8 @@ CREATE TRIGGER tree_mod_status_prot BEFORE UPDATE ON status_prot FOR EACH ROW EX
 CREATE TRIGGER update_measm_after_status_prot_created AFTER INSERT ON status_prot FOR EACH ROW EXECUTE PROCEDURE update_status_measm();
 
 ALTER TABLE ONLY measm
-    ADD CONSTRAINT messung_status_protokoll_id_fkey FOREIGN KEY (status) REFERENCES status_prot(id);
+    ADD CONSTRAINT messung_status_protokoll_id_fkey
+    FOREIGN KEY (status) REFERENCES status_prot(id) ON DELETE SET NULL;
 
 CREATE TABLE tag_link_measm
 (

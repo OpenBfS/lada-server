@@ -7,20 +7,12 @@
  */
 package de.intevation.lada.test;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.lang.reflect.ParameterizedType;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Date;
@@ -32,13 +24,10 @@ import java.util.Scanner;
 
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Table;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
@@ -46,12 +35,6 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.ITableMetaData;
-import org.dbunit.dataset.NoSuchColumnException;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.junit.Assert;
 
 import org.locationtech.jts.io.ParseException;
@@ -63,7 +46,7 @@ import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.NamingStrategy;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.test.land.ProbeTest;
-import de.intevation.lada.util.rest.JSONBConfig;
+
 
 /**
  * Class for Lada service tests.
@@ -74,14 +57,6 @@ public class ServiceTest {
 
     private static final String LAT_KEY = "latitude";
     private static final String LONG_KEY = "longitude";
-
-    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
-        DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT);
-
-    /**
-     * Timestamp attributes.
-     */
-    protected List<String> timestampAttributes = new ArrayList<String>();
 
     /**
      * Geometry attributes.
@@ -103,20 +78,6 @@ public class ServiceTest {
     }
 
     /**
-     * Filter the given JsonArray for an object with the given id.
-     * @param array Array to filter
-     * @param id Id to search for
-     * @return JsonObject with the given id
-     */
-    protected JsonObject filterJsonArrayById(JsonArray array, int id) {
-        return array
-            .stream()
-            .filter(val -> id == val.asJsonObject().getInt("id"))
-            .findFirst().get()
-            .asJsonObject();
-    }
-
-    /**
      * Read txt resource and return as string.
      * @param resource Resource to read
      * @return Resource as string
@@ -129,121 +90,6 @@ public class ServiceTest {
         String raw = scanner.next();
         scanner.close();
         return raw;
-    }
-
-    /**
-     * Read the given xml resource and return as JSON.
-     * @param resource Name of resource with DbUnit XML dataset
-     * @param clazz Model class for which data are extracted from resource
-     * @return Array of objcets from the given resource corresponding to
-     * clazz as JSON
-     * @throws RuntimeException if resource cannot be read as DbUnit dataset
-     * or bean introspection of clazz fails
-     */
-    protected JsonArray readXmlResource(String resource, Class<?> clazz) {
-        try {
-            IDataSet xml = new FlatXmlDataSetBuilder()
-                .setColumnSensing(true)
-                .build(getClass().getClassLoader()
-                    .getResourceAsStream(resource));
-
-            BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
-            String tablename = clazz.getAnnotation(Table.class).schema() + "."
-                + NamingStrategy.camelToSnake(
-                    beanInfo.getBeanDescriptor().getName());
-            ITable table = xml.getTable(tablename);
-            ITableMetaData datasetMetadata = xml.getTableMetaData(tablename);
-
-            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-            for (int row = 0; row < table.getRowCount(); row++) {
-                JsonObjectBuilder builder = Json.createObjectBuilder();
-                for (
-                    PropertyDescriptor column: beanInfo.getPropertyDescriptors()
-                ) {
-                    //Check if column is present in dataset
-                    String key = column.getName();
-                    String columnName = NamingStrategy.camelToSnake(key);
-                    try {
-                        datasetMetadata.getColumnIndex(columnName);
-                    } catch (NoSuchColumnException nsce) {
-                        continue;
-                    }
-                    String rawValue = (String) table.getValue(row, columnName);
-                    if (rawValue == null) {
-                        continue;
-                    }
-
-                    // Get entity attribute type
-                    Class<?> type =
-                        column.getWriteMethod().getParameterTypes()[0];
-                    Object value;
-
-                    // Apply JPA conversion, if any
-                    Convert convert = null;
-                    Class<?> declaringClass = clazz;
-                    do {
-                        try {
-                            convert = declaringClass.getDeclaredField(key)
-                                .getAnnotation(Convert.class);
-                            break;
-                        } catch (NoSuchFieldException e) {
-                            declaringClass = declaringClass.getSuperclass();
-                        }
-                    } while (declaringClass != null);
-                    if (convert != null) {
-                        Class<?> converter = convert.converter();
-                        // Get database attribute type from AttributeConverter
-                        Class<?> attributeType = (Class<?>) (
-                            (ParameterizedType) converter
-                            .getGenericInterfaces()[0])
-                            .getActualTypeArguments()[1];
-                        value = converter
-                            .getMethod(
-                                "convertToEntityAttribute", attributeType)
-                            .invoke(
-                                converter.getDeclaredConstructor()
-                                    .newInstance(),
-                                parseXMLAttr(rawValue, attributeType));
-                    } else {
-                        value = parseXMLAttr(rawValue, type);
-                    }
-
-                    if (type.isAssignableFrom(Integer.class)) {
-                        builder.add(key, (Integer) value);
-                    } else if (type.isAssignableFrom(Double.class)
-                        || type.isAssignableFrom(Float.class)
-                    ) {
-                        builder.add(key, (Double) value);
-                    } else if (type.isAssignableFrom(Boolean.class)) {
-                        builder.add(key, (Boolean) value);
-                    } else {
-                        builder.add(key, value.toString());
-                    }
-                }
-                arrayBuilder.add(builder);
-            }
-            return arrayBuilder.build();
-        } catch (DataSetException
-            | IntrospectionException
-            | ReflectiveOperationException e
-        ) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Object parseXMLAttr(String value, Class<?> type) {
-        if (type.isAssignableFrom(Integer.class)) {
-            return Integer.parseInt(value);
-        }
-        if (type.isAssignableFrom(Double.class)
-            || type.isAssignableFrom(Float.class)
-        ) {
-            return Double.parseDouble(value);
-        }
-        if (type.isAssignableFrom(Boolean.class)) {
-            return Boolean.parseBoolean(value);
-        }
-        return value;
     }
 
     /**
@@ -299,15 +145,7 @@ public class ServiceTest {
             }
 
             String key = entry.getKey();
-            if (timestampAttributes.contains(key)) {
-                Timestamp timestamp = Timestamp.valueOf(
-                    entry.getValue().toString().replaceAll("\"", ""));
-
-                String dateString = TIMESTAMP_FORMATTER
-                    .withZone(ZoneId.of("UTC"))
-                    .format(timestamp.toInstant());
-                builder.add(key, dateString);
-            } else if (geomPointAttributes.contains(key)) {
+            if (geomPointAttributes.contains(key)) {
                 // Convert EWKT to latitude and longitude
                 String wkt = entry.getValue().toString().split(";")[1];
                 try {
@@ -446,7 +284,7 @@ public class ServiceTest {
             "parentModified", Sample_.TREE_MOD, Sample_.LAST_MOD);
         List<String> excludes = new ArrayList<>(Arrays.asList(exclude));
         excludes.addAll(defaultExcludes);
-        verify(expected, object, excludes.toArray(exclude));
+        BaseTest.verify(expected, object, excludes.toArray(exclude));
         return object;
     }
 
@@ -475,6 +313,26 @@ public class ServiceTest {
     ) {
         return create(
             parameter, create, Locale.GERMAN, Response.Status.OK, entityType);
+    }
+
+    /**
+     * Test the CREATE Service.
+     * @param <T> Expected response entity type
+     * @param parameter the parameters used in the request.
+     * @param create the object to create, embedded in POST body.
+     * @param expectedStatus Expected HTTP status code
+     * @param entityType Expected response entity type
+     * @return The resulting json object.
+     *
+     */
+    public <T> T create(
+        String parameter,
+        Object create,
+        Response.Status expectedStatus,
+        Class<T> entityType
+    ) {
+        return create(
+            parameter, create, Locale.GERMAN, expectedStatus, entityType);
     }
 
     /**
@@ -665,9 +523,11 @@ public class ServiceTest {
         final String modTimeKey = Sample_.LAST_MOD;
         if (oldObject.containsKey(modTimeKey)) {
             var oldLastMod = ZonedDateTime.parse(
-                oldObject.getString(modTimeKey), TIMESTAMP_FORMATTER);
+                oldObject.getString(modTimeKey),
+                BaseTest.TIMESTAMP_FORMATTER);
             var updatedLastMod = ZonedDateTime.parse(
-                updatedObject.getString(modTimeKey), TIMESTAMP_FORMATTER);
+                updatedObject.getString(modTimeKey),
+                BaseTest.TIMESTAMP_FORMATTER);
             Assert.assertTrue(
                 "Object modification timestamp did not increase",
                 updatedLastMod.isAfter(oldLastMod)
@@ -792,7 +652,8 @@ public class ServiceTest {
      * @return Difference in days as long
      */
     protected long getDaysFromNow(String to) {
-        ZonedDateTime toDate = ZonedDateTime.parse(to, TIMESTAMP_FORMATTER);
+        ZonedDateTime toDate = ZonedDateTime.parse(
+            to, BaseTest.TIMESTAMP_FORMATTER);
         return getDaysFromNow(toDate.toInstant());
     }
 

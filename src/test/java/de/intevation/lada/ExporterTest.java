@@ -13,14 +13,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.SyncInvoker;
 import jakarta.ws.rs.core.GenericType;
@@ -38,10 +38,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.data.AsyncExportService;
+import de.intevation.lada.data.JsonExportService;
+import de.intevation.lada.data.LafExportService;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Job.JobStatus;
+
 
 /**
  * Test export services.
@@ -50,7 +54,8 @@ import de.intevation.lada.util.data.Job.JobStatus;
 @RunWith(Arquillian.class)
 public class ExporterTest extends BaseTest {
 
-    private static final String ASYNC_EXPORT_URL = "data/asyncexport/";
+    private static final String ASYNC_EXPORT_URL =
+        UriBuilder.fromResource(AsyncExportService.class).build() + "/";
 
     private final String formatCsv = "csv";
     private final String formatJson = "json";
@@ -59,9 +64,6 @@ public class ExporterTest extends BaseTest {
         .fromMethod(AsyncExportService.class, "createLaf9ExportJob")
         .build()
         .toString();
-
-    @PersistenceContext
-    EntityManager em;
 
     public ExporterTest() {
         this.testDatasetName = "datasets/dbUnit_query.xml";
@@ -145,6 +147,195 @@ public class ExporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
+    }
+
+    /**
+     * Test JSON export of a Sample identified by ID.
+     */
+    @Test
+    @RunAsClient
+    public final void testJsonExportProbeById()
+        throws InterruptedException, CharacterCodingException {
+        final int probeId = 1000;
+        JsonArray result = target
+            .path(UriBuilder.fromResource(JsonExportService.class)
+                .path(JsonExportService.class, "downloadSamples")
+                .build().toString())
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(List.of(probeId), MediaType.APPLICATION_JSON),
+                JsonArray.class);
+        Assert.assertEquals("Unexpected JSON content", 1, result.size());
+        assertJsonExportAsExpected(probeId, result, null);
+    }
+
+    /**
+     * Test JSON export of a Sample identified by ID.
+     */
+    @Test
+    @RunAsClient
+    public final void testJsonExportMeasmById()
+        throws InterruptedException, CharacterCodingException {
+        final int measmId = 1200;
+        JsonArray result = target
+            .path(UriBuilder.fromResource(JsonExportService.class)
+                .path(JsonExportService.class, "downloadMeasms")
+                .build().toString())
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(List.of(measmId), MediaType.APPLICATION_JSON),
+                JsonArray.class);
+        Assert.assertEquals("Unexpected JSON content", 1, result.size());
+        final int sampleId = 1000;
+        assertJsonExportAsExpected(measmId, result, sampleId);
+    }
+
+    private void assertJsonExportAsExpected(
+        int id, JsonArray result, Integer sampleId
+    ) {
+        boolean isMeasmExport = sampleId != null;
+
+        // Returned JSON represents expected sample
+        JsonObject expectedSample = BaseTest.filterJsonArrayById(
+            BaseTest.readXmlResource(this.testDatasetName, Sample.class),
+            sampleId != null ? sampleId : id);
+        JsonObject jsonSample = result.getJsonObject(0);
+        BaseTest.verify(expectedSample, jsonSample);
+
+        // Check for additional attributes expected in JSON export
+        Map<String, String> extraAttrs = Map.ofEntries(
+            Map.entry("sampleMethExtId", "E"),
+            Map.entry("regulation", "nine"),
+            Map.entry("envMediumName", "Spurenmessung Luft"),
+            Map.entry("oprModeName", "Normal-/Routinebetrieb"),
+            Map.entry("mpgCategExtId", "MC1"),
+            Map.entry("mpgCategName", "mpgCateg1"),
+            Map.entry("samplerExtId", "prn"),
+            Map.entry("samplerDescr", "test"),
+            Map.entry("samplerNetworkId", "06"),
+            Map.entry("samplerShortText", "test"),
+            Map.entry("reiAgGrDescr", "REI Ag Gr"),
+            Map.entry("reiAgGrName", "reiAgGr")
+        );
+        for (String key : extraAttrs.keySet()) {
+            assertContains(jsonSample, key);
+            Assert.assertEquals(extraAttrs.get(key), jsonSample.getString(key));
+        }
+
+        final String[] measFacilAttrs = { "measFacil", "apprLab" };
+        JsonObject measFacil = BaseTest.readXmlResource(
+            this.testDatasetName, MeasFacil.class).getJsonObject(0);
+        for (String key : measFacilAttrs) {
+            assertContains(jsonSample, key);
+            BaseTest.verify(measFacil, jsonSample.getJsonObject(key));
+        }
+
+        final String measFacilName = measFacil.getString("name");
+        assertHasAssociated(jsonSample, "commSamples", 1, Map.of(
+                measFacilAttrs[0], measFacilName));
+
+        assertHasAssociated(jsonSample, "sampleSpecifMeasVals", 1, Map.of(
+                "sampleSpecifName", "Volumenstrom",
+                "unit", "Sv"));
+
+        final String measmsKey = "measms";
+        final int measmId = isMeasmExport ? id : 1200;
+        // Sample export contains all measms, Measm export only the selected one
+        final int measmsSize = isMeasmExport ? 1 : 2;
+        assertHasAssociated(jsonSample, measmsKey, measmsSize, measmId, Map.of(
+                "mmt", "mmt A3"));
+        JsonObject measm = BaseTest.filterJsonArrayById(
+            jsonSample.getJsonArray(measmsKey), measmId);
+        final int measValId = 1000;
+        assertHasAssociated(measm, "measVals", 2, measValId, Map.of(
+                "unit", "Sv",
+                "measd", "test"));
+        assertHasAssociated(measm, "commMeasms", 1, Map.of(
+                measFacilAttrs[0], measFacilName));
+        assertHasAssociated(measm, "statusProtocol", 1, Map.of(
+                "statusLev", "MST",
+                "statusVal", "nicht vergeben",
+                measFacilAttrs[0], measFacilName));
+
+        final String envDescripKey = "envDescrip";
+        assertContains(jsonSample, envDescripKey);
+        JsonObject envDescrip = jsonSample.getJsonObject(envDescripKey);
+        final String s0Key = "S0";
+        assertContains(envDescrip, s0Key);
+        Assert.assertEquals("test", envDescrip.getString(s0Key));
+
+        final String geolocatsKey = "geolocat";
+        assertHasAssociated(jsonSample, geolocatsKey, 1, Map.of());
+        JsonObject geolocat = jsonSample.getJsonArray(geolocatsKey)
+            .getJsonObject(0);
+        final String siteKey = "site";
+        assertContains(geolocat, siteKey);
+        JsonObject site = geolocat.getJsonObject(siteKey);
+        Map<String, String> siteAttrs = Map.of(
+            "adminUnit", "Berlin",
+            "state", "Deutschland"
+        );
+        for (String key : siteAttrs.keySet()) {
+            assertContains(site, key);
+            Assert.assertEquals(siteAttrs.get(key), site.getString(key));
+        }
+    }
+
+    private void assertHasAssociated(
+        JsonObject jsonSample,
+        String associationKey,
+        int size,
+        Map<String, String> expectedAttrs
+    ) {
+        assertHasAssociated(
+            jsonSample, associationKey, size, null, expectedAttrs);
+    }
+
+    private void assertHasAssociated(
+        JsonObject jsonObject,
+        String associationKey,
+        int size,
+        Integer id,
+        Map<String, String> expectedAttrs
+    ) {
+        assertContains(jsonObject, associationKey);
+        JsonArray associations = jsonObject.getJsonArray(associationKey);
+        Assert.assertEquals(size, associations.size());
+        JsonObject associated = id == null
+            ? associations.getJsonObject(0)
+            : BaseTest.filterJsonArrayById(associations, id);
+        for (String key : expectedAttrs.keySet()) {
+            assertContains(associated, key);
+            Assert.assertEquals(
+                expectedAttrs.get(key), associated.getString(key));
+        }
+    }
+
+    /**
+     * Test LAF export of a Sample identified by ID.
+     */
+    @Test
+    @RunAsClient
+    public final void testLafExportProbeById()
+        throws InterruptedException, CharacterCodingException {
+        final int probeId = 1000;
+        JsonObject requestJson = requestJsonBuilder
+            .add("proben", Json.createArrayBuilder().add(probeId))
+            .build();
+
+        String result = target
+            .path(UriBuilder.fromResource(LafExportService.class)
+                .path(LafExportService.class, "download").build().toString())
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON),
+                String.class);
+        Assert.assertTrue(
+            "Unexpected LAF content",
+            result.startsWith("%PROBE%") && result.endsWith("%ENDE%"));
     }
 
     /**
@@ -243,7 +434,7 @@ public class ExporterTest extends BaseTest {
             "\r\n",
             "messungId,id,measVal,measUnitId,measdId",
             "1200,1000,\"1,1E00\",Sv,test",
-            "1200,1001,,Sv,test");
+            "1200,1001,,Sv,test1");
     }
 
     /**
@@ -302,7 +493,7 @@ public class ExporterTest extends BaseTest {
             "\r\n",
             "messungId,id,measVal,measUnitId,measdId",
             "1200,1000,1.1E00,Sv,test",
-            "1200,1001,,Sv,test");
+            "1200,1001,,Sv,test1");
     }
 
     /**
@@ -310,9 +501,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testJsonExportProbeById()
+    public final void testAsyncJsonExportProbeById()
         throws InterruptedException, CharacterCodingException {
-        /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "main_sample_id")
             .add("idFilter", Json.createArrayBuilder().add("120510002"))
@@ -375,7 +565,7 @@ public class ExporterTest extends BaseTest {
                     + "\"measVal\":1.1,"
                     + "\"id\":1000},{"
                     + "\"measUnitId\":\"Sv\","
-                    + "\"measdId\":\"test\","
+                    + "\"measdId\":\"test1\","
                     + "\"measVal\":null,"
                     + "\"id\":1001}]}}")).readObject(),
             runJSONExportTest(measmRequestJsonBuilder.build()));
@@ -386,9 +576,8 @@ public class ExporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testLaf8ExportProbeById()
+    public final void testAsyncLaf8ExportProbeById()
         throws InterruptedException, CharacterCodingException {
-        /* Request asynchronous export */
         final int probeId = 1000;
         JsonObject requestJson = requestJsonBuilder
             .add("proben", Json.createArrayBuilder().add(probeId))

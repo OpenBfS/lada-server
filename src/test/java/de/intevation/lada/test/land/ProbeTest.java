@@ -7,19 +7,24 @@
  */
 package de.intevation.lada.test.land;
 
-import java.util.Arrays;
+import java.util.AbstractMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
+import org.jboss.resteasy.api.validation.ResteasyConstraintViolation;
+import org.jboss.resteasy.api.validation.ViolationReport;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
@@ -46,18 +51,9 @@ public class ProbeTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            Sample_.LAST_MOD,
-            Sample_.SAMPLE_START_DATE,
-            Sample_.SCHED_START_DATE,
-            Sample_.SCHED_END_DATE,
-            Sample_.TREE_MOD
-        });
-
         // Prepare expected probe object
-        JsonObject probe = filterJsonArrayById(
-            readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
+        JsonObject probe = BaseTest.filterJsonArrayById(
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
             SAMPLE_ID);
         expectedById = convertObject(probe)
             .addNull(Sample_.MID_SAMPLE_DATE)
@@ -93,6 +89,32 @@ public class ProbeTest extends ServiceTest {
         MatcherAssert.assertThat(
             created.getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
+
+        /* Assert that validation of constraints from Default as well as
+           CreateErrors group are performed. */
+        Sample forbiddenExtIdSample = new Sample();
+        forbiddenExtIdSample.setExtId("ZDB123456789012Y");
+        List<ResteasyConstraintViolation> viols = create(
+            SAMPLE_SERVICE_URL,
+            forbiddenExtIdSample,
+            Response.Status.BAD_REQUEST,
+            ViolationReport.class).getParameterViolations();
+        Map<String,String> errs = viols.stream().collect(
+            Collectors.toMap(
+                err -> {
+                    String[] pElems = err.getPath().split("\\.");
+                    return pElems[pElems.length - 1];
+                },
+                err -> err.getMessage()
+            ));
+        MatcherAssert.assertThat(errs.entrySet(),
+            CoreMatchers.hasItems(
+                new AbstractMap.SimpleImmutableEntry<>(
+                    Sample_.EXT_ID,
+                    "muss mit \"^(?!ZDB\\d{12}Y$).*$\" übereinstimmen"),
+                new AbstractMap.SimpleImmutableEntry<>(
+                    Sample_.REGULATION_ID,
+                    "Wert nicht gesetzt")));
 
         final String updateFieldKey = Sample_.MAIN_SAMPLE_ID;
         final String newValue = "130510002";

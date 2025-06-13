@@ -35,12 +35,13 @@ import de.intevation.lada.validation.constraints.HaveDependenciesNotifications;
 import de.intevation.lada.validation.constraints.ValidDependenciesFinalStatus;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import de.intevation.lada.validation.groups.Notifications;
+import de.intevation.lada.validation.groups.PostAuthorization;
 
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ StatusProt.class, DatabaseConstraints.class })
-@ValidDependenciesFinalStatus(groups = DatabaseConstraints.class)
+@ValidDependenciesFinalStatus(groups = PostAuthorization.class)
 @HaveDependenciesNotifications(groups = Notifications.class)
 @StatusOrder(groups = DatabaseConstraints.class)
 public class StatusProt extends BelongsToMeasm implements Serializable {
