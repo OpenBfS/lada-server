@@ -407,10 +407,10 @@ public class ImporterTest extends BaseTest {
         JsonObject response = testAsyncImportProbe(
             lafData, lafSampleId, expectSuccess);
         final String warningsKey = "warnings";
-        if (response.containsKey(warningsKey)) {
+        JsonObject warnings = response.getJsonObject(warningsKey);
+        if (!warnings.isEmpty()) {
             Assert.fail("Unexpected warnings: "
-                + response.getJsonObject(warningsKey)
-                .getJsonArray(lafSampleId));
+                + warnings.getJsonArray(lafSampleId));
         }
         return response;
     }
@@ -488,7 +488,7 @@ public class ImporterTest extends BaseTest {
         final String successKey = "success";
         assertContains(fileReport, successKey);
         boolean success = fileReport.getBoolean(successKey);
-        final String sampleIdsKey = "probeIds";
+        final String sampleIdsKey = "sampleIds";
         assertContains(fileReport, sampleIdsKey);
         if (!expectSuccess) {
             Assert.assertFalse(

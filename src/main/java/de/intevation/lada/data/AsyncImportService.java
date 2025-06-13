@@ -26,6 +26,7 @@ import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.JobManager;
@@ -87,7 +88,7 @@ public class AsyncImportService extends AsyncLadaService {
     @GET
     @Path("result/{jobId}")
     @Operation(summary = "Get import result report data")
-    public Map<String, Map<String, Object>> getResult(
+    public Map<String, Report> getResult(
         @PathParam("jobId") String id
     ) {
         return importJobManager.getImportResult(id, authorization.getInfo());

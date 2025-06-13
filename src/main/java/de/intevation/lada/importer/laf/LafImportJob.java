@@ -17,6 +17,7 @@ import java.util.Map;
 
 import jakarta.inject.Inject;
 import de.intevation.lada.data.requests.LafImportParameters;
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
 import de.intevation.lada.model.master.MeasFacil;
@@ -36,7 +37,7 @@ public class LafImportJob extends Job {
     @Inject
     private LafImporter importer;
 
-    private Map<String, Map<String, Object>> importData = new HashMap<>();
+    private Map<String, Report> importData = new HashMap<>();
 
     private LafImportParameters importParams;
 
@@ -51,7 +52,7 @@ public class LafImportJob extends Job {
         //Intentionally left blank
     }
 
-    public Map<String, Map<String, Object>> getImportData() {
+    public Map<String, Report> getImportData() {
         return importData;
     }
 
@@ -78,22 +79,21 @@ public class LafImportJob extends Job {
             }
             importer.doImport(content, userInfo, mstId, config);
 
-            Map<String, Object> fileResponseData = new HashMap<>();
+            Report fileResponseData = new Report();
             if (!importer.getErrors().isEmpty()) {
-                fileResponseData.put("errors", importer.getErrors());
+                fileResponseData.setErrors(importer.getErrors());
                 this.currentStatus.setErrors(true);
             }
             if (!importer.getWarnings().isEmpty()) {
-                fileResponseData.put("warnings", importer.getWarnings());
+                fileResponseData.setWarnings(importer.getWarnings());
                 this.currentStatus.setWarnings(true);
             }
             if (!importer.getNotifications().isEmpty()) {
-                fileResponseData.put(
-                    "notifications", importer.getNotifications());
+                fileResponseData.setNotifications(importer.getNotifications());
                 this.currentStatus.setNotifications(true);
             }
-            fileResponseData.put("success", !currentStatus.getErrors());
-            fileResponseData.put("probeIds", importer.getImportedIds());
+            fileResponseData.setSuccess(!currentStatus.getErrors());
+            fileResponseData.setSampleIds(importer.getImportedIds());
             importData.put(fileName, fileResponseData);
             importedProbeids.addAll(importer.getImportedIds());
             logger.debug(
@@ -109,7 +109,7 @@ public class LafImportJob extends Job {
 
             //Put new tag in import response
             importData.forEach((file, responseData) -> {
-                responseData.put("tag", newTag.getName());
+                    responseData.setTag(newTag.getName());
             });
         }
         logger.debug("Finished LAF import");
