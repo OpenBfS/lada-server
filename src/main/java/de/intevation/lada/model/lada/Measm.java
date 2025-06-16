@@ -272,7 +272,7 @@ public class Measm extends BelongsToSample implements Serializable {
     }
 
     public StatusProt getStatusProt() {
-        if (this.statusProt == null) {
+        if (this.statusProt == null && this.statusProts != null) {
             this.statusProt = this.statusProts.stream().sorted(
                 new Comparator<StatusProt>() {
                     @Override

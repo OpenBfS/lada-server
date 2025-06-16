@@ -15,6 +15,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.UUID;
 
@@ -41,6 +42,7 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.data.requests.Laf8ImportParameters;
+import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
@@ -70,7 +72,7 @@ public class ImporterTest extends BaseTest {
     private final String sampleSpecifId = "A1";
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
-    private final String lafTemplate = "%%PROBE%%\n"
+    private final String laf8Template = "%%PROBE%%\n"
         + "UEBERTRAGUNGSFORMAT 7\n"
         + "VERSION \"0084\"\n"
         + "HAUPTPROBENNUMMER \"%s\"\n"
@@ -111,7 +113,7 @@ public class ImporterTest extends BaseTest {
     @RunAsClient
     public final void testImportProbe() {
         final String laf = String.format(
-            lafTemplate, randomProbeId(),
+            laf8Template, randomProbeId(),
             regulation, sampleSpecifId, "", measd, measUnit, "");
 
         /* Request synchronous import */
@@ -133,17 +135,17 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test successful asynchronous import of a Sample object.
+     * Test successful asynchronous LAF8 import of a Sample object.
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportProbeSuccess()
+    public final void testAsyncLaf8ImportSuccess()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         final String laf = String.format(
-            lafTemplate, lafSampleId,
+            laf8Template, lafSampleId,
             regulation, sampleSpecifId, "", measd, measUnit, "");
-        JsonObject report = testAsyncImportProbe(laf, lafSampleId, true);
+        JsonObject report = testAsyncLaf8Import(laf, lafSampleId, true);
         JsonObject expectedWarning = Json.createObjectBuilder()
             .add("key", "validation#probe")
             .add("value", "geolocats")
@@ -155,6 +157,28 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test successful asynchronous LAF9 import of a Sample object.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9ImportSuccess()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        Sample laf = prepareLaf9Data();
+        laf.setMainSampleId(lafSampleId);
+        testAsyncLaf9Import(laf, lafSampleId, true);
+        // TODO: Check for expected warning
+        // JsonObject expectedWarning = Json.createObjectBuilder()
+        //     .add("key", "validation#probe")
+        //     .add("value", "geolocats")
+        //     .add("code", "A sampling location must be provided")
+        //     .build();
+        // MatcherAssert.assertThat(
+        //     report.getJsonObject("warnings").getJsonArray(lafSampleId),
+        //     CoreMatchers.hasItem(expectedWarning));
+    }
+
+    /**
      * Test import with lowercase LAF keywords.
      */
     @Test
@@ -163,7 +187,7 @@ public class ImporterTest extends BaseTest {
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         final String lowerCaseLAF = String.format(
-            lafTemplate, lafSampleId, regulation, sampleSpecifId,
+            laf8Template, lafSampleId, regulation, sampleSpecifId,
             "", measd, measUnit, "").lines().map(line -> {
                     if (line.matches("^\\w+ .*")) {
                         String[] words = line.split(" ");
@@ -172,7 +196,7 @@ public class ImporterTest extends BaseTest {
                     }
                     return line;
                 }).collect(Collectors.joining("\n"));
-        testAsyncImportProbe(lowerCaseLAF, lafSampleId, true);
+        testAsyncLaf8Import(lowerCaseLAF, lafSampleId, true);
     }
 
     /**
@@ -182,7 +206,7 @@ public class ImporterTest extends BaseTest {
     @RunAsClient
     public final void testAsyncImportProbeNoSuccess()
         throws InterruptedException, CharacterCodingException {
-        testAsyncImportProbe("no valid LAF", "", false);
+        testAsyncLaf8Import("no valid LAF", "", false);
     }
 
     /**
@@ -194,7 +218,7 @@ public class ImporterTest extends BaseTest {
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         final String noOprModeLAF = String.format(
-            lafTemplate, lafSampleId, regulation, sampleSpecifId,
+            laf8Template, lafSampleId, regulation, sampleSpecifId,
             "", measd, measUnit, "").lines().filter(
                 line -> !line.startsWith("MESSPROGRAMM")).collect(
                     Collectors.joining("\n"));
@@ -204,7 +228,7 @@ public class ImporterTest extends BaseTest {
             Locale.US, "No value provided");
         final String errorsKey = "errors";
         for (Locale locale: msgs.keySet()) {
-            JsonObject report = testAsyncImportProbe(
+            JsonObject report = testAsyncLaf8Import(
                 locale, noOprModeLAF, "", false);
             assertContains(report, errorsKey);
             JsonArray errors = report.getJsonObject(errorsKey)
@@ -228,9 +252,9 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportProbeImportConfConvert()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
-        testAsyncImportProbe(
+        testAsyncLaf8Import(
             String.format(
-                lafTemplate, lafSampleId, "conv", sampleSpecifId,
+                laf8Template, lafSampleId, "conv", sampleSpecifId,
                 "", measd, measUnit, ""),
             lafSampleId,
             true);
@@ -244,9 +268,9 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportMeasValImportConfTransform()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
-        testAsyncImportProbe(
+        testAsyncLaf8Import(
             String.format(
-                lafTemplate, lafSampleId, "conv", sampleSpecifId,
+                laf8Template, lafSampleId, "conv", sampleSpecifId,
                 "", "H 3", measUnit, ""),
             lafSampleId,
             true);
@@ -261,9 +285,9 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportSampleSpecifMeasValImportConfTransform()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
-        testAsyncImportProbe(
+        testAsyncLaf8Import(
             String.format(
-                lafTemplate, lafSampleId, "conv", "XX",
+                laf8Template, lafSampleId, "conv", "XX",
                 "", measd, measUnit, ""),
             lafSampleId,
             true);
@@ -280,7 +304,7 @@ public class ImporterTest extends BaseTest {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbeNoWarnings(
             String.format(
-                lafTemplate, lafSampleId,
+                laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
                 "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
                 measd, measUnit, ""),
@@ -298,7 +322,7 @@ public class ImporterTest extends BaseTest {
         final String lafSampleId = randomProbeId();
         testAsyncImportProbeNoWarnings(
             String.format(
-                lafTemplate, lafSampleId,
+                laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
                 "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
                 measd, measUnit,
@@ -315,9 +339,9 @@ public class ImporterTest extends BaseTest {
     public final void asyncImportForbiddenExtId()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = "ZDB123456789012Y";
-        testAsyncImportProbe(
+        testAsyncLaf8Import(
             String.format(
-                lafTemplate, lafSampleId,
+                laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
                 "PROBE_ID \"" + lafSampleId + "\"\nP_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
                 measd, measUnit,
@@ -334,9 +358,9 @@ public class ImporterTest extends BaseTest {
     public final void asyncImportStatusWarningMeasVal()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
-        testAsyncImportProbe(
+        testAsyncLaf8Import(
             String.format(
-                lafTemplate, lafSampleId,
+                laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
                 "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
                 // Measurand does not match measuring method
@@ -370,7 +394,7 @@ public class ImporterTest extends BaseTest {
         final String lafSampleId = randomProbeId();
         // Add "ZEITBASIS" attribute to LAF string
         String lafZb = String.format(
-            lafTemplate,
+            laf8Template,
             lafSampleId,
             regulation,
             sampleSpecifId,
@@ -380,7 +404,7 @@ public class ImporterTest extends BaseTest {
             "");
         LOG.trace(lafZb);
 
-        JsonArray warnings = testAsyncImportProbe(lafZb, lafSampleId, true)
+        JsonArray warnings = testAsyncLaf8Import(lafZb, lafSampleId, true)
             .getJsonObject("warnings").getJsonArray(lafSampleId);
         LOG.trace(warnings);
         final String keyKey = "key";
@@ -408,7 +432,7 @@ public class ImporterTest extends BaseTest {
         String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
-        JsonObject response = testAsyncImportProbe(
+        JsonObject response = testAsyncLaf8Import(
             lafData, lafSampleId, expectSuccess);
         final String warningsKey = "warnings";
         JsonObject warnings = response.getJsonObject(warningsKey);
@@ -419,16 +443,16 @@ public class ImporterTest extends BaseTest {
         return response;
     }
 
-    private JsonObject testAsyncImportProbe(
+    private JsonObject testAsyncLaf8Import(
         String lafData,
         String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
-        return testAsyncImportProbe(
+        return testAsyncLaf8Import(
             Locale.US, lafData, lafSampleId, expectSuccess);
     }
 
-    private JsonObject testAsyncImportProbe(
+    private JsonObject testAsyncLaf8Import(
         Locale locale,
         String lafData,
         String lafSampleId,
@@ -449,7 +473,33 @@ public class ImporterTest extends BaseTest {
         if (!expectSuccess) {
             return fileReport;
         }
+        return checkImportedData(lafSampleId, fileReport);
+    }
 
+    private JsonObject testAsyncLaf9Import(
+        Sample lafData,
+        String lafSampleId,
+        boolean expectSuccess
+    ) throws InterruptedException, CharacterCodingException {
+        final String fileName = "test.json";
+
+        /* Request asynchronous import */
+        var requestJson = new Laf9ImportParameters();
+        requestJson.setMeasFacilId(mstId);
+        requestJson.setFiles(Map.of(fileName, List.of(lafData)));
+
+        JsonObject fileReport = runAsyncImport(
+            target, "laf9", Locale.getDefault(), requestJson, expectSuccess)
+            .getJsonObject(fileName);
+        if (!expectSuccess) {
+            return fileReport;
+        }
+        return checkImportedData(lafSampleId, fileReport);
+    }
+
+    private JsonObject checkImportedData(
+        String lafSampleId, JsonObject fileReport
+    ) {
         // Test if data correctly entered database
         final int sampleId = fileReport.getJsonArray(SAMPLE_IDS_KEY)
             .getJsonNumber(0).intValue();
@@ -581,5 +631,29 @@ public class ImporterTest extends BaseTest {
                 "Unsuccessful import: " + fileReport, success);
         }
         return report;
+    }
+
+    private Sample prepareLaf9Data() {
+        Sample laf9Template = new Sample();
+        laf9Template.setMeasFacilId(mstId);
+        laf9Template.setApprLabId(mstId);
+        laf9Template.setOprModeId(1);
+        laf9Template.setRegulationId(1);
+        laf9Template.setSampleMethId(1);
+        laf9Template.setIsTest(false);
+
+        SampleSpecifMeasVal sampleSpecif = new SampleSpecifMeasVal();
+        sampleSpecif.setSampleSpecifId(sampleSpecifId);
+        laf9Template.setSampleSpecifMeasVals(Set.of(sampleSpecif));
+
+        Measm measm = new Measm();
+        measm.setMmtId("A3");
+        MeasVal measVal = new MeasVal();
+        measVal.setMeasdId(1);
+        measVal.setMeasUnitId(1);
+        measm.setMeasVals(Set.of(measVal));
+        laf9Template.setMeasms(Set.of(measm));
+
+        return laf9Template;
     }
 }
