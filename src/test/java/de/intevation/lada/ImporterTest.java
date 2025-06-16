@@ -42,7 +42,6 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
-import de.intevation.lada.importer.laf.ImportJob;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
@@ -63,6 +62,8 @@ public class ImporterTest extends BaseTest {
     private static final Logger LOG = Logger.getLogger(ImporterTest.class);
 
     private static final String ASYNC_IMPORT_URL = "data/import/async/";
+
+    public static final String SAMPLE_IDS_KEY = "sampleIds";
 
     private final String mstId = "06010";
     private final String regulation = "test";
@@ -410,10 +411,10 @@ public class ImporterTest extends BaseTest {
         JsonObject response = testAsyncImportProbe(
             lafData, lafSampleId, expectSuccess);
         final String warningsKey = "warnings";
-        if (response.containsKey(warningsKey)) {
+        JsonObject warnings = response.getJsonObject(warningsKey);
+        if (!warnings.isEmpty()) {
             Assert.fail("Unexpected warnings: "
-                + response.getJsonObject(warningsKey)
-                .getJsonArray(lafSampleId));
+                + warnings.getJsonArray(lafSampleId));
         }
         return response;
     }
@@ -450,7 +451,7 @@ public class ImporterTest extends BaseTest {
         }
 
         // Test if data correctly entered database
-        final int sampleId = fileReport.getJsonArray(ImportJob.SAMPLE_IDS_KEY)
+        final int sampleId = fileReport.getJsonArray(SAMPLE_IDS_KEY)
             .getJsonNumber(0).intValue();
         Response importedSampleResponse = target
             .path("rest/sample/" + sampleId)
@@ -570,7 +571,7 @@ public class ImporterTest extends BaseTest {
             final String successKey = "success";
             assertContains(fileReport, successKey);
             boolean success = fileReport.getBoolean(successKey);
-            assertContains(fileReport, ImportJob.SAMPLE_IDS_KEY);
+            assertContains(fileReport, SAMPLE_IDS_KEY);
             if (!expectSuccess) {
                 Assert.assertFalse(
                     "Unexpectedly successful import: " + fileReport, success);

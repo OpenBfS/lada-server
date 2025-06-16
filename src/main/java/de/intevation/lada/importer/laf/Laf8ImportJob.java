@@ -11,12 +11,11 @@ package de.intevation.lada.importer.laf;
 import static de.intevation.lada.data.LafImportService.logLAFFile;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import jakarta.inject.Inject;
 import de.intevation.lada.data.requests.Laf8ImportParameters;
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -57,22 +56,21 @@ public class Laf8ImportJob extends ImportJob<String> {
             }
             importer.doImport(content, userInfo, mstId, config);
 
-            Map<String, Object> fileResponseData = new HashMap<>();
+            Report fileResponseData = new Report();
             if (!importer.getErrors().isEmpty()) {
-                fileResponseData.put("errors", importer.getErrors());
+                fileResponseData.setErrors(importer.getErrors());
                 this.currentStatus.setErrors(true);
             }
             if (!importer.getWarnings().isEmpty()) {
-                fileResponseData.put("warnings", importer.getWarnings());
+                fileResponseData.setWarnings(importer.getWarnings());
                 this.currentStatus.setWarnings(true);
             }
             if (!importer.getNotifications().isEmpty()) {
-                fileResponseData.put(
-                    "notifications", importer.getNotifications());
+                fileResponseData.setNotifications(importer.getNotifications());
                 this.currentStatus.setNotifications(true);
             }
-            fileResponseData.put(SUCCESS_KEY, !currentStatus.getErrors());
-            fileResponseData.put(SAMPLE_IDS_KEY, importer.getImportedIds());
+            fileResponseData.setSuccess(!currentStatus.getErrors());
+            fileResponseData.setSampleIds(importer.getImportedIds());
             importData.put(fileName, fileResponseData);
             importedProbeids.addAll(importer.getImportedIds());
             logger.debug(

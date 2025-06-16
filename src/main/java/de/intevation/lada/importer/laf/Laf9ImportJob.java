@@ -12,12 +12,11 @@ import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.TagLinkMeasm;
@@ -72,9 +71,9 @@ public class Laf9ImportJob extends ImportJob<List<Sample>> {
 
                 sampleIds.add(sample.getId());
             }
-            Map<String, Object> fileResponseData = new HashMap<>();
-            fileResponseData.put(SUCCESS_KEY, !currentStatus.getErrors());
-            fileResponseData.put(SAMPLE_IDS_KEY, sampleIds);
+            Report fileResponseData = new Report();
+            fileResponseData.setSuccess(!currentStatus.getErrors());
+            fileResponseData.setSampleIds(sampleIds);
             importData.put(fileName, fileResponseData);
             importedSampleIds.addAll(sampleIds);
         });

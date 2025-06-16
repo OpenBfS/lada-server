@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Job;
@@ -24,10 +25,7 @@ import de.intevation.lada.util.data.TagUtil;
  */
 public abstract class ImportJob<T> extends Job {
 
-    public static final String SUCCESS_KEY = "success";
-    public static final String SAMPLE_IDS_KEY = "probeIds";
-
-    protected Map<String, Map<String, Object>> importData = new HashMap<>();
+    protected Map<String, Report> importData = new HashMap<>();
 
     protected Map<String, T> files;
 
@@ -40,7 +38,7 @@ public abstract class ImportJob<T> extends Job {
         //Intentionally left blank
     }
 
-    public Map<String, Map<String, Object>> getImportData() {
+    public Map<String, Report> getImportData() {
         return importData;
     }
 
@@ -64,7 +62,7 @@ public abstract class ImportJob<T> extends Job {
 
             //Put new tag in import response
             importData.forEach((file, responseData) -> {
-                responseData.put("tag", newTag.getName());
+                    responseData.setTag(newTag.getName());
             });
         }
     }

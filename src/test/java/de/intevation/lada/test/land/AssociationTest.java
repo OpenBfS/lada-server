@@ -33,7 +33,6 @@ import org.junit.Assert;
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.ImporterTest;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
-import de.intevation.lada.importer.laf.ImportJob;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
@@ -797,7 +796,7 @@ public class AssociationTest extends ServiceTest {
             int sampleId = ImporterTest.runAsyncImport(
                 target, "laf9", Locale.getDefault(), params, true)
                 .getJsonObject(fileName)
-                .getJsonArray(ImportJob.SAMPLE_IDS_KEY)
+                .getJsonArray(ImporterTest.SAMPLE_IDS_KEY)
                 .getInt(0);
             return get(samplePath + sampleId, Sample.class);
         } catch (InterruptedException e) {
