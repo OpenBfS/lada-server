@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.importer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +36,7 @@ public class Report {
     /**
      * Errors per sample that occured during import.
      */
-    private Map<String, List<ReportItem>> errors = Map.of();
+    private Map<String, List<ReportItem>> errors = new HashMap<>();
 
     /**
      * Warnings per sample that occured during import.
@@ -77,6 +79,14 @@ public class Report {
 
     public void setErrors(Map<String, List<ReportItem>> errors) {
         this.errors = errors;
+    }
+
+    public void addError(String key, ReportItem error) {
+        if (this.errors.containsKey(key)) {
+            this.errors.get(key).add(error);
+        } else {
+            this.errors.put(key, new ArrayList<>(List.of(error)));
+        }
     }
 
     public Map<String, List<ReportItem>> getWarnings() {

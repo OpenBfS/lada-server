@@ -452,7 +452,7 @@ public class BaseTest {
      * @param exclude keys of entries to exclude from verification
      */
     public static void verify(
-        JsonObject expected,
+        Map<String, JsonValue> expected,
         JsonObject actual,
         String... exclude
     ) {

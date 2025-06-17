@@ -225,7 +225,10 @@ public class Sample extends BaseModel implements Serializable {
     @OneToMany(
         mappedBy = Measm_.SAMPLE,
         cascade = {
-            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE},
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.REMOVE,
+            CascadeType.MERGE},
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Measm> measms;
@@ -240,24 +243,33 @@ public class Sample extends BaseModel implements Serializable {
     private Set<Tag> tags;
 
     @OneToMany(mappedBy = CommSample_.SAMPLE,
-    cascade = {
-            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE },
-    fetch = FetchType.EAGER)
+        cascade = {
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.REMOVE,
+            CascadeType.MERGE},
+        fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<CommSample> commSamples;
 
 
     @OneToMany(mappedBy = SampleSpecifMeasVal_.SAMPLE,
         cascade = {
-            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE },
-            fetch = FetchType.EAGER)
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.REMOVE,
+            CascadeType.MERGE},
+        fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<SampleSpecifMeasVal> sampleSpecifMeasVals;
 
     @OneToMany(mappedBy = Geolocat_.SAMPLE,
         cascade = {
-            CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE },
-            fetch = FetchType.EAGER)
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.REMOVE,
+            CascadeType.MERGE},
+        fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Geolocat> geolocats;
 

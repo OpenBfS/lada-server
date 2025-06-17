@@ -26,7 +26,7 @@
 
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "1" name = "test" />
-    <master.regulation id = "2" />
+    <master.regulation id = "2" name = "test2" />
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
 
@@ -88,4 +88,16 @@
     />
 
     <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
+
+    <lada.sample
+        id = "1000"
+        ext_id = "T001"
+        opr_mode_id = "1"
+        regulation_id = "2"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        is_test = "false"
+        main_sample_id = "120510002"
+        sample_meth_id = "1"
+    />
 </dataset>

@@ -16,9 +16,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import de.intevation.lada.importer.Identifier;
+import de.intevation.lada.importer.Identifier.IdentificationException;
 import de.intevation.lada.importer.Report;
+import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
@@ -26,9 +30,13 @@ import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.rest.TagLinkService;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.data.StatusCodes;
 
 
 public class Laf9ImportJob extends ImportJob<List<Sample>> {
+
+    @Inject
+    private Identifier<Sample> sampleIdentifier;
 
     @Inject
     private Repository repository;
@@ -53,25 +61,40 @@ public class Laf9ImportJob extends ImportJob<List<Sample>> {
         // Import each file
         this.files.forEach((fileName, content) -> {
             List<Integer> sampleIds = new ArrayList<>();
+            Report fileResponseData = new Report();
 
             // TODO: Authorize
             for (Sample sample: content) {
-                repository.create(sample);
+                try {
+                    if (sampleIdentifier.getExisting(sample) == null) {
+                        repository.create(sample);
+                    } else {
+                        // TODO: Merge with persistent
+                        repository.update(sample);
+                    }
+                    // Handle associated tags
+                    // TODO: Handle tag links outside request scope
+                    // handleSampleTags(sample);
+                    // for (Measm m: sample.getMeasms()) {
+                    //     handleMeasmTags(m);
+                    // }
 
-                // Handle associated tags
-                // TODO: Handle tag links outside request scope
-                // handleSampleTags(sample);
-                // for (Measm m: sample.getMeasms()) {
-                //     handleMeasmTags(m);
-                // }
+                    // TODO: Handle geolocat.site_id
 
-                // TODO: Handle geolocat.site_id
+                    // TODO: Avoid duplicating statusProt entries
 
-                // TODO: Avoid duplicating statusProt entries
-
-                sampleIds.add(sample.getId());
+                    sampleIds.add(sample.getId());
+                } catch (IdentificationException e) {
+                    currentStatus.setErrors(true);
+                    boolean hasExtId = sample.getExtId() != null;
+                    String id = hasExtId
+                        ? sample.getExtId() : sample.getMainSampleId();
+                    fileResponseData.addError(id, new ReportItem(
+                            hasExtId ? Sample_.EXT_ID : Sample_.MAIN_SAMPLE_ID,
+                            id,
+                            StatusCodes.IMP_INVALID_VALUE));
+                }
             }
-            Report fileResponseData = new Report();
             fileResponseData.setSuccess(!currentStatus.getErrors());
             fileResponseData.setSampleIds(sampleIds);
             importData.put(fileName, fileResponseData);
