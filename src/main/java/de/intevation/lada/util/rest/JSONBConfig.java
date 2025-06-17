@@ -29,41 +29,39 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
     public static final String DATE_FORMAT =
         "yyyy'-'MM'-'dd'T'HH':'mm[':'ss['.'SSS]]XXX";
 
+    /**
+     * JSON binding configured for the LADA application
+     */
+    public static final Jsonb JSONB = JsonbBuilder.create(new JsonbConfig()
+        .withNullValues(true)
+
+        // The API-doc says "Custom date format as specified in
+        // DateTimeFormatter", but at least with Yasson the special
+        // JsonbDateFormat.TIME_IN_MILLIS can be used here, too.
+        .withDateFormat(DATE_FORMAT, null)
+
+        .withAdapters(
+            // De-/serialize Charset from/to String
+            new JsonbAdapter<Charset, String>() {
+                @Override
+                public Charset adaptFromJson(
+                    String serialized
+                ) throws Exception {
+                    return Charset.forName(serialized);
+                }
+
+                @Override
+                public String adaptToJson(
+                    Charset charset
+                ) throws Exception {
+                    return charset.name();
+                }
+            }));
+
     @Override
     public Jsonb getContext(Class<?> type) {
         // Return regardless of type in order to use the same config for
         // de-/serializing any object
-        return JsonbBuilder.create(getJsonbConfig());
-    }
-
-    /**
-     * @return The JSON binding configuration for the LADA application
-     */
-    public static JsonbConfig getJsonbConfig() {
-        return new JsonbConfig()
-            .withNullValues(true)
-
-            // The API-doc says "Custom date format as specified in
-            // DateTimeFormatter", but at least with Yasson the special
-            // JsonbDateFormat.TIME_IN_MILLIS can be used here, too.
-            .withDateFormat(DATE_FORMAT, null)
-
-            .withAdapters(
-                // De-/serialize Charset from/to String
-                new JsonbAdapter<Charset, String>() {
-                    @Override
-                    public Charset adaptFromJson(
-                        String serialized
-                    ) throws Exception {
-                        return Charset.forName(serialized);
-                    }
-
-                    @Override
-                    public String adaptToJson(
-                        Charset charset
-                    ) throws Exception {
-                        return charset.name();
-                    }
-                });
+        return JSONB;
     }
 }

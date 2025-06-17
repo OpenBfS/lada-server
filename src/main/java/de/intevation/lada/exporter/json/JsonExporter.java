@@ -30,9 +30,6 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
-
 import org.jboss.logging.Logger;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.Exporter;
@@ -80,8 +77,6 @@ import de.intevation.lada.util.rest.JSONBConfig;
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
 public class JsonExporter implements Exporter<QueryExportParameters> {
-
-    private Jsonb jsonb = JsonbBuilder.create(JSONBConfig.getJsonbConfig());
 
     private static final int ZEBS_COUNTER = 3;
 
@@ -660,7 +655,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     }
 
     private JsonObject convertToJsonObject(Object o) {
-        String jsonString = jsonb.toJson(o);
+        String jsonString = JSONBConfig.JSONB.toJson(o);
         JsonReader reader = Json.createReader(new StringReader(jsonString));
         JsonObject jsonObject = reader.readObject();
         reader.close();
