@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.json.bind.JsonbBuilder;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
@@ -48,8 +47,7 @@ public class Laf9ExportJob extends ExportJob<LafExportParameters> {
         createTmpFile();
         try (FileWriter writer = new FileWriter(
                 this.outputFile, StandardCharsets.UTF_8)) {
-            JsonbBuilder.create(JSONBConfig.getJsonbConfig())
-                .toJson(samples, writer);
+            JSONBConfig.JSONB.toJson(samples, writer);
         } catch(IOException e) {
             throw new RuntimeException("Failed writing JSON to file", e);
         }
