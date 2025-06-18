@@ -27,7 +27,7 @@ import de.intevation.lada.util.data.Repository;
 public class LFGBEnvDescripHasS3Validator
     implements ConstraintValidator<LFGBEnvDescripHasS3, Sample> {
 
-    private static final int REG_LFGB = 15;
+    private static final int REG_LFGB = 8;
     private static final int FUTTERMITTEL = 2;
     private static final int FUTTERMITTEL_NACH_LFGB = 18;
 

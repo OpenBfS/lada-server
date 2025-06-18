@@ -259,10 +259,7 @@ CREATE TABLE mpg_mmt_mp_measd (
 
 CREATE TABLE sample (
     id serial PRIMARY KEY,
-    ext_id character varying(16) UNIQUE NOT NULL CHECK (trim(both ' ' from ext_id) <> '')
-        DEFAULT 'ZDB'
-            || lpad(nextval('lada.sample_sample_id_seq')::varchar, 12, '0')
-            || 'Y',
+    ext_id character varying(16) UNIQUE NOT NULL CHECK (trim(both ' ' from ext_id) <> ''),
     is_test boolean DEFAULT false NOT NULL,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     appr_lab_id character varying(5) NOT NULL REFERENCES master.meas_facil,
@@ -299,6 +296,29 @@ CREATE TABLE sample (
 CREATE TRIGGER last_mod_sample BEFORE UPDATE ON sample FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 CREATE TRIGGER tree_mod_sample BEFORE UPDATE ON sample FOR EACH ROW EXECUTE PROCEDURE update_tree_mod_sample();
 
+CREATE SEQUENCE IF NOT EXISTS lada.sample_lfgb_ext_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+CREATE OR REPLACE FUNCTION lada.set_default_sample_ext_id()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (NEW.regulation_id = 8 AND NEW.ext_id IS NULL) THEN
+        NEW.ext_id := 'LFGB' || lpad(((nextval('lada.sample_lfgb_ext_id_seq'::regclass))::character varying)::text, 12, '0'::text);
+    ELSIF (NEW.regulation_id <> 8 AND NEW.ext_id IS NULL) THEN
+        NEW.ext_id := ('ZDB'::text || lpad(((nextval('lada.sample_sample_id_seq'::regclass))::character varying)::text, 12, '0'::text)) || 'Y'::text;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_set_sample_ext_id_default
+BEFORE INSERT ON lada.sample
+FOR EACH ROW
+EXECUTE FUNCTION lada.set_default_sample_ext_id();
 
 --
 -- Name: comm_sample; Type: TABLE; Schema: lada; Owner: -; Tablespace:

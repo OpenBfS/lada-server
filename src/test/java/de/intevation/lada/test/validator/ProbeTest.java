@@ -47,7 +47,7 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final Integer EXAMPLE_NUCL_FACIL_ID = 1;
     private static final String MST_06010 = "06010";
     private static final Integer REGULATION_ID_REI = 4;
-    private static final Integer REGULATION_ID_LFGB = 15;
+    private static final Integer REGULATION_ID_LFGB = 8;
     private static final Integer SAMPLE_METH_ID_INDIVIDUAL = 1;
     private static final Integer SAMPLE_METH_ID_CONT = 9;
     private static final String EXISTING_APPR_LAB_ID = MST_06010;

@@ -27,7 +27,7 @@ import de.intevation.lada.util.data.Repository;
 public class HasSampleSpecificMeasValValidator
     implements ConstraintValidator<HasSampleSpecificMeasVal, Sample> {
 
-    private static final int REG_LFGB = 15;
+    private static final int REG_LFGB = 8;
 
     private String message;
 
