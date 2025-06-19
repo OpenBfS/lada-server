@@ -28,8 +28,6 @@ import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Report;
-import de.intevation.lada.model.master.MeasFacil;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.JobManager;
 import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.LadaService;
@@ -42,9 +40,6 @@ import de.intevation.lada.rest.LadaService;
  */
 @Path(LadaService.PATH_DATA + "import/async")
 public class AsyncImportService extends AsyncLadaService {
-
-    @Inject
-    private Repository repository;
 
     @Inject
     ImportJobManager importJobManager;
@@ -60,9 +55,6 @@ public class AsyncImportService extends AsyncLadaService {
     public AsyncLadaService.AsyncJobResponse createAsyncImport(
         @Valid Laf8ImportParameters lafImportParameters
     ) throws BadRequestException {
-        MeasFacil mst = repository.getById(
-                MeasFacil.class, lafImportParameters.getMeasFacilId());
-
         //Get file content strings from input object
         Map<String, String> files = new HashMap<String, String>();
         Charset charset = lafImportParameters.getEncoding();
@@ -80,9 +72,10 @@ public class AsyncImportService extends AsyncLadaService {
         } catch (IllegalArgumentException | CharacterCodingException e) {
             throw new BadRequestException();
         }
+        lafImportParameters.setFiles(files);
 
-        String newJobId = importJobManager.createLaf8ImportJob(
-            authorization.getInfo(), lafImportParameters, mst, files);
+        String newJobId = importJobManager.createLafImportJob(
+            authorization.getInfo(), lafImportParameters);
         return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 
@@ -92,11 +85,8 @@ public class AsyncImportService extends AsyncLadaService {
     public AsyncLadaService.AsyncJobResponse createAsyncLaf9Import(
         @Valid Laf9ImportParameters importParameters
     ) throws BadRequestException {
-        MeasFacil mst = repository.getById(
-                MeasFacil.class, importParameters.getMeasFacilId());
-
-        String newJobId = importJobManager.createLaf9ImportJob(
-            authorization.getInfo(), mst, importParameters.getFiles());
+        String newJobId = importJobManager.createLafImportJob(
+            authorization.getInfo(), importParameters);
         return new AsyncLadaService.AsyncJobResponse(newJobId);
     }
 

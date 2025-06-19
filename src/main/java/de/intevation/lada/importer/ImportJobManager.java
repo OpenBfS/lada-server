@@ -8,26 +8,30 @@
 
 package de.intevation.lada.importer;
 
-import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
 import de.intevation.lada.data.requests.Laf8ImportParameters;
+import de.intevation.lada.data.requests.Laf9ImportParameters;
+import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.laf.ImportJob;
 import de.intevation.lada.importer.laf.Laf8ImportJob;
 import de.intevation.lada.importer.laf.Laf9ImportJob;
-import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.JobManager;
+import de.intevation.lada.util.data.Repository;
 
 
 /**
  * Class managing import jobs.
  */
 public class ImportJobManager extends JobManager {
+
+    @Inject
+    private Repository repository;
 
     @Inject
     private Provider<Laf8ImportJob> laf8ImportJobProvider;
@@ -43,39 +47,30 @@ public class ImportJobManager extends JobManager {
      * Create a new import job.
      * @param userInfo User info
      * @param params Parameters
-     * @param mst MessStelle
      * @param files Decoded files
      * @return New job jobId
      */
-    public String createLaf8ImportJob(
+    @SuppressWarnings("unchecked")
+    public <T> String createLafImportJob(
         UserInfo userInfo,
-        Laf8ImportParameters params,
-        MeasFacil mst,
-        Map<String, String> files
+        LafImportParameters<T> params
     ) {
-        Laf8ImportJob newJob = laf8ImportJobProvider.get();
-        newJob.setImportParameters(params);
-        newJob.setUserInfo(userInfo);
-        newJob.setMst(mst);
-        newJob.setFiles(files);
-        return addJob(newJob);
-    }
+        MeasFacil mst = repository.getById(
+            MeasFacil.class, params.getMeasFacilId());
 
-    /**
-     * Create a new import job.
-     * @param userInfo User info
-     * @param files Decoded files
-     * @return New job jobId
-     */
-    public String createLaf9ImportJob(
-        UserInfo userInfo,
-        MeasFacil mst,
-        Map<String, List<Sample>> files
-    ) {
-        Laf9ImportJob newJob = laf9ImportJobProvider.get();
+        ImportJob<T> newJob;
+        if (params instanceof Laf8ImportParameters laf8params) {
+            Laf8ImportJob laf8ImportJob = laf8ImportJobProvider.get();
+            laf8ImportJob.setImportParameters(laf8params);
+            newJob = (ImportJob<T>) laf8ImportJob;
+        } else if (params instanceof Laf9ImportParameters) {
+            newJob = (ImportJob<T>) laf9ImportJobProvider.get();
+        } else {
+            throw new IllegalArgumentException();
+        }
         newJob.setUserInfo(userInfo);
         newJob.setMst(mst);
-        newJob.setFiles(files);
+        newJob.setFiles(params.getFiles());
         return addJob(newJob);
     }
 
