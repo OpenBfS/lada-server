@@ -18,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -53,7 +54,7 @@ public class AsyncImportService extends AsyncLadaService {
     @Path("laf")
     @Operation(summary = "Import LAF 8.4 documents")
     public AsyncLadaService.AsyncJobResponse createAsyncImport(
-        @Valid Laf8ImportParameters lafImportParameters
+        @NotNull @Valid Laf8ImportParameters lafImportParameters
     ) throws BadRequestException {
         //Get file content strings from input object
         Map<String, String> files = new HashMap<String, String>();
@@ -83,7 +84,7 @@ public class AsyncImportService extends AsyncLadaService {
     @Path("laf9")
     @Operation(summary = "Import LAF 9 documents")
     public AsyncLadaService.AsyncJobResponse createAsyncLaf9Import(
-        @Valid Laf9ImportParameters importParameters
+        @NotNull @Valid Laf9ImportParameters importParameters
     ) throws BadRequestException {
         String newJobId = importJobManager.createLafImportJob(
             authorization.getInfo(), importParameters);

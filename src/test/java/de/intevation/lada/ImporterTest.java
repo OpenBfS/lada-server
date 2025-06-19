@@ -312,13 +312,51 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test unsuccessful asynchronous import of a Probe object.
+     * Test asynchronous LAF8 import with invalid input.
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportProbeNoSuccess()
+    public final void testAsyncLaf8ImportNoSuccess()
         throws InterruptedException, CharacterCodingException {
         testAsyncLaf8Import("no valid LAF", "", false);
+    }
+
+    /**
+     * Test asynchronous LAF9 import with invalid input.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9ImportNoSuccess()
+        throws InterruptedException, CharacterCodingException {
+        // Only Arrays of non-null objects should be accepted as list of samples
+        final JsonValue jsonString = Json.createValue("test");
+        final JsonValue jsonNumber = Json.createValue(1);
+        List<JsonValue> invalidLists = List.of(
+            JsonValue.NULL,
+            jsonString,
+            jsonNumber,
+            JsonValue.TRUE,
+            JsonValue.EMPTY_JSON_OBJECT,
+            Json.createArrayBuilder().add(JsonValue.NULL).build(),
+            Json.createArrayBuilder().add(jsonString).build(),
+            Json.createArrayBuilder().add(jsonNumber).build(),
+            Json.createArrayBuilder().add(JsonValue.TRUE).build(),
+            Json.createArrayBuilder().add(JsonValue.EMPTY_JSON_ARRAY).build());
+        for (JsonValue invalidList : invalidLists) {
+            JsonValue payload = Json.createObjectBuilder()
+                .add("files", Json.createObjectBuilder()
+                    .add("invalidFile", invalidList))
+                .add("measFacilId", mstId)
+                .build();
+            parseResponse(target
+                .path(ASYNC_IMPORT_URL)
+                .path("laf9")
+                .request()
+                .header("X-SHIB-user", BaseTest.testUser)
+                .header("X-SHIB-roles", BaseTest.testRoles)
+                .post(Entity.entity(payload, MediaType.APPLICATION_JSON)),
+                Response.Status.BAD_REQUEST);
+        }
     }
 
     /**
