@@ -111,7 +111,7 @@ public class ProbeTest extends ServiceTest {
             CoreMatchers.hasItems(
                 new AbstractMap.SimpleImmutableEntry<>(
                     Sample_.EXT_ID,
-                    "muss mit \"^(?!ZDB\\d{12}Y$).*$\" übereinstimmen"),
+                    "muss mit \"^(?!ZDB).*$\" übereinstimmen"),
                 new AbstractMap.SimpleImmutableEntry<>(
                     Sample_.REGULATION_ID,
                     "Wert nicht gesetzt")));

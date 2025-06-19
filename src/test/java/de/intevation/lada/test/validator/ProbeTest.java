@@ -838,7 +838,7 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setExtId("ZDB123456789012Y");
 
         assertHasErrors(validator.validate(sample, CreateErrors.class),
-            Sample_.EXT_ID, "must match \"^(?!ZDB\\d{12}Y$).*$\"");
+            Sample_.EXT_ID, "must match \"^(?!ZDB).*$\"");
     }
 
     /**
