@@ -30,9 +30,9 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
         "yyyy'-'MM'-'dd'T'HH':'mm[':'ss['.'SSS]]XXX";
 
     /**
-     * JSON binding configured for the LADA application
+     * The JSON binding configuration for the LADA application
      */
-    public static final Jsonb JSONB = JsonbBuilder.create(new JsonbConfig()
+    public static final JsonbConfig JSONB_CONFIG = new JsonbConfig()
         .withNullValues(true)
 
         // The API-doc says "Custom date format as specified in
@@ -56,7 +56,12 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
                 ) throws Exception {
                     return charset.name();
                 }
-            }));
+            });
+
+    /**
+     * JSON binding configured for the LADA application
+     */
+    public static final Jsonb JSONB = JsonbBuilder.create(JSONB_CONFIG);
 
     @Override
     public Jsonb getContext(Class<?> type) {

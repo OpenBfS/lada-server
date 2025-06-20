@@ -7,13 +7,19 @@
  */
 package de.intevation.lada.importer;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
+import jakarta.persistence.Id;
 import jakarta.persistence.NoResultException;
-
-import org.jboss.logging.Logger;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
@@ -25,6 +31,7 @@ import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.rest.JSONBConfig;
 
 
 /**
@@ -33,10 +40,55 @@ import de.intevation.lada.util.data.Repository;
 public class ObjectMerger {
 
     @Inject
-    Logger logger;
-
-    @Inject
     private Repository repository;
+
+    /**
+     * Merge attribute values from JSON object into
+     * {@link jakarta.persistence.Entity} instance.
+     *
+     * Attributes in {@code src} that do not correspond to any entity
+     * attribute, those that correspond to {@link Id} attributes
+     * and read-only attributes (without setter method) are ignored.
+     *
+     * @param target entity instance at which attributes are set
+     * @param src JSON object from which attribute values are taken
+     * @throws IllegalArgumentException if {@code target} is not an entity
+     */
+    public void merge(Object target, JsonObject src) {
+        Class<?> clazz = target.getClass();
+        EntityType<?> type = repository.entityManager().getMetamodel()
+            .entity(clazz);
+        Object srcObject = JSONBConfig.JSONB.fromJson(src.toString(), clazz);
+        for (String name : src.keySet()) {
+            Attribute<?, ?> attr;
+            try {
+                 attr = type.getAttribute(name);
+            } catch (IllegalArgumentException e) {
+                // Attribute of the given name does not exist. Ignore
+                continue;
+            }
+
+            // target is the identified entity instance. Do not override ID
+            if (attr instanceof SingularAttribute<?, ?> sing && sing.isId()) {
+                continue;
+            }
+
+            PropertyDescriptor p;
+            try {
+                p = new PropertyDescriptor(name, clazz);
+            } catch (IntrospectionException e) {
+                // Attribute is no Bean property with pair of accessor methods
+                continue;
+            }
+            try {
+                Method setter = p.getWriteMethod();
+                Method getter = p.getReadMethod();
+                setter.invoke(target, getter.invoke(srcObject));
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     /**
      * Merge sample objects.

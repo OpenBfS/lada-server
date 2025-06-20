@@ -54,6 +54,7 @@ import de.intevation.lada.rest.SiteService;
 import de.intevation.lada.rest.StatusProtService;
 import de.intevation.lada.rest.TagService;
 import de.intevation.lada.test.ServiceTest;
+import de.intevation.lada.util.rest.JSONBConfig;
 
 
 public class AssociationTest extends ServiceTest {
@@ -790,7 +791,12 @@ public class AssociationTest extends ServiceTest {
         // Create Sample via LAF 9 import
         Laf9ImportParameters params = new Laf9ImportParameters();
         final String fileName = "dummy";
-        params.setFiles(Map.of(fileName, List.of(sample)));
+        params.setFiles(Map.of(
+                fileName,
+                List.of(
+                    JSONBConfig.JSONB.fromJson(
+                        JSONBConfig.JSONB.toJson(sample),
+                        JsonObject.class))));
         params.setMeasFacilId(measFacilId);
         try {
             int sampleId = ImporterTest.runAsyncImport(

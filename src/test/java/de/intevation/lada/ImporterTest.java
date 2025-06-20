@@ -24,6 +24,8 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.SyncInvoker;
 import jakarta.ws.rs.client.WebTarget;
@@ -53,6 +55,7 @@ import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Job.JobStatus;
 import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.util.rest.JSONBConfig;
 
 
 /**
@@ -72,6 +75,9 @@ public class ImporterTest extends BaseTest {
     private static final String REPORT_ITEM_KEY_KEY = "key";
     private static final String REPORT_ITEM_VALUE_KEY = "value";
     private static final String REPORT_ITEM_CODE_KEY = "code";
+
+    private static final Jsonb JSONB_SPARSE = JsonbBuilder.create(
+        JSONBConfig.JSONB_CONFIG.withNullValues(false));
 
     private final String existingExtId = "T001";
     private final String existingMainSampleId = "120510002";
@@ -223,12 +229,6 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncLaf9UpdateImport()
         throws InterruptedException, CharacterCodingException {
         Sample laf = prepareLaf9Data();
-
-        // TODO: Should be unnecessary once merging works
-        final int existingSampleId = 1000;
-        laf.setId(existingSampleId);
-        laf.setExtId("T001");
-
         laf.setMainSampleId(existingMainSampleId);
         final int updateRegId = 2;
         laf.setRegulationId(updateRegId);
@@ -238,7 +238,7 @@ public class ImporterTest extends BaseTest {
             Sample_.MAIN_SAMPLE_ID, Json.createValue(existingMainSampleId));
         verify.put(Sample_.REGULATION_ID, Json.createValue(updateRegId));
 
-        testAsyncLaf9Import(laf, existingMainSampleId, true, verify);
+        testAsyncLaf9Import(laf, existingMainSampleId, true, true, verify);
     }
 
     /**
@@ -337,11 +337,15 @@ public class ImporterTest extends BaseTest {
             jsonNumber,
             JsonValue.TRUE,
             JsonValue.EMPTY_JSON_OBJECT,
-            Json.createArrayBuilder().add(JsonValue.NULL).build(),
+            Json.createArrayBuilder().add(JsonValue.NULL).build()
+            /* JSON binding accepts any JSON value as object. See
+               https://github.com/eclipse-ee4j/yasson/issues/672
             Json.createArrayBuilder().add(jsonString).build(),
             Json.createArrayBuilder().add(jsonNumber).build(),
             Json.createArrayBuilder().add(JsonValue.TRUE).build(),
-            Json.createArrayBuilder().add(JsonValue.EMPTY_JSON_ARRAY).build());
+            Json.createArrayBuilder().add(JsonValue.EMPTY_JSON_ARRAY).build()
+            */
+            );
         for (JsonValue invalidList : invalidLists) {
             JsonValue payload = Json.createObjectBuilder()
                 .add("files", Json.createObjectBuilder()
@@ -653,12 +657,28 @@ public class ImporterTest extends BaseTest {
         boolean expectSuccess,
         Map<String, JsonValue> verify
     ) throws InterruptedException, CharacterCodingException {
+        return testAsyncLaf9Import(
+            lafData, lafSampleId, expectSuccess, false, verify);
+    }
+
+    private JsonObject testAsyncLaf9Import(
+        Sample lafData,
+        String lafSampleId,
+        boolean expectSuccess,
+        boolean sparse,
+        Map<String, JsonValue> verify
+    ) throws InterruptedException, CharacterCodingException {
         final String fileName = "test.json";
+
+        Jsonb jsonb = sparse ? JSONB_SPARSE : JSONBConfig.JSONB;
 
         /* Request asynchronous import */
         var requestJson = new Laf9ImportParameters();
         requestJson.setMeasFacilId(mstId);
-        requestJson.setFiles(Map.of(fileName, List.of(lafData)));
+        requestJson.setFiles(Map.of(
+                fileName,
+                List.of(jsonb.fromJson(
+                        jsonb.toJson(lafData), JsonObject.class))));
 
         JsonObject fileReport = runAsyncImport(
             target, "laf9", Locale.getDefault(), requestJson, expectSuccess)

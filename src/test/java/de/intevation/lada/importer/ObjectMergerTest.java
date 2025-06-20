@@ -13,6 +13,9 @@ import java.util.List;
 
 import jakarta.annotation.Resource;
 import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.transaction.UserTransaction;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -25,8 +28,10 @@ import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -63,6 +68,68 @@ public class ObjectMergerTest extends BaseTest {
 
     public ObjectMergerTest() {
         testDatasetName = "datasets/dbUnit_objectmerger.xml";
+    }
+
+    @Test
+    public final void skipsId() {
+        Sample target = new Sample();
+        JsonObject src = Json.createObjectBuilder()
+            .add(Sample_.ID, 1).build();
+        merger.merge(target, src);
+        Assert.assertNull(target.getId());
+    }
+
+    @Test
+    public final void skipsReadOnlyAttribute() {
+        Sample target = new Sample();
+        JsonObject src = Json.createObjectBuilder()
+            .add(Sample_.TAG_LINKS, JsonValue.EMPTY_JSON_ARRAY).build();
+        merger.merge(target, src);
+        Assert.assertNull(target.getTagLinks());
+    }
+
+    @Test
+    public final void mergeSingularAttribute() {
+        Sample target = new Sample();
+        final String extId = "XXX";
+        JsonObject src = Json.createObjectBuilder()
+            .add(Sample_.EXT_ID, extId).build();
+        merger.merge(target, src);
+        Assert.assertEquals(extId, target.getExtId());
+    }
+
+    @Test
+    public final void mergeNullValuedAttribute() {
+        Sample target = new Sample();
+        target.setMainSampleId("XXX");
+        JsonObject src = Json.createObjectBuilder()
+            .addNull(Sample_.MAIN_SAMPLE_ID).build();
+        merger.merge(target, src);
+        Assert.assertNull(target.getMainSampleId());
+    }
+
+    @Test
+    public final void throwsIfNotEntity() {
+        Assert.assertThrows(
+            IllegalArgumentException.class,
+            () -> merger.merge(
+                new Object(), JsonValue.EMPTY_JSON_OBJECT));
+    }
+
+    @Test
+    public final void mergeAssociation() {
+        Sample target = new Sample();
+        final String minSampleId = "XXX";
+        JsonObject src = Json.createObjectBuilder()
+            .add(Sample_.MEASMS, Json.createArrayBuilder()
+                .add(Json.createObjectBuilder()
+                    .add(Measm_.MIN_SAMPLE_ID, minSampleId)))
+            .build();
+        merger.merge(target, src);
+        Assert.assertNotNull("Missing measms", target.getMeasms());
+        Assert.assertEquals(1, target.getMeasms().size());
+        Measm measm = target.getMeasms().stream().findFirst().get();
+        Assert.assertEquals(minSampleId, measm.getMinSampleId());
     }
 
     /**

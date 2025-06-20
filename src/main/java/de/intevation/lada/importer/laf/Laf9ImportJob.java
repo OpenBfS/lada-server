@@ -8,15 +8,18 @@
 package de.intevation.lada.importer.laf;
 
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import de.intevation.lada.importer.Identifier;
+import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.Identifier.IdentificationException;
 import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
@@ -31,15 +34,19 @@ import de.intevation.lada.rest.TagLinkService;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.util.rest.JSONBConfig;
 
 
-public class Laf9ImportJob extends ImportJob<List<Sample>> {
+public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     @Inject
     private Identifier<Sample> sampleIdentifier;
 
     @Inject
     private Repository repository;
+
+    @Inject
+    private ObjectMerger merger;
 
     @Inject
     private Validator validator;
@@ -62,15 +69,21 @@ public class Laf9ImportJob extends ImportJob<List<Sample>> {
         this.files.forEach((fileName, content) -> {
             List<Integer> sampleIds = new ArrayList<>();
             Report fileResponseData = new Report();
+            for (JsonObject rawSample: content) {
+                Sample sample = JSONBConfig.JSONB.fromJson(
+                    rawSample.toString(), Sample.class);
 
-            // TODO: Authorize
-            for (Sample sample: content) {
+                // TODO: Authorize
                 try {
-                    if (sampleIdentifier.getExisting(sample) == null) {
+                    Sample persistent = sampleIdentifier.getExisting(sample);
+                    if (persistent == null) {
                         repository.create(sample);
+                        sampleIds.add(sample.getId());
                     } else {
-                        // TODO: Merge with persistent
-                        repository.update(sample);
+                        merger.merge(persistent, rawSample);
+                        // TODO: Merge Associations
+                        repository.update(persistent);
+                        sampleIds.add(persistent.getId());
                     }
                     // Handle associated tags
                     // TODO: Handle tag links outside request scope
@@ -79,13 +92,12 @@ public class Laf9ImportJob extends ImportJob<List<Sample>> {
                     //     handleMeasmTags(m);
                     // }
 
+                    // TODO: validate
+
                     // TODO: Handle geolocat.site_id
 
                     // TODO: Avoid duplicating statusProt entries
-
-                    sampleIds.add(sample.getId());
                 } catch (IdentificationException e) {
-                    currentStatus.setErrors(true);
                     boolean hasExtId = sample.getExtId() != null;
                     String id = hasExtId
                         ? sample.getExtId() : sample.getMainSampleId();
@@ -95,7 +107,7 @@ public class Laf9ImportJob extends ImportJob<List<Sample>> {
                             StatusCodes.IMP_INVALID_VALUE));
                 }
             }
-            fileResponseData.setSuccess(!currentStatus.getErrors());
+            fileResponseData.setSuccess(fileResponseData.getErrors().isEmpty());
             fileResponseData.setSampleIds(sampleIds);
             importData.put(fileName, fileResponseData);
             importedSampleIds.addAll(sampleIds);
