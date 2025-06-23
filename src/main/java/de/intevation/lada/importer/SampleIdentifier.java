@@ -15,9 +15,9 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
 /**
- * Class to identify a probe object.
+ * Class to identify {@link Sample} objects.
  */
-public class ProbeIdentifier implements Identifier<Sample> {
+public class SampleIdentifier implements Identifier<Sample> {
 
     @Inject
     private Repository repository;

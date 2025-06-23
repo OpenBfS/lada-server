@@ -16,9 +16,9 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
 /**
- * Identifier for messung objects.
+ * Identifier for {@link Measm} objects.
  */
-public class MessungIdentifier implements Identifier<Measm> {
+public class MeasmIdentifier implements Identifier<Measm> {
 
     @Inject
     private Repository repository;
