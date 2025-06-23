@@ -7,10 +7,9 @@
  */
 package de.intevation.lada.importer;
 
-import java.util.List;
-
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -29,30 +28,8 @@ public class MessungIdentifier implements Identifier<Measm> {
         throws Identifier.IdentificationException {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
 
-        if (messung.getExtId() == null
-            && messung.getMinSampleId() != null
-        ) {
-            builder.and(Measm_.sampleId, messung.getSampleId())
-                .and(Measm_.minSampleId, messung.getMinSampleId());
-            try {
-                return repository.getSingle(builder.getQuery());
-            } catch (NoResultException e) {
-                //TODO: QueryBuilder instance can not be reused here
-                //This may be a hibernate 6 bug, see:
-                //https://hibernate.atlassian.net/browse/HHH-15951
-                builder = repository.queryBuilder(Measm.class)
-                    .and(Measm_.sampleId, messung.getSampleId())
-                    .and(Measm_.mmtId, messung.getMmtId());
-                List<Measm> messungen =
-                    repository.filter(builder.getQuery());
-                if (messungen.size() == 1
-                    && messungen.get(0).getMinSampleId() == null
-                ) {
-                    return messungen.get(0);
-                }
-                return null;
-            }
-        } else if (messung.getExtId() != null) {
+        // Identify using extId if it's given
+        if (messung.getExtId() != null) {
             builder.and(Measm_.sampleId, messung.getSampleId())
                 .and(Measm_.extId, messung.getExtId());
             try {
@@ -60,16 +37,45 @@ public class MessungIdentifier implements Identifier<Measm> {
             } catch (NoResultException e) {
                 return null;
             }
-        } else if (messung.getMmtId() != null) {
+        }
+
+        /* Secondarily, identify using minSampleId.
+           Falls back to unique Measm with equal Mmt and no minSampleId. */
+        if (messung.getMinSampleId() != null) {
             builder.and(Measm_.sampleId, messung.getSampleId())
-                .and(Measm_.mmtId, messung.getMmtId());
-            List<Measm> messungen =
-                repository.filter(builder.getQuery());
-            if (messungen.isEmpty() || messungen.size() > 1) {
+                .and(Measm_.minSampleId, messung.getMinSampleId());
+            try {
+                return repository.getSingle(builder.getQuery());
+            } catch (NoResultException e) {
+                if (messung.getMmtId() != null) {
+                    Measm measmWithEqualMmt =
+                        findUniqueMeasmWithEqualMmt(messung);
+                    if (measmWithEqualMmt == null
+                        || measmWithEqualMmt.getMinSampleId() == null
+                    ) {
+                        return measmWithEqualMmt;
+                    }
+                }
                 return null;
             }
-            return messungen.get(0);
+        }
+
+        // Fall back to unique Measm with equal Mmt
+        if (messung.getMmtId() != null) {
+            return findUniqueMeasmWithEqualMmt(messung);
         }
         throw new Identifier.IdentificationException();
+    }
+
+    private Measm findUniqueMeasmWithEqualMmt(Measm measm) {
+        try {
+            return repository.getSingle(repository
+                .queryBuilder(Measm.class)
+                .and(Measm_.sampleId, measm.getSampleId())
+                .and(Measm_.mmtId, measm.getMmtId())
+                .getQuery());
+        } catch (NoResultException | NonUniqueResultException e) {
+            return null;
+        }
     }
 }
