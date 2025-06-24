@@ -61,6 +61,7 @@ public class ImporterTest extends BaseTest {
 
     private static final String ASYNC_IMPORT_URL = "data/import/async/";
 
+    private final String existingMainSampleId = "120510002";
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
@@ -274,6 +275,24 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportSampleGeolocatE()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
+        testAsyncImportProbeNoWarnings(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId,
+                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                measd, measUnit, ""),
+            lafSampleId,
+            true);
+    }
+
+    /**
+     * Test asynchronous import updating sampling location.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportUpdateGeolocatE()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = existingMainSampleId;
         testAsyncImportProbeNoWarnings(
             String.format(
                 lafTemplate, lafSampleId,
