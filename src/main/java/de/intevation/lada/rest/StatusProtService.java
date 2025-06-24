@@ -122,7 +122,6 @@ public class StatusProtService extends LadaIntegerIdEntityService {
                 .and(MeasVal_.measm, messung)
                 .getQuery());
             for (MeasVal measVal : messwerte) {
-                measVal.getMeasm().getMeasVals().remove(measVal);
                 repository.delete(measVal);
             }
         }

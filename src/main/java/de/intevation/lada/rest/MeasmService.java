@@ -107,7 +107,6 @@ public class MeasmService extends LadaIntegerIdEntityService {
         authorization.authorize(messungObj, RequestMethod.DELETE);
         lock.isLocked(messungObj);
 
-        messungObj.getSample().getMeasms().remove(messungObj);
         repository.delete(messungObj);
     }
 

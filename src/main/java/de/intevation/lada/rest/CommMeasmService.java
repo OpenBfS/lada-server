@@ -97,7 +97,6 @@ public class CommMeasmService extends LadaIntegerIdEntityService {
     public void delete() {
         CommMeasm kommentarObj = repository.getById(CommMeasm.class, id);
         authorization.authorize(kommentarObj, RequestMethod.DELETE);
-        kommentarObj.getMeasm().getCommMeasms().remove(kommentarObj);
         repository.delete(kommentarObj);
     }
 }

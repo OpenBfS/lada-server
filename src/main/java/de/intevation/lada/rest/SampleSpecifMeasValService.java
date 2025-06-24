@@ -106,7 +106,6 @@ public class SampleSpecifMeasValService extends LadaIntegerIdEntityService {
         SampleSpecifMeasVal obj = repository.getById(
             SampleSpecifMeasVal.class, id);
         authorization.authorize(obj, RequestMethod.DELETE);
-        obj.getSample().getSampleSpecifMeasVals().remove(obj);
         lock.isLocked(obj);
         /* Delete the object*/
         repository.delete(obj);
