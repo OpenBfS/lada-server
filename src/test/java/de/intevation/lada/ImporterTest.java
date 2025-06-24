@@ -466,6 +466,24 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test asynchronous import updating sampling location.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportUpdateGeolocatE()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = existingMainSampleId;
+        testAsyncImportProbeNoWarnings(
+            String.format(
+                laf8Template, lafSampleId,
+                regulation, sampleSpecifId,
+                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                measd, measUnit, ""),
+            lafSampleId,
+            true);
+    }
+
+    /**
      * Test asynchronous import including status.
      */
     @Test

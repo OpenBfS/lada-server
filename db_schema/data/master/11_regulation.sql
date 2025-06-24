@@ -31,10 +31,10 @@ COPY regulation (id, descr, name) FROM stdin;
 4	REI-Immissionsdaten	REI-I
 6	KFÜ	KFÜ
 7	Landesdaten	Land
+8	LFGB	LFGB
 2	§162-Daten	§162
 1	§161-Daten	§161
 10	§161-Daten/SPARS	§162/SPARSE
-15	LFGB	LFGB
 \.
 
 

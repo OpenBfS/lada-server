@@ -130,7 +130,7 @@ public class Sample extends BaseModel implements Serializable {
 
     @NotEmptyNorWhitespace
     @Size(max = 16)
-    @Pattern(regexp = "^(?!ZDB\\d{12}Y$).*$", groups = CreateErrors.class)
+    @Pattern(regexp = "^(?!ZDB).*$", groups = CreateErrors.class)
     private String extId;
 
     @NotBlank

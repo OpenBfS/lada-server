@@ -8,6 +8,8 @@
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
 
     <master.mmt id = "A3" />
+    <master.mmt id = "42" />
+    <master.mmt id = "43" />
 
     <lada.sample
         id = "1000"
@@ -26,6 +28,30 @@
         min_sample_id = "06A0"
         ext_id = "1"
         mmt_id = "A3"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.measm
+        id = "1201"
+        sample_id = "1000"
+        ext_id = "90"
+        mmt_id = "42"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.measm
+        id = "1202"
+        sample_id = "1000"
+        ext_id = "91"
+        mmt_id = "43"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.measm
+        id = "1203"
+        sample_id = "1000"
+        ext_id = "92"
+        mmt_id = "43"
         is_completed = "false"
         is_scheduled = "true"
     />

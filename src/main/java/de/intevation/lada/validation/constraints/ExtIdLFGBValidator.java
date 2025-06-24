@@ -22,7 +22,7 @@ import de.intevation.lada.model.lada.Sample_;
 public class ExtIdLFGBValidator
     implements ConstraintValidator<ExtIdLFGB, Sample> {
 
-    private static final int REG_LFGB = 15;
+    private static final int REG_LFGB = 8;
 
     private String message;
 
