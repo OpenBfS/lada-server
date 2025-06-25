@@ -462,8 +462,24 @@ public class BaseTest {
             if (exclusions.contains(key)) {
                 continue;
             }
-            if (entry.getValue() instanceof JsonObject expectedChild) {
-                verify(expectedChild, actual.get(key).asJsonObject(), exclude);
+            if (entry.getValue() instanceof JsonObject expectedChild
+                && actual.get(key) instanceof JsonObject actualChild
+            ) {
+                verify(expectedChild, actualChild, exclude);
+            } else if (entry.getValue() instanceof JsonArray expectedArray
+                && actual.get(key) instanceof JsonArray actualArray
+            ) {
+                for (int i = 0; i < expectedArray.size(); i++) {
+                    JsonValue expectedValue = expectedArray.get(i);
+                    JsonValue actualValue = actualArray.get(i);
+                    if (expectedValue instanceof JsonObject expectedObject
+                        && actualValue instanceof JsonObject actualObject
+                    ) {
+                        verify(expectedObject, actualObject, exclude);
+                    } else {
+                        Assert.assertEquals(expectedValue, actualValue);
+                    }
+                }
             } else {
                 Assert.assertEquals(
                     String.format("%s:", key),

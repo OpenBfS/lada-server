@@ -188,8 +188,8 @@ public class ImporterTest extends BaseTest {
         final String lafSampleId = randomProbeId();
         Sample laf = prepareLaf9Data();
         laf.setMainSampleId(lafSampleId);
-        Map<String, JsonValue> verify = new HashMap<>(exptectedAttrs);
-        verify.put(Sample_.MAIN_SAMPLE_ID, Json.createValue(lafSampleId));
+        JsonObject verify = JSONBConfig.JSONB.fromJson(
+            JSONB_SPARSE.toJson(laf), JsonObject.class);
         testAsyncLaf9Import(laf, lafSampleId, true, verify);
         // TODO: Check for expected warning
         // JsonObject expectedWarning = Json.createObjectBuilder()
@@ -252,7 +252,7 @@ public class ImporterTest extends BaseTest {
         final String laf = String.format(
             laf8Template, newMainSampleId,
             "test", sampleSpecifId,
-            "PROBE_ID \"T001\"\n", measd, measUnit, "");
+            "PROBE_ID \"" + existingExtId + "\"\n", measd, measUnit, "");
 
         JsonObject report = testAsyncLaf8Import(laf, newMainSampleId, false);
         JsonObject expectedError = Json.createObjectBuilder()
@@ -723,7 +723,7 @@ public class ImporterTest extends BaseTest {
             .get();
         JsonObject importedSample =
             parseResponse(importedSampleResponse, JsonObject.class);
-        BaseTest.verify(verify, importedSample);
+        BaseTest.verify(verify, importedSample, "owner");
 
         Response importedSampleSpecifMeasValResponse = target
             .path("rest/samplespecifmeasval")
