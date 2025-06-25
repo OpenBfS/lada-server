@@ -468,6 +468,7 @@ public class BaseTest {
                 verify(expectedChild, actualChild, exclude);
             } else if (entry.getValue() instanceof JsonArray expectedArray
                 && actual.get(key) instanceof JsonArray actualArray
+                && expectedArray.size() == actualArray.size()
             ) {
                 for (int i = 0; i < expectedArray.size(); i++) {
                     JsonValue expectedValue = expectedArray.get(i);
