@@ -28,7 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -447,6 +449,10 @@ public class BaseTest {
      * Verify recursively that entries in expected appear also in actual and
      * have the same values.
      *
+     * Arrays of objects in {@code actual} are sorted by attribute "id"
+     * before being verified, if possible. {@code expected} can be prepared
+     * accordingly to prevent false negatives.
+     *
      * @param expected object with expected attributes
      * @param actual object to be verified
      * @param exclude keys of entries to exclude from verification
@@ -470,9 +476,27 @@ public class BaseTest {
                 && actual.get(key) instanceof JsonArray actualArray
                 && expectedArray.size() == actualArray.size()
             ) {
+                List<JsonValue> orderedInput = new ArrayList<>(actualArray);
+                orderedInput.sort(new Comparator<JsonValue>() {
+                    private static final String ID_KEY = "id";
+
+                    @Override
+                    public int compare(JsonValue arg0, JsonValue arg1) {
+                        if (arg0 instanceof JsonObject o0
+                            && arg1 instanceof JsonObject o1
+                            && o0.containsKey(ID_KEY)
+                            && o1.containsKey(ID_KEY)
+                        ) {
+                            String id0 = o0.get(ID_KEY).toString();
+                            String id1 = o1.get(ID_KEY).toString();
+                            return id0.compareTo(id1);
+                        }
+                        return 0;
+                    }
+                });
                 for (int i = 0; i < expectedArray.size(); i++) {
                     JsonValue expectedValue = expectedArray.get(i);
-                    JsonValue actualValue = actualArray.get(i);
+                    JsonValue actualValue = orderedInput.get(i);
                     if (expectedValue instanceof JsonObject expectedObject
                         && actualValue instanceof JsonObject actualObject
                     ) {
