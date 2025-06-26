@@ -231,7 +231,7 @@ public class Sample extends BaseModel implements Serializable {
             CascadeType.MERGE},
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Measm> measms;
+    private List<Measm> measms;
 
     /* Work around the fact that hibernate does not provide means to have
        a ManyToMany association without cascading to the link table */
@@ -503,11 +503,11 @@ public class Sample extends BaseModel implements Serializable {
         this.nuclFacilGrId = nuclFacilGrId;
     }
 
-    public Set<Measm> getMeasms() {
+    public List<Measm> getMeasms() {
         return this.measms;
     }
 
-    public void setMeasms(Set<Measm> measms) {
+    public void setMeasms(List<Measm> measms) {
         this.measms = measms;
     }
 

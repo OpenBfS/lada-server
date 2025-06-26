@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -387,7 +388,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     }
 
     private void addMessungen(JsonObjectBuilder probe, Sample sample) {
-        Set<Measm> messungen = sample.getMeasms();
+        Collection<Measm> messungen = sample.getMeasms();
         List<JsonObjectBuilder> messungenBuilders = new ArrayList<>();
         for (Measm messung: messungen) {
             Mmt mmt = repository.getById(

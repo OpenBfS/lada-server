@@ -9,6 +9,7 @@ package de.intevation.lada.importer.laf;
 
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
 
@@ -24,6 +25,7 @@ import de.intevation.lada.importer.Identifier.IdentificationException;
 import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.TagLinkMeasm;
@@ -41,6 +43,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     @Inject
     private Identifier<Sample> sampleIdentifier;
+
+    @Inject
+    private Identifier<Measm> measmIdentifier;
 
     @Inject
     private Repository repository;
@@ -80,8 +85,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                         repository.create(sample);
                         sampleIds.add(sample.getId());
                     } else {
-                        merger.merge(persistent, rawSample);
-                        // TODO: Merge Associations
+                        merge(persistent, sample, rawSample, fileResponseData);
                         repository.update(persistent);
                         sampleIds.add(persistent.getId());
                     }
@@ -98,13 +102,11 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
                     // TODO: Avoid duplicating statusProt entries
                 } catch (IdentificationException e) {
-                    boolean hasExtId = sample.getExtId() != null;
-                    String id = hasExtId
-                        ? sample.getExtId() : sample.getMainSampleId();
-                    fileResponseData.addError(id, new ReportItem(
-                            hasExtId ? Sample_.EXT_ID : Sample_.MAIN_SAMPLE_ID,
-                            id,
-                            StatusCodes.IMP_INVALID_VALUE));
+                    reportIdentificationException(
+                        Sample_.EXT_ID,
+                        Sample_.MAIN_SAMPLE_ID,
+                        rawSample,
+                        fileResponseData);
                 }
             }
             fileResponseData.setSuccess(fileResponseData.getErrors().isEmpty());
@@ -114,6 +116,57 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         });
 
         tagImportedData(importedSampleIds, this.mst);
+    }
+
+    private void merge(
+        Sample targetSample,
+        Sample srcSample,
+        JsonObject rawSample,
+        Report report
+    ) {
+        merger.merge(targetSample, rawSample);
+        // TODO: Merge other associations
+        for (int i = 0; i < srcSample.getMeasms().size(); i++) {
+            Measm srcMeasm = srcSample.getMeasms().get(i);
+            JsonObject rawMeasm =
+                rawSample.getJsonArray(Sample_.MEASMS).getJsonObject(i);
+
+            // Identify
+            srcMeasm.setSample(targetSample);
+            Measm persistentMeasm;
+            try {
+                persistentMeasm = measmIdentifier.getExisting(srcMeasm);
+            } catch (IdentificationException e) {
+                reportIdentificationException(
+                    Measm_.EXT_ID, Measm_.MIN_SAMPLE_ID, rawMeasm, report);
+                continue;
+            }
+
+            // Merge existent or add new object
+            if (persistentMeasm != null) {
+                merger.merge(persistentMeasm, rawMeasm);
+            } else {
+                targetSample.getMeasms().add(srcMeasm);
+            }
+        }
+    }
+
+    private void reportIdentificationException(
+        String primaryIdField,
+        String secondaryIdField,
+        JsonObject failedObject,
+        Report report
+    ) {
+        String idField = failedObject.isNull(primaryIdField)
+            ? secondaryIdField
+            : primaryIdField;
+        JsonValue jsonId = failedObject.get(idField);
+        // Convert to String without quote signs
+        String id = JsonValue.ValueType.STRING.equals(jsonId.getValueType())
+            ? failedObject.getString(idField)
+            : jsonId.toString();
+        report.addError(id, new ReportItem(
+                idField, id, StatusCodes.IMP_INVALID_VALUE));
     }
 
     private void handleMeasmTags(Measm measm) {

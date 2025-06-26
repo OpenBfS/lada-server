@@ -257,6 +257,32 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test successful asynchronous LAF9 update import of Measm objects.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9UpdateMeasmImport()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = new Sample();
+        laf.setExtId(existingExtId);
+
+        final int existingMeasmExtId = 453;
+        Measm measmUpdate = new Measm();
+        measmUpdate.setExtId(existingMeasmExtId);
+        final String minSampleId = "test";
+        measmUpdate.setMinSampleId(minSampleId);
+
+        Measm measmNew = new Measm();
+        measmNew.setMmtId("I3");
+
+        laf.setMeasms(List.of(measmUpdate, measmNew));
+
+        JsonObject verify = JSONBConfig.JSONB.fromJson(
+            JSONB_SPARSE.toJson(laf).toString(), JsonObject.class);
+        testAsyncLaf9Import(laf, existingMainSampleId, true, true, verify);
+    }
+
+    /**
      * Test failing sample identification with LAF8.
      */
     @Test
@@ -837,7 +863,7 @@ public class ImporterTest extends BaseTest {
         measVal.setMeasdId(1);
         measVal.setMeasUnitId(1);
         measm.setMeasVals(Set.of(measVal));
-        laf9Template.setMeasms(Set.of(measm));
+        laf9Template.setMeasms(List.of(measm));
 
         return laf9Template;
     }

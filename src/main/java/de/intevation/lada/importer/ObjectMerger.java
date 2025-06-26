@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.metamodel.Attribute;
 import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.ListAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
 
 import de.intevation.lada.model.lada.Geolocat;
@@ -47,8 +48,9 @@ public class ObjectMerger {
      * {@link jakarta.persistence.Entity} instance.
      *
      * Attributes in {@code src} that do not correspond to any entity
-     * attribute, those that correspond to {@link Id} attributes
-     * and read-only attributes (without setter method) are ignored.
+     * attribute, those that correspond to {@link Id} attributes,
+     * associations and read-only attributes (without setter method)
+     * are ignored.
      *
      * @param target entity instance at which attributes are set
      * @param src JSON object from which attribute values are taken
@@ -68,8 +70,16 @@ public class ObjectMerger {
                 continue;
             }
 
-            // target is the identified entity instance. Do not override ID
-            if (attr instanceof SingularAttribute<?, ?> sing && sing.isId()) {
+            if (
+                // target is the identified entity instance. Do not override ID
+                attr instanceof SingularAttribute<?, ?> sing && sing.isId()
+                // Do not recurse into associations
+                || attr.isAssociation()
+                // TODO: Skip all associations
+                && attr instanceof ListAttribute<?, ?> set
+                && set.getElementType().equals(repository.entityManager()
+                    .getMetamodel().entity(Measm.class))
+            ) {
                 continue;
             }
 

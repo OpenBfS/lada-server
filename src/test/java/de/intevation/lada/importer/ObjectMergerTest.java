@@ -117,7 +117,7 @@ public class ObjectMergerTest extends BaseTest {
     }
 
     @Test
-    public final void mergeAssociation() {
+    public final void skipsAssociation() {
         Sample target = new Sample();
         final String minSampleId = "XXX";
         JsonObject src = Json.createObjectBuilder()
@@ -126,10 +126,7 @@ public class ObjectMergerTest extends BaseTest {
                     .add(Measm_.MIN_SAMPLE_ID, minSampleId)))
             .build();
         merger.merge(target, src);
-        Assert.assertNotNull("Missing measms", target.getMeasms());
-        Assert.assertEquals(1, target.getMeasms().size());
-        Measm measm = target.getMeasms().stream().findFirst().get();
-        Assert.assertEquals(minSampleId, measm.getMinSampleId());
+        Assert.assertNull("Unexpected measms", target.getMeasms());
     }
 
     /**
