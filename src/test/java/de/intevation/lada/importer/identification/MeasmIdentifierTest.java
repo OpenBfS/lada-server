@@ -5,7 +5,7 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.importer;
+package de.intevation.lada.importer.identification;
 
 import jakarta.annotation.Resource;
 import jakarta.inject.Inject;
@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.BaseTest;
-import de.intevation.lada.importer.Identifier.IdentificationException;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 
@@ -27,17 +26,12 @@ import de.intevation.lada.model.lada.Sample;
  * Unit tests for Identifier implementations.
  */
 @RunWith(Arquillian.class)
-public class IdentifierTest extends BaseTest {
+public class MeasmIdentifierTest extends BaseTest {
 
     private static final int PID1000 = 1000;
 
     @Resource
     private UserTransaction transaction;
-
-    private final String mstId = "06010";
-
-    @Inject
-    private Identifier<Sample> probeIdentifier;
 
     @Inject
     private Identifier<Measm> messungIdentifier;
@@ -47,97 +41,8 @@ public class IdentifierTest extends BaseTest {
     private int existingMeasmIdMmt42 = 1201;
     private final String existingMinSampleId = "06A0";
 
-    public IdentifierTest() {
-        testDatasetName = "datasets/dbUnit_identifier.xml";
-    }
-
-    /**
-     * Identify probe objects.
-     *
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @Transactional
-    public final void identifyProbeByHPNrMST() throws Exception {
-        Sample probe = new Sample();
-        probe.setMainSampleId("120510002");
-        probe.setMeasFacilId(mstId);
-        probe.setIsTest(false);
-
-        Assert.assertNotNull(probeIdentifier.getExisting(probe));
-    }
-
-    /**
-     * Identify probject by HP-Nr and MST.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @Transactional
-    public final void identifyProbeByHPNrMSTNew() throws Exception {
-        Sample probe = new Sample();
-        probe.setMainSampleId("120510003");
-        probe.setMeasFacilId(mstId);
-
-        Assert.assertNull(probeIdentifier.getExisting(probe));
-    }
-
-    /**
-     * Identify probe object by external probe id.
-     *
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @Transactional
-    public final void identifyProbeByExterneProbeId() throws Exception {
-        Sample probe = new Sample();
-        probe.setExtId("T001");
-
-        Assert.assertNotNull(probeIdentifier.getExisting(probe));
-    }
-
-    /**
-     * Identify probe object by external id as new.
-     * @throws Exception that can occur during test.
-     */
-    @Test
-    @Transactional
-    public final void identifyProbeByExterneProbeIdNew() throws Exception {
-        Sample probe = new Sample();
-        probe.setExtId("T002");
-
-        Assert.assertNull(probeIdentifier.getExisting(probe));
-    }
-
-    /**
-     * Identify probe object by external id as reject.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @Transactional
-    public final void identifyProbeByExterneProbeIdReject() throws Exception {
-        Sample probe = new Sample();
-        probe.setExtId("T001");
-        probe.setMainSampleId("120510003");
-        probe.setMeasFacilId(mstId);
-
-        Assert.assertThrows(
-            Identifier.IdentificationException.class,
-            () -> probeIdentifier.getExisting(probe));
-    }
-
-    /**
-     * Identify probe object by external id as update.
-     * @throws Exception that ca occur during the test.
-     */
-    @Test
-    @Transactional
-    public final void identifyProbeByExterneProbeIdUpdate() throws Exception {
-        Sample probe = new Sample();
-        probe.setExtId("T001");
-        probe.setMainSampleId("");
-        probe.setMeasFacilId(mstId);
-
-        Assert.assertNotNull(probeIdentifier.getExisting(probe));
+    public MeasmIdentifierTest() {
+        testDatasetName = "datasets/dbUnit_identifier_measm.xml";
     }
 
     /**
@@ -220,7 +125,7 @@ public class IdentifierTest extends BaseTest {
         messung.setSample(sample);
 
         Assert.assertThrows(
-            Identifier.IdentificationException.class,
+            IdentificationException.class,
             () -> messungIdentifier.getExisting(messung));
     }
 

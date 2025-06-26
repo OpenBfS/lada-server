@@ -5,7 +5,7 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.importer;
+package de.intevation.lada.importer.identification;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
@@ -18,14 +18,14 @@ import de.intevation.lada.util.data.Repository;
 /**
  * Identifier for {@link Measm} objects.
  */
-public class MeasmIdentifier implements Identifier<Measm> {
+class MeasmIdentifier implements Identifier<Measm> {
 
     @Inject
     private Repository repository;
 
     @Override
     public Measm getExisting(Measm messung)
-        throws Identifier.IdentificationException {
+        throws IdentificationException {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
 
         // Identify using extId if it's given
@@ -64,7 +64,7 @@ public class MeasmIdentifier implements Identifier<Measm> {
         if (messung.getMmtId() != null) {
             return findUniqueMeasmWithEqualMmt(messung);
         }
-        throw new Identifier.IdentificationException();
+        throw new IdentificationException();
     }
 
     private Measm findUniqueMeasmWithEqualMmt(Measm measm) {

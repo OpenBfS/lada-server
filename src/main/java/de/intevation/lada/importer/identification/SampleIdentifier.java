@@ -5,7 +5,7 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.importer;
+package de.intevation.lada.importer.identification;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
@@ -17,14 +17,14 @@ import de.intevation.lada.util.data.Repository;
 /**
  * Class to identify {@link Sample} objects.
  */
-public class SampleIdentifier implements Identifier<Sample> {
+class SampleIdentifier implements Identifier<Sample> {
 
     @Inject
     private Repository repository;
 
     @Override
     public Sample getExisting(Sample probe)
-        throws Identifier.IdentificationException {
+        throws IdentificationException {
         QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
 
         if (probe.getExtId() == null
@@ -65,6 +65,6 @@ public class SampleIdentifier implements Identifier<Sample> {
         } catch (NoResultException e) {
             return null;
         }
-        throw new Identifier.IdentificationException();
+        throw new IdentificationException();
     }
 }

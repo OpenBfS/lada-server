@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <master.network id = "06" />
+    <master.meas_facil id = "06010" network_id = "06" />
+
+    <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
+    <master.regulation id = "9" />
+    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+
+    <lada.sample
+        id = "1000"
+        ext_id = "T001"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        is_test = "false"
+        main_sample_id = "120510002"
+        sample_meth_id = "1"
+    />
+</dataset>

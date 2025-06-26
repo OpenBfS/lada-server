@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.ObjectMerger;
-import de.intevation.lada.importer.Identifier.IdentificationException;
+import de.intevation.lada.importer.identification.Identification;
+import de.intevation.lada.importer.identification.IdentificationException;
 import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.lada.Measm;
@@ -42,10 +42,7 @@ import de.intevation.lada.util.rest.JSONBConfig;
 public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     @Inject
-    private Identifier<Sample> sampleIdentifier;
-
-    @Inject
-    private Identifier<Measm> measmIdentifier;
+    private Identification identification;
 
     @Inject
     private Repository repository;
@@ -80,7 +77,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
                 // TODO: Authorize
                 try {
-                    Sample persistent = sampleIdentifier.getExisting(sample);
+                    Sample persistent = identification.getExisting(sample);
                     if (persistent == null) {
                         repository.create(sample);
                         sampleIds.add(sample.getId());
@@ -135,7 +132,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             srcMeasm.setSample(targetSample);
             Measm persistentMeasm;
             try {
-                persistentMeasm = measmIdentifier.getExisting(srcMeasm);
+                persistentMeasm = identification.getExisting(srcMeasm);
             } catch (IdentificationException e) {
                 reportIdentificationException(
                     Measm_.EXT_ID, Measm_.MIN_SAMPLE_ID, rawMeasm, report);

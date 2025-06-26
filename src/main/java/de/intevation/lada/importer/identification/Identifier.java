@@ -5,13 +5,13 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.importer;
+package de.intevation.lada.importer.identification;
 
 
 /**
  * Interface for object identifier.
  */
-public interface Identifier<T> {
+interface Identifier<T> {
 
     /**
      * Get persistent entity identified by attributes of given object.
@@ -20,8 +20,4 @@ public interface Identifier<T> {
      * @throws IdentificationException in case of ambiguous identifying attributes
      */
     T getExisting(T object) throws IdentificationException;
-
-    public class IdentificationException extends Exception {
-        private static final long serialVersionUID = 1L;
-    }
 }

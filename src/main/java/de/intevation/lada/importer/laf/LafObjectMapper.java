@@ -30,9 +30,10 @@ import jakarta.persistence.metamodel.SingularAttribute;
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
+import de.intevation.lada.importer.identification.Identification;
+import de.intevation.lada.importer.identification.IdentificationException;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommMeasm_;
@@ -115,10 +116,7 @@ public class LafObjectMapper {
     private Validator validator;
 
     @Inject
-    private Identifier<Sample> probeIdentifier;
-
-    @Inject
-    private Identifier<Measm> messungIdentifier;
+    private Identification identification;
 
     @Inject
     private ObjectMerger merger;
@@ -267,7 +265,7 @@ public class LafObjectMapper {
         Sample newProbe = null;
         boolean oldProbeIsReadonly = false;
         try {
-            Sample old = probeIdentifier.getExisting(probe);
+            Sample old = identification.getExisting(probe);
             if (old != null) {
                 // Matching probe was found in the db. Update it!
                 if (
@@ -313,7 +311,7 @@ public class LafObjectMapper {
                     validate(probe, "validation#probe", false, true);
                 }
             }
-        } catch (Identifier.IdentificationException e) {
+        } catch (IdentificationException e) {
             // Sample was found but some data does not match
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.IMP_PRESENT);
@@ -636,7 +634,7 @@ public class LafObjectMapper {
         // Compare with messung objects in the db
         Measm newMessung;
         try {
-            Measm old = messungIdentifier.getExisting(messung);
+            Measm old = identification.getExisting(messung);
             if (old != null) {
                 if (!authorizer.isAuthorized(old, RequestMethod.PUT)) {
                     currentNotifications.add(
@@ -664,7 +662,7 @@ public class LafObjectMapper {
                 // Create a new messung and the first status
                 newMessung = repository.create(messung);
             }
-        } catch (Identifier.IdentificationException e) {
+        } catch (IdentificationException e) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.VALUE_MISSING);
             err.setKey("identification");
