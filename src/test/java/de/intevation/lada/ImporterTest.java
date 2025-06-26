@@ -29,7 +29,6 @@ import jakarta.json.bind.JsonbBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.SyncInvoker;
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -48,10 +47,13 @@ import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Job.JobStatus;
 import de.intevation.lada.util.data.StatusCodes;
@@ -84,6 +86,7 @@ public class ImporterTest extends BaseTest {
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
+    private final String mmtId = "A3";
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
     private final String laf8Template = "%%PROBE%%\n"
@@ -99,15 +102,27 @@ public class ImporterTest extends BaseTest {
         + "DESKRIPTOREN \"010100000000000000000000\"\n"
         + "%s"
         + "%%MESSUNG%%\n"
-        + "MESSMETHODE_S \"A3\"\n"
+        + "MESSMETHODE_S \"" + mmtId + "\"\n"
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%s"
         + "%%ENDE%%\n";
 
-    private Map<String, JsonValue> exptectedAttrs = Map.of(
+    private Map<String, JsonValue> expectedAttrs = Map.of(
         Sample_.IS_TEST, JsonValue.FALSE,
         Sample_.MEAS_FACIL_ID, Json.createValue(mstId),
-        Sample_.REGULATION_ID, Json.createValue(1)
+        Sample_.REGULATION_ID, Json.createValue(1),
+        Sample_.SAMPLE_SPECIF_MEAS_VALS, Json.createArrayBuilder()
+        .add(Json.createObjectBuilder()
+            .add(SampleSpecifMeasVal_.SAMPLE_SPECIF_ID, sampleSpecifId))
+        .build(),
+        Sample_.MEASMS, Json.createArrayBuilder()
+        .add(Json.createObjectBuilder()
+            .add(Measm_.MMT_ID, mmtId)
+            .add(Measm_.MEAS_VALS, Json.createArrayBuilder()
+                .add(Json.createObjectBuilder()
+                    .add(MeasVal_.MEASD_ID, 1)
+                    .add(MeasVal_.MEAS_UNIT_ID, 1))))
+        .build()
     );
 
     public ImporterTest() {
@@ -165,7 +180,7 @@ public class ImporterTest extends BaseTest {
         final String laf = String.format(
             laf8Template, lafSampleId,
             regulation, sampleSpecifId, "", measd, measUnit, "");
-        Map<String, JsonValue> verify = new HashMap<>(exptectedAttrs);
+        Map<String, JsonValue> verify = new HashMap<>(expectedAttrs);
         verify.put(Sample_.MAIN_SAMPLE_ID, Json.createValue(lafSampleId));
         JsonObject report = testAsyncLaf8Import(laf, lafSampleId, true, verify);
         JsonObject expectedWarning = Json.createObjectBuilder()
@@ -213,7 +228,7 @@ public class ImporterTest extends BaseTest {
             laf8Template, existingMainSampleId,
             "test2", sampleSpecifId, "", measd, measUnit, "");
 
-        Map<String, JsonValue> verify = new HashMap<>(exptectedAttrs);
+        Map<String, JsonValue> verify = new HashMap<>(expectedAttrs);
         verify.put(
             Sample_.MAIN_SAMPLE_ID, Json.createValue(existingMainSampleId));
         verify.put(Sample_.REGULATION_ID, Json.createValue(2));
@@ -233,7 +248,7 @@ public class ImporterTest extends BaseTest {
         final int updateRegId = 2;
         laf.setRegulationId(updateRegId);
 
-        Map<String, JsonValue> verify = new HashMap<>(exptectedAttrs);
+        Map<String, JsonValue> verify = new HashMap<>(expectedAttrs);
         verify.put(
             Sample_.MAIN_SAMPLE_ID, Json.createValue(existingMainSampleId));
         verify.put(Sample_.REGULATION_ID, Json.createValue(updateRegId));
@@ -278,7 +293,7 @@ public class ImporterTest extends BaseTest {
         laf.setMainSampleId("XXX");
 
         JsonObject report = testAsyncLaf9Import(
-            laf, newMainSampleId, false, exptectedAttrs);
+            laf, newMainSampleId, false, expectedAttrs);
         JsonObject expectedError = Json.createObjectBuilder()
             .add(REPORT_ITEM_KEY_KEY, Sample_.EXT_ID)
             .add(REPORT_ITEM_VALUE_KEY, existingExtId)
@@ -621,7 +636,7 @@ public class ImporterTest extends BaseTest {
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
         return testAsyncLaf8Import(
-            Locale.US, lafData, lafSampleId, expectSuccess, exptectedAttrs);
+            Locale.US, lafData, lafSampleId, expectSuccess, expectedAttrs);
     }
 
     private JsonObject testAsyncLaf8Import(
@@ -641,7 +656,7 @@ public class ImporterTest extends BaseTest {
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
         return testAsyncLaf8Import(
-            locale, lafData, lafSampleId, expectSuccess, exptectedAttrs);
+            locale, lafData, lafSampleId, expectSuccess, expectedAttrs);
     }
 
     private JsonObject testAsyncLaf8Import(
@@ -724,45 +739,6 @@ public class ImporterTest extends BaseTest {
         JsonObject importedSample =
             parseResponse(importedSampleResponse, JsonObject.class);
         BaseTest.verify(verify, importedSample, "owner");
-
-        Response importedSampleSpecifMeasValResponse = target
-            .path("rest/samplespecifmeasval")
-            .queryParam("sampleId", sampleId)
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
-        List<SampleSpecifMeasVal> importedSampleSpecifMeasVals =
-            parseResponse(importedSampleSpecifMeasValResponse,
-                new GenericType<List<SampleSpecifMeasVal>>() { });
-        Assert.assertEquals(1, importedSampleSpecifMeasVals.size());
-        Assert.assertEquals(
-            sampleSpecifId,
-            importedSampleSpecifMeasVals.get(0).getSampleSpecifId());
-
-        Response importedMeasmResponse = target
-            .path("rest/measm")
-            .queryParam("sampleId", sampleId)
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
-        final int measmId = parseResponse(
-            importedMeasmResponse, new GenericType<List<Measm>>() { })
-            .get(0).getId();
-
-        Response importedMeasValResponse = target
-            .path("rest/measval")
-            .queryParam("measmId", measmId)
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
-        MeasVal importedMeasVal = parseResponse(
-            importedMeasValResponse, new GenericType<List<MeasVal>>() { })
-            .get(0);
-        Assert.assertEquals(1, (int) importedMeasVal.getMeasdId());
-        Assert.assertEquals(1, (int) importedMeasVal.getMeasUnitId());
 
         return fileReport;
     }
@@ -856,7 +832,7 @@ public class ImporterTest extends BaseTest {
         laf9Template.setSampleSpecifMeasVals(Set.of(sampleSpecif));
 
         Measm measm = new Measm();
-        measm.setMmtId("A3");
+        measm.setMmtId(mmtId);
         MeasVal measVal = new MeasVal();
         measVal.setMeasdId(1);
         measVal.setMeasUnitId(1);
