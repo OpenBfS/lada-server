@@ -320,15 +320,23 @@ public class ImporterTest extends BaseTest {
 
         JsonObject report = testAsyncLaf9Import(
             laf, newMainSampleId, false, expectedAttrs);
-        JsonObject expectedError = Json.createObjectBuilder()
-            .add(REPORT_ITEM_KEY_KEY, Sample_.EXT_ID)
-            .add(REPORT_ITEM_VALUE_KEY, existingExtId)
-            .add(REPORT_ITEM_CODE_KEY,
-                String.valueOf(StatusCodes.IMP_INVALID_VALUE))
-            .build();
-        MatcherAssert.assertThat(
-            report.getJsonObject(ERRORS_KEY).getJsonArray(existingExtId),
-            CoreMatchers.hasItem(expectedError));
+        JsonObject actualError = report.getJsonObject(ERRORS_KEY)
+            .getJsonArray(existingExtId).getJsonObject(0);
+        Assert.assertEquals(String.valueOf(StatusCodes.IMP_INVALID_VALUE),
+            actualError.getString(REPORT_ITEM_CODE_KEY));
+        MatcherAssert.assertThat(List.of(actualError
+                .getString(REPORT_ITEM_KEY_KEY)
+                .replaceAll("(\\[|\\])", "").split(", ")),
+            CoreMatchers.hasItems(
+                Sample_.EXT_ID,
+                Sample_.IS_TEST,
+                Sample_.MAIN_SAMPLE_ID,
+                Sample_.MEAS_FACIL_ID));
+        MatcherAssert.assertThat(List.of(actualError
+                .getString(REPORT_ITEM_VALUE_KEY)
+                .replaceAll("(\\[|\\])", "").split(", ")),
+            CoreMatchers.hasItems(
+                existingExtId, "false", newMainSampleId, mstId));
     }
 
     /**

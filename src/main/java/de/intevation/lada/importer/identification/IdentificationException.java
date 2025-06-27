@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.importer.identification;
 
+import java.util.Map;
 
 /**
  * Thrown if an {@link Identifier} is given an object with
@@ -14,4 +15,16 @@ package de.intevation.lada.importer.identification;
  */
 public class IdentificationException extends Exception {
     private static final long serialVersionUID = 1L;
+
+    private Map<String, Object> identifyingAttributes;
+
+    public IdentificationException() { };
+
+    public IdentificationException(Map<String, Object> identifyingAttributes) {
+        this.identifyingAttributes = identifyingAttributes;
+    }
+
+    public Map<String, Object> getIdentifyingAttributes() {
+        return identifyingAttributes;
+    }
 }

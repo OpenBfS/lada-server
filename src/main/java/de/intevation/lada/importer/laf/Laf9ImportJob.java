@@ -9,13 +9,13 @@ package de.intevation.lada.importer.laf;
 
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,7 +25,6 @@ import de.intevation.lada.importer.identification.IdentificationException;
 import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.TagLinkMeasm;
@@ -99,11 +98,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
                     // TODO: Avoid duplicating statusProt entries
                 } catch (IdentificationException e) {
-                    reportIdentificationException(
-                        Sample_.EXT_ID,
-                        Sample_.MAIN_SAMPLE_ID,
-                        rawSample,
-                        fileResponseData);
+                    reportIdentificationException(sample, e, fileResponseData);
                 }
             }
             fileResponseData.setSuccess(fileResponseData.getErrors().isEmpty());
@@ -134,8 +129,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             try {
                 persistentMeasm = identification.getExisting(srcMeasm);
             } catch (IdentificationException e) {
-                reportIdentificationException(
-                    Measm_.EXT_ID, Measm_.MIN_SAMPLE_ID, rawMeasm, report);
+                reportIdentificationException(targetSample, e, report);
                 continue;
             }
 
@@ -149,21 +143,17 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     }
 
     private void reportIdentificationException(
-        String primaryIdField,
-        String secondaryIdField,
-        JsonObject failedObject,
+        Sample sample,
+        IdentificationException exception,
         Report report
     ) {
-        String idField = failedObject.isNull(primaryIdField)
-            ? secondaryIdField
-            : primaryIdField;
-        JsonValue jsonId = failedObject.get(idField);
-        // Convert to String without quote signs
-        String id = JsonValue.ValueType.STRING.equals(jsonId.getValueType())
-            ? failedObject.getString(idField)
-            : jsonId.toString();
-        report.addError(id, new ReportItem(
-                idField, id, StatusCodes.IMP_INVALID_VALUE));
+        Map<String, Object> failedAttrs = exception.getIdentifyingAttributes();
+        report.addError(sample.getExtId() != null
+            ? sample.getExtId() : sample.getMainSampleId(),
+            new ReportItem(
+                failedAttrs.keySet().toString(),
+                failedAttrs.values().toString(),
+                StatusCodes.IMP_INVALID_VALUE));
     }
 
     private void handleMeasmTags(Measm measm) {

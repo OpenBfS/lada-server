@@ -10,6 +10,10 @@ package de.intevation.lada.importer.identification;
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -64,7 +68,12 @@ class MeasmIdentifier implements Identifier<Measm> {
         if (messung.getMmtId() != null) {
             return findUniqueMeasmWithEqualMmt(messung);
         }
-        throw new IdentificationException();
+
+        Map<String, Object> failedAttrs = new HashMap<>();
+        failedAttrs.put(Measm_.EXT_ID, messung.getExtId());
+        failedAttrs.put(Measm_.MIN_SAMPLE_ID, messung.getMinSampleId());
+        failedAttrs.put(Measm_.MMT_ID, messung.getMmtId());
+        throw new IdentificationException(failedAttrs);
     }
 
     private Measm findUniqueMeasmWithEqualMmt(Measm measm) {
