@@ -863,7 +863,7 @@ public class ImporterTest extends BaseTest {
 
         SampleSpecifMeasVal sampleSpecif = new SampleSpecifMeasVal();
         sampleSpecif.setSampleSpecifId(sampleSpecifId);
-        laf9Template.setSampleSpecifMeasVals(Set.of(sampleSpecif));
+        laf9Template.setSampleSpecifMeasVals(List.of(sampleSpecif));
 
         Measm measm = new Measm();
         measm.setMmtId(mmtId);

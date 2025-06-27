@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.Set;
+import java.util.Collection;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -50,7 +50,7 @@ public class SampleSpecifMeasValService extends LadaIntegerIdEntityService {
      * @return requested objects.
      */
     @GET
-    public Set<SampleSpecifMeasVal> get(
+    public Collection<SampleSpecifMeasVal> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         return repository.getById(Sample.class, sampleId)

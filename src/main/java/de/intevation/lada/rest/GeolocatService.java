@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.Set;
+import java.util.Collection;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -52,7 +52,7 @@ public class GeolocatService extends LadaIntegerIdEntityService {
      * @return requested objects.
      */
     @GET
-    public Set<Geolocat> get(
+    public Collection<Geolocat> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         return repository.getById(Sample.class, sampleId).getGeolocats();

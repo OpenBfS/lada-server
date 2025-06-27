@@ -250,8 +250,7 @@ public class Sample extends BaseModel implements Serializable {
             CascadeType.MERGE},
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<CommSample> commSamples;
-
+    private List<CommSample> commSamples;
 
     @OneToMany(mappedBy = SampleSpecifMeasVal_.SAMPLE,
         cascade = {
@@ -261,7 +260,7 @@ public class Sample extends BaseModel implements Serializable {
             CascadeType.MERGE},
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<SampleSpecifMeasVal> sampleSpecifMeasVals;
+    private List<SampleSpecifMeasVal> sampleSpecifMeasVals;
 
     @OneToMany(mappedBy = Geolocat_.SAMPLE,
         cascade = {
@@ -271,7 +270,7 @@ public class Sample extends BaseModel implements Serializable {
             CascadeType.MERGE},
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Geolocat> geolocats;
+    private List<Geolocat> geolocats;
 
     @Transient
     private boolean owner;
@@ -527,29 +526,28 @@ public class Sample extends BaseModel implements Serializable {
         this.tags = tags;
     }
 
-    public Set<CommSample> getCommSamples() {
+    public List<CommSample> getCommSamples() {
         return this.commSamples;
     }
 
-    public void setCommSamples(Set<CommSample> commSamples) {
+    public void setCommSamples(List<CommSample> commSamples) {
         this.commSamples = commSamples;
     }
 
-    public Set<SampleSpecifMeasVal> getSampleSpecifMeasVals() {
+    public List<SampleSpecifMeasVal> getSampleSpecifMeasVals() {
         return this.sampleSpecifMeasVals;
     }
 
     public void setSampleSpecifMeasVals(
-        Set<SampleSpecifMeasVal> sampleSpecifMeasVals) {
+        List<SampleSpecifMeasVal> sampleSpecifMeasVals) {
         this.sampleSpecifMeasVals = sampleSpecifMeasVals;
     }
 
-    public Set<Geolocat> getGeolocats() {
+    public List<Geolocat> getGeolocats() {
         return this.geolocats;
     }
 
-    public void setGeolocats(
-            Set<Geolocat> geolocats) {
+    public void setGeolocats(List<Geolocat> geolocats) {
         this.geolocats = geolocats;
     }
 

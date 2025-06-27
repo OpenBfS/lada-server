@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.Set;
+import java.util.Collection;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -41,7 +41,7 @@ public class CommSampleService extends LadaIntegerIdEntityService {
      * @return requested objects.
      */
     @GET
-    public Set<CommSample> get(
+    public Collection<CommSample> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         return repository.getById(Sample.class, sampleId).getCommSamples();

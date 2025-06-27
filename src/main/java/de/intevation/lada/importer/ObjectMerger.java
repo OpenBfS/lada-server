@@ -21,7 +21,7 @@ import jakarta.persistence.metamodel.Attribute;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.ListAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
-
+import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
@@ -77,8 +77,8 @@ public class ObjectMerger {
                 || attr.isAssociation()
                 // TODO: Skip all associations
                 && attr instanceof ListAttribute<?, ?> set
-                && set.getElementType().equals(repository.entityManager()
-                    .getMetamodel().entity(Measm.class))
+                && BelongsToSample.class.isAssignableFrom(
+                    set.getElementType().getJavaType())
             ) {
                 continue;
             }

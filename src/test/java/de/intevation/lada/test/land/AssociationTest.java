@@ -120,10 +120,10 @@ public class AssociationTest extends ServiceTest {
             getSampleSpecificMeasVal("A74");
 
         sample.setMeasms(List.of(measm));
-        sample.setCommSamples(Set.of(commSample));
+        sample.setCommSamples(List.of(commSample));
         sample.setTags(Set.of(tag));
-        sample.setSampleSpecifMeasVals(Set.of(sampleSpecifMeasVal));
-        sample.setGeolocats(Set.of(geolocat));
+        sample.setSampleSpecifMeasVals(List.of(sampleSpecifMeasVal));
+        sample.setGeolocats(List.of(geolocat));
 
         // Create Sample via $samplePath
         Sample created = create(samplePath, sample, Sample.class);
@@ -138,10 +138,10 @@ public class AssociationTest extends ServiceTest {
         // Extract properties to test for
         List<Measm> createdMeasms = created.getMeasms();
         Set<Tag> createdTags = created.getTags();
-        Set<CommSample> createdCommSamples = created.getCommSamples();
-        Set<SampleSpecifMeasVal> createdSampleSpecifMeasVals = created
-            .getSampleSpecifMeasVals();
-        Set<Geolocat> createdGeolocats = created.getGeolocats();
+        Collection<CommSample> createdCommSamples = created.getCommSamples();
+        Collection<SampleSpecifMeasVal> createdSampleSpecifMeasVals =
+            created.getSampleSpecifMeasVals();
+        Collection<Geolocat> createdGeolocats = created.getGeolocats();
         Measm createdSampleMeasm = createdMeasms.get(0);
         Optional<Tag> t = createdTags.stream().findFirst();
         Tag createdTag = t.get();

@@ -411,7 +411,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     }
 
     private void addKommentare(JsonObjectBuilder probe, Sample sample) {
-        Set<CommSample> kommentare = sample.getCommSamples();
+        Collection<CommSample> kommentare = sample.getCommSamples();
         List<JsonObjectBuilder> kommentareJsonObjectBuilders = new ArrayList<>();
         for (CommSample kommentar: kommentare) {
             JsonObject kommentarJsonObject = convertToJsonObject(kommentar);
@@ -431,7 +431,8 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     }
 
     private void addZusatzwerte(JsonObjectBuilder probe, Sample sample) {
-        Set<SampleSpecifMeasVal> zusatzwerte = sample.getSampleSpecifMeasVals();
+        Collection<SampleSpecifMeasVal> zusatzwerte =
+            sample.getSampleSpecifMeasVals();
         List<JsonObjectBuilder> zusatzwerteJsonObjectBuilders = new ArrayList<>();
         for (SampleSpecifMeasVal zusatzwert:zusatzwerte) {
             SampleSpecif pz = repository.getById(
@@ -594,7 +595,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     }
 
     private void addOrtszuordung(JsonObjectBuilder probe, Sample sample) {
-        Set<Geolocat> ortszuordnung = sample.getGeolocats();
+        Collection<Geolocat> ortszuordnung = sample.getGeolocats();
         List<JsonObjectBuilder> geolocatBuilders = new ArrayList<>();
         for (Geolocat g: ortszuordnung) {
             JsonObject ortszuordnungJsonObject = convertToJsonObject(g);

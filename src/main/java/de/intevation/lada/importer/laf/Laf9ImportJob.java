@@ -7,13 +7,19 @@
  */
 package de.intevation.lada.importer.laf;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.persistence.metamodel.ListAttribute;
+import jakarta.persistence.metamodel.PluralAttribute;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,9 +30,9 @@ import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
 import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
+import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
@@ -57,6 +63,28 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     @Inject
     private TagLinkService<TagLinkMeasm> tagLinkMeasmService;
+
+    private Map<String, PropertyDescriptor> belongsToSampleProperties;
+
+    @PostConstruct
+    private void init() throws IntrospectionException {
+        // Collect PropertyDescriptors for lists of associated child objects
+        Map<String, PropertyDescriptor> collectGetters = new HashMap<>();
+        Set<PluralAttribute<? super Sample, ?, ?>> attrs = repository
+            .entityManager().getMetamodel().entity(Sample.class)
+            .getPluralAttributes();
+        for (PluralAttribute<? super Sample, ?, ?> attr : attrs) {
+            if (attr instanceof ListAttribute<?, ?>
+                && BelongsToSample.class.isAssignableFrom(
+                    attr.getElementType().getJavaType())
+            ) {
+                String attrName = attr.getName();
+                collectGetters.put(attrName,
+                    new PropertyDescriptor(attrName, Sample.class));
+            }
+        }
+        this.belongsToSampleProperties = Map.copyOf(collectGetters);
+    }
 
     /**
      * Run the import job.
@@ -118,27 +146,56 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     ) {
         merger.merge(targetSample, rawSample);
         // TODO: Merge other associations
-        for (int i = 0; i < srcSample.getMeasms().size(); i++) {
-            Measm srcMeasm = srcSample.getMeasms().get(i);
-            JsonObject rawMeasm =
-                rawSample.getJsonArray(Sample_.MEASMS).getJsonObject(i);
-
-            // Identify
-            srcMeasm.setSample(targetSample);
-            Measm persistentMeasm;
-            try {
-                persistentMeasm = identification.getExisting(srcMeasm);
-            } catch (IdentificationException e) {
-                reportIdentificationException(targetSample, e, report);
+        for (String attrName : belongsToSampleProperties.keySet()) {
+            List<BelongsToSample> srcObjects =
+                getChildList(attrName, srcSample);
+            if (srcObjects == null) {
                 continue;
             }
+            for (int i = 0; i < srcObjects.size(); i++) {
+                BelongsToSample srcObject = srcObjects.get(i);
+                JsonObject rawObject =
+                    rawSample.getJsonArray(attrName).getJsonObject(i);
 
-            // Merge existent or add new object
-            if (persistentMeasm != null) {
-                merger.merge(persistentMeasm, rawMeasm);
-            } else {
-                targetSample.getMeasms().add(srcMeasm);
+                // Identify
+                srcObject.setSample(targetSample);
+                BelongsToSample persistentObject;
+                try {
+                    persistentObject = identification.getExisting(srcObject);
+                } catch (IdentificationException e) {
+                    reportIdentificationException(targetSample, e, report);
+                    continue;
+                }
+
+                // Merge existent or add new object
+                if (persistentObject != null) {
+                    merger.merge(persistentObject, rawObject);
+                } else {
+                    List<BelongsToSample> targetObjects =
+                        getChildList(attrName, targetSample);
+                    if (targetObjects == null) {
+                        targetObjects = new ArrayList<>();
+                        try {
+                            belongsToSampleProperties.get(attrName)
+                                .getWriteMethod()
+                                .invoke(targetSample, targetObjects);
+                        } catch (ReflectiveOperationException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    targetObjects.add(srcObject);
+                }
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<BelongsToSample> getChildList(String name, Sample sample) {
+        try {
+            return (List<BelongsToSample>) belongsToSampleProperties
+                .get(name).getReadMethod().invoke(sample);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
         }
     }
 
