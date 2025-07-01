@@ -251,7 +251,7 @@ public class ObjectMergerTest extends BaseTest {
         wert1.setMeasUnitId(MEHID207);
         wert1.setMeasdId(MGID56);
         wert1.setMeasVal(MESS15D);
-        merger.mergeMesswerte(messung, List.of(wert1));
+        merger.mergeMeasVals(messung, List.of(wert1));
         List<MeasVal> dbWerte = repository.filter(builder.getQuery());
         // Only the "merged" measVal is kept
         Assert.assertEquals(1, dbWerte.size());

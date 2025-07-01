@@ -19,13 +19,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.metamodel.Attribute;
 import jakarta.persistence.metamodel.EntityType;
-import jakarta.persistence.metamodel.ListAttribute;
 import jakarta.persistence.metamodel.SingularAttribute;
-import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
@@ -75,10 +72,6 @@ public class ObjectMerger {
                 attr instanceof SingularAttribute<?, ?> sing && sing.isId()
                 // Do not recurse into associations
                 || attr.isAssociation()
-                // TODO: Skip all associations
-                && attr instanceof ListAttribute<?, ?> set
-                && BelongsToSample.class.isAssignableFrom(
-                    set.getElementType().getJavaType())
             ) {
                 continue;
             }
@@ -249,26 +242,26 @@ public class ObjectMerger {
     }
 
     /**
-     * Merge messwerte.
+     * Replace existing measVals of given target Measm instance.
+     *
      * @param target the resulting object
-     * @param messwerte the source object
+     * @param measVals the source object
      * @return the merger instance
      */
-    public ObjectMerger mergeMesswerte(
+    public ObjectMerger mergeMeasVals(
         Measm target,
-        Collection<MeasVal> messwerte
+        Collection<MeasVal> measVals
     ) {
-        QueryBuilder<MeasVal> builder =
-            repository.queryBuilder(MeasVal.class)
-            .and(MeasVal_.measm, target);
-        List<MeasVal> found =
-            repository.filter(builder.getQuery());
-        // Replace existing measVals, if any
-        for (MeasVal m: found) {
-            repository.delete(m);
-        }
-        for (MeasVal m: messwerte) {
-            repository.create(m);
+        target.getMeasVals().clear();
+        repository.entityManager()
+            .createQuery("delete from MeasVal where measm = :m")
+            .setParameter("m", target)
+            .executeUpdate();
+        if (measVals != null) {
+            for (MeasVal m: measVals) {
+                m.setMeasm(target);
+                repository.create(m);
+            }
         }
         return this;
     }

@@ -170,6 +170,11 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 // Merge existent or add new object
                 if (persistentObject != null) {
                     merger.merge(persistentObject, rawObject);
+                    if (persistentObject instanceof Measm targetMeasm
+                        && srcObject instanceof Measm srcMeasm
+                    ) {
+                        mergeMeasmChilds(targetMeasm, srcMeasm);
+                    }
                 } else {
                     List<BelongsToSample> targetObjects =
                         getChildList(attrName, targetSample);
@@ -187,6 +192,10 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 }
             }
         }
+    }
+
+    private void mergeMeasmChilds(Measm targetMeasm, Measm srcMeasm) {
+        merger.mergeMeasVals(targetMeasm, srcMeasm.getMeasVals());
     }
 
     @SuppressWarnings("unchecked")

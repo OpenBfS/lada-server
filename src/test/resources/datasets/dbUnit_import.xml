@@ -123,6 +123,12 @@
         is_completed = "false"
         is_scheduled = "true"
     />
+    <lada.meas_val
+        id = "10000"
+        measm_id = "1200"
+        measd_id = "1"
+        meas_unit_id = "1"
+    />
     <lada.geolocat
         id = "1000"
         type_regulation = "E"

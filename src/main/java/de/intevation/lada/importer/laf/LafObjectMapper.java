@@ -680,8 +680,7 @@ public class LafObjectMapper {
         Collection<MeasVal> messwerte = new ArrayList<MeasVal>();
         List<Integer> messgroessenListe = new ArrayList<Integer>();
         for (Map<String, String> measValRaw: object.getMesswerte()) {
-            MeasVal tmp =
-                createMesswert(measValRaw, newMessung);
+            MeasVal tmp = createMesswert(measValRaw);
             if (tmp != null) {
                 //find duplicates
                 if (messgroessenListe.contains(tmp.getMeasdId())) {
@@ -702,7 +701,7 @@ public class LafObjectMapper {
         messwerte = messwertNormalizer.normalizeMesswerte(
             messwerte, probe.getEnvMediumId());
         //persist messwerte
-        merger.mergeMesswerte(newMessung, messwerte);
+        merger.mergeMeasVals(newMessung, messwerte);
 
         // Check for warnings and errors for messung ...
         validate(newMessung, "validation#messung");
@@ -838,14 +837,10 @@ public class LafObjectMapper {
         return zusatzwert;
     }
 
-    private MeasVal createMesswert(
-        Map<String, String> attributes,
-        Measm measm
-    ) {
+    private MeasVal createMesswert(Map<String, String> attributes) {
         this.configMapper.applyConfigs(attributes);
 
         MeasVal messwert = new MeasVal();
-        messwert.setMeasm(measm);
 
         if (attributes.containsKey("MESSGROESSE_ID")) {
             Measd measd = repository.entityManager().find(

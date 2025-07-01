@@ -83,6 +83,7 @@ public class ImporterTest extends BaseTest {
 
     private final String existingExtId = "T001";
     private final String existingMainSampleId = "120510002";
+    private final int existingMeasmExtId = 453;
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
@@ -233,7 +234,21 @@ public class ImporterTest extends BaseTest {
             Sample_.MAIN_SAMPLE_ID, Json.createValue(existingMainSampleId));
         verify.put(Sample_.REGULATION_ID, Json.createValue(2));
 
-        testAsyncLaf8Import(laf, existingMainSampleId, true, verify);
+        JsonObject report =
+            testAsyncLaf8Import(laf, existingMainSampleId, true, verify);
+        assertMeasValIsReplaced(report);
+    }
+
+    private void assertMeasValIsReplaced(JsonObject report) {
+        // Assert that measVal is replaced
+        final int existingMeasValId = 10000;
+        Set<MeasVal> measVals = JSONBConfig.JSONB
+            .fromJson(getImportedSample(report).toString(), Sample.class)
+            .getMeasms().get(0).getMeasVals();
+        Assert.assertEquals(1, measVals.size());
+        MatcherAssert.assertThat(
+            measVals.stream().map(MeasVal::getId).toList(),
+            CoreMatchers.not(CoreMatchers.hasItem(existingMeasValId)));
     }
 
     /**
@@ -266,7 +281,6 @@ public class ImporterTest extends BaseTest {
         Sample laf = new Sample();
         laf.setExtId(existingExtId);
 
-        final int existingMeasmExtId = 453;
         Measm measmUpdate = new Measm();
         measmUpdate.setExtId(existingMeasmExtId);
         final String minSampleId = "test";
@@ -280,6 +294,34 @@ public class ImporterTest extends BaseTest {
         JsonObject verify = JSONBConfig.JSONB.fromJson(
             JSONB_SPARSE.toJson(laf).toString(), JsonObject.class);
         testAsyncLaf9Import(laf, existingMainSampleId, true, true, verify);
+    }
+
+    /**
+     * Test successful asynchronous LAF9 update import of MeasVal objects,
+     * which means existing measVals are replaced.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9UpdateMeasValImport()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = new Sample();
+        laf.setExtId(existingExtId);
+
+        Measm measm = new Measm();
+        measm.setExtId(existingMeasmExtId);
+
+        MeasVal measVal = new MeasVal();
+        measVal.setMeasdId(1);
+        measVal.setMeasUnitId(1);
+        measm.setMeasVals(Set.of(measVal));
+
+        laf.setMeasms(List.of(measm));
+
+        JsonObject verify = JSONBConfig.JSONB.fromJson(
+            JSONB_SPARSE.toJson(laf).toString(), JsonObject.class);
+        JsonObject report = testAsyncLaf9Import(
+            laf, existingMainSampleId, true, true, verify);
+        assertMeasValIsReplaced(report);
     }
 
     /**
@@ -715,7 +757,7 @@ public class ImporterTest extends BaseTest {
         if (!expectSuccess) {
             return fileReport;
         }
-        return checkImportedData(lafSampleId, fileReport, verify);
+        return checkImportedData(fileReport, verify);
     }
 
     private JsonObject testAsyncLaf9Import(
@@ -753,15 +795,21 @@ public class ImporterTest extends BaseTest {
         if (!expectSuccess) {
             return fileReport;
         }
-        return checkImportedData(lafSampleId, fileReport, verify);
+        return checkImportedData(fileReport, verify);
     }
 
     private JsonObject checkImportedData(
-        String lafSampleId,
         JsonObject fileReport,
         Map<String, JsonValue> verify
     ) {
         // Test if data correctly entered database
+        JsonObject importedSample = getImportedSample(fileReport);
+        BaseTest.verify(verify, importedSample, "owner");
+
+        return fileReport;
+    }
+
+    private JsonObject getImportedSample(JsonObject fileReport) {
         final int sampleId = fileReport.getJsonArray(SAMPLE_IDS_KEY)
             .getJsonNumber(0).intValue();
         Response importedSampleResponse = target
@@ -770,11 +818,7 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject importedSample =
-            parseResponse(importedSampleResponse, JsonObject.class);
-        BaseTest.verify(verify, importedSample, "owner");
-
-        return fileReport;
+        return parseResponse(importedSampleResponse, JsonObject.class);
     }
 
     private String randomProbeId() {
