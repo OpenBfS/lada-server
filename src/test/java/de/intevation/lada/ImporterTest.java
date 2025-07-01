@@ -61,6 +61,8 @@ public class ImporterTest extends BaseTest {
 
     private static final String ASYNC_IMPORT_URL = "data/import/async/";
 
+    private final String sampleIdsKey = "sampleIds";
+
     private final String existingMainSampleId = "120510002";
     private final String mstId = "06010";
     private final String regulation = "test";
@@ -123,10 +125,9 @@ public class ImporterTest extends BaseTest {
             parseResponse(importResponse).asJsonObject();
 
         /* Check if a Sample object has been imported */
-        final String probeIdsKey = "probeIds";
-        assertContains(importResponseObject, probeIdsKey);
+        assertContains(importResponseObject, sampleIdsKey);
         Assert.assertEquals(1,
-            importResponseObject.getJsonArray(probeIdsKey).size());
+            importResponseObject.getJsonArray(sampleIdsKey).size());
     }
 
     /**
@@ -507,7 +508,6 @@ public class ImporterTest extends BaseTest {
         final String successKey = "success";
         assertContains(fileReport, successKey);
         boolean success = fileReport.getBoolean(successKey);
-        final String sampleIdsKey = "sampleIds";
         assertContains(fileReport, sampleIdsKey);
         if (!expectSuccess) {
             Assert.assertFalse(

@@ -11,11 +11,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import jakarta.inject.Inject;
 
@@ -26,6 +23,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.util.auth.UserInfo;
@@ -42,13 +40,7 @@ public class LafImporter {
     @Inject
     private LafObjectMapper mapper;
 
-    private Map<String, List<ReportItem>> errors =
-        new HashMap<String, List<ReportItem>>();
-    private Map<String, List<ReportItem>> warnings =
-        new HashMap<String, List<ReportItem>>();
-    private Map<String, List<ReportItem>> notifications =
-        new HashMap<String, List<ReportItem>>();
-    private List<Integer> importProbeIds;
+    private Report report;
 
     /**
      * Start the import of the LAF data.
@@ -67,11 +59,7 @@ public class LafImporter {
         // Every line can be the last line, so it is easier to append a
         // newline here than to extend the grammar with EOF for every line.
         lafString += "\r\n";
-        errors = new HashMap<String, List<ReportItem>>();
-        warnings = new HashMap<String, List<ReportItem>>();
-        notifications = new HashMap<String, List<ReportItem>>();
-
-        importProbeIds = new ArrayList<Integer>();
+        report = new Report();
 
         try {
             CharStream ais = CharStreams.fromStream(new ByteArrayInputStream(
@@ -103,66 +91,28 @@ public class LafImporter {
                 parserWarnings.add(warn);
             }
             if (!errorListener.getErrors().isEmpty()) {
-                errors.put("Parser", errorListener.getErrors());
+                report.addErrors(Map.of("Parser", errorListener.getErrors()));
                 return;
             }
-            errors.putAll(listener.getErrors());
-            warnings.putAll(listener.getWarnings());
+            report.addErrors(listener.getErrors());
+            report.addWarnings(listener.getWarnings());
             if (!parserWarnings.isEmpty()) {
-                warnings.put("Parser", parserWarnings);
+                report.addWarnings(Map.of("Parser", parserWarnings));
             }
             mapper.setUserInfo(userInfo);
             mapper.setConfig(config);
             mapper.setMeasFacilId(measFacilId);
             mapper.mapObjects(listener.getData());
-            importProbeIds = mapper.getImportedProbeIds();
-            for (Entry<String, List<ReportItem>> entry
-                : mapper.getErrors().entrySet()
-            ) {
-                if (errors.containsKey(entry.getKey())) {
-                    errors.get(entry.getKey()).addAll(entry.getValue());
-                } else {
-                    errors.put(entry.getKey(), entry.getValue());
-                }
-            }
-
-            for (Entry<String, List<ReportItem>> entry
-                : mapper.getWarnings().entrySet()
-            ) {
-                if (warnings.containsKey(entry.getKey())) {
-                    warnings.get(entry.getKey()).addAll(entry.getValue());
-                } else {
-                    warnings.put(entry.getKey(), entry.getValue());
-                }
-            }
-
-            for (Entry<String, List<ReportItem>> entry
-                : mapper.getNotifications().entrySet()
-            ) {
-                if (notifications.containsKey(entry.getKey())) {
-                    notifications.get(entry.getKey()).addAll(entry.getValue());
-                } else {
-                    notifications.put(entry.getKey(), entry.getValue());
-                }
-            }
+            report.setSampleIds(mapper.getImportedProbeIds());
+            report.addErrors(mapper.getErrors());
+            report.addWarnings(mapper.getWarnings());
+            report.addNotifications(mapper.getNotifications());
         } catch (IOException e) {
             logger.debug("Exception while reading LAF input", e);
         }
     }
 
-    public Map<String, List<ReportItem>> getErrors() {
-        return this.errors;
-    }
-
-    public Map<String, List<ReportItem>> getWarnings() {
-        return this.warnings;
-    }
-
-    public Map<String, List<ReportItem>> getNotifications() {
-        return this.notifications;
-    }
-
-    public List<Integer> getImportedIds() {
-        return this.importProbeIds;
+    public Report getReport() {
+        return this.report;
     }
 }

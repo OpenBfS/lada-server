@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.importer;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,11 +16,6 @@ import java.util.Map;
  * Container for result of importing a file.
  */
 public class Report {
-
-    /**
-     * Indicates whether contents of the file could be imported.
-     */
-    private boolean success;
 
     /**
      * Name of tag that was generated for the import.
@@ -34,25 +30,24 @@ public class Report {
     /**
      * Errors per sample that occured during import.
      */
-    private Map<String, List<ReportItem>> errors = Map.of();
+    private Map<String, List<ReportItem>> errors = new HashMap<>();
 
     /**
      * Warnings per sample that occured during import.
      */
-    private Map<String, List<ReportItem>> warnings = Map.of();
+    private Map<String, List<ReportItem>> warnings = new HashMap<>();
 
     /**
      * Notifications per sample that occured during import.
      */
-    private Map<String, List<ReportItem>> notifications = Map.of();
+    private Map<String, List<ReportItem>> notifications = new HashMap<>();
 
 
+    /**
+     * Indicates whether contents of the file could be imported without errors.
+     */
     public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
+        return this.errors.isEmpty();
     }
 
     public String getTag() {
@@ -79,6 +74,16 @@ public class Report {
         this.errors = errors;
     }
 
+    public void addErrors(Map<String, List<ReportItem>> newErrors) {
+        for (Map.Entry<String, List<ReportItem>> entry : newErrors.entrySet()) {
+            if (this.errors.containsKey(entry.getKey())) {
+                this.errors.get(entry.getKey()).addAll(entry.getValue());
+            } else {
+                this.errors.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
     public Map<String, List<ReportItem>> getWarnings() {
         return warnings;
     }
@@ -87,11 +92,35 @@ public class Report {
         this.warnings = warnings;
     }
 
+    public void addWarnings(Map<String, List<ReportItem>> newWarnings) {
+        for (Map.Entry<String, List<ReportItem>> entry
+                 : newWarnings.entrySet()) {
+            if (this.warnings.containsKey(entry.getKey())) {
+                this.warnings.get(entry.getKey()).addAll(entry.getValue());
+            } else {
+                this.warnings.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
     public Map<String, List<ReportItem>> getNotifications() {
         return notifications;
     }
 
     public void setNotifications(Map<String, List<ReportItem>> notifications) {
         this.notifications = notifications;
+    }
+
+    public void addNotifications(
+        Map<String, List<ReportItem>> newNotifications
+    ) {
+        for (Map.Entry<String, List<ReportItem>> entry
+                 : newNotifications.entrySet()) {
+            if (this.notifications.containsKey(entry.getKey())) {
+                this.notifications.get(entry.getKey()).addAll(entry.getValue());
+            } else {
+                this.notifications.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 }

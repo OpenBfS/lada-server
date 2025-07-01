@@ -79,23 +79,18 @@ public class LafImportJob extends Job {
             }
             importer.doImport(content, userInfo, mstId, config);
 
-            Report fileResponseData = new Report();
-            if (!importer.getErrors().isEmpty()) {
-                fileResponseData.setErrors(importer.getErrors());
+            Report fileResponseData = importer.getReport();
+            if (!fileResponseData.getErrors().isEmpty()) {
                 this.currentStatus.setErrors(true);
             }
-            if (!importer.getWarnings().isEmpty()) {
-                fileResponseData.setWarnings(importer.getWarnings());
+            if (!fileResponseData.getWarnings().isEmpty()) {
                 this.currentStatus.setWarnings(true);
             }
-            if (!importer.getNotifications().isEmpty()) {
-                fileResponseData.setNotifications(importer.getNotifications());
+            if (!fileResponseData.getNotifications().isEmpty()) {
                 this.currentStatus.setNotifications(true);
             }
-            fileResponseData.setSuccess(!currentStatus.getErrors());
-            fileResponseData.setSampleIds(importer.getImportedIds());
             importData.put(fileName, fileResponseData);
-            importedProbeids.addAll(importer.getImportedIds());
+            importedProbeids.addAll(fileResponseData.getSampleIds());
             logger.debug(
                 String.format("Finished import of file \"%s\"", fileName));
         });
