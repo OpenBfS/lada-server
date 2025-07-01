@@ -7,9 +7,14 @@
  */
 package de.intevation.lada.importer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import de.intevation.lada.model.BaseModel;
 
 
 /**
@@ -25,22 +30,22 @@ public class Report {
     /**
      * IDs of successfully imported samples.
      */
-    private List<Integer> sampleIds = List.of();
+    private List<Integer> sampleIds = new ArrayList<>();
 
     /**
      * Errors per sample that occured during import.
      */
-    private Map<String, List<ReportItem>> errors = new HashMap<>();
+    private Map<String, Set<ReportItem>> errors = new HashMap<>();
 
     /**
      * Warnings per sample that occured during import.
      */
-    private Map<String, List<ReportItem>> warnings = new HashMap<>();
+    private Map<String, Set<ReportItem>> warnings = new HashMap<>();
 
     /**
      * Notifications per sample that occured during import.
      */
-    private Map<String, List<ReportItem>> notifications = new HashMap<>();
+    private Map<String, Set<ReportItem>> notifications = new HashMap<>();
 
 
     /**
@@ -66,61 +71,108 @@ public class Report {
         this.sampleIds = sampleIds;
     }
 
-    public Map<String, List<ReportItem>> getErrors() {
+    public void addSampleId(Integer sampleId) {
+        this.sampleIds.add(sampleId);
+    }
+
+    public Map<String, Set<ReportItem>> getErrors() {
         return errors;
     }
 
-    public void setErrors(Map<String, List<ReportItem>> errors) {
-        this.errors = errors;
-    }
-
-    public void addErrors(Map<String, List<ReportItem>> newErrors) {
-        for (Map.Entry<String, List<ReportItem>> entry : newErrors.entrySet()) {
-            if (this.errors.containsKey(entry.getKey())) {
-                this.errors.get(entry.getKey()).addAll(entry.getValue());
-            } else {
-                this.errors.put(entry.getKey(), entry.getValue());
-            }
+    public void addErrors(Map<String, Set<ReportItem>> newErrors) {
+        for (Map.Entry<String, Set<ReportItem>> entry
+                 : newErrors.entrySet()) {
+            addErrors(entry.getKey(), entry.getValue());
         }
     }
 
-    public Map<String, List<ReportItem>> getWarnings() {
+    public void addErrors(String key, Set<ReportItem> newErrors) {
+        if (this.errors.containsKey(key)) {
+            this.errors.get(key).addAll(newErrors);
+        } else {
+            this.errors.put(key, newErrors);
+        }
+    }
+
+    public void addError(String key, ReportItem error) {
+        if (this.errors.containsKey(key)) {
+            this.errors.get(key).add(error);
+        } else {
+            this.errors.put(key, new HashSet<>(Set.of(error)));
+        }
+    }
+
+    public Map<String, Set<ReportItem>> getWarnings() {
         return warnings;
     }
 
-    public void setWarnings(Map<String, List<ReportItem>> warnings) {
-        this.warnings = warnings;
-    }
-
-    public void addWarnings(Map<String, List<ReportItem>> newWarnings) {
-        for (Map.Entry<String, List<ReportItem>> entry
+    public void addWarnings(Map<String, Set<ReportItem>> newWarnings) {
+        for (Map.Entry<String, Set<ReportItem>> entry
                  : newWarnings.entrySet()) {
-            if (this.warnings.containsKey(entry.getKey())) {
-                this.warnings.get(entry.getKey()).addAll(entry.getValue());
-            } else {
-                this.warnings.put(entry.getKey(), entry.getValue());
-            }
+            addWarnings(entry.getKey(), entry.getValue());
         }
     }
 
-    public Map<String, List<ReportItem>> getNotifications() {
+    public void addWarnings(String key, Set<ReportItem> newWarnings) {
+        if (this.warnings.containsKey(key)) {
+            this.warnings.get(key).addAll(newWarnings);
+        } else {
+            this.warnings.put(key, newWarnings);
+        }
+    }
+
+    public void addWarning(String key, ReportItem warning) {
+        if (this.warnings.containsKey(key)) {
+            this.warnings.get(key).add(warning);
+        } else {
+            this.warnings.put(key, new HashSet<>(Set.of(warning)));
+        }
+    }
+
+    public Map<String, Set<ReportItem>> getNotifications() {
         return notifications;
     }
 
-    public void setNotifications(Map<String, List<ReportItem>> notifications) {
-        this.notifications = notifications;
+    public void addNotifications(
+        Map<String, Set<ReportItem>> newNotifications
+    ) {
+        for (Map.Entry<String, Set<ReportItem>> entry
+                 : newNotifications.entrySet()) {
+            addNotifications(entry.getKey(), entry.getValue());
+        }
     }
 
-    public void addNotifications(
-        Map<String, List<ReportItem>> newNotifications
-    ) {
-        for (Map.Entry<String, List<ReportItem>> entry
-                 : newNotifications.entrySet()) {
-            if (this.notifications.containsKey(entry.getKey())) {
-                this.notifications.get(entry.getKey()).addAll(entry.getValue());
-            } else {
-                this.notifications.put(entry.getKey(), entry.getValue());
-            }
+    public void addNotifications(String key, Set<ReportItem> newNotifications) {
+        if (this.notifications.containsKey(key)) {
+            this.notifications.get(key).addAll(newNotifications);
+        } else {
+            this.notifications.put(key, newNotifications);
         }
+    }
+
+    public void addNotification(String key, ReportItem notification) {
+        if (this.notifications.containsKey(key)) {
+            this.notifications.get(key).add(notification);
+        } else {
+            this.notifications.put(key, new HashSet<>(Set.of(notification)));
+        }
+    }
+
+    public void addValidatonMessages(
+        String key,
+        String itemKey,
+        BaseModel validatedObject
+    ) {
+        validatedObject.getErrors().forEach(
+            (k, v) -> v.forEach(value ->
+                addError(key, new ReportItem(itemKey, k, value))));
+
+        validatedObject.getWarnings().forEach(
+            (k, v) -> v.forEach(value ->
+                addWarning(key, new ReportItem(itemKey, k, value))));
+
+        validatedObject.getNotifications().forEach(
+            (k, v) -> v.forEach(value ->
+                addNotification(key, new ReportItem(itemKey, k, value))));
     }
 }

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 
@@ -72,10 +72,10 @@ public class LafImporter {
             errorListener.reset();
             parser.addErrorListener(errorListener);
             ParseTree tree = parser.probendatei();
-            LafObjectListener listener = new LafObjectListener();
+            LafObjectListener listener = new LafObjectListener(report);
             ParseTreeWalker walker = new ParseTreeWalker();
             walker.walk(listener, tree);
-            List<ReportItem> parserWarnings = listener.getParserWarnings();
+            Set<ReportItem> parserWarnings = listener.getParserWarnings();
             if (!listener.hasUebertragungsformat()) {
                 ReportItem warn = new ReportItem();
                 warn.setKey("UEBERTRAGUNGSFORMAT");
@@ -91,22 +91,16 @@ public class LafImporter {
                 parserWarnings.add(warn);
             }
             if (!errorListener.getErrors().isEmpty()) {
-                report.addErrors(Map.of("Parser", errorListener.getErrors()));
+                report.addErrors("Parser", errorListener.getErrors());
                 return;
             }
-            report.addErrors(listener.getErrors());
-            report.addWarnings(listener.getWarnings());
             if (!parserWarnings.isEmpty()) {
-                report.addWarnings(Map.of("Parser", parserWarnings));
+                report.addWarnings("Parser", parserWarnings);
             }
             mapper.setUserInfo(userInfo);
             mapper.setConfig(config);
             mapper.setMeasFacilId(measFacilId);
-            mapper.mapObjects(listener.getData());
-            report.setSampleIds(mapper.getImportedProbeIds());
-            report.addErrors(mapper.getErrors());
-            report.addWarnings(mapper.getWarnings());
-            report.addNotifications(mapper.getNotifications());
+            mapper.mapObjects(listener.getData(), report);
         } catch (IOException e) {
             logger.debug("Exception while reading LAF input", e);
         }
