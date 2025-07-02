@@ -104,7 +104,7 @@ public class ImporterTest extends BaseTest {
         + "%s"
         + "%%MESSUNG%%\n"
         + "MESSMETHODE_S \"" + mmtId + "\"\n"
-        + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
+        + "MESSWERT \"%s\" 0 \"%s\" 4.4\n"
         + "%s"
         + "%%ENDE%%\n";
 
@@ -191,6 +191,15 @@ public class ImporterTest extends BaseTest {
         MatcherAssert.assertThat(
             report.getJsonObject("warnings").getJsonArray(lafSampleId),
             CoreMatchers.hasItem(expectedWarning));
+
+        JsonObject expectedNotification = Json.createObjectBuilder()
+            .add("key", "validation#messwert")
+            .add("value", MeasVal_.MEAS_VAL)
+            .add("code", "must be greater than 0")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("notifications").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedNotification));
     }
 
     /**
