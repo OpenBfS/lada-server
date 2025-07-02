@@ -112,9 +112,9 @@ public class AssociationTest extends ServiceTest {
                 measFacilId,
                 9,
                 "Test");
-        measm.setStatusProts(Set.of(statusProtSampleMeasm));
+        measm.setStatusProts(List.of(statusProtSampleMeasm));
         MeasVal measValSample = getMeasVal(56, 207);
-        measm.setMeasVals(Set.of(measValSample));
+        measm.setMeasVals(List.of(measValSample));
         measm.setTags(Set.of(tag));
         SampleSpecifMeasVal sampleSpecifMeasVal =
             getSampleSpecificMeasVal("A74");
@@ -179,11 +179,11 @@ public class AssociationTest extends ServiceTest {
             9,
             "Text Neu"
          );
-        newMeasm.setStatusProts(Set.of(statusProt));
+        newMeasm.setStatusProts(List.of(statusProt));
         newMeasm.setMmtId(mmtId);
         newMeasm.setSample(created);
-        newMeasm.setMeasVals(Set.of(measVal));
-        newMeasm.setCommMeasms(Set.of(commMeasm));
+        newMeasm.setMeasVals(List.of(measVal));
+        newMeasm.setCommMeasms(List.of(commMeasm));
         Measm createdMeasm = create(measmPath, newMeasm, Measm.class);
 
         testMeasmAssociationsAreCleared(createdMeasm);
@@ -515,18 +515,18 @@ public class AssociationTest extends ServiceTest {
                 measFacilId,
                 9,
                 "Test");
-        measm2.setStatusProts(Set.of(statusProt));
+        measm2.setStatusProts(List.of(statusProt));
         Tag tag2 = new Tag();
         tag2.setName("another tag");
         CommMeasm commMeasm3 = getCommMeasm("new Comment2", measFacilId);
         MeasVal measVal3 = getMeasVal(56, 209);
-        measm2.setMeasVals(Set.of(measVal3));
+        measm2.setMeasVals(List.of(measVal3));
         CommSample commSample2 = getCommSample(measFacilId,
             "new comment2");
         SampleSpecifMeasVal sampleSpecifMeasVal2 =
                 getSampleSpecificMeasVal("A76");
         Geolocat loc3 = getGeolocat(TYPE_REGULATION_R, site);
-        measm2.setCommMeasms(Set.of(commMeasm3));
+        measm2.setCommMeasms(List.of(commMeasm3));
         updated.getMeasms().add(measm2);
         updated.getTags().add(tag2);
         updated.getCommSamples().add(commSample2);

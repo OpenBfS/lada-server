@@ -10,6 +10,7 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -118,7 +119,7 @@ public class Measm extends BelongsToSample implements Serializable {
              CascadeType.MERGE},
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<StatusProt> statusProts;
+    private List<StatusProt> statusProts;
 
 
     @OneToMany(mappedBy = CommMeasm_.MEASM,
@@ -129,7 +130,7 @@ public class Measm extends BelongsToSample implements Serializable {
             CascadeType.MERGE},
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<CommMeasm> commMeasms;
+    private List<CommMeasm> commMeasms;
 
     @OneToMany(mappedBy = MeasVal_.MEASM,
         cascade = {
@@ -139,7 +140,7 @@ public class Measm extends BelongsToSample implements Serializable {
             CascadeType.MERGE},
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<MeasVal> measVals;
+    private List<MeasVal> measVals;
 
     /* Work around the fact that hibernate does not provide means to have
     a ManyToMany association without cascading to the link table */
@@ -285,41 +286,51 @@ public class Measm extends BelongsToSample implements Serializable {
                 new Comparator<StatusProt>() {
                     @Override
                     public int compare(StatusProt arg0, StatusProt arg1) {
-                        int isAfter = - arg0.getDate().compareTo(arg1.getDate());
-                        return isAfter != 0
-                            ? isAfter
-                            // Try breaking ties using statusVal
-                            : arg0.getStatusValId() != null
-                            ? arg0.getStatusValId().compareTo(
-                                arg1.getStatusValId())
-                            : 0;
+                        Date date0 = arg0.getDate();
+                        Date date1 = arg1.getDate();
+                        if (date0 == null || date1 == null) {
+                            return 0;
+                        }
+
+                        int isAfter = - date0.compareTo(date1);
+                        if (isAfter != 0) {
+                            return isAfter;
+                        }
+
+                        // Try breaking ties using statusVal
+                        Integer statusValId0 = arg0.getStatusValId();
+                        Integer statusValId1 = arg1.getStatusValId();
+                        if (statusValId0 == null || statusValId1 == null) {
+                            return 0;
+                        }
+                        return statusValId0.compareTo(statusValId1);
                     }
                 }).findFirst().orElse(null);
         }
         return this.statusProt;
     }
 
-    public Set<StatusProt> getStatusProts() {
+    public List<StatusProt> getStatusProts() {
         return this.statusProts;
     }
 
-    public void setStatusProts(Set<StatusProt> statusProts) {
+    public void setStatusProts(List<StatusProt> statusProts) {
         this.statusProts = statusProts;
     }
 
-    public Set<CommMeasm> getCommMeasms() {
+    public List<CommMeasm> getCommMeasms() {
         return this.commMeasms;
     }
 
-    public void setCommMeasms(Set<CommMeasm> commMeasms) {
+    public void setCommMeasms(List<CommMeasm> commMeasms) {
         this.commMeasms = commMeasms;
     }
 
-    public Set<MeasVal> getMeasVals() {
+    public List<MeasVal> getMeasVals() {
         return this.measVals;
     }
 
-    public void setMeasVals(Set<MeasVal> measVals) {
+    public void setMeasVals(List<MeasVal> measVals) {
         this.measVals = measVals;
     }
 

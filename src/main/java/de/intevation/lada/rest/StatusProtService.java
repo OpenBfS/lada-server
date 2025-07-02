@@ -8,9 +8,9 @@
 package de.intevation.lada.rest;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -56,7 +56,7 @@ public class StatusProtService extends LadaIntegerIdEntityService {
      * @return requested objects.
      */
     @GET
-    public Set<StatusProt> get(
+    public Collection<StatusProt> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getById(Measm.class, measmId);

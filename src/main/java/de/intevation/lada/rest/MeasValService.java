@@ -8,7 +8,6 @@
 package de.intevation.lada.rest;
 
 import java.util.Collection;
-import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -63,7 +62,7 @@ public class MeasValService extends LadaIntegerIdEntityService {
      * @return Filtered Messwert objects.
      */
     @GET
-    public Set<MeasVal> get(
+    public Collection<MeasVal> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getById(Measm.class, measmId);

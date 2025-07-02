@@ -12,7 +12,6 @@ import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.persistence.metamodel.ListAttribute;
 import jakarta.persistence.metamodel.PluralAttribute;
-import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
 
 import java.beans.IntrospectionException;
@@ -31,6 +30,7 @@ import de.intevation.lada.importer.identification.IdentificationException;
 import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
@@ -44,6 +44,7 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.JSONBConfig;
+import de.intevation.lada.validation.Validator;
 
 
 public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
@@ -201,12 +202,33 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     }
 
     private void mergeMeasmChilds(Measm targetMeasm, Measm srcMeasm) {
+        // measVals
         Collection<MeasVal> newMeasVals = srcMeasm.getMeasVals();
         if (newMeasVals != null) {
             merger.mergeMeasVals(targetMeasm, newMeasVals);
             for (MeasVal m : newMeasVals) {
                 // Validation already done in ObjectMerger
                 reportValidationMessages(m, "validation#messwert");
+            }
+        }
+
+        // statusProts and commMeasms can only be added, not updated
+        addBelongsToMeasms(targetMeasm, srcMeasm.getStatusProts());
+        addBelongsToMeasms(targetMeasm, srcMeasm.getCommMeasms());
+    }
+
+    private void addBelongsToMeasms(
+        Measm target,
+        Collection<? extends BelongsToMeasm> newEntries
+    ) {
+        if (newEntries != null) {
+            for (BelongsToMeasm newEntry : newEntries) {
+                newEntry.setMeasm(target);
+                reportValidationMessages(
+                    validator.validate(newEntry), "Status ");
+                if (!newEntry.hasErrors()) {
+                    repository.create(newEntry);
+                }
             }
         }
     }
@@ -278,7 +300,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         if (currentTag.isPresent()) {
             return currentTag;
         }
-        if (validator.validate(tag, Default.class).isEmpty()) {
+        if (!validator.validate(tag, Default.class).hasErrors()) {
             currentTag = Optional.of(repository.create(tag));
         }
         return currentTag;

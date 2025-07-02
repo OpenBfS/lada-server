@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.Set;
+import java.util.Collection;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -41,7 +41,7 @@ public class CommMeasmService extends LadaIntegerIdEntityService {
      * @return filtered CommMeasm objects.
      */
     @GET
-    public Set<CommMeasm> get(
+    public Collection<CommMeasm> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getById(Measm.class, measmId);

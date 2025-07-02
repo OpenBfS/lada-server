@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -513,7 +512,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     private void addMesswerte(
         JsonObjectBuilder messungJsonObjectBuilder, Measm measm
     ) {
-        Set<MeasVal> messwerte = measm.getMeasVals();
+        Collection<MeasVal> messwerte = measm.getMeasVals();
         List<JsonObjectBuilder> messwerteJsonObjectBuilders = new ArrayList<>();
         for (MeasVal messwert: messwerte) {
             JsonObject messwertJsonObject = convertToJsonObject(messwert);
@@ -542,7 +541,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     private void addMessungsKommentare(
         JsonObjectBuilder messungJsonObjectBuilder, Measm measm
     ) {
-        Set<CommMeasm> kommentare = measm.getCommMeasms();
+        Collection<CommMeasm> kommentare = measm.getCommMeasms();
         List<JsonObjectBuilder> kommJsonObjectBuilders = new ArrayList<>();
         for (CommMeasm kommentar: kommentare) {
             JsonObject kommentarJsonObject = convertToJsonObject(kommentar);
@@ -565,7 +564,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         JsonObjectBuilder messungJsonObjectBuilder,
         Measm measm
     ) {
-        Set<StatusProt> status = measm.getStatusProts();
+        Collection<StatusProt> status = measm.getStatusProts();
         List<JsonObjectBuilder> statusObjectBuilders = new ArrayList<>();
         for (StatusProt statusProt: status) {
             StatusMp kombi = repository.getById(
