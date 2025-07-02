@@ -7,8 +7,8 @@
  */
 package de.intevation.lada.importer.laf;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
@@ -28,7 +28,7 @@ public class LafErrorListener extends BaseErrorListener {
     public static final LafErrorListener INSTANCE =
         new LafErrorListener();
 
-    private List<ReportItem> errors = new ArrayList<ReportItem>();
+    private Set<ReportItem> errors = new HashSet<ReportItem>();
 
     @Override
     public void syntaxError(
@@ -58,7 +58,7 @@ public class LafErrorListener extends BaseErrorListener {
         this.errors.clear();
     }
 
-    public List<ReportItem> getErrors() {
+    public Set<ReportItem> getErrors() {
         return this.errors;
     }
 }

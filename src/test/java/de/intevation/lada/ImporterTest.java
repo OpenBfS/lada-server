@@ -164,10 +164,9 @@ public class ImporterTest extends BaseTest {
             parseResponse(importResponse).asJsonObject();
 
         /* Check if a Sample object has been imported */
-        final String probeIdsKey = "probeIds";
-        assertContains(importResponseObject, probeIdsKey);
+        assertContains(importResponseObject, SAMPLE_IDS_KEY);
         Assert.assertEquals(1,
-            importResponseObject.getJsonArray(probeIdsKey).size());
+            importResponseObject.getJsonArray(SAMPLE_IDS_KEY).size());
     }
 
     /**

@@ -14,9 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +26,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
@@ -69,7 +68,7 @@ public class LafImportService extends LadaService {
     @POST
     @Path("laf")
     @Consumes(MediaType.TEXT_PLAIN)
-    public Map<String, Object> upload(
+    public Report upload(
         String content,
         @Context HttpServletRequest request
     ) {
@@ -99,32 +98,24 @@ public class LafImportService extends LadaService {
             config = repository.filter(builder.getQuery());
         }
         importer.doImport(content, userInfo, mstId, config);
-        Map<String, Object> respData = new HashMap<String, Object>();
+        Report respData = importer.getReport();
         Boolean success = true;
-        if (!importer.getErrors().isEmpty()) {
-            respData.put("errors", importer.getErrors());
-            if (importer.getErrors().values().stream().anyMatch(
-                    elem -> elem.stream().anyMatch(
-                        ele -> ele.getKey().equals("validation#probe")))) {
-                success = false;
-            }
+        if (respData.getErrors().values().stream().anyMatch(
+                elem -> elem.stream().anyMatch(
+                    ele -> ele.getKey().equals("validation#probe")))) {
+            success = false;
         }
-        if (!importer.getWarnings().isEmpty()) {
-            respData.put("warnings", importer.getWarnings());
-        }
-        if (!importer.getNotifications().isEmpty()) {
-          respData.put("notifications", importer.getNotifications());
-        }
-        List<Integer> importedProbeids = importer.getImportedIds();
-        respData.put("probeIds", importedProbeids);
 
         // If import created at least a new record
-        if (importedProbeids.size() > 0 && !mstId.equals("null") && success) {
+        if (!respData.getSampleIds().isEmpty()
+            && !mstId.equals("null")
+            && success
+        ) {
             //Generate a tag for the imported probe records
             Tag newTag = tagUtil.generateTag("IMP", mst.getNetworkId());
-            tagUtil.setTagsByProbeIds(importedProbeids, newTag.getId());
+            tagUtil.setTagsByProbeIds(respData.getSampleIds(), newTag.getId());
 
-            respData.put("tag", newTag.getName());
+            respData.setTag(newTag.getName());
         }
 
         return respData;

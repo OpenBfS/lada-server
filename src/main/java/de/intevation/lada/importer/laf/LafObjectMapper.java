@@ -16,8 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +29,7 @@ import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.importer.ObjectMerger;
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
@@ -135,13 +134,7 @@ public class LafObjectMapper {
     @Inject
     private MesswertNormalizer messwertNormalizer;
 
-    private Map<String, List<ReportItem>> errors;
-    private Map<String, List<ReportItem>> warnings;
-    private Map<String, List<ReportItem>> notifications;
-    private Set<ReportItem> currentErrors;
-    private Set<ReportItem> currentWarnings;
-    private Set<ReportItem> currentNotifications;
-    private List<Integer> importProbeIds;
+    private LafRawData.Sample currentSample;
 
     private int currentZeitbasis;
 
@@ -151,40 +144,36 @@ public class LafObjectMapper {
 
     private ImportConfigMapper configMapper;
 
+    private Report report;
+
     /**
      * Map the raw data to database objects.
      * @param data the raw data from laf parser
+     * @param report Report to collect information about import process
      */
-    public void mapObjects(LafRawData data) {
+    public void mapObjects(LafRawData data, Report report) {
         validator = new Validator();
-        errors = new HashMap<>();
-        warnings = new HashMap<>();
-        notifications = new HashMap<>();
-        importProbeIds = new ArrayList<>();
+        this.report = report;
         for (LafRawData.Sample sample: data.getProben()) {
             create(sample);
         }
     }
 
-    private void create(LafRawData.Sample object) {
-        currentWarnings = new HashSet<>();
-        currentErrors = new HashSet<>();
-        currentNotifications = new HashSet<>();
+    private void create(LafRawData.Sample currentSample) {
+        this.currentSample = currentSample;
         Sample probe = new Sample();
         String netzbetreiberId = null;
 
-        this.configMapper.applyConfigs(object.getAttributes());
+        this.configMapper.applyConfigs(currentSample.getAttributes());
 
-        if (object.getAttributes().containsKey("MESSSTELLE")) {
-            probe.setMeasFacilId(object.getAttributes().get("MESSSTELLE"));
+        if (currentSample.getAttributes().containsKey("MESSSTELLE")) {
+            probe.setMeasFacilId(currentSample.getAttributes().get("MESSSTELLE"));
         }
         if (probe.getMeasFacilId() == null) {
             if (measFacilId == null) {
-                currentErrors.add(
+                addError(
                     new ReportItem(
                         "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
-                errors.put(object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentErrors));
                 return;
             }
             probe.setMeasFacilId(measFacilId);
@@ -192,49 +181,46 @@ public class LafObjectMapper {
             MeasFacil mst = repository.entityManager().find(
                 MeasFacil.class, probe.getMeasFacilId());
             if (mst == null) {
-                currentErrors.add(
+                addError(
                     new ReportItem(
                         "MESSSTELLE",
                         probe.getMeasFacilId(), StatusCodes.IMP_INVALID_VALUE));
-                errors.put(
-                    object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentErrors));
                 return;
             }
             netzbetreiberId = mst.getNetworkId();
         }
 
-        if (object.getAttributes().containsKey("ZEITBASIS")) {
-            String attribute = object.getAttributes().get("ZEITBASIS");
+        if (currentSample.getAttributes().containsKey("ZEITBASIS")) {
+            String attribute = currentSample.getAttributes().get("ZEITBASIS");
             QueryBuilder<Tz> builder = repository.queryBuilder(Tz.class)
                 .and(Tz_.name, attribute);
             try {
                 currentZeitbasis = repository.getSingle(builder.getQuery())
                     .getId();
             } catch (NoResultException e) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         "ZEITBASIS",
-                        object.getAttributes().get(
+                        currentSample.getAttributes().get(
                             "ZEITBASIS"), StatusCodes.IMP_INVALID_VALUE));
             }
-        } else if (object.getAttributes().containsKey("ZEITBASIS_S")) {
+        } else if (currentSample.getAttributes().containsKey("ZEITBASIS_S")) {
             currentZeitbasis =
-                Integer.valueOf(object.getAttributes().get("ZEITBASIS_S"));
+                Integer.valueOf(currentSample.getAttributes().get("ZEITBASIS_S"));
             Tz timezone = repository.entityManager()
                 .find(Tz.class, currentZeitbasis);
             if (timezone == null) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         "ZEITBASIS_S",
-                        object.getAttributes().get(
+                        currentSample.getAttributes().get(
                             "ZEITBASIS_S"), StatusCodes.IMP_INVALID_VALUE));
             }
         }
 
         // Fill the object with data
         for (Entry<String, String> attribute
-                 : object.getAttributes().entrySet()) {
+                 : currentSample.getAttributes().entrySet()) {
             addProbeAttribute(attribute, probe, netzbetreiberId);
         }
         if (probe.getApprLabId() == null) {
@@ -253,11 +239,7 @@ public class LafObjectMapper {
             err.setCode(StatusCodes.NOT_ALLOWED);
             err.setKey(userInfo.getName());
             err.setValue("Messstelle " + probe.getMeasFacilId());
-            currentWarnings.clear();
-            currentErrors.add(err);
-            errors.put(
-                object.getIdentifier(),
-                new ArrayList<ReportItem>(currentErrors));
+            addError(err);
             return;
         }
 
@@ -277,7 +259,7 @@ public class LafObjectMapper {
                         old, RequestMethod.PUT);
                     if (oldProbeIsReadonly) {
                         newProbe = old;
-                        currentNotifications.add(
+                        addNotification(
                             new ReportItem(
                                 "probe",
                                 old.getExtId(),
@@ -291,11 +273,7 @@ public class LafObjectMapper {
                     err.setCode(StatusCodes.NOT_ALLOWED);
                     err.setKey(userInfo.getName());
                     err.setValue("Messstelle " + old.getMeasFacilId());
-                    currentWarnings.clear();
-                    currentErrors.add(err);
-                    errors.put(
-                        object.getIdentifier(),
-                        new ArrayList<ReportItem>(currentErrors));
+                    addError(err);
                     return;
                 }
             } else {
@@ -317,37 +295,25 @@ public class LafObjectMapper {
             err.setCode(StatusCodes.IMP_PRESENT);
             err.setKey("duplicate");
             err.setValue("");
-            currentErrors.add(err);
-            if (!currentErrors.isEmpty()) {
-                errors.put(object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentErrors));
-            }
-            if (!currentWarnings.isEmpty()) {
-                warnings.put(object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentWarnings));
-            }
-            if (!currentNotifications.isEmpty()) {
-                notifications.put(object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentNotifications));
-            }
+            addError(err);
             return;
         }
         if (newProbe != null) {
-            importProbeIds.add(newProbe.getId());
+            report.addSampleId(newProbe.getId());
         } else if (probe != null) {
-            importProbeIds.add(probe.getId());
+            report.addSampleId(probe.getId());
         }
 
         if (newProbe != null) {
             if (!oldProbeIsReadonly) {
                 // Create kommentar objects
-                for (Map<String, String> commRaw: object.getKommentare()) {
+                for (Map<String, String> commRaw: currentSample.getKommentare()) {
                     createProbeKommentar(commRaw, newProbe);
                 }
 
                 // Create zusatzwert objects
                 List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<>();
-                for (Map<String, String> raw: object.getZusatzwerte()) {
+                for (Map<String, String> raw: currentSample.getZusatzwerte()) {
                     SampleSpecifMeasVal tmp = createZusatzwert(raw, newProbe);
                     if (tmp != null) {
                         zusatzwerte.add(tmp);
@@ -357,8 +323,8 @@ public class LafObjectMapper {
                 merger.mergeZusatzwerte(newProbe, zusatzwerte);
 
                 // Create site objects
-                this.configMapper.applyConfigs(object.getEntnahmeOrt());
-                for (Map<String, String> uOrt: object.getUrsprungsOrte()) {
+                this.configMapper.applyConfigs(currentSample.getEntnahmeOrt());
+                for (Map<String, String> uOrt: currentSample.getUrsprungsOrte()) {
                     this.configMapper.applyConfigs(uOrt);
                 }
                 // Special things for REI-Messpunkt
@@ -366,7 +332,7 @@ public class LafObjectMapper {
                     || Integer.valueOf(3).equals(probe.getRegulationId())
                     || Integer.valueOf(4).equals(probe.getRegulationId())
                 ) {
-                    createReiMesspunkt(object, newProbe);
+                    createReiMesspunkt(currentSample, newProbe);
                 } else {
                     // Check if we have EOrte present
                     QueryBuilder<Geolocat> builderPresentEOrte = repository
@@ -397,12 +363,12 @@ public class LafObjectMapper {
                     // First create or find entnahmeOrte and ursprungsOrte
                     // Create the new entnahmeOrt but do not persist
                     Geolocat eOrt = createOrtszuordnung(
-                        object.getEntnahmeOrt(), "E", newProbe);
+                        currentSample.getEntnahmeOrt(), "E", newProbe);
 
                     //Create/Find Ursprungsort(e) from LAF
                     List<Geolocat> uOrte = new ArrayList<>();
                     //If object.getUrsprungsOrte().size() > 1
-                    for (Map<String, String> raw: object.getUrsprungsOrte()) {
+                    for (Map<String, String> raw: currentSample.getUrsprungsOrte()) {
                         Geolocat tmp = createOrtszuordnung(raw, "U", newProbe);
                         if (tmp != null) {
                             uOrte.add(tmp);
@@ -518,7 +484,7 @@ public class LafObjectMapper {
                             }
                         }
                         // clean up ursprungsorte before!
-                        if (object.getUrsprungsOrte().size() > 0
+                        if (currentSample.getUrsprungsOrte().size() > 0
                             || presentUOrte.size() > 0) {
                             QueryBuilder<Geolocat> builderUOrt = repository
                                 .queryBuilder(Geolocat.class)
@@ -561,16 +527,16 @@ public class LafObjectMapper {
             validate(newProbe, "validation#probe");
 
             // Create measms
-            for (LafRawData.Messung measmRaw: object.getMessungen()) {
+            for (LafRawData.Messung measmRaw: currentSample.getMessungen()) {
                 create(measmRaw, newProbe);
             }
 
             // If key SZENARIO is present in imported file, assign
             // global tag to probe and its messung objects
-            if (object.getAttributes().containsKey("SZENARIO")) {
+            if (currentSample.getAttributes().containsKey("SZENARIO")) {
                 //assign to probe object
                 assignGlobalTag(
-                    object.getAttributes().get("SZENARIO"), newProbe);
+                    currentSample.getAttributes().get("SZENARIO"), newProbe);
                 //assign to messung objects
                 QueryBuilder<Measm> builderMessung = repository
                     .queryBuilder(Measm.class)
@@ -579,33 +545,8 @@ public class LafObjectMapper {
                     repository.filter(builderMessung.getQuery());
                 for (Measm messung: messungen) {
                     assignGlobalTag(
-                        object.getAttributes().get("SZENARIO"), messung);
+                        currentSample.getAttributes().get("SZENARIO"), messung);
                 }
-            }
-        }
-        if (!currentErrors.isEmpty()) {
-            if (errors.containsKey(object.getIdentifier())) {
-                errors.get(object.getIdentifier()).addAll(currentErrors);
-            } else {
-                errors.put(object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentErrors));
-            }
-        }
-        if (!currentWarnings.isEmpty()) {
-            if (warnings.containsKey(object.getIdentifier())) {
-                warnings.get(object.getIdentifier()).addAll(currentWarnings);
-            } else {
-                warnings.put(object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentWarnings));
-            }
-        }
-        if (!currentNotifications.isEmpty()) {
-            if (notifications.containsKey(object.getIdentifier())) {
-                notifications.get(
-                    object.getIdentifier()).addAll(currentNotifications);
-            } else {
-                notifications.put(object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentNotifications));
             }
         }
     }
@@ -627,7 +568,7 @@ public class LafObjectMapper {
             warn.setCode(StatusCodes.NOT_ALLOWED);
             warn.setKey(userInfo.getName());
             warn.setValue("Messung: " + messung.getMinSampleId());
-            currentErrors.add(warn);
+            addError(warn);
             return;
         }
 
@@ -637,7 +578,7 @@ public class LafObjectMapper {
             Measm old = identification.getExisting(messung);
             if (old != null) {
                 if (!authorizer.isAuthorized(old, RequestMethod.PUT)) {
-                    currentNotifications.add(
+                    addNotification(
                         new ReportItem(
                             "messung",
                             old.getExtId(),
@@ -655,7 +596,7 @@ public class LafObjectMapper {
                     err2.setCode(StatusCodes.VALUE_MISSING);
                     err2.setKey("not valid (missing Messmethode)");
                     err2.setValue("Messung: " + messung.getMinSampleId());
-                    currentErrors.add(err2);
+                    addError(err2);
                     return;
                 }
 
@@ -667,7 +608,7 @@ public class LafObjectMapper {
             err.setCode(StatusCodes.VALUE_MISSING);
             err.setKey("identification");
             err.setValue("Messung");
-            currentErrors.add(err);
+            addError(err);
             return;
         }
 
@@ -684,7 +625,7 @@ public class LafObjectMapper {
             if (tmp != null) {
                 //find duplicates
                 if (messgroessenListe.contains(tmp.getMeasdId())) {
-                    currentWarnings.add(new ReportItem(
+                    addWarning(new ReportItem(
                             measValRaw.get("MESSGROESSE_ID") == null
                             ? "MESSWERT - MESSGROESSE"
                             : "MESSWERT - MESSGROESSE_ID",
@@ -728,7 +669,7 @@ public class LafObjectMapper {
         this.configMapper.applyConfigs(attributes);
 
         if (attributes.get("TEXT").equals("")) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     "PROBENKOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
             return;
@@ -747,7 +688,7 @@ public class LafObjectMapper {
                 .equals(attributes.get("TEXT").trim().replace(" ", "")
                     .toUpperCase()))
         ) {
-            currentNotifications.add(
+            addNotification(
                 new ReportItem(
                     "PROBENKOMMENTAR",
                     attributes.get("TEXT"),
@@ -772,7 +713,7 @@ public class LafObjectMapper {
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     userInfo.getName(),
                     "Kommentar: " + kommentar.getMeasFacilId(),
@@ -824,7 +765,7 @@ public class LafObjectMapper {
             .and(field, attribute);
         List<SampleSpecif> zusatz = repository.filter(builder.getQuery());
         if (zusatz == null || zusatz.isEmpty()) {
-            currentWarnings.add(new ReportItem(
+            addWarning(new ReportItem(
                     isId ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
                     attribute,
                     StatusCodes.IMP_INVALID_VALUE));
@@ -848,7 +789,7 @@ public class LafObjectMapper {
                 Integer.valueOf(attributes.get("MESSGROESSE_ID"))
             );
             if (measd == null) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         "MESSWERT - MESSGROESSE_ID",
                         attributes.get("MESSGROESSE_ID"),
@@ -875,7 +816,7 @@ public class LafObjectMapper {
                 .and(Measd_.name, messgroesseString);
             List<Measd> groesse = repository.filter(builder.getQuery());
             if (groesse == null || groesse.isEmpty()) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         "MESSWERT - MESSGROESSE",
                         attributes.get("MESSGROESSE"),
@@ -890,7 +831,7 @@ public class LafObjectMapper {
                 Integer.valueOf(attributes.get("MESSEINHEIT_ID"))
             );
             if (measUnit == null) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         "MESSWERT - MESSEINHEIT_ID",
                         attributes.get("MESSEINHEIT_ID"),
@@ -906,7 +847,7 @@ public class LafObjectMapper {
                 .and(MeasUnit_.unitSymbol, attribute);
             List<MeasUnit> einheit = repository.filter(builder.getQuery());
             if (einheit == null || einheit.isEmpty()) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         "MESSWERT - MESSEINHEIT",
                         attribute,
@@ -966,7 +907,7 @@ public class LafObjectMapper {
         this.configMapper.applyConfigs(attributes);
 
         if (attributes.get("TEXT").equals("")) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem("KOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
             return;
         }
@@ -999,7 +940,7 @@ public class LafObjectMapper {
                 .equals(attributes.get("TEXT").trim().replace(" ", "")
                     .toUpperCase()))
         ) {
-            currentNotifications.add(
+            addNotification(
                 new ReportItem(
                     "MESSUNGKOMMENTAR",
                     attributes.get("TEXT"),
@@ -1009,7 +950,7 @@ public class LafObjectMapper {
 
         kommentar.setText(attributes.get("TEXT"));
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     userInfo.getName(),
                     "Messungs Kommentar: " + kommentar.getMeasFacilId(),
@@ -1031,6 +972,10 @@ public class LafObjectMapper {
     ) {
         //check for warnings in Probeobject - if true prevent status 7
         Boolean probeWarnings = true;
+        Set<ReportItem> currentErrors = this.report.getErrors()
+            .getOrDefault(currentSample.getIdentifier(), Set.of());
+        Set<ReportItem> currentWarnings = this.report.getWarnings()
+            .getOrDefault(currentSample.getIdentifier(), Set.of());
         probeWarnings = currentWarnings.stream().anyMatch(
             elem -> (elem.getKey().equals("validation#probe")));
 
@@ -1059,7 +1004,7 @@ public class LafObjectMapper {
                     return;
                 }
             } else {
-                currentErrors.add(
+                addError(
                     new ReportItem(
                         "Statusvergabe", "Status", StatusCodes.VALUE_MISSING));
                 return;
@@ -1085,7 +1030,7 @@ public class LafObjectMapper {
                 .setParameter("statusLev", statusStufe)
                 .getSingleResult()).getId();
         } catch (NoResultException nre) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     "status#" + statusStufe,
                     statusWert,
@@ -1107,7 +1052,7 @@ public class LafObjectMapper {
         List<StatusAccessMpView> erreichbar =
             repository.filter(errFilter.getQuery());
         if (erreichbar.isEmpty()) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     "status#" + statusStufe,
                     statusWert,
@@ -1133,7 +1078,7 @@ public class LafObjectMapper {
                 }
                 if (!hasNoMesswert) {
                     hasValidMesswerte = true;
-                    currentWarnings.add(
+                    addWarning(
                         new ReportItem(
                             "status#" + statusStufe,
                             statusWert,
@@ -1175,7 +1120,7 @@ public class LafObjectMapper {
             repository.update(messung);
             return true;
         } else {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     "status#" + statusStufe,
                     statusWert,
@@ -1246,7 +1191,7 @@ public class LafObjectMapper {
                             warn.setCode(StatusCodes.VALUE_MISSING);
                             warn.setKey("Ort");
                             warn.setValue("Kein Messpunkt angelegt");
-                            currentWarnings.add(warn);
+                            addWarning(warn);
                             return;
                         } else {
                             o = oE;
@@ -1272,14 +1217,14 @@ public class LafObjectMapper {
                     warn.setCode(StatusCodes.VALUE_NOT_MATCHING);
                     warn.setKey("Ort");
                     warn.setValue(uo.get("U_ORTS_ZUSATZCODE"));
-                    currentWarnings.add(warn);
+                    addWarning(warn);
                 }
             } else {
                 ReportItem warn = new ReportItem();
                 warn.setCode(StatusCodes.VALUE_NOT_MATCHING);
                 warn.setKey("Ort");
                 warn.setValue(uo.get("U_ORTS_ZUSATZCODE"));
-                currentWarnings.add(warn);
+                addWarning(warn);
             }
         } else {
             Site o = null;
@@ -1338,7 +1283,7 @@ public class LafObjectMapper {
                 rawOrt.get(type + "_ORTS_ZUSATZCODE")
             );
             if (zusatz == null) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         type + "_ORTS_ZUSATZCODE",
                         rawOrt.get(type + "_ORTS_ZUSATZCODE"),
@@ -1373,7 +1318,7 @@ public class LafObjectMapper {
                 SpatRefSys spatRefSys = repository.entityManager().find(
                     SpatRefSys.class, o.getSpatRefSysId());
                 if (spatRefSys == null) {
-                    currentWarnings.add(
+                    addWarning(
                         new ReportItem(
                             type + "KOORDINATEN_ART_S",
                             attributes.get(type + "KOORDINATEN_ART_S"),
@@ -1387,7 +1332,7 @@ public class LafObjectMapper {
                 List<SpatRefSys> arten =
                     repository.filter(kdaBuilder.getQuery());
                 if (arten == null || arten.isEmpty()) {
-                    currentWarnings.add(
+                    addWarning(
                         new ReportItem(
                             type + "KOORDINATEN_ART",
                             attributes.get(type + "KOORDINATEN_ART"),
@@ -1408,7 +1353,7 @@ public class LafObjectMapper {
             List<AdminUnit> ves =
                 repository.filter(builder.getQuery());
             if (ves == null || ves.size() == 0) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         "GEMEINDENAME",
                         attributes.get(type + "GEMEINDENAME"),
@@ -1421,7 +1366,7 @@ public class LafObjectMapper {
             AdminUnit adminUnit = repository.entityManager().find(
                     AdminUnit.class, o.getAdminUnitId());
             if (adminUnit == null) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         type + "GEMEINDESCHLUESSEL", o.getAdminUnitId(),
                         StatusCodes.IMP_INVALID_VALUE));
@@ -1450,7 +1395,7 @@ public class LafObjectMapper {
             List<State> staat =
                 repository.filter(builderStaat.getQuery());
             if (staat == null || staat.size() == 0) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(key, hLand, StatusCodes.IMP_INVALID_VALUE));
             } else if (staat.size() > 0) {
                 o.setStateId(staat.get(0).getId());
@@ -1512,7 +1457,7 @@ public class LafObjectMapper {
             note.setCode(StatusCodes.VALUE_NOT_MATCHING);
             note.setKey("globalTag");
             note.setValue(szenario);
-            currentWarnings.add(note);
+            addWarning(note);
         } else {
             if (object instanceof Sample) {
                 TagLinkSample tagZuord = new TagLinkSample();
@@ -1528,7 +1473,7 @@ public class LafObjectMapper {
                     note.setCode(StatusCodes.VAL_EXISTS);
                     note.setKey("globalTag#probe");
                     note.setValue(szenario);
-                    currentNotifications.add(note);
+                    addNotification(note);
                 } else {
                     tagZuord.setTagId(globalTag.get(0).getId());
                     tagZuord.setSampleId(probe.getId());
@@ -1549,7 +1494,7 @@ public class LafObjectMapper {
                     note.setCode(StatusCodes.VAL_EXISTS);
                     note.setKey("globalTag#messung");
                     note.setValue(szenario);
-                    currentNotifications.add(note);
+                    addNotification(note);
                 } else {
                     tagZuord.setTagId(globalTag.get(0).getId());
                     tagZuord.setMeasmId(messung.getId());
@@ -1575,7 +1520,7 @@ public class LafObjectMapper {
                 Integer.valueOf(value.toString())
             );
             if (regulation == null) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1584,7 +1529,7 @@ public class LafObjectMapper {
             probe.setRegulationId(v);
         } else if ("DATENBASIS_S".equals(key)
             && probe.getRegulationId() != null) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
         }
@@ -1599,7 +1544,7 @@ public class LafObjectMapper {
             List<Regulation> datenbasis =
                 repository.filter(builder.getQuery());
             if (datenbasis == null || datenbasis.isEmpty()) {
-                currentErrors.add(
+                addError(
                     new ReportItem(key, value, StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
@@ -1608,7 +1553,7 @@ public class LafObjectMapper {
         } else if ("DATENBASIS".equals(key)
             && probe.getRegulationId() != null
         ) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
         }
@@ -1630,7 +1575,7 @@ public class LafObjectMapper {
             MeasFacil measFacil = repository.entityManager().find(
                 MeasFacil.class, value.toString());
             if (measFacil == null) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1647,7 +1592,7 @@ public class LafObjectMapper {
             List<MpgTransf> transfer = repository.filter(
                     builder.getQuery());
             if (transfer == null || transfer.isEmpty()) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1664,7 +1609,7 @@ public class LafObjectMapper {
             List<MpgTransf> transfer =
                 repository.filter(builder.getQuery());
             if (transfer == null || transfer.isEmpty()) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1684,7 +1629,7 @@ public class LafObjectMapper {
             List<DatasetCreator> datensatzErzeuger =
                 repository.filter(builder.getQuery());
             if (datensatzErzeuger == null || datensatzErzeuger.isEmpty()) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1700,7 +1645,7 @@ public class LafObjectMapper {
             List<MpgCateg> kategorie =
                 repository.filter(builder.getQuery());
             if (kategorie == null || kategorie.isEmpty()) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1715,7 +1660,7 @@ public class LafObjectMapper {
                 .and(Sampler_.extId, value);
             List<Sampler> prn = repository.filter(builder.getQuery());
             if (prn == null || prn.isEmpty()) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1745,7 +1690,7 @@ public class LafObjectMapper {
             EnvMedium envMedium = repository.entityManager().find(
                 EnvMedium.class, value.toString());
             if (envMedium == null){
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1754,7 +1699,7 @@ public class LafObjectMapper {
         } else if ("UMWELTBEREICH_S".equals(key)
             && probe.getEnvMediumId() != null
         ) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
         }
@@ -1770,7 +1715,7 @@ public class LafObjectMapper {
                 .and(EnvMedium_.name, value.toString().substring(0, length));
             List<EnvMedium> umwelt = repository.filter(builder.getQuery());
             if (umwelt == null || umwelt.isEmpty()) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1779,7 +1724,7 @@ public class LafObjectMapper {
         } else if ("UMWELTBEREICH_C".equals(key)
             && probe.getEnvMediumId() != null
         ) {
-            currentWarnings.add(
+            addWarning(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
         }
@@ -1822,7 +1767,7 @@ public class LafObjectMapper {
             if (!list.isEmpty()) {
                 probe.setReiAgGrId(list.get(0).getId());
             } else {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.VALUE_NOT_MATCHING));
             }
@@ -1839,7 +1784,7 @@ public class LafObjectMapper {
             List<SampleMeth> probenart =
                 repository.filter(builder.getQuery());
             if (probenart == null || probenart.isEmpty()) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
@@ -1876,7 +1821,7 @@ public class LafObjectMapper {
             Mmt mmt = repository.entityManager().find(
                 Mmt.class, value.toString());
             if (mmt == null) {
-                currentWarnings.add(
+                addWarning(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
             } else {
@@ -1891,7 +1836,7 @@ public class LafObjectMapper {
                 warn.setCode(StatusCodes.IMP_MISSING_VALUE);
                 warn.setKey("messmethode");
                 warn.setValue(key);
-                currentWarnings.add(warn);
+                addWarning(warn);
             } else {
                 messung.setMmtId(mm.get(0).getId());
             }
@@ -1918,56 +1863,27 @@ public class LafObjectMapper {
         if (!validated) {
             validator.validate(object);
         }
-        object.getErrors().forEach((k, v) -> {
-                v.forEach((value) -> {
-                        ReportItem err = new ReportItem(key, k, value);
-                        if (errorsToWarnings) {
-                            currentWarnings.add(err);
-                        } else {
-                            currentErrors.add(err);
-                        }
-                    });
-            });
-        object.getWarnings().forEach((k, v) -> {
-                v.forEach((value) -> {
-                        currentWarnings.add(
-                            new ReportItem(key, k, value));
-                    });
-            });
-        object.getNotifications().forEach((k, v) -> {
-                v.forEach((value) -> {
-                        currentNotifications.add(
-                            new ReportItem(key, k, value));
-                    });
-            });
+        if (errorsToWarnings) {
+            object.addErrors(object.getWarnings());
+            object.getWarnings().clear();
+        }
+        report.addValidatonMessages(
+            currentSample.getIdentifier(), key, object);
     }
 
-    /**
-     * @return the errors
-     */
-    public Map<String, List<ReportItem>> getErrors() {
-        return errors;
+    private void addError(ReportItem error) {
+        this.report.addError(
+            this.currentSample.getIdentifier(), error);
     }
 
-    /**
-     * @return the errors
-     */
-    public Map<String, List<ReportItem>> getWarnings() {
-        return warnings;
+    private void addWarning(ReportItem warning) {
+        this.report.addWarning(
+            this.currentSample.getIdentifier(), warning);
     }
 
-    /**
-     * @return the notifications
-     */
-    public Map<String, List<ReportItem>> getNotifications() {
-        return notifications;
-    }
-
-    /**
-     * @return Imported probe ids
-     */
-    public List<Integer> getImportedProbeIds() {
-        return importProbeIds;
+    private void addNotification(ReportItem notification) {
+        this.report.addNotification(
+            this.currentSample.getIdentifier(), notification);
     }
 
     /**

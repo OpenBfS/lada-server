@@ -129,7 +129,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     reportIdentificationException(sample, e, fileResponseData);
                 }
             }
-            fileResponseData.setSuccess(fileResponseData.getErrors().isEmpty());
             fileResponseData.setSampleIds(sampleIds);
             importData.put(fileName, fileResponseData);
             importedSampleIds.addAll(sampleIds);
