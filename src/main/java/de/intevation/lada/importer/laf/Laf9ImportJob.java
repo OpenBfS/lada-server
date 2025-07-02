@@ -66,6 +66,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     private Map<String, PropertyDescriptor> belongsToSampleProperties;
 
+    private Report fileResponseData;
+    private String currentReportKey;
+
     @PostConstruct
     private void init() throws IntrospectionException {
         // Collect PropertyDescriptors for lists of associated child objects
@@ -97,10 +100,12 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         // Import each file
         this.files.forEach((fileName, content) -> {
             List<Integer> sampleIds = new ArrayList<>();
-            Report fileResponseData = new Report();
+            this.fileResponseData = new Report();
             for (JsonObject rawSample: content) {
                 Sample sample = JSONBConfig.JSONB.fromJson(
                     rawSample.toString(), Sample.class);
+                this.currentReportKey = sample.getExtId() != null
+                    ? sample.getExtId() : sample.getMainSampleId();
 
                 // TODO: Authorize
                 try {
@@ -126,7 +131,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
                     // TODO: Avoid duplicating statusProt entries
                 } catch (IdentificationException e) {
-                    reportIdentificationException(sample, e, fileResponseData);
+                    reportIdentificationException(e);
                 }
             }
             fileResponseData.setSampleIds(sampleIds);
@@ -162,7 +167,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 try {
                     persistentObject = identification.getExisting(srcObject);
                 } catch (IdentificationException e) {
-                    reportIdentificationException(targetSample, e, report);
+                    reportIdentificationException(e);
                     continue;
                 }
 
@@ -208,13 +213,10 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     }
 
     private void reportIdentificationException(
-        Sample sample,
-        IdentificationException exception,
-        Report report
+        IdentificationException exception
     ) {
         Map<String, Object> failedAttrs = exception.getIdentifyingAttributes();
-        report.addError(sample.getExtId() != null
-            ? sample.getExtId() : sample.getMainSampleId(),
+        fileResponseData.addError(currentReportKey,
             new ReportItem(
                 failedAttrs.keySet().toString(),
                 failedAttrs.values().toString(),
