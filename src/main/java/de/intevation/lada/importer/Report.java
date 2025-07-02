@@ -158,7 +158,7 @@ public class Report {
         }
     }
 
-    public void addValidatonMessages(
+    public void addValidationMessages(
         String key,
         String itemKey,
         BaseModel validatedObject

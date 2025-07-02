@@ -1875,7 +1875,7 @@ public class LafObjectMapper {
             object.addErrors(object.getWarnings());
             object.getWarnings().clear();
         }
-        report.addValidatonMessages(
+        report.addValidationMessages(
             currentSample.getIdentifier(), key, object);
     }
 
