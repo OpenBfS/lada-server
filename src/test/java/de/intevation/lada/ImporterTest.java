@@ -41,6 +41,7 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
@@ -83,7 +84,7 @@ public class ImporterTest extends BaseTest {
         + "%s"
         + "%%MESSUNG%%\n"
         + "MESSMETHODE_S \"A3\"\n"
-        + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
+        + "MESSWERT \"%s\" 0 \"%s\" 4.4\n"
         + "%s"
         + "%%ENDE%%\n";
 
@@ -150,6 +151,15 @@ public class ImporterTest extends BaseTest {
         MatcherAssert.assertThat(
             report.getJsonObject("warnings").getJsonArray(lafSampleId),
             CoreMatchers.hasItem(expectedWarning));
+
+        JsonObject expectedNotification = Json.createObjectBuilder()
+            .add("key", "validation#messwert")
+            .add("value", MeasVal_.MEAS_VAL)
+            .add("code", "must be greater than 0")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("notifications").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedNotification));
     }
 
     /**
