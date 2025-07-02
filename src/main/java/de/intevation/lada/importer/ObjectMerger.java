@@ -30,6 +30,7 @@ import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.JSONBConfig;
+import de.intevation.lada.validation.Validator;
 
 
 /**
@@ -39,6 +40,9 @@ public class ObjectMerger {
 
     @Inject
     private Repository repository;
+
+    @Inject
+    private Validator validator;
 
     /**
      * Merge attribute values from JSON object into
@@ -257,9 +261,10 @@ public class ObjectMerger {
             .createQuery("delete from MeasVal where measm = :m")
             .setParameter("m", target)
             .executeUpdate();
-        if (measVals != null) {
-            for (MeasVal m: measVals) {
-                m.setMeasm(target);
+        for (MeasVal m: measVals) {
+            m.setMeasm(target);
+            validator.validate(m);
+            if (!m.hasErrors()) {
                 repository.create(m);
             }
         }

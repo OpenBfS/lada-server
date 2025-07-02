@@ -333,6 +333,45 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Asynchronous LAF9 import reports error, if given measVals with
+     * duplicate measurand.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9DupMeasValImport()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = new Sample();
+        laf.setExtId(existingExtId);
+
+        Measm measm = new Measm();
+        measm.setExtId(existingMeasmExtId);
+
+        MeasVal measVal1 = new MeasVal();
+        measVal1.setMeasdId(1);
+        measVal1.setMeasUnitId(1);
+        MeasVal measVal2 = new MeasVal();
+        measVal2.setMeasdId(1);
+        measVal2.setMeasUnitId(1);
+        measm.setMeasVals(Set.of(measVal1, measVal2));
+
+        laf.setMeasms(List.of(measm));
+
+        JsonObject verify = JSONBConfig.JSONB.fromJson(
+            JSONB_SPARSE.toJson(laf).toString(), JsonObject.class);
+        JsonObject report = testAsyncLaf9Import(
+            laf, existingMainSampleId, false, true, verify);
+        JsonObject expectedError = Json.createObjectBuilder()
+            .add(REPORT_ITEM_KEY_KEY, "validation#messwert")
+            .add(REPORT_ITEM_VALUE_KEY, MeasVal_.MEASD_ID)
+            .add(REPORT_ITEM_CODE_KEY,
+                "Non-unique value combination for [measdId, measm]")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject(ERRORS_KEY).getJsonArray(existingExtId),
+            CoreMatchers.hasItem(expectedError));
+    }
+
+    /**
      * Test failing sample identification with LAF8.
      */
     @Test

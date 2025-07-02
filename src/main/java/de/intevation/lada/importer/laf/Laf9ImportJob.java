@@ -30,7 +30,9 @@ import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
 import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToSample;
+import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.TagLinkMeasm;
@@ -199,7 +201,14 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     }
 
     private void mergeMeasmChilds(Measm targetMeasm, Measm srcMeasm) {
-        merger.mergeMeasVals(targetMeasm, srcMeasm.getMeasVals());
+        Collection<MeasVal> newMeasVals = srcMeasm.getMeasVals();
+        if (newMeasVals != null) {
+            merger.mergeMeasVals(targetMeasm, newMeasVals);
+            for (MeasVal m : newMeasVals) {
+                // Validation already done in ObjectMerger
+                reportValidationMessages(m, "validation#messwert");
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -221,6 +230,13 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 failedAttrs.keySet().toString(),
                 failedAttrs.values().toString(),
                 StatusCodes.IMP_INVALID_VALUE));
+    }
+
+    private void reportValidationMessages(
+        BaseModel validatedObject, String key
+    ) {
+        fileResponseData.addValidationMessages(
+            currentReportKey, key, validatedObject);
     }
 
     private void handleMeasmTags(Measm measm) {
