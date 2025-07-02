@@ -73,7 +73,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     private String currentReportKey;
 
     @PostConstruct
-    private void init() throws IntrospectionException {
+    private void init() {
         // Collect PropertyDescriptors for lists of associated child objects
         Map<String, PropertyDescriptor> collectGetters = new HashMap<>();
         Set<PluralAttribute<? super Sample, ?, ?>> attrs = repository
@@ -85,8 +85,13 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     attr.getElementType().getJavaType())
             ) {
                 String attrName = attr.getName();
-                collectGetters.put(attrName,
-                    new PropertyDescriptor(attrName, Sample.class));
+                try {
+                    collectGetters.put(attrName,
+                        new PropertyDescriptor(attrName, Sample.class));
+                } catch (IntrospectionException e) {
+                    // Avoids warning during startup
+                    throw new RuntimeException(e);
+                }
             }
         }
         this.belongsToSampleProperties = Map.copyOf(collectGetters);
