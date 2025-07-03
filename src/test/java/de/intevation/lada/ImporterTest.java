@@ -224,16 +224,15 @@ public class ImporterTest extends BaseTest {
         expected.getMeasms().get(0).getStatusProts().add(0, generatedStatus);
         JsonObject verify = JSONBConfig.JSONB.fromJson(
             JSONB_SPARSE.toJson(expected), JsonObject.class);
-        testAsyncLaf9Import(laf, lafSampleId, true, verify);
-        // TODO: Check for expected warning
-        // JsonObject expectedWarning = Json.createObjectBuilder()
-        //     .add(REPORT_ITEM_KEY_KEY, "validation#probe")
-        //     .add(REPORT_ITEM_VALUE_KEY, "geolocats")
-        //     .add(REPORT_ITEM_CODE_KEY, "A sampling location must be provided")
-        //     .build();
-        // MatcherAssert.assertThat(
-        //     report.getJsonObject("warnings").getJsonArray(lafSampleId),
-        //     CoreMatchers.hasItem(expectedWarning));
+        JsonObject report = testAsyncLaf9Import(laf, lafSampleId, true, verify);
+        JsonObject expectedWarning = Json.createObjectBuilder()
+            .add(REPORT_ITEM_KEY_KEY, "validation#probe")
+            .add(REPORT_ITEM_VALUE_KEY, "geolocats")
+            .add(REPORT_ITEM_CODE_KEY, "A sampling location must be provided")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("warnings").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedWarning));
     }
 
     /**

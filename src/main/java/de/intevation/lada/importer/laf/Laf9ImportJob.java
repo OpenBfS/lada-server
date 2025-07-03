@@ -119,12 +119,20 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 try {
                     Sample persistent = identification.getExisting(sample);
                     if (persistent == null) {
-                        repository.create(sample);
-                        sampleIds.add(sample.getId());
+                        reportValidationMessages(
+                            validator.validate(sample), "validation#probe");
+                        if (!sample.hasErrors()) {
+                            repository.create(sample);
+                            sampleIds.add(sample.getId());
+                        }
                     } else {
                         merge(persistent, sample, rawSample, fileResponseData);
-                        repository.update(persistent);
-                        sampleIds.add(persistent.getId());
+                        reportValidationMessages(
+                            validator.validate(persistent), "validation#probe");
+                        if (!persistent.hasErrors()) {
+                            repository.update(persistent);
+                            sampleIds.add(persistent.getId());
+                        }
                     }
                     // Handle associated tags
                     // TODO: Handle tag links outside request scope
@@ -132,8 +140,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     // for (Measm m: sample.getMeasms()) {
                     //     handleMeasmTags(m);
                     // }
-
-                    // TODO: validate
 
                     // TODO: Handle geolocat.site_id
 
@@ -158,6 +164,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     ) {
         merger.merge(targetSample, rawSample);
         // TODO: Merge other associations
+        // TODO: validate
         for (String attrName : belongsToSampleProperties.keySet()) {
             List<BelongsToSample> srcObjects =
                 getChildList(attrName, srcSample);
