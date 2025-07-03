@@ -107,7 +107,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
         // Import each file
         this.files.forEach((fileName, content) -> {
-            List<Integer> sampleIds = new ArrayList<>();
             this.fileResponseData = new Report();
             for (JsonObject rawSample: content) {
                 Sample sample = JSONBConfig.JSONB.fromJson(
@@ -123,7 +122,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                             validator.validate(sample), "validation#probe");
                         if (!sample.hasErrors()) {
                             repository.create(sample);
-                            sampleIds.add(sample.getId());
+                            fileResponseData.addSampleId(sample.getId());
                         }
                     } else {
                         merge(persistent, sample, rawSample, fileResponseData);
@@ -131,7 +130,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                             validator.validate(persistent), "validation#probe");
                         if (!persistent.hasErrors()) {
                             repository.update(persistent);
-                            sampleIds.add(persistent.getId());
+                            fileResponseData.addSampleId(persistent.getId());
                         }
                     }
                     // Handle associated tags
@@ -148,9 +147,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     reportIdentificationException(e);
                 }
             }
-            fileResponseData.setSampleIds(sampleIds);
             importData.put(fileName, fileResponseData);
-            importedSampleIds.addAll(sampleIds);
+            importedSampleIds.addAll(fileResponseData.getSampleIds());
         });
 
         tagImportedData(importedSampleIds, this.mst);
