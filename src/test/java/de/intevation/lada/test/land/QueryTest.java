@@ -9,8 +9,6 @@ package de.intevation.lada.test.land;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
@@ -36,9 +34,6 @@ public class QueryTest extends ServiceTest {
     @Override
     public void init(WebTarget t) {
         super.init(t);
-
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{});
 
         // Load probe object to test POST request
         createPayload = readJsonResource("/datasets/query.json");

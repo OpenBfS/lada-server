@@ -7,14 +7,13 @@
  */
 package de.intevation.lada.test.land;
 
-import java.util.Arrays;
-
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.test.ServiceTest;
 
@@ -32,13 +31,8 @@ public class OrtszuordnungTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "lastMod"
-        });
-
         expectedById = convertObject(
-            readXmlResource("datasets/dbUnit_lada.xml", Geolocat.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", Geolocat.class)
                 .getJsonObject(0))
             .add("parentModified", TS1)
             .add("readonly", JsonValue.FALSE)

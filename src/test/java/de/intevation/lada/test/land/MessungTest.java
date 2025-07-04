@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.util.Arrays;
-
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
@@ -18,6 +16,7 @@ import jakarta.ws.rs.core.Response;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.test.ServiceTest;
 
@@ -35,16 +34,9 @@ public class MessungTest extends ServiceTest {
     public void init (WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "lastMod",
-            "measmStartDate",
-            "treeMod"
-        });
-
         // Prepare expected probe object
         JsonObject messung =
-            readXmlResource("datasets/dbUnit_lada.xml", Measm.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", Measm.class)
             .getJsonObject(0);
         expectedById = convertObject(messung)
             .add("parentModified", TS1)

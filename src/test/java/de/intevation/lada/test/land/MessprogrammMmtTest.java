@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.util.Arrays;
-
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -16,6 +14,7 @@ import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.test.ServiceTest;
 
@@ -30,14 +29,9 @@ public class MessprogrammMmtTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung"
-        });
-
         // Prepare expected object
         JsonObject messprogrammMmt =
-            readXmlResource("datasets/dbUnit_lada.xml", MpgMmtMp.class)
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", MpgMmtMp.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogrammMmt);
         builder.add("measds", Json.createArrayBuilder().add(56));

@@ -41,6 +41,7 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
@@ -61,6 +62,9 @@ public class ImporterTest extends BaseTest {
 
     private static final String ASYNC_IMPORT_URL = "data/import/async/";
 
+    private final String sampleIdsKey = "sampleIds";
+
+    private final String existingMainSampleId = "120510002";
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
@@ -80,7 +84,7 @@ public class ImporterTest extends BaseTest {
         + "%s"
         + "%%MESSUNG%%\n"
         + "MESSMETHODE_S \"A3\"\n"
-        + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
+        + "MESSWERT \"%s\" 0 \"%s\" 4.4\n"
         + "%s"
         + "%%ENDE%%\n";
 
@@ -122,10 +126,9 @@ public class ImporterTest extends BaseTest {
             parseResponse(importResponse).asJsonObject();
 
         /* Check if a Sample object has been imported */
-        final String probeIdsKey = "probeIds";
-        assertContains(importResponseObject, probeIdsKey);
+        assertContains(importResponseObject, sampleIdsKey);
         Assert.assertEquals(1,
-            importResponseObject.getJsonArray(probeIdsKey).size());
+            importResponseObject.getJsonArray(sampleIdsKey).size());
     }
 
     /**
@@ -148,6 +151,15 @@ public class ImporterTest extends BaseTest {
         MatcherAssert.assertThat(
             report.getJsonObject("warnings").getJsonArray(lafSampleId),
             CoreMatchers.hasItem(expectedWarning));
+
+        JsonObject expectedNotification = Json.createObjectBuilder()
+            .add("key", "validation#messwert")
+            .add("value", MeasVal_.MEAS_VAL)
+            .add("code", "must be greater than 0")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("notifications").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedNotification));
     }
 
     /**
@@ -285,6 +297,24 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test asynchronous import updating sampling location.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportUpdateGeolocatE()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = existingMainSampleId;
+        testAsyncImportProbeNoWarnings(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId,
+                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                measd, measUnit, ""),
+            lafSampleId,
+            true);
+    }
+
+    /**
      * Test asynchronous import including status.
      */
     @Test
@@ -407,10 +437,10 @@ public class ImporterTest extends BaseTest {
         JsonObject response = testAsyncImportProbe(
             lafData, lafSampleId, expectSuccess);
         final String warningsKey = "warnings";
-        if (response.containsKey(warningsKey)) {
+        JsonObject warnings = response.getJsonObject(warningsKey);
+        if (!warnings.isEmpty()) {
             Assert.fail("Unexpected warnings: "
-                + response.getJsonObject(warningsKey)
-                .getJsonArray(lafSampleId));
+                + warnings.getJsonArray(lafSampleId));
         }
         return response;
     }
@@ -488,7 +518,6 @@ public class ImporterTest extends BaseTest {
         final String successKey = "success";
         assertContains(fileReport, successKey);
         boolean success = fileReport.getBoolean(successKey);
-        final String sampleIdsKey = "probeIds";
         assertContains(fileReport, sampleIdsKey);
         if (!expectSuccess) {
             Assert.assertFalse(

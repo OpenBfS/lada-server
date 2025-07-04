@@ -60,7 +60,7 @@ public class ImportJobManager extends JobManager {
      * @param userInfo for authorization
      * @return Import result report data for requested job
      */
-    public Map<String, Map<String, Object>> getImportResult(
+    public Map<String, Report> getImportResult(
         String id, UserInfo userInfo
     ) {
         LafImportJob job = (LafImportJob) getJobById(id, userInfo);

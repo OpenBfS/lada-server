@@ -9,9 +9,12 @@ package de.intevation.lada.importer.laf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.util.data.StatusCodes;
 
@@ -25,11 +28,10 @@ public class LafObjectListener extends LafBaseListener {
     LafRawData.Messung currentMessung;
     Map<String, String> currentUOrt;
     Map<String, String> currentEOrt;
-    Map<String, List<ReportItem>> errors;
-    Map<String, List<ReportItem>> warnings;
-    ArrayList<ReportItem> currentErrors;
-    ArrayList<ReportItem> currentWarnings;
-    ArrayList<ReportItem> parserWarnings;
+    private Set<ReportItem> currentErrors;
+    private Set<ReportItem> currentWarnings;
+    private Set<ReportItem> parserWarnings;
+    private Report report;
 
     private boolean hasDatenbasis = false;
     private boolean hasMessprogramm = false;
@@ -42,13 +44,12 @@ public class LafObjectListener extends LafBaseListener {
     private boolean hasEKoordinaten = false;
     private boolean probenNrContext = false;
 
-    public LafObjectListener() {
+    public LafObjectListener(Report report) {
         data = new LafRawData();
-        errors = new HashMap<>();
-        warnings = new HashMap<>();
-        currentErrors = new ArrayList<>();
-        currentWarnings = new ArrayList<>();
-        parserWarnings = new ArrayList<>();
+        this.report = report;
+        this.currentErrors = new HashSet<>();
+        this.currentWarnings = new HashSet<>();
+        this.parserWarnings = new HashSet<>();
         currentUOrt = new HashMap<>();
         currentEOrt = new HashMap<>();
     }
@@ -57,21 +58,7 @@ public class LafObjectListener extends LafBaseListener {
         return data;
     }
 
-    /**
-     * @return the errors
-     */
-    public Map<String, List<ReportItem>> getErrors() {
-        return errors;
-    }
-
-    /**
-     * @return the warnings
-     */
-    public Map<String, List<ReportItem>> getWarnings() {
-        return warnings;
-    }
-
-    public List<ReportItem> getParserWarnings() {
+    public Set<ReportItem> getParserWarnings() {
         return parserWarnings;
     }
 
@@ -91,15 +78,17 @@ public class LafObjectListener extends LafBaseListener {
 
     @Override public void enterEnd(LafParser.EndContext ctx) {
         if (!parserWarnings.isEmpty()) {
-            warnings.put("Parser", parserWarnings);
+            report.addWarnings("Parser", parserWarnings);
         }
         if (currentProbe != null) {
             data.addProbe(currentProbe);
             if (!currentErrors.isEmpty()) {
-                errors.put(currentProbe.getIdentifier(), currentErrors);
+                report.addErrors(
+                    currentProbe.getIdentifier(), currentErrors);
             }
             if (!currentWarnings.isEmpty()) {
-                warnings.put(currentProbe.getIdentifier(), currentWarnings);
+                report.addWarnings(
+                    currentProbe.getIdentifier(), currentWarnings);
             }
 
             currentErrors.clear();
@@ -147,26 +136,10 @@ public class LafObjectListener extends LafBaseListener {
             currentEOrt.clear();
         }
         if (!currentErrors.isEmpty()) {
-            if (errors.containsKey(currentProbe.getIdentifier())) {
-                errors.get(
-                    currentProbe.getIdentifier()).addAll(
-                        new ArrayList<>(currentErrors));
-            } else {
-                errors.put(
-                    currentProbe.getIdentifier(),
-                    new ArrayList<>(currentErrors));
-            }
+            report.addErrors(currentProbe.getIdentifier(), currentErrors);
         }
         if (!currentWarnings.isEmpty()) {
-            if (warnings.containsKey(currentProbe.getIdentifier())) {
-                warnings.get(
-                    currentProbe.getIdentifier()).addAll(
-                        new ArrayList<>(currentWarnings));
-            } else {
-                warnings.put(
-                    currentProbe.getIdentifier(),
-                    new ArrayList<>(currentWarnings));
-            }
+            report.addWarnings(currentProbe.getIdentifier(), currentWarnings);
         }
         currentProbe = data.new Sample();
         currentErrors.clear();

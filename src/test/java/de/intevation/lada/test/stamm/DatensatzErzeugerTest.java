@@ -7,14 +7,13 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.util.Arrays;
-
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.test.ServiceTest;
 
@@ -30,14 +29,9 @@ public class DatensatzErzeugerTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "lastMod"
-        });
-
         // Prepare expected object
         JsonObject erzeuger =
-            readXmlResource("datasets/dbUnit_master.xml", DatasetCreator.class)
+            BaseTest.readXmlResource("datasets/dbUnit_master.xml", DatasetCreator.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();

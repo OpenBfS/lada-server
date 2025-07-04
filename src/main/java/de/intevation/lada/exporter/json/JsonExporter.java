@@ -10,10 +10,11 @@ package de.intevation.lada.exporter.json;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -24,20 +25,15 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.jboss.logging.Logger;
-
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.lada.CommMeasm;
@@ -77,6 +73,7 @@ import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.rest.JSONBConfig;
 
 /**
  * Exporter class for writing query results to JSON.
@@ -85,9 +82,9 @@ import de.intevation.lada.util.data.Repository;
  */
 public class JsonExporter implements Exporter<QueryExportParameters> {
 
+    private Jsonb jsonb = JsonbBuilder.create(JSONBConfig.getJsonbConfig());
+
     private static final int ZEBS_COUNTER = 3;
-    private static final String JSON_DATE_FORMAT
-        = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSSXXX";
 
     @Inject private Logger logger;
 
@@ -205,14 +202,13 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         Charset encoding,
         UserInfo userInfo
     ) {
-        //Create json.
-        String json = createJsonString(probeIds, userInfo);
+        JsonArrayBuilder json = generateProbenObjectBuilder(probeIds, userInfo);
         if (json == null) {
             return null;
         }
-
+        String jsonString = json.build().toString();
         InputStream in = new ByteArrayInputStream(
-            json.getBytes(StandardCharsets.UTF_8));
+            jsonString.getBytes(StandardCharsets.UTF_8));
         try {
             in.close();
         } catch (IOException e) {
@@ -237,53 +233,49 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         Charset encoding,
         UserInfo userInfo
     ) {
-        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
-        for (Integer id : messungsIds) {
-            builder.or(Measm_.id, id);
-        }
-        List<Measm> messungen =
-            repository.filter(builder.getQuery());
+        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
+            .andIn(Measm_.id, messungsIds);
+        List<Measm> messungen = repository.filter(builder.getQuery());
         if (messungen.isEmpty()) {
             return null;
         }
-        final ObjectMapper mapper = createObjectMapper();
-        ArrayNode json = mapper.createArrayNode();
+
+        List<JsonObjectBuilder> messungenObjectBuilders = new ArrayList<>();
         for (Measm m : messungen) {
             Sample p = repository.getById(
                 Sample.class,
                 m.getSampleId()
             );
-            try {
-                String tmp = mapper.writeValueAsString(p);
-                JsonNode jsProbe = mapper.readTree(tmp);
-                addProbeninfo(jsProbe);
-                tmp = mapper.writeValueAsString(m);
-                JsonNode jsMessung = mapper.readTree(tmp);
-                Mmt mmt = repository.getById(
-                    Mmt.class,
-                    m.getMmtId()
-                );
-                ((ObjectNode) jsMessung).put("mmt", mmt == null ?
-                    "" : mmt.getName());
-                addMesswerte(jsMessung);
-                addMessungsKommentare(jsMessung);
-                addStatusProtokoll(jsMessung);
-                ArrayNode mArry = mapper.createArrayNode();
-                mArry.add(jsMessung);
-                ((ObjectNode) jsProbe).set("measms", mArry);
-                addKommentare(jsProbe);
-                addZusatzwerte(jsProbe);
-                addDeskriptoren(jsProbe);
-                addOrtszuordung(jsProbe);
-                addMessstelle(jsProbe);
-                json.add(jsProbe);
-            } catch (IOException e) {
-                logger.debug("Error parsing object structure.", e);
-                return null;
-            }
+            JsonObject sampleJsonObject = convertToJsonObject(p);
+            JsonObjectBuilder sampleJsonObjectBuilder =
+                Json.createObjectBuilder(sampleJsonObject);
+            addProbeninfo(sampleJsonObjectBuilder, p);
+            JsonObject measmJsonObject = convertToJsonObject(m);
+            JsonObjectBuilder measmJsonObjectBuilder =
+                Json.createObjectBuilder(measmJsonObject);
+            Mmt mmt = repository.getById(
+                Mmt.class,
+                m.getMmtId()
+            );
+            measmJsonObjectBuilder.add("mmt", mmt == null ?
+                nullableString("") : nullableString(mmt.getName()));
+            addMesswerte(measmJsonObjectBuilder, m);
+            addMessungsKommentare(measmJsonObjectBuilder, m);
+            addStatusProtokoll(measmJsonObjectBuilder, m);
+            JsonArrayBuilder mArry = Json.createArrayBuilder();
+            mArry.add(measmJsonObjectBuilder);
+            sampleJsonObjectBuilder.add("measms", mArry);
+            addKommentare(sampleJsonObjectBuilder, p);
+            addZusatzwerte(sampleJsonObjectBuilder, p);
+            addDeskriptoren(sampleJsonObjectBuilder, p);
+            addOrtszuordung(sampleJsonObjectBuilder, p);
+            addMessstelle(sampleJsonObjectBuilder, p);
+            messungenObjectBuilders.add(sampleJsonObjectBuilder);
         }
+        JsonArrayBuilder json = Json.createArrayBuilder(messungenObjectBuilders);
+        String jsonString = json.build().toString();
         InputStream in = new ByteArrayInputStream(
-            json.toString().getBytes(StandardCharsets.UTF_8));
+            jsonString.toString().getBytes(StandardCharsets.UTF_8));
         try {
             in.close();
         } catch (IOException e) {
@@ -293,207 +285,211 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         return in;
     }
 
-    private String createJsonString(List<Integer> probeIds, UserInfo userInfo) {
-        QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
-        for (Integer id : probeIds) {
-            builder.or(Sample_.id, id);
+    /**
+     * Export Messungen and associated Proben context.
+     * @param probeIds ignored.
+     * @param messungsIds List of Messungs IDs to export.
+     * @param encoding Ignored. Result is always UTF_8.
+     * @param userInfo UserInfo
+     * @return Export result as InputStream or null if the export failed
+     */
+    private JsonArrayBuilder generateProbenObjectBuilder(
+        List<Integer> probeIds, UserInfo userInfo
+    ) {
+        JsonArrayBuilder jsonBuilder = Json.createArrayBuilder();
+        List<Sample> proben = repository.filter(repository
+            .queryBuilder(Sample.class)
+            .andIn(Sample_.id, probeIds)
+            .getQuery());
+        List<JsonObjectBuilder> probenbuilder = new ArrayList<>();
+        for (Sample s : proben) {
+            JsonObject probeJson = convertToJsonObject(s);
+            JsonObjectBuilder builder = Json.createObjectBuilder(probeJson);
+            addProbeninfo(builder, s);
+            addMessungen(builder, s);
+            addKommentare(builder, s);
+            addZusatzwerte(builder, s);
+            addDeskriptoren(builder, s);
+            addOrtszuordung(builder, s);
+            addMessstelle(builder, s);
+            probenbuilder.add(builder);
         }
-        List<Sample> proben =
-            repository.filter(builder.getQuery());
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            String tmp = mapper.writeValueAsString(proben);
-            JsonNode nodes = mapper.readTree(tmp);
-            for (int i = 0; i < nodes.size(); i++) {
-                addProbeninfo(nodes.get(i));
-                addMessungen(nodes.get(i));
-                addKommentare(nodes.get(i));
-                addZusatzwerte(nodes.get(i));
-                addDeskriptoren(nodes.get(i));
-                addOrtszuordung(nodes.get(i));
-                addMessstelle(nodes.get(i));
-            }
-            return mapper.writeValueAsString(nodes);
-        } catch (IOException e) {
-            logger.debug("Error parsing object structure.", e);
-            return null;
-        }
+        probenbuilder.stream().forEach(jsonBuilder::add);
+        return jsonBuilder;
     }
 
-    private void addProbeninfo(JsonNode node) {
-        ObjectNode probe = (ObjectNode) node;
+    private void addProbeninfo(JsonObjectBuilder probe, Sample sample) {
         SampleMeth art = repository.getById(
             SampleMeth.class,
-            probe.get("sampleMethId").asInt()
+            sample.getSampleMethId()
         );
         Regulation datenbasis = repository.getById(
             Regulation.class,
-            probe.get("regulationId").asInt()
+            sample.getRegulationId()
         );
         EnvMedium umw = repository.getById(
             EnvMedium.class,
-            probe.get("envMediumId").asText()
+            sample.getEnvMediumId()
         );
-        probe.put("sampleMethExtId",
-            art == null ? "" : art.getExtId());
-        probe.put("regulation",
-            datenbasis == null ? "" : datenbasis.getName());
-        probe.put("envMediumName", umw == null ? "" : umw.getName());
-        if (probe.get("oprModeId").asInt() != 0) {
+        probe.add("sampleMethExtId",
+            art == null
+            ? nullableString("")
+            : nullableString(art.getExtId()));
+        probe.add("regulation",
+            datenbasis == null
+            ? nullableString("")
+            : nullableString(datenbasis.getName()));
+        probe.add("envMediumName",
+            umw == null
+            ? nullableString("")
+            : nullableString(umw.getName()));
+        if (sample.getOprModeId() != null) {
             OprMode ba = repository.getById(
                 OprMode.class,
-                probe.get("oprModeId").asInt()
+                sample.getOprModeId()
             );
-            probe.put("oprModeName", ba.getName());
+            probe.add("oprModeName", nullableString(ba.getName()));
         }
-        if (probe.get("mpgCategId").asInt() != 0) {
+        if (sample.getMpgCategId() != null) {
             MpgCateg mpl = repository.getById(
                 MpgCateg.class,
-                probe.get("mpgCategId").asInt()
+                sample.getMpgCategId()
             );
-            probe.put("mpgCategExtId", mpl.getExtId());
-            probe.put("mpgCategName", mpl.getName());
+            probe.add("mpgCategExtId", nullableString(mpl.getExtId()));
+            probe.add("mpgCategName", nullableString(mpl.getName()));
         }
-        if (probe.get("samplerId").asInt() != 0) {
+        if (sample.getSamplerId() != null) {
             Sampler probenehmer = repository.getById(
                 Sampler.class,
-                probe.get("samplerId").asInt()
+                sample.getSamplerId()
             );
-            probe.put("samplerExtId", probenehmer.getExtId());
-            probe.put("samplerDescr", probenehmer.getDescr());
-            probe.put("samplerNetworkId", probenehmer.getNetworkId());
-            probe.put(
-                "samplerShortText", probenehmer.getShortText());
+            probe.add("samplerExtId", nullableString(probenehmer.getExtId()));
+            probe.add("samplerDescr", nullableString(probenehmer.getDescr()));
+            probe.add("samplerNetworkId", nullableString(probenehmer.getNetworkId()));
+            probe.add(
+                "samplerShortText", nullableString(probenehmer.getShortText()));
         }
-        if (probe.get("reiAgGrId").asInt() != 0) {
+        if (sample.getReiAgGrId() != null) {
             ReiAgGr reiAgGr = repository.getById(
                 ReiAgGr.class,
-                probe.get("reiAgGrId").asInt()
+                sample.getReiAgGrId()
             );
-            probe.put("reiAgGrDescr", reiAgGr.getDescr());
-            probe.put("reiAgGrName", reiAgGr.getName());
+            probe.add("reiAgGrDescr", nullableString(reiAgGr.getDescr()));
+            probe.add("reiAgGrName", nullableString(reiAgGr.getName()));
         }
     }
 
-    private void addMessstelle(JsonNode node) {
+    private void addMessstelle(JsonObjectBuilder probe, Sample sample) {
         MeasFacil messstelle = repository.getById(
             MeasFacil.class,
-            node.get("measFacilId").asText()
+            sample.getMeasFacilId()
         );
         MeasFacil laborMessstelle = repository.getById(
             MeasFacil.class,
-            node.get("apprLabId").asText()
+            sample.getApprLabId()
         );
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            String tmp = mapper.writeValueAsString(messstelle);
-            String tmp2 = mapper.writeValueAsString(laborMessstelle);
-            JsonNode nodes = mapper.readTree(tmp);
-            JsonNode nodes2 = mapper.readTree(tmp2);
-            ((ObjectNode) node).set("measFacil", nodes);
-            ((ObjectNode) node).set("apprLab", nodes2);
-        } catch (IOException e) {
-            logger.debug("Could not export Messstelle for Sample "
-                + node.get("externeProbeId").asText());
-        }
+        JsonObjectBuilder measFacilBuilder = Json.createObjectBuilder(
+            convertToJsonObject(messstelle)
+        );
+        JsonObjectBuilder apprLabBuilder = Json.createObjectBuilder(
+            convertToJsonObject(laborMessstelle)
+        );
+        probe.add("measFacil", measFacilBuilder);
+        probe.add("apprLab", apprLabBuilder);
     }
 
-    private void addMessungen(JsonNode probe) {
-        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
-        builder.and(Measm_.sampleId, probe.get("id").asInt());
+    private void addMessungen(JsonObjectBuilder probe, Sample sample) {
+        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
+            .and(Measm_.sampleId, sample.getId());
         List<Measm> messungen =
             repository.filter(builder.getQuery());
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            String tmp = mapper.writeValueAsString(messungen);
-            JsonNode nodes = mapper.readTree(tmp);
-            for (int i = 0; i < nodes.size(); i++) {
-                Mmt mmt = repository.getById(
-                    Mmt.class,
-                    nodes.get(i).get("mmtId").asText()
-                );
-                ((ObjectNode) nodes.get(i)).put("mmt",
-                    mmt == null ? "" : mmt.getName());
-                addMesswerte(nodes.get(i));
-                addMessungsKommentare(nodes.get(i));
-                addStatusProtokoll(nodes.get(i));
-            }
-            ((ObjectNode) probe).set("measms", nodes);
-        } catch (IOException e) {
-            logger.debug("Could not export Messungen for Sample "
-                + probe.get("externeProbeId").asText());
+        List<JsonObjectBuilder> messungenBuilders = new ArrayList<>();
+        for (Measm messung: messungen) {
+            Mmt mmt = repository.getById(
+                Mmt.class,
+                messung.getMmtId()
+            );
+            JsonObject messungJsonObject = convertToJsonObject(messung);
+            JsonObjectBuilder messungJsonObjectBuilder =
+                Json.createObjectBuilder(messungJsonObject);
+            messungJsonObjectBuilder.add("mmt",
+                mmt == null
+                ? nullableString("")
+                : nullableString(mmt.getName()));
+            addMesswerte(messungJsonObjectBuilder, messung);
+            addMessungsKommentare(messungJsonObjectBuilder, messung);
+            addStatusProtokoll(messungJsonObjectBuilder, messung);
+            messungenBuilders.add(messungJsonObjectBuilder);
         }
+        probe.add("measms", Json.createArrayBuilder(messungenBuilders));
     }
 
-    private void addKommentare(JsonNode probe) {
+    private void addKommentare(JsonObjectBuilder probe, Sample sample) {
         QueryBuilder<CommSample> builder =
-            repository.queryBuilder(CommSample.class);
-        builder.and(CommSample_.sampleId, probe.get("id").asInt());
+            repository.queryBuilder(CommSample.class)
+            .and(CommSample_.sampleId, sample.getId());
         List<CommSample> kommentare =
             repository.filter(builder.getQuery());
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            String tmp = mapper.writeValueAsString(kommentare);
-            JsonNode nodes = mapper.readTree(tmp);
-            for (int i = 0; i < nodes.size(); i++) {
-                MeasFacil mst = repository.getById(
-                    MeasFacil.class,
-                    nodes.get(i).get("measFacilId").asText()
-                );
-                ((ObjectNode) nodes.get(i)).put(
-                    "measFacil",
-                    mst.getName());
-            }
-            ((ObjectNode) probe).set("commSamples", nodes);
-        } catch (IOException e) {
-            logger.debug("Could not export Kommentare for Sample "
-                + probe.get("externeProbeId").asText());
+        List<JsonObjectBuilder> kommentareJsonObjectBuilders = new ArrayList<>();
+        for (CommSample kommentar: kommentare) {
+            JsonObject kommentarJsonObject = convertToJsonObject(kommentar);
+            JsonObjectBuilder kommentarJsonObjectBuilder =
+                Json.createObjectBuilder(kommentarJsonObject);
+            MeasFacil mst = repository.getById(
+                MeasFacil.class,
+                kommentar.getMeasFacilId()
+            );
+            kommentarJsonObjectBuilder.add(
+                "measFacil",
+                nullableString(mst.getName()));
+            kommentareJsonObjectBuilders.add(kommentarJsonObjectBuilder);
         }
+        probe.add("commSamples", Json.createArrayBuilder(
+                kommentareJsonObjectBuilders));
     }
 
-    private void addZusatzwerte(JsonNode probe) {
+    private void addZusatzwerte(JsonObjectBuilder probe, Sample sample) {
         QueryBuilder<SampleSpecifMeasVal> builder =
-            repository.queryBuilder(SampleSpecifMeasVal.class);
-        builder.and(SampleSpecifMeasVal_.sampleId, probe.get("id").asInt());
+            repository.queryBuilder(SampleSpecifMeasVal.class)
+            .and(SampleSpecifMeasVal_.sampleId, sample.getId());
         List<SampleSpecifMeasVal> zusatzwerte =
             repository.filter(builder.getQuery());
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            String tmp = mapper.writeValueAsString(zusatzwerte);
-            JsonNode nodes = mapper.readTree(tmp);
-            for (int i = 0; i < nodes.size(); i++) {
-                SampleSpecif pz = repository.getById(
-                    SampleSpecif.class,
-                    nodes.get(i).get("sampleSpecifId").asText()
-                );
-                ((ObjectNode) nodes.get(i)).put(
-                    "sampleSpecifName", pz.getName());
-                Integer mehId = pz.getMeasUnitId();
-                if (mehId != null) {
+        List<JsonObjectBuilder> zusatzwerteJsonObjectBuilders = new ArrayList<>();
+        for (SampleSpecifMeasVal zusatzwert:zusatzwerte) {
+            SampleSpecif pz = repository.getById(
+                SampleSpecif.class,
+                zusatzwert.getSampleSpecifId()
+            );
+            JsonObject zusatzwertJsonObject = convertToJsonObject(zusatzwert);
+            JsonObjectBuilder zusatzwertJsonObjectBuilder =
+                Json.createObjectBuilder(zusatzwertJsonObject);
+            zusatzwertJsonObjectBuilder.add(
+                "sampleSpecifName", nullableString(pz.getName()));
+            Integer mehId = pz.getMeasUnitId();
+            if (mehId != null) {
                 MeasUnit meh = repository.getById(
                     MeasUnit.class, mehId);
-                ((ObjectNode) nodes.get(i)).put(
-                    "unit", meh.getUnitSymbol());
-                } else {
-                    continue;
-                }
+                zusatzwertJsonObjectBuilder.add(
+                    "unit", nullableString(meh.getUnitSymbol()));
+            } else {
+                continue;
             }
-            ((ObjectNode) probe).set("sampleSpecifMeasVals", nodes);
-        } catch (IOException e) {
-            logger.debug("Could not export Zusatzwerte for Sample "
-                + probe.get("externeProbeId").asText());
+            zusatzwerteJsonObjectBuilders.add(zusatzwertJsonObjectBuilder);
         }
+        probe.add("sampleSpecifMeasVals",
+            Json.createArrayBuilder(zusatzwerteJsonObjectBuilders));
     }
 
-    private void addDeskriptoren(JsonNode probe) {
-        String desk = probe.get("envDescripDisplay").asText();
+    private void addDeskriptoren(JsonObjectBuilder probe, Sample sample) {
+        String desk = sample.getEnvDescripDisplay();
         String[] parts = desk.split(" ");
         if (parts.length <= 1) {
             return;
         }
 
         int vorgaenger = 0;
-        ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
+        JsonObjectBuilder node = Json.createObjectBuilder();
+
         boolean isZebs = Integer.parseInt(parts[1]) == 1;
         int hdV = 0;
         int ndV = 0;
@@ -529,165 +525,159 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
                     }
                 }
             }
-            node.put("S" + i, beschreibung);
+            node.add("S" + i, beschreibung);
             builder = builder.getEmptyBuilder();
         }
-        ((ObjectNode) probe).set("envDescrip", node);
+        probe.add("envDescrip", node);
     }
 
-    private void addMesswerte(JsonNode node) {
+    private void addMesswerte(
+        JsonObjectBuilder messungJsonObjectBuilder, Measm measm
+    ) {
         QueryBuilder<MeasVal> builder =
-            repository.queryBuilder(MeasVal.class);
-        builder.and(MeasVal_.measmId, node.get("id").asInt());
+            repository.queryBuilder(MeasVal.class)
+            .and(MeasVal_.measmId, measm.getId());
         List<MeasVal> messwerte =
             repository.filter(builder.getQuery());
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            String tmp = mapper.writeValueAsString(messwerte);
-            JsonNode nodes = mapper.readTree(tmp);
-            for (int i = 0; i < nodes.size(); i++) {
-                MeasUnit meh = repository.getById(
-                    MeasUnit.class,
-                    nodes.get(i).get("measUnitId").asInt()
-                );
-                ((ObjectNode) nodes.get(i)).put("unit",
-                    meh == null ? "" : meh.getUnitSymbol());
-                Measd mg = repository.getById(
-                    Measd.class,
-                    nodes.get(i).get("measdId").asInt()
-                );
-                ((ObjectNode) nodes.get(i)).put("measd",
-                    mg == null ? "" : mg.getName());
-            }
-            ((ObjectNode) node).set("measVals", nodes);
-        } catch (IOException e) {
-            logger.debug("Could not export Messwerte for Messung "
-                + node.get("nebenprobenNr").asText());
+        List<JsonObjectBuilder> messwerteJsonObjectBuilders = new ArrayList<>();
+        for (MeasVal messwert: messwerte) {
+            JsonObject messwertJsonObject = convertToJsonObject(messwert);
+            JsonObjectBuilder messwertJsonObjectBuilder =
+                Json.createObjectBuilder(messwertJsonObject);
+            MeasUnit meh = repository.getById(
+                MeasUnit.class,
+                messwert.getMeasUnitId()
+            );
+            messwertJsonObjectBuilder.add("unit",
+                meh == null
+                ? nullableString("")
+                : nullableString(meh.getUnitSymbol()));
+            Measd mg = repository.getById(
+                Measd.class,
+                messwert.getMeasdId()
+            );
+            messwertJsonObjectBuilder.add("measd",
+                mg == null ? nullableString("") : nullableString(mg.getName()));
+            messwerteJsonObjectBuilders.add(messwertJsonObjectBuilder);
         }
+        messungJsonObjectBuilder.add("measVals",
+            Json.createArrayBuilder(messwerteJsonObjectBuilders));
     }
 
-    private void addMessungsKommentare(JsonNode node) {
+    private void addMessungsKommentare(
+        JsonObjectBuilder messungJsonObjectBuilder, Measm measm
+    ) {
         QueryBuilder<CommMeasm> builder =
-            repository.queryBuilder(CommMeasm.class);
-        builder.and(CommMeasm_.measmId, node.get("id").asInt());
+            repository.queryBuilder(CommMeasm.class)
+            .and(CommMeasm_.measmId, measm.getId());
         List<CommMeasm> kommentare =
             repository.filter(builder.getQuery());
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            String tmp = mapper.writeValueAsString(kommentare);
-            JsonNode nodes = mapper.readTree(tmp);
-            for (int i = 0; i < nodes.size(); i++) {
-                MeasFacil mst = repository.getById(
-                    MeasFacil.class,
-                    nodes.get(i).get("measFacilId").asText()
-                );
-                ((ObjectNode) nodes.get(i)).put(
-                    "measFacil",
-                    mst.getName());
-            }
-            ((ObjectNode) node).set("commMeasms", nodes);
-        } catch (IOException e) {
-            logger.debug("Could not export Kommentare for Messung "
-                + node.get("nebenprobenNr").asText());
+        List<JsonObjectBuilder> kommJsonObjectBuilders = new ArrayList<>();
+        for (CommMeasm kommentar: kommentare) {
+            JsonObject kommentarJsonObject = convertToJsonObject(kommentar);
+            JsonObjectBuilder kommentarJsonObjectBuilder =
+                Json.createObjectBuilder(kommentarJsonObject);
+            MeasFacil mst = repository.getById(
+                MeasFacil.class,
+                kommentar.getMeasFacilId()
+            );
+            kommentarJsonObjectBuilder.add(
+                "measFacil",
+                nullableString(mst.getName()));
+            kommJsonObjectBuilders.add(kommentarJsonObjectBuilder);
         }
+        messungJsonObjectBuilder.add("commMeasms",
+            Json.createArrayBuilder(kommJsonObjectBuilders));
     }
 
-    private void addStatusProtokoll(JsonNode node) {
+    private void addStatusProtokoll(
+        JsonObjectBuilder messungJsonObjectBuilder,
+        Measm measm
+    ) {
         QueryBuilder<StatusProt> builder =
-            repository.queryBuilder(StatusProt.class);
-        builder.and(StatusProt_.measmId, node.get("id").asInt());
+            repository.queryBuilder(StatusProt.class)
+            .and(StatusProt_.measmId, measm.getId());
         List<StatusProt> status =
             repository.filter(builder.getQuery());
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            String tmp = mapper.writeValueAsString(status);
-            JsonNode nodes = mapper.readTree(tmp);
-            for (int i = 0; i < nodes.size(); i++) {
-                StatusMp kombi = repository.getById(
-                    StatusMp.class,
-                    nodes.get(i).get("statusMpId").asInt()
-                );
-                ((ObjectNode) nodes.get(i)).put(
-                    "statusLev",
-                    kombi.getStatusLev().getLev());
-                ((ObjectNode) nodes.get(i)).put(
-                    "statusVal",
-                    kombi.getStatusVal().getVal());
-                MeasFacil mst = repository.getById(
-                    MeasFacil.class,
-                    nodes.get(i).get("measFacilId").asText()
-                );
-                ((ObjectNode) nodes.get(i)).put(
-                    "measFacil",
-                    mst.getName());
-            }
-            ((ObjectNode) node).set("statusProtocol", nodes);
-        } catch (IOException e) {
-            logger.debug("Could not export Statusprotokoll for Messung "
-                + node.get("nebenprobenNr").asText());
+        List<JsonObjectBuilder> statusObjectBuilders = new ArrayList<>();
+        for (StatusProt statusProt: status) {
+            StatusMp kombi = repository.getById(
+                StatusMp.class,
+                statusProt.getStatusMpId()
+            );
+            JsonObject statusJsonObject = convertToJsonObject(statusProt);
+            JsonObjectBuilder statusBuilder =
+                Json.createObjectBuilder(statusJsonObject);
+            statusBuilder.add(
+                "statusLev",
+                nullableString(kombi.getStatusLev().getLev()));
+            statusBuilder.add(
+                "statusVal",
+                nullableString(kombi.getStatusVal().getVal()));
+            MeasFacil mst = repository.getById(
+                MeasFacil.class,
+                statusProt.getMeasFacilId()
+            );
+            statusBuilder.add(
+                "measFacil",
+                nullableString(mst.getName()));
+            statusObjectBuilders.add(statusBuilder);
         }
+        messungJsonObjectBuilder.add("statusProtocol",
+            Json.createArrayBuilder(statusObjectBuilders));
     }
 
-    private void addOrtszuordung(JsonNode node) {
+    private void addOrtszuordung(JsonObjectBuilder probe, Sample sample) {
         QueryBuilder<Geolocat> builder =
-            repository.queryBuilder(Geolocat.class);
-        builder.and(Geolocat_.sampleId, node.get("id").asInt());
+            repository.queryBuilder(Geolocat.class)
+            .and(Geolocat_.sampleId, sample.getId());
         List<Geolocat> ortszuordnung =
             repository.filter(builder.getQuery());
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            String tmp = mapper.writeValueAsString(ortszuordnung);
-            JsonNode nodes = mapper.readTree(tmp);
-            for (int i = 0; i < nodes.size(); i++) {
-                addOrt(nodes.get(i));
-            }
-            ((ObjectNode) node).set("geolocat", nodes);
-        } catch (IOException e) {
-            logger.debug("Could not export Ortszuordnugen for Sample "
-                + node.get("externeProbeId").asText());
+        List<JsonObjectBuilder> geolocatBuilders = new ArrayList<>();
+        for (Geolocat g: ortszuordnung) {
+            JsonObject ortszuordnungJsonObject = convertToJsonObject(g);
+            JsonObjectBuilder geolocatBuilder =
+                Json.createObjectBuilder(ortszuordnungJsonObject);
+            addOrt(geolocatBuilder, g);
+            geolocatBuilders.add(geolocatBuilder);
         }
+        probe.add("geolocat", Json.createArrayBuilder(geolocatBuilders));
     }
 
-    private void addOrt(JsonNode node) {
-        Site ort = repository.getById(
-                Site.class, node.get("siteId").asInt());
-        Jsonb ortJsonb = JsonbBuilder.create();
-        String tmp = ortJsonb.toJson(ort);
-        final ObjectMapper mapper = createObjectMapper();
-        try {
-            JsonNode oNode = mapper.readTree(tmp);
+    private void addOrt(
+        JsonObjectBuilder ortszuordnungJson, Geolocat geolocat
+    ) {
+        Site ort = repository.getById(Site.class, geolocat.getSiteId());
+        JsonObject siteJsonObject = convertToJsonObject(ort);
+        JsonObjectBuilder siteJsonObjectBuilder =
+            Json.createObjectBuilder(siteJsonObject);
 
-            final String gemIdKey = "adminUnitId";
-            if (oNode.hasNonNull(gemIdKey)) {
-                AdminUnit ve = repository.getById(
-                    AdminUnit.class,
-                    oNode.get(gemIdKey).asText()
-                );
-                ((ObjectNode) oNode).put("adminUnit",
-                    ve == null ? "" : ve.getName());
-            }
-
-            final String staatIdKey = "stateId";
-            if (oNode.hasNonNull(staatIdKey)) {
-                State staat = repository.getById(
-                    State.class,
-                    oNode.get(staatIdKey).asInt()
-                );
-                ((ObjectNode) oNode).put("state",
-                    staat == null ? "" : staat.getCtry());
-            }
-
-            ((ObjectNode) node).set("site", oNode);
-        } catch (IOException e) {
-            logger.debug("Could not export Ort for Ortszuordnung "
-                + node.get("id").asText());
-            logger.debug(e);
+        AdminUnit ve = ort.getAdminUnit();
+        if (ve != null) {
+            siteJsonObjectBuilder.add("adminUnit", ve.getName());
         }
+
+        Integer stateId = ort.getStateId();
+        if (stateId != null) {
+            State staat = repository.getById(State.class, stateId);
+            siteJsonObjectBuilder.add("state", staat.getCtry());
+        }
+
+        ortszuordnungJson.add("site", siteJsonObjectBuilder);
     }
 
-    private ObjectMapper createObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setDateFormat(new SimpleDateFormat(JSON_DATE_FORMAT));
-        return mapper;
+    private JsonObject convertToJsonObject(Object o) {
+        String jsonString = jsonb.toJson(o);
+        JsonReader reader = Json.createReader(new StringReader(jsonString));
+        JsonObject jsonObject = reader.readObject();
+        reader.close();
+        return jsonObject;
+    }
+
+    private JsonValue nullableString (String value){
+        if(value == null) {
+            return JsonValue.NULL;
+        }
+        return Json.createValue(value);
     }
 }

@@ -9,22 +9,40 @@ package de.intevation.lada;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import jakarta.json.Json;
 import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Table;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
@@ -37,7 +55,11 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.ITableMetaData;
+import org.dbunit.dataset.NoSuchColumnException;
 import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
@@ -53,6 +75,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.postgresql.ds.PGSimpleDataSource;
 
+import de.intevation.lada.model.NamingStrategy;
 import de.intevation.lada.util.rest.JSONBConfig;
 
 
@@ -62,6 +85,10 @@ import de.intevation.lada.util.rest.JSONBConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class BaseTest {
+
+    public static final DateTimeFormatter TIMESTAMP_FORMATTER =
+        DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT)
+        .withZone(ZoneId.of("UTC"));
 
     /**
      * Name of the test archive output file.
@@ -416,6 +443,36 @@ public class BaseTest {
             json.containsKey(key));
     }
 
+    /**
+     * Verify recursively that entries in expected appear also in actual and
+     * have the same values.
+     *
+     * @param expected object with expected attributes
+     * @param actual object to be verified
+     * @param exclude keys of entries to exclude from verification
+     */
+    public static void verify(
+        JsonObject expected,
+        JsonObject actual,
+        String... exclude
+    ) {
+        List<String> exclusions = Arrays.asList(exclude);
+        for (Map.Entry<String, JsonValue> entry : expected.entrySet()) {
+            String key = entry.getKey();
+            if (exclusions.contains(key)) {
+                continue;
+            }
+            if (entry.getValue() instanceof JsonObject expectedChild) {
+                verify(expectedChild, actual.get(key).asJsonObject(), exclude);
+            } else {
+                Assert.assertEquals(
+                    String.format("%s:", key),
+                    entry.getValue(),
+                    actual.get(key));
+            }
+        }
+    }
+
     protected static void assertJsonContainsValidationMessage(JsonObject json,
             String expectedPath, String expectedMessage) {
         assertNotNull("JSON must not be null", json);
@@ -464,6 +521,140 @@ public class BaseTest {
             }
         }
         con.getConnection().prepareStatement(sql).execute();
+    }
+
+    /**
+     * Read the given xml resource and return as JSON.
+     * @param resource Name of resource with DbUnit XML dataset
+     * @param clazz Model class for which data are extracted from resource
+     * @return Array of objcets from the given resource corresponding to
+     * clazz as JSON
+     * @throws RuntimeException if resource cannot be read as DbUnit dataset
+     * or bean introspection of clazz fails
+     */
+    public static JsonArray readXmlResource(String resource, Class<?> clazz) {
+        try {
+            IDataSet xml = new FlatXmlDataSetBuilder()
+                .setColumnSensing(true)
+                .build(ClassLoader.getSystemClassLoader()
+                    .getResourceAsStream(resource));
+
+            BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
+            String tablename = clazz.getAnnotation(Table.class).schema() + "."
+                + NamingStrategy.camelToSnake(
+                    beanInfo.getBeanDescriptor().getName());
+            ITable table = xml.getTable(tablename);
+            ITableMetaData datasetMetadata = xml.getTableMetaData(tablename);
+
+            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+            for (int row = 0; row < table.getRowCount(); row++) {
+                JsonObjectBuilder builder = Json.createObjectBuilder();
+                for (
+                    PropertyDescriptor column: beanInfo.getPropertyDescriptors()
+                ) {
+                    //Check if column is present in dataset
+                    String key = column.getName();
+                    String columnName = NamingStrategy.camelToSnake(key);
+                    try {
+                        datasetMetadata.getColumnIndex(columnName);
+                    } catch (NoSuchColumnException nsce) {
+                        continue;
+                    }
+                    String rawValue = (String) table.getValue(row, columnName);
+                    if (rawValue == null) {
+                        continue;
+                    }
+
+                    // Get entity attribute type
+                    Class<?> type = column.getReadMethod().getReturnType();
+                    Object value;
+
+                    // Apply JPA conversion, if any
+                    Convert convert = null;
+                    Class<?> declaringClass = clazz;
+                    do {
+                        try {
+                            convert = declaringClass.getDeclaredField(key)
+                                .getAnnotation(Convert.class);
+                            break;
+                        } catch (NoSuchFieldException e) {
+                            declaringClass = declaringClass.getSuperclass();
+                        }
+                    } while (declaringClass != null);
+                    if (convert != null) {
+                        Class<?> converter = convert.converter();
+                        // Get database attribute type from AttributeConverter
+                        Class<?> attributeType = (Class<?>) (
+                            (ParameterizedType) converter
+                            .getGenericInterfaces()[0])
+                            .getActualTypeArguments()[1];
+                        value = converter
+                            .getMethod(
+                                "convertToEntityAttribute", attributeType)
+                            .invoke(
+                                converter.getDeclaredConstructor()
+                                    .newInstance(),
+                                parseXMLAttr(rawValue, attributeType));
+                    } else {
+                        value = parseXMLAttr(rawValue, type);
+                    }
+
+                    if (type.isAssignableFrom(Integer.class)) {
+                        builder.add(key, (Integer) value);
+                    } else if (type.isAssignableFrom(Double.class)
+                        || type.isAssignableFrom(Float.class)
+                    ) {
+                        builder.add(key, (Double) value);
+                    } else if (type.isAssignableFrom(Boolean.class)) {
+                        builder.add(key, (Boolean) value);
+                    } else if (type.isAssignableFrom(Date.class)) {
+                        builder.add(key, BaseTest.TIMESTAMP_FORMATTER
+                            .format((Instant) value));
+                    } else {
+                        builder.add(key, value.toString());
+                    }
+                }
+                arrayBuilder.add(builder);
+            }
+            return arrayBuilder.build();
+        } catch (DataSetException
+            | IntrospectionException
+            | ReflectiveOperationException e
+        ) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Object parseXMLAttr(String value, Class<?> type) {
+        if (type.isAssignableFrom(Integer.class)) {
+            return Integer.parseInt(value);
+        }
+        if (type.isAssignableFrom(Double.class)
+            || type.isAssignableFrom(Float.class)
+        ) {
+            return Double.parseDouble(value);
+        }
+        if (type.isAssignableFrom(Boolean.class)) {
+            return Boolean.parseBoolean(value);
+        }
+        if (type.isAssignableFrom(Date.class)) {
+            return Timestamp.valueOf(value).toInstant();
+        }
+        return value;
+    }
+
+    /**
+     * Filter the given JsonArray for an object with the given id.
+     * @param array Array to filter
+     * @param id Id to search for
+     * @return JsonObject with the given id
+     */
+    public static JsonObject filterJsonArrayById(JsonArray array, int id) {
+        return array
+            .stream()
+            .filter(val -> id == val.asJsonObject().getInt("id"))
+            .findFirst().get()
+            .asJsonObject();
     }
 
     /**

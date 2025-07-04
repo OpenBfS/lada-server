@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.util.Arrays;
-
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.WebTarget;
@@ -34,12 +32,6 @@ public class StatusTest extends ServiceTest {
     @Override
     public void init(WebTarget t) {
         super.init(t);
-
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "date",
-            "treeMod"
-        });
 
         // Load objects to test POST requests
         create = readJsonResource("/datasets/status.json");

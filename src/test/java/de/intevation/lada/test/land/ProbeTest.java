@@ -8,7 +8,6 @@
 package de.intevation.lada.test.land;
 
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,18 +51,9 @@ public class ProbeTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            Sample_.LAST_MOD,
-            Sample_.SAMPLE_START_DATE,
-            Sample_.SCHED_START_DATE,
-            Sample_.SCHED_END_DATE,
-            Sample_.TREE_MOD
-        });
-
         // Prepare expected probe object
-        JsonObject probe = filterJsonArrayById(
-            readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
+        JsonObject probe = BaseTest.filterJsonArrayById(
+            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
             SAMPLE_ID);
         expectedById = convertObject(probe)
             .addNull(Sample_.MID_SAMPLE_DATE)
@@ -121,7 +111,7 @@ public class ProbeTest extends ServiceTest {
             CoreMatchers.hasItems(
                 new AbstractMap.SimpleImmutableEntry<>(
                     Sample_.EXT_ID,
-                    "muss mit \"^(?!ZDB\\d{12}Y$).*$\" übereinstimmen"),
+                    "muss mit \"^(?!ZDB).*$\" übereinstimmen"),
                 new AbstractMap.SimpleImmutableEntry<>(
                     Sample_.REGULATION_ID,
                     "Wert nicht gesetzt")));

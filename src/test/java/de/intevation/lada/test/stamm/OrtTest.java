@@ -41,10 +41,6 @@ public class OrtTest extends ServiceTest {
     public void init(WebTarget t) {
         super.init(t);
 
-        // Attributes with timestamps
-        timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung"
-        });
         // Attributes with point geometries
         geomPointAttributes = Arrays.asList(new String[]{
                 "geom"
@@ -52,7 +48,7 @@ public class OrtTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject erzeuger =
-            readXmlResource("datasets/dbUnit_master.xml", Site.class)
+            BaseTest.readXmlResource("datasets/dbUnit_master.xml", Site.class)
             .getJsonObject(0);
         expectedById = convertObject(erzeuger)
             .add("referenceCount", 2)
