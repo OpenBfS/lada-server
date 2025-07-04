@@ -33,7 +33,9 @@ public class Laf9ImportParameters
     extends LafImportParameters<Collection<JsonObject>> {
 
     // Just here to provide a class literal for the Schema annotation
-    private static class SampleCollection extends ArrayList<Sample> { }
+    private static class SampleCollection extends ArrayList<Sample> {
+        private static final long serialVersionUID = 1L;
+    }
 
     // Shadow field in order to add container element validation constraints
     @Schema(additionalProperties = SampleCollection.class)
