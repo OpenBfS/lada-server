@@ -75,7 +75,7 @@ public class Identification {
             }
         }
         try {
-            return (T) repository.getSingle(queryBuilder.getQuery());
+            return repository.getSingle(queryBuilder.getQuery());
         } catch (NoResultException e) {
             return null;
         }
