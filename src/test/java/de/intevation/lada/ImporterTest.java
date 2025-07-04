@@ -650,22 +650,52 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test creating new sample with forbidden extId.
+     * Test creating new sample with forbidden extId via LAF8.
      */
     @Test
     @RunAsClient
-    public final void asyncImportForbiddenExtId()
+    public final void asyncImportLaf8ForbiddenExtId()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = "ZDB123456789012Y";
-        testAsyncLaf8Import(
-            String.format(
-                laf8Template, lafSampleId,
-                regulation, sampleSpecifId,
-                "PROBE_ID \"" + lafSampleId + "\"\nP_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
-                measd, measUnit,
-                "BEARBEITUNGSSTATUS 1000\n"),
-            lafSampleId,
-            false);
+        checkForbiddenExtIdError(testAsyncLaf8Import(
+                String.format(
+                    laf8Template, lafSampleId,
+                    regulation, sampleSpecifId,
+                    "PROBE_ID \"" + lafSampleId + "\"\n",
+                    measd, measUnit,
+                    "BEARBEITUNGSSTATUS 1000\n"),
+                lafSampleId,
+                false),
+            lafSampleId);
+    }
+
+    /**
+     * Test creating new sample with forbidden extId via LAF9.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncImportLaf9ForbiddenExtId()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = "ZDB123456789012Y";
+        Sample laf = prepareLaf9Data();
+        laf.setMainSampleId(lafSampleId);
+        laf.setExtId(lafSampleId);
+        checkForbiddenExtIdError(
+            testAsyncLaf9Import(laf, lafSampleId, false, Map.of()),
+            lafSampleId);
+    }
+
+    private void checkForbiddenExtIdError(
+        JsonObject report, String lafSampleId
+    ) {
+        JsonObject expectedError = Json.createObjectBuilder()
+            .add(REPORT_ITEM_KEY_KEY, "validation#probe")
+            .add(REPORT_ITEM_VALUE_KEY, Sample_.EXT_ID)
+            .add(REPORT_ITEM_CODE_KEY, "ExtId only for LFGB")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject(ERRORS_KEY).getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedError));
     }
 
     /**

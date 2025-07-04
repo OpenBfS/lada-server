@@ -45,6 +45,9 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.JSONBConfig;
 import de.intevation.lada.validation.Validator;
+import de.intevation.lada.validation.groups.CreateErrors;
+import de.intevation.lada.validation.groups.Notifications;
+import de.intevation.lada.validation.groups.Warnings;
 
 
 public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
@@ -119,7 +122,12 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     Sample persistent = identification.getExisting(sample);
                     if (persistent == null) {
                         reportValidationMessages(
-                            validator.validate(sample), "validation#probe");
+                            validator.validate(
+                                sample,
+                                CreateErrors.class,
+                                Warnings.class,
+                                Notifications.class),
+                            "validation#probe");
                         if (!sample.hasErrors()) {
                             repository.create(sample);
                             fileResponseData.addSampleId(sample.getId());
