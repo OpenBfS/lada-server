@@ -77,6 +77,7 @@ public class ImporterTest extends BaseTest {
 
     public static final String SAMPLE_IDS_KEY = "sampleIds";
     private static final String ERRORS_KEY = "errors";
+    private static final String OWNER_KEY = "owner";
     private static final String REPORT_ITEM_KEY_KEY = "key";
     private static final String REPORT_ITEM_VALUE_KEY = "value";
     private static final String REPORT_ITEM_CODE_KEY = "code";
@@ -223,7 +224,7 @@ public class ImporterTest extends BaseTest {
         generatedStatus.setStatusMpId(1);
         expected.getMeasms().get(0).getStatusProts().add(0, generatedStatus);
         JsonObject report = testAsyncLaf9Import(
-            laf, lafSampleId, true, false, expected);
+            laf, lafSampleId, true, false, expected, OWNER_KEY);
         JsonObject expectedWarning = Json.createObjectBuilder()
             .add(REPORT_ITEM_KEY_KEY, "validation#probe")
             .add(REPORT_ITEM_VALUE_KEY, "geolocats")
@@ -307,7 +308,8 @@ public class ImporterTest extends BaseTest {
 
         laf.setMeasms(List.of(measmUpdate, measmNew));
 
-        testAsyncLaf9Import(laf, existingMainSampleId, true, true, laf);
+        testAsyncLaf9Import(
+            laf, existingMainSampleId, true, true, laf, OWNER_KEY);
     }
 
     /**
@@ -332,7 +334,7 @@ public class ImporterTest extends BaseTest {
         laf.setMeasms(List.of(measm));
 
         JsonObject report = testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, laf);
+            laf, existingMainSampleId, true, true, laf, OWNER_KEY);
         assertMeasValIsReplaced(report);
     }
 
@@ -844,12 +846,14 @@ public class ImporterTest extends BaseTest {
         String lafSampleId,
         boolean expectSuccess,
         boolean sparse,
-        Sample verify
+        Sample verify,
+        String... ignore
     ) throws InterruptedException, CharacterCodingException {
         return testAsyncLaf9Import(
             lafData, lafSampleId, expectSuccess, sparse,
             JSONBConfig.JSONB.fromJson(
-                JSONB_SPARSE.toJson(verify), JsonObject.class));
+                JSONB_SPARSE.toJson(verify), JsonObject.class),
+            ignore);
     }
 
     private JsonObject testAsyncLaf9Import(
@@ -857,7 +861,8 @@ public class ImporterTest extends BaseTest {
         String lafSampleId,
         boolean expectSuccess,
         boolean sparse,
-        Map<String, JsonValue> verify
+        Map<String, JsonValue> verify,
+        String... ignore
     ) throws InterruptedException, CharacterCodingException {
         final String fileName = "test.json";
 
@@ -877,16 +882,17 @@ public class ImporterTest extends BaseTest {
         if (!expectSuccess) {
             return fileReport;
         }
-        return checkImportedData(fileReport, verify);
+        return checkImportedData(fileReport, verify, ignore);
     }
 
     private JsonObject checkImportedData(
         JsonObject fileReport,
-        Map<String, JsonValue> verify
+        Map<String, JsonValue> verify,
+        String... ignore
     ) {
         // Test if data correctly entered database
         JsonObject importedSample = getImportedSample(fileReport);
-        BaseTest.verify(verify, importedSample, "owner", "statusProt");
+        BaseTest.verify(verify, importedSample, ignore);
 
         return fileReport;
     }
