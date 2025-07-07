@@ -136,8 +136,6 @@ public class SampleService extends LadaIntegerIdEntityService {
         @ConvertGroup(from = Default.class, to = CreateErrors.class)
         Sample probe
     ) throws BadRequestException {
-        setEnvAttrs(probe);
-
         return repository.create(probe);
     }
 
@@ -238,8 +236,6 @@ public class SampleService extends LadaIntegerIdEntityService {
     ) throws BadRequestException {
         lock.isLocked(probe);
 
-        setEnvAttrs(probe);
-
         return repository.update(probe);
     }
 
@@ -252,19 +248,5 @@ public class SampleService extends LadaIntegerIdEntityService {
         Sample probeObj = repository.getById(Sample.class, id);
         authorization.authorize(probeObj, RequestMethod.DELETE);
         repository.delete(probeObj);
-    }
-
-    private void setEnvAttrs(Sample probe) {
-        if (probe.getEnvMediumId() == null) {
-            probe.setEnvMediumId(
-                factory.findEnvMediumId(probe.getEnvDescripDisplay()));
-        } else if (probe.getEnvDescripDisplay() == null
-            || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
-                probe.getEnvDescripDisplay())
-        ) {
-            probe.setEnvDescripDisplay(
-                factory.getInitialMediaDesk(probe.getEnvMediumId()));
-        }
-        factory.findMedia(probe);
     }
 }
