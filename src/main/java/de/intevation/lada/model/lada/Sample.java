@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,6 +42,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvMedium;
@@ -287,6 +291,41 @@ public class Sample extends BaseModel implements Serializable {
 
 
     public Sample() {
+    }
+
+    /**
+     * Coplement environment related attributes on deserialization.
+     *
+     * @param envMediumId value from serialized input
+     * @param envDescripDisplay value from serialized input
+     */
+    @JsonbCreator
+    public Sample(
+        @JsonbProperty(Sample_.ENV_MEDIUM_ID) String envMediumId,
+        @JsonbProperty(Sample_.ENV_DESCRIP_DISPLAY) String envDescripDisplay
+    ) {
+        // Set values from serialized input
+        this.envMediumId = envMediumId;
+        this.envDescripDisplay = envDescripDisplay;
+
+        // Try to complement values
+        ProbeFactory factory;
+        try {
+            factory = CDI.current().getBeanContainer().createInstance()
+                .select(ProbeFactory.class).get();
+        } catch (IllegalStateException e) {
+            // CDI not available
+            return;
+        }
+        if (envMediumId == null) {
+            this.envMediumId = factory.findEnvMediumId(envDescripDisplay);
+        } else if (envDescripDisplay == null
+            || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
+                envDescripDisplay)
+        ) {
+            this.envDescripDisplay = factory.getInitialMediaDesk(envMediumId);
+        }
+        factory.findMedia(this);
     }
 
     public Integer getId() {
