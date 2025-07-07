@@ -222,9 +222,8 @@ public class ImporterTest extends BaseTest {
         StatusProt generatedStatus = new StatusProt();
         generatedStatus.setStatusMpId(1);
         expected.getMeasms().get(0).getStatusProts().add(0, generatedStatus);
-        JsonObject verify = JSONBConfig.JSONB.fromJson(
-            JSONB_SPARSE.toJson(expected), JsonObject.class);
-        JsonObject report = testAsyncLaf9Import(laf, lafSampleId, true, verify);
+        JsonObject report = testAsyncLaf9Import(
+            laf, lafSampleId, true, false, expected);
         JsonObject expectedWarning = Json.createObjectBuilder()
             .add(REPORT_ITEM_KEY_KEY, "validation#probe")
             .add(REPORT_ITEM_VALUE_KEY, "geolocats")
@@ -308,9 +307,7 @@ public class ImporterTest extends BaseTest {
 
         laf.setMeasms(List.of(measmUpdate, measmNew));
 
-        JsonObject verify = JSONBConfig.JSONB.fromJson(
-            JSONB_SPARSE.toJson(laf).toString(), JsonObject.class);
-        testAsyncLaf9Import(laf, existingMainSampleId, true, true, verify);
+        testAsyncLaf9Import(laf, existingMainSampleId, true, true, laf);
     }
 
     /**
@@ -334,10 +331,8 @@ public class ImporterTest extends BaseTest {
 
         laf.setMeasms(List.of(measm));
 
-        JsonObject verify = JSONBConfig.JSONB.fromJson(
-            JSONB_SPARSE.toJson(laf).toString(), JsonObject.class);
         JsonObject report = testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, verify);
+            laf, existingMainSampleId, true, true, laf);
         assertMeasValIsReplaced(report);
     }
 
@@ -365,10 +360,8 @@ public class ImporterTest extends BaseTest {
 
         laf.setMeasms(List.of(measm));
 
-        JsonObject verify = JSONBConfig.JSONB.fromJson(
-            JSONB_SPARSE.toJson(laf).toString(), JsonObject.class);
         JsonObject report = testAsyncLaf9Import(
-            laf, existingMainSampleId, false, true, verify);
+            laf, existingMainSampleId, false, true, laf);
         JsonObject expectedError = Json.createObjectBuilder()
             .add(REPORT_ITEM_KEY_KEY, "validation#messwert")
             .add(REPORT_ITEM_VALUE_KEY, MeasVal_.MEASD_ID)
@@ -417,7 +410,7 @@ public class ImporterTest extends BaseTest {
         laf.setMainSampleId("XXX");
 
         JsonObject report = testAsyncLaf9Import(
-            laf, newMainSampleId, false, expectedAttrs);
+            laf, newMainSampleId, false, false, expectedAttrs);
         JsonObject actualError = report.getJsonObject(ERRORS_KEY)
             .getJsonArray(existingExtId).getJsonObject(0);
         Assert.assertEquals(String.valueOf(StatusCodes.IMP_INVALID_VALUE),
@@ -681,7 +674,7 @@ public class ImporterTest extends BaseTest {
         laf.setMainSampleId(lafSampleId);
         laf.setExtId(lafSampleId);
         checkForbiddenExtIdError(
-            testAsyncLaf9Import(laf, lafSampleId, false, Map.of()),
+            testAsyncLaf9Import(laf, lafSampleId, false, false, Map.of()),
             lafSampleId);
     }
 
@@ -850,10 +843,13 @@ public class ImporterTest extends BaseTest {
         Sample lafData,
         String lafSampleId,
         boolean expectSuccess,
-        Map<String, JsonValue> verify
+        boolean sparse,
+        Sample verify
     ) throws InterruptedException, CharacterCodingException {
         return testAsyncLaf9Import(
-            lafData, lafSampleId, expectSuccess, false, verify);
+            lafData, lafSampleId, expectSuccess, sparse,
+            JSONBConfig.JSONB.fromJson(
+                JSONB_SPARSE.toJson(verify), JsonObject.class));
     }
 
     private JsonObject testAsyncLaf9Import(
