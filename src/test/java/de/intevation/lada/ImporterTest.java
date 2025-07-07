@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +49,7 @@ import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
@@ -55,6 +57,8 @@ import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.Job;
@@ -91,6 +95,7 @@ public class ImporterTest extends BaseTest {
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
+    private final String envDescrip = "D: 01 01 00 00 00 00 00 00 00 00 00 00";
     private final String mmtId = "A3";
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
@@ -104,7 +109,7 @@ public class ImporterTest extends BaseTest {
         + "DATENBASIS \"%s\"\n"
         + "PZB_S \"%s\" 42 \"\" 5.0\n"
         + "PROBENAHME_DATUM_UHRZEIT_A 20120510 0900\n"
-        + "DESKRIPTOREN \"010100000000000000000000\"\n"
+        + "DESKRIPTOREN \"" + envDescrip.replaceAll("(D:| )", "") + "\"\n"
         + "%s"
         + "%%MESSUNG%%\n"
         + "MESSMETHODE_S \"" + mmtId + "\"\n"
@@ -594,10 +599,10 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @RunAsClient
-    public final void testAsyncImportSampleGeolocatE()
+    public final void testAsyncLaf8ImportGeolocatE()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
-        testAsyncImportProbeNoWarnings(
+        testAsyncLaf8ImportNoWarnings(
             String.format(
                 laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
@@ -608,6 +613,31 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test asynchronous import including sampling location.
+     * Ensure that no false warning about missing sampling location occurs.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9ImportGeolocatE()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        Sample laf = prepareLaf9Data();
+        laf.setMainSampleId(lafSampleId);
+
+        Geolocat samplingLocation = new Geolocat();
+        samplingLocation.setTypeRegulation("E");
+        Site site = new Site();
+        final int existingSiteId = 1000;
+        site.setId(existingSiteId);
+        samplingLocation.setSite(site);
+        laf.setGeolocats(List.of(samplingLocation));
+
+        testAsyncLaf9ImportNoWarnings(
+            laf, lafSampleId, true, false, laf,
+            OWNER_KEY, Site_.REFERENCE_COUNT, Sample_.MEASMS);
+    }
+
+    /**
      * Test asynchronous import updating sampling location.
      */
     @Test
@@ -615,7 +645,7 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportUpdateGeolocatE()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = existingMainSampleId;
-        testAsyncImportProbeNoWarnings(
+        testAsyncLaf8ImportNoWarnings(
             String.format(
                 laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
@@ -633,7 +663,7 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportStatus()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
-        testAsyncImportProbeNoWarnings(
+        testAsyncLaf8ImportNoWarnings(
             String.format(
                 laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
@@ -771,13 +801,32 @@ public class ImporterTest extends BaseTest {
         }
     }
 
-    private JsonObject testAsyncImportProbeNoWarnings(
+    private JsonObject testAsyncLaf8ImportNoWarnings(
         String lafData,
         String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
         JsonObject response = testAsyncLaf8Import(
             lafData, lafSampleId, expectSuccess);
+        return assertReportHasNoWarnings(response, lafSampleId);
+    }
+
+    private JsonObject testAsyncLaf9ImportNoWarnings(
+        Sample lafData,
+        String lafSampleId,
+        boolean expectSuccess,
+        boolean sparse,
+        Sample verify,
+        String... ignore
+    ) throws InterruptedException, CharacterCodingException {
+        JsonObject response = testAsyncLaf9Import(
+            lafData, lafSampleId, expectSuccess, sparse, verify, ignore);
+        return assertReportHasNoWarnings(response, lafSampleId);
+    }
+
+    private JsonObject assertReportHasNoWarnings(
+        JsonObject response, String lafSampleId
+    ) {
         final String warningsKey = "warnings";
         JsonObject warnings = response.getJsonObject(warningsKey);
         if (!warnings.isEmpty()) {
@@ -992,6 +1041,8 @@ public class ImporterTest extends BaseTest {
         laf9Template.setRegulationId(1);
         laf9Template.setSampleMethId(1);
         laf9Template.setIsTest(false);
+        laf9Template.setEnvDescripDisplay(envDescrip);
+        laf9Template.setSampleStartDate(new Date());
 
         SampleSpecifMeasVal sampleSpecif = new SampleSpecifMeasVal();
         sampleSpecif.setSampleSpecifId(sampleSpecifId);

@@ -112,35 +112,46 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         this.files.forEach((fileName, content) -> {
             this.fileResponseData = new Report();
             for (JsonObject rawSample: content) {
-                Sample sample = JSONBConfig.JSONB.fromJson(
+                Sample inputSample = JSONBConfig.JSONB.fromJson(
                     rawSample.toString(), Sample.class);
-                this.currentReportKey = sample.getExtId() != null
-                    ? sample.getExtId() : sample.getMainSampleId();
+                this.currentReportKey = inputSample.getExtId() != null
+                    ? inputSample.getExtId() : inputSample.getMainSampleId();
 
                 // TODO: Authorize
                 try {
-                    Sample persistent = identification.getExisting(sample);
-                    if (persistent == null) {
+                    Sample finalSample =
+                        identification.getExisting(inputSample);
+                    if (finalSample == null) {
                         reportValidationMessages(
-                            validator.validate(
-                                sample,
-                                CreateErrors.class,
-                                Warnings.class,
-                                Notifications.class),
+                            validator.validate(inputSample, CreateErrors.class),
                             "validation#probe");
-                        if (!sample.hasErrors()) {
-                            repository.create(sample);
-                            fileResponseData.addSampleId(sample.getId());
+                        if (!inputSample.hasErrors()) {
+                            finalSample = repository.create(inputSample);
+                            fileResponseData.addSampleId(inputSample.getId());
+                        } else {
+                            // Only for further validation
+                            finalSample = inputSample;
                         }
                     } else {
-                        merge(persistent, sample, rawSample, fileResponseData);
+                        merge(
+                            finalSample,
+                            inputSample,
+                            rawSample,
+                            fileResponseData);
                         reportValidationMessages(
-                            validator.validate(persistent), "validation#probe");
-                        if (!persistent.hasErrors()) {
-                            repository.update(persistent);
-                            fileResponseData.addSampleId(persistent.getId());
+                            validator.validate(finalSample, Default.class),
+                            "validation#probe");
+                        if (!finalSample.hasErrors()) {
+                            finalSample = repository.update(finalSample);
+                            fileResponseData.addSampleId(finalSample.getId());
                         }
                     }
+                    // Add warnings and notifications to final state
+                    reportValidationMessages(
+                        validator.validate(
+                            finalSample, Warnings.class, Notifications.class),
+                        "validation#probe");
+
                     // Handle associated tags
                     // TODO: Handle tag links outside request scope
                     // handleSampleTags(sample);

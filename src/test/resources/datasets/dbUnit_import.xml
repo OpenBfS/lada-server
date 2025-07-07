@@ -95,7 +95,7 @@
         network_id = "06"
         ext_id = "D_00191"
         long_text = "Langer Text"
-        is_fuzzy = "true"
+        is_fuzzy = "false"
         spat_ref_sys_id = "4"
         coord_x_ext = "49.83021"
         coord_y_ext = "8.81948"
