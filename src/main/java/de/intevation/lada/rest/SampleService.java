@@ -250,11 +250,18 @@ public class SampleService extends LadaIntegerIdEntityService {
         repository.delete(probeObj);
     }
 
-    private void clearAssociations(Sample probe) {
-        probe.setCommSamples(null);
-        probe.setMeasms(null);
-        probe.setTags(null);
-        probe.setSampleSpecifMeasVals(null);
-        probe.setGeolocats(null);
+    /**
+     * Clears associated objects.
+     * Not cascading persistence operations is not enough
+     * to prevent accidents in persistence layer.
+     *
+     * @param s the actual sample
+     */
+    private void clearAssociations(Sample s) {
+        s.setCommSamples(null);
+        s.setMeasms(null);
+        s.setTags(null);
+        s.setSampleSpecifMeasVals(null);
+        s.setGeolocats(null);
     }
 }

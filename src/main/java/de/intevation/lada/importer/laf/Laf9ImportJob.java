@@ -16,6 +16,7 @@ import jakarta.validation.groups.Default;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
@@ -51,6 +53,8 @@ import de.intevation.lada.validation.groups.Warnings;
 
 
 public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
+
+    private static final String MSG_KEY_PREFIX = "validation#";
 
     @Inject
     private Identification identification;
@@ -70,15 +74,15 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     @Inject
     private TagLinkService<TagLinkMeasm> tagLinkMeasmService;
 
-    private Map<String, PropertyDescriptor> belongsToSampleProperties;
+    private Map<String, Method> belongsToSampleGetters;
 
     private Report fileResponseData;
     private String currentReportKey;
 
     @PostConstruct
     private void init() {
-        // Collect PropertyDescriptors for lists of associated child objects
-        Map<String, PropertyDescriptor> collectGetters = new HashMap<>();
+        // Collect getters for lists of associated child objects
+        Map<String, Method> collectGetters = new HashMap<>();
         Set<PluralAttribute<? super Sample, ?, ?>> attrs = repository
             .entityManager().getMetamodel().entity(Sample.class)
             .getPluralAttributes();
@@ -90,14 +94,15 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 String attrName = attr.getName();
                 try {
                     collectGetters.put(attrName,
-                        new PropertyDescriptor(attrName, Sample.class));
+                        new PropertyDescriptor(attrName, Sample.class)
+                        .getReadMethod());
                 } catch (IntrospectionException e) {
                     // Avoids warning during startup
                     throw new RuntimeException(e);
                 }
             }
         }
-        this.belongsToSampleProperties = Map.copyOf(collectGetters);
+        this.belongsToSampleGetters = Map.copyOf(collectGetters);
     }
 
     /**
@@ -121,36 +126,30 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 try {
                     Sample finalSample =
                         identification.getExisting(inputSample);
-                    if (finalSample == null) {
-                        reportValidationMessages(
-                            validator.validate(inputSample, CreateErrors.class),
-                            "validation#probe");
-                        if (!inputSample.hasErrors()) {
-                            finalSample = repository.create(inputSample);
-                            fileResponseData.addSampleId(inputSample.getId());
-                        } else {
-                            // Only for further validation
-                            finalSample = inputSample;
-                        }
+                    boolean isNewSample = finalSample == null;
+                    final String msgKey = "probe";
+                    if (isNewSample) {
+                        finalSample = create(inputSample, msgKey);
                     } else {
-                        merge(
+                        finalSample = merge(finalSample, rawSample, msgKey);
+                    }
+                    /* Merge child objects if parent has no errors,
+                       i.e. was persisted */
+                    if (repository.entityManager().contains(finalSample)) {
+                        fileResponseData.addSampleId(finalSample.getId());
+                        mergeSampleChilds(
                             finalSample,
-                            inputSample,
+                            isNewSample,
                             rawSample,
                             fileResponseData);
-                        reportValidationMessages(
-                            validator.validate(finalSample, Default.class),
-                            "validation#probe");
-                        if (!finalSample.hasErrors()) {
-                            finalSample = repository.update(finalSample);
-                            fileResponseData.addSampleId(finalSample.getId());
-                        }
                     }
-                    // Add warnings and notifications to final state
+
+                    /* Add warnings and notifications to final state
+                       with child objects merged */
                     reportValidationMessages(
                         validator.validate(
                             finalSample, Warnings.class, Notifications.class),
-                        "validation#probe");
+                        MSG_KEY_PREFIX + msgKey);
 
                     // Handle associated tags
                     // TODO: Handle tag links outside request scope
@@ -160,8 +159,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     // }
 
                     // TODO: Handle geolocat.site_id
-
-                    // TODO: Avoid duplicating statusProt entries
                 } catch (IdentificationException e) {
                     reportIdentificationException(e);
                 }
@@ -173,16 +170,17 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         tagImportedData(importedSampleIds, this.mst);
     }
 
-    private void merge(
+    private void mergeSampleChilds(
         Sample targetSample,
-        Sample srcSample,
+        boolean isNewSample,
         JsonObject rawSample,
         Report report
     ) {
-        merger.merge(targetSample, rawSample);
+        Sample srcSample = JSONBConfig.JSONB.fromJson(
+            rawSample.toString(), Sample.class);
+        Map<Measm, JsonObject> importedMeasms = new HashMap<>();
         // TODO: Merge other associations
-        // TODO: validate
-        for (String attrName : belongsToSampleProperties.keySet()) {
+        for (String attrName : belongsToSampleGetters.keySet()) {
             List<BelongsToSample> srcObjects =
                 getChildList(attrName, srcSample);
             if (srcObjects == null) {
@@ -190,60 +188,97 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             }
             for (int i = 0; i < srcObjects.size(); i++) {
                 BelongsToSample srcObject = srcObjects.get(i);
-                JsonObject rawObject =
-                    rawSample.getJsonArray(attrName).getJsonObject(i);
-
-                // Identify
                 srcObject.setSample(targetSample);
-                BelongsToSample persistentObject;
-                try {
-                    persistentObject = identification.getExisting(srcObject);
-                } catch (IdentificationException e) {
-                    reportIdentificationException(e);
-                    continue;
+
+                BelongsToSample finalObject = null;
+                if (!isNewSample) {
+                    // Identify
+                    try {
+                        finalObject = identification.getExisting(srcObject);
+                    } catch (IdentificationException e) {
+                        reportIdentificationException(e);
+                        continue;
+                    }
                 }
 
                 // Merge existent or add new object
-                if (persistentObject != null) {
-                    merger.merge(persistentObject, rawObject);
-                    if (persistentObject instanceof Measm targetMeasm
-                        && srcObject instanceof Measm srcMeasm
-                    ) {
-                        mergeMeasmChilds(targetMeasm, srcMeasm);
-                    }
+                JsonObject rawObject =
+                    rawSample.getJsonArray(attrName).getJsonObject(i);
+                if (finalObject == null) {
+                    finalObject = create(srcObject, attrName);
                 } else {
-                    List<BelongsToSample> targetObjects =
-                        getChildList(attrName, targetSample);
-                    if (targetObjects == null) {
-                        targetObjects = new ArrayList<>();
-                        try {
-                            belongsToSampleProperties.get(attrName)
-                                .getWriteMethod()
-                                .invoke(targetSample, targetObjects);
-                        } catch (ReflectiveOperationException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    targetObjects.add(srcObject);
+                    finalObject = merge(finalObject, rawObject, attrName);
+                }
+
+                /* Merge Measm child objects if parent has no errors,
+                   i.e. was persisted */
+                if (repository.entityManager().contains(finalObject)
+                    && finalObject instanceof Measm targetMeasm
+                ) {
+                    importedMeasms.put(targetMeasm, rawObject);
+                } else {
+                    reportValidationMessages(
+                        validator.validate(
+                            finalObject, Warnings.class, Notifications.class),
+                        MSG_KEY_PREFIX + attrName);
                 }
             }
         }
+
+        // Merge and validate child objects and validate imported measms
+        for (Measm importedMeasm : importedMeasms.keySet()) {
+            mergeMeasmChilds(importedMeasm, importedMeasms.get(importedMeasm));
+            reportValidationMessages(
+                validator.validate(
+                    importedMeasm, Warnings.class, Notifications.class),
+                MSG_KEY_PREFIX + Sample_.MEASMS);
+        }
     }
 
-    private void mergeMeasmChilds(Measm targetMeasm, Measm srcMeasm) {
+    private <T extends BaseModel> T create(T inputObject, String msgKey) {
+        reportValidationMessages(
+            validator.validate(inputObject, CreateErrors.class),
+            MSG_KEY_PREFIX + msgKey);
+        if (!inputObject.hasErrors()) {
+            return repository.create(inputObject);
+        }
+        return inputObject;
+    }
+
+    private <T extends BaseModel> T merge(
+        T persistent, JsonObject rawObject, String msgKey
+    ) {
+        merger.merge(persistent, rawObject);
+        reportValidationMessages(
+            validator.validate(persistent, Default.class),
+            MSG_KEY_PREFIX + msgKey);
+        if (persistent.hasErrors()) {
+            repository.entityManager().detach(persistent);
+        } else {
+            persistent = repository.update(persistent);
+        }
+        return persistent;
+    }
+
+    private void mergeMeasmChilds(Measm targetMeasm, JsonObject rawMeasm) {
+        Measm srcMeasm = JSONBConfig.JSONB.fromJson(
+            rawMeasm.toString(), Measm.class);
+
         // measVals
         Collection<MeasVal> newMeasVals = srcMeasm.getMeasVals();
         if (newMeasVals != null) {
             merger.mergeMeasVals(targetMeasm, newMeasVals);
             for (MeasVal m : newMeasVals) {
                 // Validation already done in ObjectMerger
-                reportValidationMessages(m, "validation#messwert");
+                reportValidationMessages(m, MSG_KEY_PREFIX + "messwert");
             }
         }
 
         // statusProts and commMeasms can only be added, not updated
-        addBelongsToMeasms(targetMeasm, srcMeasm.getStatusProts());
         addBelongsToMeasms(targetMeasm, srcMeasm.getCommMeasms());
+        /* Put statusProts last, because validating requires
+           the final state of all objects */
+        addBelongsToMeasms(targetMeasm, srcMeasm.getStatusProts());
     }
 
     private void addBelongsToMeasms(
@@ -265,8 +300,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     @SuppressWarnings("unchecked")
     private List<BelongsToSample> getChildList(String name, Sample sample) {
         try {
-            return (List<BelongsToSample>) belongsToSampleProperties
-                .get(name).getReadMethod().invoke(sample);
+            return (List<BelongsToSample>) belongsToSampleGetters
+                .get(name).invoke(sample);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }

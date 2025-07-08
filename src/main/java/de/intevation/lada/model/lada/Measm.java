@@ -109,35 +109,20 @@ public class Measm extends BelongsToSample implements Serializable {
     @Transient
     private StatusProt statusProt;
 
-    /* Cascade removal of Measm to referencing StatusProt entries, namely
-       OneToOne-associated statusProt */
     @OneToMany(mappedBy = StatusProt_.MEASM,
-         cascade = {
-             CascadeType.PERSIST,
-             CascadeType.REFRESH,
-             CascadeType.REMOVE,
-             CascadeType.MERGE},
+        cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<StatusProt> statusProts;
 
-
     @OneToMany(mappedBy = CommMeasm_.MEASM,
-        cascade = {
-            CascadeType.PERSIST,
-            CascadeType.REFRESH,
-            CascadeType.REMOVE,
-            CascadeType.MERGE},
+        cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CommMeasm> commMeasms;
 
     @OneToMany(mappedBy = MeasVal_.MEASM,
-        cascade = {
-            CascadeType.PERSIST,
-            CascadeType.REFRESH,
-            CascadeType.REMOVE,
-            CascadeType.MERGE},
+        cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<MeasVal> measVals;

@@ -112,8 +112,8 @@ public class MeasmService extends LadaIntegerIdEntityService {
 
     /**
      * Clears associated objects.
-     *
-     * Only laf9service allows importing of measms with associations.
+     * Not cascading persistence operations is not enough
+     * to prevent accidents in persistence layer.
      *
      * @param m the actual measm
      */

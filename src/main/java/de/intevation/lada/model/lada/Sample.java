@@ -228,11 +228,7 @@ public class Sample extends BaseModel implements Serializable {
 
     @OneToMany(
         mappedBy = Measm_.SAMPLE,
-        cascade = {
-            CascadeType.PERSIST,
-            CascadeType.REFRESH,
-            CascadeType.REMOVE,
-            CascadeType.MERGE},
+        cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Measm> measms;
@@ -247,31 +243,19 @@ public class Sample extends BaseModel implements Serializable {
     private Set<Tag> tags;
 
     @OneToMany(mappedBy = CommSample_.SAMPLE,
-        cascade = {
-            CascadeType.PERSIST,
-            CascadeType.REFRESH,
-            CascadeType.REMOVE,
-            CascadeType.MERGE},
+        cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<CommSample> commSamples;
 
     @OneToMany(mappedBy = SampleSpecifMeasVal_.SAMPLE,
-        cascade = {
-            CascadeType.PERSIST,
-            CascadeType.REFRESH,
-            CascadeType.REMOVE,
-            CascadeType.MERGE},
+        cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<SampleSpecifMeasVal> sampleSpecifMeasVals;
 
     @OneToMany(mappedBy = Geolocat_.SAMPLE,
-        cascade = {
-            CascadeType.PERSIST,
-            CascadeType.REFRESH,
-            CascadeType.REMOVE,
-            CascadeType.MERGE},
+        cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Geolocat> geolocats;

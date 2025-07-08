@@ -381,6 +381,70 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Asynchronous LAF9 import reports error, if given invalid child object.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9WithInvalidChildImport()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        Sample laf = prepareLaf9Data();
+        laf.setMainSampleId(lafSampleId);
+        Measm measm = new Measm();
+        measm.setMmtId("XXX"); // Invalid
+        laf.getMeasms().add(measm);
+
+        Sample expected = prepareLaf9Data();
+        expected.setMainSampleId(lafSampleId);
+
+        JsonObject report = testAsyncLaf9Import(
+            laf, existingMainSampleId, false, true, expected);
+        JsonObject expectedError = Json.createObjectBuilder()
+            .add(REPORT_ITEM_KEY_KEY, "validation#measms")
+            .add(REPORT_ITEM_VALUE_KEY, Measm_.MMT_ID)
+            .add(REPORT_ITEM_CODE_KEY, "size must be between 0 and 2")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject(ERRORS_KEY).getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedError));
+    }
+
+    /**
+     * Asynchronous LAF9 import reports error, if given invalid child object
+     * for update.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9UpdateWithInvalidChildImport()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = new Sample();
+        laf.setExtId(existingExtId);
+        Measm measm = new Measm();
+        measm.setExtId(existingMeasmExtId);
+        measm.setMmtId("XXX"); // Invalid
+        laf.setMeasms(List.of(measm));
+        MeasVal measVal = new MeasVal();
+        measVal.setMeasdId(2);
+        measVal.setMeasUnitId(2);
+        measm.setMeasVals(List.of(measVal));
+
+        // Sample and all child objects should remain unchanged
+        final int existingSampleId = 1000;
+        JsonObject expected = getSample(existingSampleId);
+
+        JsonObject report = testAsyncLaf9Import(
+            laf, existingMainSampleId, false, true, expected);
+        JsonObject expectedError = Json.createObjectBuilder()
+            .add(REPORT_ITEM_KEY_KEY, "validation#measms")
+            .add(REPORT_ITEM_VALUE_KEY, Measm_.MMT_ID)
+            .add(REPORT_ITEM_CODE_KEY, "size must be between 0 and 2")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject(ERRORS_KEY).getJsonArray(existingExtId),
+            CoreMatchers.hasItem(expectedError));
+    }
+
+    /**
      * Test failing sample identification with LAF8.
      */
     @Test
@@ -949,6 +1013,10 @@ public class ImporterTest extends BaseTest {
     private JsonObject getImportedSample(JsonObject fileReport) {
         final int sampleId = fileReport.getJsonArray(SAMPLE_IDS_KEY)
             .getJsonNumber(0).intValue();
+        return getSample(sampleId);
+    }
+
+    private JsonObject getSample(int sampleId) {
         Response importedSampleResponse = target
             .path("rest/sample/" + sampleId)
             .request()
@@ -1050,11 +1118,13 @@ public class ImporterTest extends BaseTest {
 
         Measm measm = new Measm();
         measm.setMmtId(mmtId);
-        laf9Template.setMeasms(List.of(measm));
+        laf9Template.setMeasms(new ArrayList<>(List.of(measm)));
 
         MeasVal measVal = new MeasVal();
         measVal.setMeasdId(1);
         measVal.setMeasUnitId(1);
+        measVal.setMeasVal(1d);
+        measVal.setError(1f);
         measm.setMeasVals(List.of(measVal));
 
         StatusProt statusProt = new StatusProt();
