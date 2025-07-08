@@ -92,7 +92,7 @@ Verzeichnis "lada_print_templates" neben diesem Verzeichnis befindet):
 Bauen des Client-Images (es wird angenommen, dass der Client-Quellcode sich im
 Verzeichnis "client" neben diesem Verzeichnis befindet):
  $ cd ../client
- $ docker build -t koala/lada_client .
+ $ docker build --target development -t koala/lada_client .
 
 Oder für Shibboleth-Unterstützung:
  $ cd ../client
