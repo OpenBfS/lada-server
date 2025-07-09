@@ -262,6 +262,10 @@ public class ObjectMerger {
             .setParameter("m", target)
             .executeUpdate();
         for (MeasVal m: measVals) {
+            /* Ignore IDs in input to prevent Hibernate from
+               considering new objects as transient */
+            m.setId(null);
+
             m.setMeasm(target);
             validator.validate(m);
             if (!m.hasErrors()) {

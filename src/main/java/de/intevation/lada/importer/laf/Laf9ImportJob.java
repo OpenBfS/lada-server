@@ -33,10 +33,12 @@ import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.BelongsToSample;
+import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
@@ -76,13 +78,17 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     private Map<String, Method> belongsToSampleGetters;
 
+    private Map<Class<?>, Method> idSetters;
+
     private Report fileResponseData;
     private String currentReportKey;
 
     @PostConstruct
     private void init() {
-        // Collect getters for lists of associated child objects
+        /* Collect getters for lists of associated child objects
+           and setters for IDs of associated child objects */
         Map<String, Method> collectGetters = new HashMap<>();
+        Map<Class<?>, Method> collectSetters = new HashMap<>();
         Set<PluralAttribute<? super Sample, ?, ?>> attrs = repository
             .entityManager().getMetamodel().entity(Sample.class)
             .getPluralAttributes();
@@ -96,6 +102,10 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     collectGetters.put(attrName,
                         new PropertyDescriptor(attrName, Sample.class)
                         .getReadMethod());
+
+                    Class<?> elementType = attr.getElementType().getJavaType();
+                    collectSetters.put(elementType,
+                        repository.idProperty(elementType).getWriteMethod());
                 } catch (IntrospectionException e) {
                     // Avoids warning during startup
                     throw new RuntimeException(e);
@@ -103,6 +113,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             }
         }
         this.belongsToSampleGetters = Map.copyOf(collectGetters);
+        this.idSetters = Map.copyOf(collectSetters);
     }
 
     /**
@@ -119,6 +130,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             for (JsonObject rawSample: content) {
                 Sample inputSample = JSONBConfig.JSONB.fromJson(
                     rawSample.toString(), Sample.class);
+
                 this.currentReportKey = inputSample.getExtId() != null
                     ? inputSample.getExtId() : inputSample.getMainSampleId();
 
@@ -129,6 +141,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     boolean isNewSample = finalSample == null;
                     final String msgKey = "probe";
                     if (isNewSample) {
+                        /* Ignore IDs in input to prevent Hibernate from
+                           considering new objects as transient */
+                        inputSample.setId(null);
                         finalSample = create(inputSample, msgKey);
                     } else {
                         finalSample = merge(finalSample, rawSample, msgKey);
@@ -205,6 +220,14 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 JsonObject rawObject =
                     rawSample.getJsonArray(attrName).getJsonObject(i);
                 if (finalObject == null) {
+                    /* Ignore IDs in input to prevent Hibernate from
+                       considering new objects as transient */
+                    try {
+                        this.idSetters.get(srcObject.getClass()).invoke(
+                            srcObject, (Object) null);
+                    } catch (ReflectiveOperationException e) {
+                        throw new RuntimeException(e);
+                    }
                     finalObject = create(srcObject, attrName);
                 } else {
                     finalObject = merge(finalObject, rawObject, attrName);
@@ -287,6 +310,14 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     ) {
         if (newEntries != null) {
             for (BelongsToMeasm newEntry : newEntries) {
+                /* Ignore IDs in input to prevent Hibernate from
+                   considering new objects as transient */
+                if (newEntry instanceof CommMeasm cm) {
+                    cm.setId(null);
+                } else if (newEntry instanceof StatusProt sp) {
+                    sp.setId(null);
+                }
+
                 newEntry.setMeasm(target);
                 reportValidationMessages(
                     validator.validate(newEntry), "Status ");

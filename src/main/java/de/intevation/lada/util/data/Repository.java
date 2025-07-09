@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.util.data;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,6 +20,8 @@ import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
@@ -123,6 +127,20 @@ public class Repository {
     public EntityManager entityManager() {
         return em;
     }
+
+    /**
+     * Return ID property of given entity type.
+     *
+     * @param type entity type for which ID property is requested
+     */
+    public <T> PropertyDescriptor idProperty(
+        Class<T> type
+    ) throws IntrospectionException {
+        EntityType<T> entityType = em.getMetamodel().entity(type);
+        SingularAttribute<? super T, ?> idAttr
+            = entityType.getId(entityType.getIdType().getJavaType());
+        return new PropertyDescriptor(idAttr.getName(), type);
+     }
 
     /**
      * Get QueryBuilder for given class.
