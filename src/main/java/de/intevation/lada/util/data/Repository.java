@@ -129,6 +129,16 @@ public class Repository {
     }
 
     /**
+     * Return ID attribute of given entity type.
+     *
+     * @param type entity type for which ID attribute is requested
+     */
+    public <T> SingularAttribute<? super T, ?> idAttribute(Class<T> type) {
+        EntityType<T> entityType = em.getMetamodel().entity(type);
+        return entityType.getId(entityType.getIdType().getJavaType());
+    }
+
+    /**
      * Return ID property of given entity type.
      *
      * @param type entity type for which ID property is requested
@@ -136,11 +146,8 @@ public class Repository {
     public <T> PropertyDescriptor idProperty(
         Class<T> type
     ) throws IntrospectionException {
-        EntityType<T> entityType = em.getMetamodel().entity(type);
-        SingularAttribute<? super T, ?> idAttr
-            = entityType.getId(entityType.getIdType().getJavaType());
-        return new PropertyDescriptor(idAttr.getName(), type);
-     }
+        return new PropertyDescriptor(idAttribute(type).getName(), type);
+    }
 
     /**
      * Get QueryBuilder for given class.

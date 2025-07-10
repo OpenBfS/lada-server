@@ -8,8 +8,6 @@
 package de.intevation.lada.importer.identification;
 
 import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.util.Set;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
@@ -17,8 +15,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.metamodel.EntityType;
-import jakarta.persistence.metamodel.SingularAttribute;
 
 
 /**
@@ -43,7 +39,7 @@ public class Identification {
      * @throws IdentificationException in case of ambiguous identifying attributes
      */
     @SuppressWarnings("unchecked")
-    public <T, I> T getExisting(T object) throws IdentificationException {
+    public <T> T getExisting(T object) throws IdentificationException {
         // Use type-specific identifier, if available
         if (object instanceof Sample sample) {
             return (T) sampleIdentifier.getExisting(sample);
@@ -51,28 +47,14 @@ public class Identification {
             return (T) measmIdentifier.getExisting(measm);
         }
 
-        // Otherwise identify using ID attributes
+        // Otherwise identify using ID attribute
         Class<T> type = (Class<T>) object.getClass();
-        EntityType<T> entityType = repository.entityManager().getMetamodel()
-            .entity(type);
-        Set<SingularAttribute<? super T, ?>> idAttributes;
-        if (entityType.hasSingleIdAttribute()) {
-            idAttributes =
-                Set.of(entityType.getId(entityType.getIdType().getJavaType()));
-        } else {
-            idAttributes = entityType.getIdClassAttributes();
-        }
         QueryBuilder<T> queryBuilder = repository.queryBuilder(type);
-        for (SingularAttribute<? super T, ?> idAttr : idAttributes) {
-            SingularAttribute<? super T, I> idAttribute =
-                (SingularAttribute<? super T, I>) idAttr;
-            try {
-                I id = (I) new PropertyDescriptor(idAttr.getName(), type)
-                    .getReadMethod().invoke(object);
-                queryBuilder.and(idAttribute, id);
-            } catch (IntrospectionException | ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            queryBuilder.and(repository.idAttribute(type),
+                repository.idProperty(type).getReadMethod().invoke(object));
+        } catch (IntrospectionException | ReflectiveOperationException e) {
+            throw new RuntimeException(e);
         }
         try {
             return repository.getSingle(queryBuilder.getQuery());
