@@ -1117,7 +1117,7 @@ public class ImporterTest extends BaseTest {
         laf9Template.setSampleMethId(1);
         laf9Template.setIsTest(false);
         laf9Template.setEnvDescripDisplay(envDescrip);
-        laf9Template.setSampleStartDate(new Date());
+        laf9Template.setSampleStartDate(new Date(0l));
 
         SampleSpecifMeasVal sampleSpecif = new SampleSpecifMeasVal();
         sampleSpecif.setSampleSpecifId(sampleSpecifId);
