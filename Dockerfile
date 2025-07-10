@@ -103,4 +103,4 @@ HEALTHCHECK CMD [ $(curl -sfw '%{http_code}' http://localhost:8080/lada-server/r
 #CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", \
 #     "-bmanagement=0.0.0.0"]
 
-ENTRYPOINT ["$SRC/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/src/lada-server/docker-entrypoint.sh"]

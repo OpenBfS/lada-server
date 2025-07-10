@@ -20,6 +20,6 @@ run-batch
 stop-embedded-server
 EOF
 
-chown -R jboss:jboss $JBOSS_HOME/standalone/log /var/log/wildfly
 
-su - jboss -c "export JAVA_OPTS='${LADA_JAVA_OPTS}' ; /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0"
+export JAVA_OPTS='${LADA_JAVA_OPTS}'
+/opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
