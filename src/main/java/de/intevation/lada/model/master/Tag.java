@@ -8,17 +8,12 @@
 package de.intevation.lada.model.master;
 
 import java.util.Date;
-import java.util.Set;
 
-import jakarta.json.bind.annotation.JsonbTransient;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -26,8 +21,6 @@ import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.model.lada.TagLinkMeasm;
-import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NetworkOrMeasFacil;
 import de.intevation.lada.validation.constraints.Unique;
@@ -84,16 +77,6 @@ public class Tag extends BaseModel {
     @Temporal(TIMESTAMP)
     private Date createdAt;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "tag_id", updatable = false)
-    @JsonbTransient
-    private Set<TagLinkMeasm> tagLinkMeasms;
-
-    @OneToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "tag_id", updatable = false)
-    @JsonbTransient
-    private Set<TagLinkSample> tagLinkSamples;
-
     private boolean isAutoTag;
 
     public Tag() { }
@@ -122,22 +105,6 @@ public class Tag extends BaseModel {
         this.measFacilId = measFacilId;
     }
 
-    public Set<TagLinkMeasm> getTagLinkMeasms() {
-        return tagLinkMeasms;
-    }
-
-    public void setTagLinkMeasms(Set<TagLinkMeasm> tagLinkMeasms) {
-        this.tagLinkMeasms = tagLinkMeasms;
-    }
-
-    public Set<TagLinkSample> getTagLinkSamples() {
-        return tagLinkSamples;
-    }
-
-    public void setTagLinkSamples(Set<TagLinkSample> tagLinkSamples) {
-        this.tagLinkSamples = tagLinkSamples;
-    }
-
     public boolean getIsAutoTag() {
         return this.isAutoTag;
     }
@@ -145,7 +112,6 @@ public class Tag extends BaseModel {
     public void setIsAutoTag(boolean isAutoTag) {
         this.isAutoTag = isAutoTag;
     }
-
 
     public Date getValUntil() {
         return valUntil;

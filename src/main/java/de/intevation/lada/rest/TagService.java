@@ -7,15 +7,11 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.TypedQuery;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
@@ -24,10 +20,9 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
-import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkMeasm_;
-import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.lada.TagLinkSample_;
+import de.intevation.lada.model.lada.TagLink_;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.util.data.TagUtil;
@@ -39,6 +34,15 @@ import de.intevation.lada.util.rest.RequestMethod;
  */
 @Path(LadaService.PATH_REST + "tag")
 public class TagService extends LadaIntegerIdEntityService {
+
+    private static final String TAGS_PER_OBJECT_QUERY = String.format(
+        "select t from %s t where ", Tag_.class_.getName());
+
+    private static final String ID_PARAM = "id%s";
+
+    private static final String IN_PREDICATE = String.format(
+        "t.%s in (select %s from %%s where %%s = :%s)",
+        Tag_.ID, TagLink_.TAG_ID, ID_PARAM);
 
     /**
      * Get a single tag by id.
@@ -65,50 +69,35 @@ public class TagService extends LadaIntegerIdEntityService {
         @QueryParam("sampleId") Set<Integer> sampleIds,
         @QueryParam("measmId") Set<Integer> measmIds
     ) {
-        CriteriaBuilder builder =
-            repository.entityManager().getCriteriaBuilder();
-        CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
-        Root<Tag> root = criteriaQuery.from(Tag.class);
-
-        List<Tag> result;
-        if (!sampleIds.isEmpty()) {
-            // Return only tags assigned to all given Sample or Messung objects
-            Join<Tag, TagLinkSample> joinTagZuordnung =
-                root.join(Tag_.tagLinkSamples);
-            // Work-around missing SQL INTERSECTION in JPA:
-            final Iterator<Integer> filterIds = sampleIds.iterator();
-            Predicate idFilter = builder.equal(
-                joinTagZuordnung.get(TagLinkSample_.sampleId),
-                    filterIds.next());
-            result = repository.filter(criteriaQuery.where(idFilter));
-            while (!result.isEmpty() && filterIds.hasNext()) {
-                idFilter = builder.equal(
-                    joinTagZuordnung.get(TagLinkSample_.sampleId),
-                        filterIds.next());
-                result.retainAll(
-                    repository.filter(criteriaQuery.where(idFilter)));
-            }
-        } else if (!measmIds.isEmpty()) {
-            // Return only tags assigned to all given Sample or Messung objects
-            Join<Tag, TagLinkMeasm> joinTagZuordnung =
-                root.join(Tag_.tagLinkMeasms);
-            // Work-around missing SQL INTERSECTION in JPA:
-            final Iterator<Integer> filterIds = measmIds.iterator();
-            Predicate idFilter = builder.equal(
-                joinTagZuordnung.get(TagLinkMeasm_.measmId), filterIds.next());
-            result = repository.filter(criteriaQuery.where(idFilter));
-            while (!result.isEmpty() && filterIds.hasNext()) {
-                idFilter = builder.equal(
-                    joinTagZuordnung.get(TagLinkMeasm_.measmId),
-                        filterIds.next());
-                result.retainAll(
-                    repository.filter(criteriaQuery.where(idFilter)));
-            }
-        } else {
-            result = repository.getAll(Tag.class);
+        if (sampleIds.isEmpty() && measmIds.isEmpty()) {
+            return repository.getAll(Tag.class);
         }
 
-        return result;
+        Set<Integer> ids;
+        String tagLinkEntityName;
+        String taggedObjectKey;
+        if (!sampleIds.isEmpty()) {
+            ids = sampleIds;
+            tagLinkEntityName = TagLinkSample_.class_.getName();
+            taggedObjectKey = TagLinkSample_.SAMPLE_ID;
+        } else {
+            ids = measmIds;
+            tagLinkEntityName = TagLinkMeasm_.class_.getName();
+            taggedObjectKey = TagLinkMeasm_.MEASM_ID;
+        }
+        // Return only tags assigned to all objects given by IDs
+        String queryString = TAGS_PER_OBJECT_QUERY + ids.stream()
+            .map(id -> String.format(
+                    IN_PREDICATE,
+                    tagLinkEntityName,
+                    taggedObjectKey,
+                    id))
+            .collect(Collectors.joining(" and "));
+        TypedQuery<Tag> query = repository.entityManager().createQuery(
+            queryString, Tag.class);
+        ids.forEach(
+            id -> query.setParameter(String.format(ID_PARAM, id), id));
+        return query.getResultList();
     }
 
     /**
