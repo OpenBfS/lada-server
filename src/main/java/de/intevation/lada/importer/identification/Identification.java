@@ -11,6 +11,7 @@ import java.beans.IntrospectionException;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import jakarta.inject.Inject;
@@ -29,6 +30,9 @@ public class Identification {
     private Identifier<Measm> measmIdentifier;
 
     @Inject
+    private Identifier<Tag> tagIdentifier;
+
+    @Inject
     private Repository repository;
 
     /**
@@ -45,6 +49,8 @@ public class Identification {
             return (T) sampleIdentifier.getExisting(sample);
         } else if (object instanceof Measm measm) {
             return (T) measmIdentifier.getExisting(measm);
+        } else if (object instanceof Tag tag) {
+            return (T) tagIdentifier.getExisting(tag);
         }
 
         // Otherwise identify using ID attribute

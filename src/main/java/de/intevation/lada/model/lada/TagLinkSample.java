@@ -8,6 +8,8 @@
 
 package de.intevation.lada.model.lada;
 
+import java.util.Objects;
+
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Entity;
@@ -47,5 +49,17 @@ public class TagLinkSample extends TagLink {
 
     public void setSampleId(Integer sampleId) {
         this.sampleId = sampleId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof TagLinkSample o
+            && Objects.equals(this.tagId, o.getTagId())
+            && Objects.equals(this.sampleId, o.getSampleId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.tagId, this.sampleId);
     }
 }

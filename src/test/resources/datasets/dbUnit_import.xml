@@ -104,6 +104,15 @@
         short_text = "kurz"
     />
 
+    <master.tag
+        id = "1"
+        name = "associated"
+    />
+    <master.tag
+        id = "2"
+        name = "not associated"
+    />
+
     <lada.sample
         id = "1"
         ext_id = "T001"
@@ -134,5 +143,10 @@
         type_regulation = "E"
         sample_id = "1"
         site_id = "1"
+    />
+    <lada.tag_link_sample
+        id = "1"
+        tag_id = "1"
+        sample_id = "1"
     />
 </dataset>

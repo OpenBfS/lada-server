@@ -121,7 +121,7 @@ public class AssociationTest extends ServiceTest {
 
         sample.setMeasms(List.of(measm));
         sample.setCommSamples(List.of(commSample));
-        sample.setTags(Set.of(tag));
+        sample.setTags(List.of(tag));
         sample.setSampleSpecifMeasVals(List.of(sampleSpecifMeasVal));
         sample.setGeolocats(List.of(geolocat));
 
@@ -137,7 +137,7 @@ public class AssociationTest extends ServiceTest {
 
         // Extract properties to test for
         List<Measm> createdMeasms = created.getMeasms();
-        Set<Tag> createdTags = created.getTags();
+        Collection<Tag> createdTags = created.getTags();
         Collection<CommSample> createdCommSamples = created.getCommSamples();
         Collection<SampleSpecifMeasVal> createdSampleSpecifMeasVals =
             created.getSampleSpecifMeasVals();
@@ -401,9 +401,10 @@ public class AssociationTest extends ServiceTest {
 
     private void testAssociationsAreDeleted(
             Sample created,
-            Set<CommMeasm> createdCommMeasms,
-            Set<MeasVal> createdMeasVals,
-            Set<Tag> createdTags) {
+            Collection<CommMeasm> createdCommMeasms,
+            Collection<MeasVal> createdMeasVals,
+            Collection<Tag> createdTags
+    ) {
         Assert.assertFalse(created.getMeasms().isEmpty());
         Assert.assertFalse(created.getCommSamples().isEmpty());
         Assert.assertFalse(created.getSampleSpecifMeasVals().isEmpty());
@@ -676,8 +677,11 @@ public class AssociationTest extends ServiceTest {
     ) {
         Assert.assertNotNull(createdMeasms);
         Assert.assertEquals(1, createdMeasms.size());
+
         Assert.assertNotNull(createdTags);
-        Assert.assertEquals(1, createdTags.size());
+        // Import creates additional tag
+        Assert.assertEquals(2, createdTags.size());
+
         Assert.assertNotNull(createdCommSamples);
         Assert.assertEquals(1, createdCommSamples.size());
         Assert.assertNotNull(createdSampleSpecifMeasVals);

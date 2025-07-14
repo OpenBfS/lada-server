@@ -13,6 +13,8 @@ BEGIN
             'geolocat',
             'status_prot',
             'sample_specif_meas_val',
+            'tag_link_sample',
+            'tag',
             'site'
         ] LOOP
         EXECUTE format('SELECT setval(pg_get_serial_sequence(''%1$s'', ''id''), '

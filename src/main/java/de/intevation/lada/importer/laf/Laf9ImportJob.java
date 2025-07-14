@@ -40,7 +40,6 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLinkMeasm;
-import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.rest.TagLinkService;
@@ -69,9 +68,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     @Inject
     private Validator validator;
-
-    @Inject
-    private TagLinkService<TagLinkSample> tagLinkSampleService;
 
     @Inject
     private TagLinkService<TagLinkMeasm> tagLinkMeasmService;
@@ -168,7 +164,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
                     // Handle associated tags
                     // TODO: Handle tag links outside request scope
-                    // handleSampleTags(sample);
                     // for (Measm m: sample.getMeasms()) {
                     //     handleMeasmTags(m);
                     // }
@@ -246,6 +241,42 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                         MSG_KEY_PREFIX + attrName);
                 }
             }
+        }
+
+        // Merge tags
+        List<Tag> srcTags = srcSample.getTags();
+        if (srcTags != null && !srcTags.isEmpty()) {
+            for (int i = 0; i < srcTags.size(); i++) {
+                Tag srcTag = srcTags.get(i);
+                Tag finalTag = null;
+                try {
+                    finalTag = identification.getExisting(srcTag);
+                } catch (IdentificationException e) {
+                    reportIdentificationException(e);
+                    continue;
+                }
+                final String tagsKey = "tags";
+                if (finalTag == null) {
+                    /* Ignore IDs in input to prevent Hibernate from
+                       considering new objects as transient */
+                    srcTag.setId(null);
+                    finalTag = create(srcTag, tagsKey);
+                } else {
+                    JsonObject rawTag
+                        = rawSample.getJsonArray(tagsKey).getJsonObject(i);
+                    finalTag = merge(finalTag, rawTag, tagsKey);
+                }
+                reportValidationMessages(
+                    validator.validate(
+                        finalTag, Warnings.class, Notifications.class),
+                    MSG_KEY_PREFIX + tagsKey);
+                if (repository.entityManager().contains(finalTag)) {
+                    targetSample.addTag(finalTag);
+                }
+                // TODO: Extend tag expiring time?
+            }
+            // Persist tag links added to sample
+            repository.update(targetSample);
         }
 
         // Merge and validate child objects and validate imported measms
@@ -377,23 +408,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             }
         }
         tagLinkMeasmService.createTagReference(tagLinks);
-    }
-
-    private void handleSampleTags(Sample sample) {
-        Set<Tag> tags = sample.getTags();
-        List<TagLinkSample> tagLinks = new ArrayList<>();
-        for (Tag tag : tags) {
-            Optional<Tag> currentTag = upsertTag(tag);
-            if (currentTag.isPresent()) {
-                TagLinkSample tagLink = new TagLinkSample();
-                tagLink.setSampleId(sample.getId());
-                tagLink.setTagId(currentTag.get().getId());
-                tagLinks.add(tagLink);
-            } else {
-                tags.remove(tag);
-            }
-        }
-        tagLinkSampleService.createTagReference(tagLinks);
     }
 
     private Optional<Tag> upsertTag(Tag tag) {

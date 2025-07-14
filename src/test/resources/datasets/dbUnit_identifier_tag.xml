@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <master.network id = "06" />
+    <master.meas_facil id = "06010" network_id = "06" />
+
+    <master.tag
+        id = "1"
+        name = "global"
+    />
+    <master.tag
+        id = "2"
+        name = "network"
+        network_id = "06"
+    />
+    <master.tag
+        id = "3"
+        name = "measFacil"
+        meas_facil_id = "06010"
+    />
+</dataset>

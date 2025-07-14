@@ -8,10 +8,11 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.json.bind.annotation.JsonbCreator;
@@ -235,12 +236,16 @@ public class Sample extends BaseModel implements Serializable {
 
     /* Work around the fact that hibernate does not provide means to have
        a ManyToMany association without cascading to the link table */
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REFRESH},
+        fetch = FetchType.EAGER)
     @JoinColumn(name = "sample_id", insertable = false, updatable = false)
     @JsonbTransient
     private Set<TagLinkSample> tagLinks;
     @Transient
-    private Set<Tag> tags;
+    private List<Tag> tags;
 
     @OneToMany(mappedBy = CommSample_.SAMPLE,
         cascade = CascadeType.REMOVE,
@@ -537,16 +542,30 @@ public class Sample extends BaseModel implements Serializable {
         return this.tagLinks;
     }
 
-    public Set<Tag> getTags() {
+    public List<Tag> getTags() {
         if (this.tags == null && this.tagLinks != null) {
-            this.tags = this.tagLinks.stream().map(link -> link.tag)
-                .collect(Collectors.toSet());
+            this.tags = this.tagLinks.stream().map(link -> link.tag).toList();
         }
         return this.tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public void addTag(Tag tag) {
+        if (this.tagLinks == null) {
+            this.tagLinks = new HashSet<>();
+        }
+        TagLinkSample tagLink = new TagLinkSample();
+        tagLink.setTagId(tag.getId());
+        tagLink.setSampleId(this.id);
+        if (this.tagLinks.add(tagLink)) {
+            if (this.tags == null) {
+                this.tags = new ArrayList<>();
+            }
+            this.tags.add(tag);
+        }
     }
 
     public List<CommSample> getCommSamples() {

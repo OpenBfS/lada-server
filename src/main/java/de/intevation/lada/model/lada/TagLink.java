@@ -21,7 +21,7 @@ public abstract class TagLink extends BaseModel {
     @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Tag.class)
-    private Integer tagId;
+    protected Integer tagId;
 
     @ManyToOne
     @JoinColumn(insertable = false, updatable = false)
