@@ -342,11 +342,17 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         IdentificationException exception
     ) {
         Map<String, Object> failedAttrs = exception.getIdentifyingAttributes();
-        fileResponseData.addError(currentReportKey,
-            new ReportItem(
+        ReportItem reportItem;
+        if (failedAttrs != null) {
+            reportItem = new ReportItem(
                 failedAttrs.keySet().toString(),
                 failedAttrs.values().toString(),
-                StatusCodes.IMP_INVALID_VALUE));
+                StatusCodes.IMP_INVALID_VALUE);
+        } else {
+            reportItem = new ReportItem(
+                "identification", "", StatusCodes.IMP_INVALID_VALUE);
+        }
+        fileResponseData.addError(currentReportKey, reportItem);
     }
 
     private void reportValidationMessages(
