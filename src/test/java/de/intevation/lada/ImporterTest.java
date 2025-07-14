@@ -436,7 +436,7 @@ public class ImporterTest extends BaseTest {
         measm.setMeasVals(List.of(measVal));
 
         // Sample and all child objects should remain unchanged
-        final int existingSampleId = 1000;
+        final int existingSampleId = 1;
         JsonObject expected = getSample(existingSampleId);
 
         JsonObject report = testAsyncLaf9Import(
@@ -698,7 +698,7 @@ public class ImporterTest extends BaseTest {
         Geolocat samplingLocation = new Geolocat();
         samplingLocation.setTypeRegulation("E");
         Site site = new Site();
-        final int existingSiteId = 1000;
+        final int existingSiteId = 1;
         site.setId(existingSiteId);
         samplingLocation.setSite(site);
         laf.setGeolocats(List.of(samplingLocation));

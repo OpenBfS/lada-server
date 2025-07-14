@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
@@ -136,6 +137,8 @@ public class BaseTest {
     protected String testDatasetName;
 
     private static final String DATASETS_DIR = "datasets";
+    private static final String INIT_SEQ_SCRIPT =
+        DATASETS_DIR + "/init_sequences.sql";
     private static final String CLEANUP_SCRIPT = DATASETS_DIR + "/cleanup.sql";
     private static final String NULL_PLACEHOLDER = "[null]";
 
@@ -163,7 +166,12 @@ public class BaseTest {
             new PostgresqlDataTypeFactory());
 
         // Insert test data
-        doDbOperation(DatabaseOperation.CLEAN_INSERT);
+        IDataSet dataset = new FlatXmlDataSetBuilder()
+            .setColumnSensing(true)
+            .build(getClass().getClassLoader()
+                .getResourceAsStream(testDatasetName));
+        DatabaseOperation.CLEAN_INSERT.execute(con, dataset);
+        executeSql(INIT_SEQ_SCRIPT);
 
         this.client = ClientBuilder.newClient().register(JSONBConfig.class);
         this.target = client.target(baseUrl.toString());
@@ -231,7 +239,7 @@ public class BaseTest {
         this.client.close();
 
         // Ensure clean database after test
-        cleanup();
+        executeSql(CLEANUP_SCRIPT);
         con.close();
     }
 
@@ -487,9 +495,15 @@ public class BaseTest {
                             && o0.containsKey(ID_KEY)
                             && o1.containsKey(ID_KEY)
                         ) {
-                            String id0 = o0.get(ID_KEY).toString();
-                            String id1 = o1.get(ID_KEY).toString();
-                            return id0.compareTo(id1);
+                            JsonValue id0 = o0.get(ID_KEY);
+                            JsonValue id1 = o1.get(ID_KEY);
+                            if (id0 instanceof JsonNumber n0
+                                && id1 instanceof JsonNumber n1
+                            ) {
+                                return n0.bigDecimalValue().compareTo(
+                                    n1.bigDecimalValue());
+                            }
+                            return id0.toString().compareTo(id1.toString());
                         }
                         return 0;
                     }
@@ -534,26 +548,15 @@ public class BaseTest {
             containsPath.get());
     }
 
-    private void doDbOperation(
-        DatabaseOperation op
-    ) throws DatabaseUnitException, SQLException {
-        IDataSet dataset = new FlatXmlDataSetBuilder()
-            .setColumnSensing(true)
-            .build(getClass().getClassLoader()
-                .getResourceAsStream(testDatasetName));
-
-        op.execute(con, dataset);
-    }
-
-    private void cleanup()
+    private void executeSql(String scriptName)
         throws DatabaseUnitException, SQLException, IOException {
         String sql;
         //Read cleanup script
         try (InputStream is = getClass().getClassLoader()
-                .getResourceAsStream(CLEANUP_SCRIPT)) {
+                .getResourceAsStream(scriptName)) {
             if (is == null) {
                 throw new IOException(
-                    "Could not find cleanup script: " + CLEANUP_SCRIPT);
+                    "Could not find SQL script: " + scriptName);
             }
             try (InputStreamReader isr = new InputStreamReader(is);
             BufferedReader reader = new BufferedReader(isr)) {
