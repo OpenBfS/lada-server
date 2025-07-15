@@ -24,6 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -33,6 +34,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.processing.CheckHQL;
 import org.hibernate.annotations.Formula;
 import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
@@ -66,6 +68,11 @@ import de.intevation.lada.validation.groups.Warnings;
 @IsReiComplete(groups = Warnings.class)
 @HasValidReiSiteExtId(groups = Warnings.class)
 @ReiSiteExtIdMatchesNuclFacil(groups = Warnings.class)
+@CheckHQL
+@NamedQuery(name = Names.QUERY_UPDATE_SITE_IMG,
+    query = "update Site s set s.img = :data WHERE s.id = :siteId")
+@NamedQuery(name = Names.QUERY_UPDATE_SITE_MAP,
+    query = "update Site s set s.map = :data WHERE s.id = :siteId")
 public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

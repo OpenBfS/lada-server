@@ -18,5 +18,14 @@ public class Names {
      */
     public static final String SCHEMA_NAME = "master";
 
+    public static final String QUERY_UPDATE_SITE_IMG = "updateSiteImg";
+
+    public static final String QUERY_UPDATE_SITE_MAP = "updateSiteMap";
+
+    public static final String QUERY_GET_MEASD_FOR_MMT = "getMeasdForMmt";
+
+    public static final String QUERY_GET_SAMPLE_SPECIF_FOR_ENV_MEDIUM =
+        "getSampleSpecifForEnvMedium";
+
     private Names() { };
 }

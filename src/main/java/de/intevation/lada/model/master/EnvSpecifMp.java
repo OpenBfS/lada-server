@@ -10,15 +10,21 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.processing.CheckHQL;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
+@CheckHQL
+@NamedQuery(name = Names.QUERY_GET_SAMPLE_SPECIF_FOR_ENV_MEDIUM, query =
+    "select sampleSpecifId from EnvSpecifMp where envMediumId = :envMediumId")
 public class EnvSpecifMp implements Serializable {
     private static final long serialVersionUID = 1L;
 

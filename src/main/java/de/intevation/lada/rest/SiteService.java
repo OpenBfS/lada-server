@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +37,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.factory.OrtFactory;
+import de.intevation.lada.model.master.Names;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
@@ -49,8 +51,14 @@ import de.intevation.lada.validation.Validator;
 @Path(LadaService.PATH_REST + "site")
 public class SiteService extends LadaIntegerIdEntityService {
 
-    private static final String UPDATE_QUERY_TPL =
-        "UPDATE Site s SET s.%s = :data WHERE s.id = :siteId";
+    private static final String IMG_PATH = "img";
+    private static final String MAP_PATH = "map";
+
+    private static final String PATH_PATTERN = IMG_PATH + "|" + MAP_PATH;
+
+    private static final Map<String, String> UPDATE_QUERIES = Map.of(
+        IMG_PATH, Names.QUERY_UPDATE_SITE_IMG,
+        MAP_PATH, Names.QUERY_UPDATE_SITE_MAP);
 
     @Inject
     private OrtFactory ortFactory;
@@ -228,7 +236,7 @@ public class SiteService extends LadaIntegerIdEntityService {
     @Path("{id}/{type}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public byte[] getSiteImage(
-            @PathParam("type") @Pattern(regexp = "img|map") String type
+        @PathParam("type") @Pattern(regexp = PATH_PATTERN) String type
     ) {
         Site site = repository.getById(Site.class, id);
         return type.equals("map") ? site.getMap() : site.getImg();
@@ -247,9 +255,9 @@ public class SiteService extends LadaIntegerIdEntityService {
     @Path("{id}/{type}")
     @Consumes(MediaType.TEXT_PLAIN)
     public void uploadSiteImage(
-            @PathParam("type") @Pattern(regexp = "img|map") String type,
-            @Context HttpServletRequest request,
-            @NotBlank String dataUrl
+        @PathParam("type") @Pattern(regexp = PATH_PATTERN) String type,
+        @Context HttpServletRequest request,
+        @NotBlank String dataUrl
     ) throws IOException {
         Site site = repository.getById(Site.class, id);
         authorization.authorize(site, RequestMethod.PUT);
@@ -267,8 +275,8 @@ public class SiteService extends LadaIntegerIdEntityService {
     }
 
     private void updateDataColumn(Integer id, byte[] img, String type) {
-        String sql = String.format(UPDATE_QUERY_TPL, type);
-        repository.entityManager().createQuery(sql)
+        repository.entityManager()
+            .createNamedQuery(UPDATE_QUERIES.get(type))
             .setParameter("data", img)
             .setParameter("siteId", id)
             .executeUpdate();
