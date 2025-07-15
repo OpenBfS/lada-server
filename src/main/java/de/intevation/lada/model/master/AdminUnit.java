@@ -20,7 +20,7 @@ import org.locationtech.jts.geom.Point;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 public class AdminUnit implements Serializable {
     private static final long serialVersionUID = 1L;
 

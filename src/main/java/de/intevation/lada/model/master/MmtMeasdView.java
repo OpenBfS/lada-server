@@ -9,13 +9,19 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 
+import org.hibernate.annotations.processing.CheckHQL;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
+@CheckHQL
+@NamedQuery(name = Names.QUERY_GET_MEASD_FOR_MMT,
+    query = "select measdId from MmtMeasdView where mmtId = :mmt")
 public class MmtMeasdView implements Serializable {
     private static final long serialVersionUID = 1L;
 

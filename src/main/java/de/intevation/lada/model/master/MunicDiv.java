@@ -29,7 +29,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ MunicDiv.class, DatabaseConstraints.class })
 @Unique(fields = {"networkId", "siteId"},
     groups = DatabaseConstraints.class, clazz = MunicDiv.class)

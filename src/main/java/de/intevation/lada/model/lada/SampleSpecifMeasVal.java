@@ -32,7 +32,7 @@ import de.intevation.lada.validation.groups.Warnings;
 
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ SampleSpecifMeasVal.class, DatabaseConstraints.class })
 @Unique(fields = {"sampleSpecifId", "sample"},
     groups = DatabaseConstraints.class, clazz = SampleSpecifMeasVal.class)

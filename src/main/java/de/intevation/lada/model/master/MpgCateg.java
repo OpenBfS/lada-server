@@ -31,7 +31,7 @@ import jakarta.validation.constraints.Size;
  *
  */
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ MpgCateg.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = MpgCateg.class, fields = { "extId", "networkId" })

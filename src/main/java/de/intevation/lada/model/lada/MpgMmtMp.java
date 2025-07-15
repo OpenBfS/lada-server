@@ -37,7 +37,7 @@ import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ MpgMmtMp.class, DatabaseConstraints.class })
 @Unique(fields = {"mmtId", "mpgId"},
     groups = DatabaseConstraints.class, clazz = MpgMmtMp.class)
@@ -55,7 +55,7 @@ public class MpgMmtMp extends BelongsToMpg implements Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        schema = SchemaName.NAME,
+        schema = Names.SCHEMA_NAME,
         inverseJoinColumns = @JoinColumn(name = "measd_id")
     )
     @Valid

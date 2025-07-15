@@ -8,13 +8,14 @@
 package de.intevation.lada.rest;
 
 import java.util.List;
-import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
+import de.intevation.lada.model.master.Names;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.SampleSpecif_;
 
@@ -39,14 +40,10 @@ public class SampleSpecifService extends LadaStringIdEntityService {
         @QueryParam("envMediumId") @Pattern(regexp = ".+") String envMediumId
     ) {
         if (envMediumId != null) {
-            Query query =
-                repository.queryFromString(
-                    "SELECT sample_specif_id FROM "
-                    + de.intevation.lada.model.master.SchemaName.NAME
-                    + ".env_specif_mp "
-                    + "WHERE env_medium_id = :envMediumId"
-                ).setParameter("envMediumId", envMediumId);
-            @SuppressWarnings("unchecked")
+            TypedQuery<String> query = repository.entityManager()
+                .createNamedQuery(
+                    Names.QUERY_GET_SAMPLE_SPECIF_FOR_ENV_MEDIUM, String.class)
+                .setParameter("envMediumId", envMediumId);
             List<String> ids = query.getResultList();
 
             if (!ids.isEmpty()) {

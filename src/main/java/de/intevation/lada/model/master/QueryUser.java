@@ -26,7 +26,7 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 public class QueryUser implements Serializable {
     private static final long serialVersionUID = 1L;
 

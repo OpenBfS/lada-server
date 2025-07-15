@@ -20,7 +20,7 @@ import jakarta.persistence.Column;
 
 @Entity
 @NamedQuery(name = "Tz.findAll", query = "SELECT z FROM Tz z")
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 public class Tz implements Serializable {
     private static final long serialVersionUID = 1L;
 

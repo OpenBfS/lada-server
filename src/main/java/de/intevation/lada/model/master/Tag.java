@@ -27,7 +27,7 @@ import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ Tag.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = Tag.class, fields = { "name", "networkId", "measFacilId" })

@@ -21,7 +21,7 @@ import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ TagLinkSample.class, DatabaseConstraints.class })
 public class TagLinkSample extends TagLink {
     public static final long serialVersionUID = 1L;

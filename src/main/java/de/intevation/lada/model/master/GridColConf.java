@@ -26,7 +26,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ GridColConf.class, DatabaseConstraints.class })
 public class GridColConf implements Serializable {
     private static final long serialVersionUID = 1L;

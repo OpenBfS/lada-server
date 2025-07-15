@@ -27,7 +27,7 @@ import jakarta.validation.constraints.Size;
 
 
 @Entity
-@Table(name = "comm_measm", schema = SchemaName.NAME)
+@Table(name = "comm_measm", schema = Names.SCHEMA_NAME)
 @Unique(fields = {"text", "measm"},
     groups = DatabaseConstraints.class, clazz = CommMeasm.class)
 @GroupSequence({ CommMeasm.class, DatabaseConstraints.class })
