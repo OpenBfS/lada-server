@@ -191,6 +191,13 @@ public class StammdatenTest extends BaseTest {
         stammdatenTest.getById("measd", ID56);
     }
 
+    @Test
+    @RunAsClient
+    public final void measdForMmt() {
+        stammdatenTest.init(this.target);
+        stammdatenTest.getAll("measd?mmtId=A3");
+    }
+
     /**
      * Tests for messmethode operations.
      * @param baseUrl The server url used for the request.
@@ -299,6 +306,13 @@ public class StammdatenTest extends BaseTest {
     public final void testProbenzusatzById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("samplespecif", "A74");
+    }
+
+    @Test
+    @RunAsClient
+    public final void sampleSpecifForEnvMedium() {
+        stammdatenTest.init(this.target);
+        stammdatenTest.getAll("samplespecif?envMediumId=L6");
     }
 
     /**
