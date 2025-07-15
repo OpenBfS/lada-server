@@ -23,6 +23,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -36,6 +37,7 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.processing.CheckHQL;
 
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.model.master.Tag;
@@ -70,6 +72,9 @@ import de.intevation.lada.validation.groups.Warnings;
 @HasMeasmStartDateRegulation1(groups = Warnings.class)
 @HasMeasmStartDateRegulationNot1(groups = Notifications.class)
 @HasObligMeasds(groups = Notifications.class)
+@CheckHQL
+@NamedQuery(name = Names.QUERY_DELETE_MEAS_VALS,
+    query = "delete from MeasVal where measm = :m")
 public class Measm extends BelongsToSample implements Serializable {
     private static final long serialVersionUID = 1L;
 

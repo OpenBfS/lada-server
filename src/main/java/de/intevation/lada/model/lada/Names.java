@@ -18,5 +18,7 @@ public class Names {
      */
     public static final String SCHEMA_NAME = "lada";
 
+    public static final String QUERY_DELETE_MEAS_VALS = "deleteMeasVals";
+
     private Names() { };
 }
