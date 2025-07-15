@@ -19,7 +19,7 @@ import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @NamedQuery(
     name = "Network.findAll",
     query = "SELECT n FROM Network n")

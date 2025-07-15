@@ -528,7 +528,7 @@ public class ProbeFactory {
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
                 "SELECT "
-                + de.intevation.lada.model.master.SchemaName.NAME
+                + de.intevation.lada.model.master.Names.SCHEMA_NAME
                 + ".get_media_from_media_desk( :mediaDesk );")
                     .setParameter("mediaDesk", mediaDesk)
                     .getSingleResult();

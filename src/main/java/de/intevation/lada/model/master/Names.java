@@ -8,12 +8,15 @@
 package de.intevation.lada.model.master;
 
 /**
- * Provide a constant holding the name to be used to schema-qualify
- * database object names represented by classes in this package.
- *
+ * Provide constants holding names for objects in this package.
  */
-public class SchemaName {
-    public static final String NAME = "master";
+public class Names {
 
-    private SchemaName() { };
+    /**
+     * The name to be used to schema-qualify database object names
+     * represented by classes in this package.
+     */
+    public static final String SCHEMA_NAME = "master";
+
+    private Names() { };
 }

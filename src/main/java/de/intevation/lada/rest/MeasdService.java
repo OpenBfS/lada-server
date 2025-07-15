@@ -45,7 +45,7 @@ public class MeasdService extends LadaIntegerIdEntityService {
         Query query =
             repository.queryFromString(
                 "SELECT measd_id FROM "
-                + de.intevation.lada.model.master.SchemaName.NAME
+                + de.intevation.lada.model.master.Names.SCHEMA_NAME
                 + ".mmt_measd_view "
                 + "WHERE mmt_id = :mmt"
             ).setParameter("mmt", mmtId);

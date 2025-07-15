@@ -55,7 +55,7 @@ import de.intevation.lada.validation.groups.Warnings;
 
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ Site.class, DatabaseConstraints.class })
 @HasCoordsOrAdminUnitOrState
 @ValidCoordinates

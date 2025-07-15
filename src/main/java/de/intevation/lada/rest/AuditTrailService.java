@@ -250,7 +250,7 @@ public class AuditTrailService extends LadaService {
                 "ext_id",
                 audit.getRowDataJson().get("site_id").toString(),
                 "id",
-                de.intevation.lada.model.master.SchemaName.NAME);
+                de.intevation.lada.model.master.Names.SCHEMA_NAME);
             node.setIdentifier(value);
             break;
         case "measm":
@@ -279,7 +279,7 @@ public class AuditTrailService extends LadaService {
                     "name",
                     audit.getRowDataJson().get("measd_id").toString(),
                     "id",
-                    de.intevation.lada.model.master.SchemaName.NAME);
+                    de.intevation.lada.model.master.Names.SCHEMA_NAME);
                 identifier.setIdentifier(value);
                 break;
             default:
@@ -360,7 +360,7 @@ public class AuditTrailService extends LadaService {
                 "name",
                 audit.getRowDataJson().get("measd_id").toString(),
                 "id",
-                de.intevation.lada.model.master.SchemaName.NAME);
+                de.intevation.lada.model.master.Names.SCHEMA_NAME);
             node.setIdentifier(value);
             break;
         default:
@@ -413,7 +413,7 @@ public class AuditTrailService extends LadaService {
                 "name",
                 audit.getRowDataJson().get("measd_id").toString(),
                 "id",
-                de.intevation.lada.model.master.SchemaName.NAME);
+                de.intevation.lada.model.master.Names.SCHEMA_NAME);
             node.setIdentifier(value);
         }
         if ("mpg_sample_specif".equals(audit.getTableName())) {
@@ -428,7 +428,7 @@ public class AuditTrailService extends LadaService {
                 "ext_id",
                 audit.getRowDataJson().get("site_id").toString(),
                 "id",
-                de.intevation.lada.model.master.SchemaName.NAME);
+                de.intevation.lada.model.master.Names.SCHEMA_NAME);
             node.setIdentifier(value);
         }
         return node;
@@ -508,7 +508,7 @@ public class AuditTrailService extends LadaService {
                     m.getValueField(),
                     id,
                     "id",
-                    de.intevation.lada.model.master.SchemaName.NAME);
+                    de.intevation.lada.model.master.Names.SCHEMA_NAME);
                 builder.add(key, value);
             }
         });

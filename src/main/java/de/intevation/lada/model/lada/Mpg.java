@@ -61,7 +61,7 @@ import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ Mpg.class, DatabaseConstraints.class })
 @BeginBeforeEnd
 @ValidSamplePd
@@ -218,7 +218,7 @@ public class Mpg extends BaseModel implements Serializable {
 
     @ManyToMany (fetch = FetchType.EAGER)
     @JoinTable(
-        schema = SchemaName.NAME,
+        schema = Names.SCHEMA_NAME,
         inverseJoinColumns = @JoinColumn(name = "sample_specif_id")
     )
     @Valid

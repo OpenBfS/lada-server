@@ -42,7 +42,7 @@ public class SampleSpecifService extends LadaStringIdEntityService {
             Query query =
                 repository.queryFromString(
                     "SELECT sample_specif_id FROM "
-                    + de.intevation.lada.model.master.SchemaName.NAME
+                    + de.intevation.lada.model.master.Names.SCHEMA_NAME
                     + ".env_specif_mp "
                     + "WHERE env_medium_id = :envMediumId"
                 ).setParameter("envMediumId", envMediumId);

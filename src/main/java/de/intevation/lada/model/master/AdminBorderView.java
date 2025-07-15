@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 import org.locationtech.jts.geom.MultiPolygon;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 public class AdminBorderView implements Serializable {
     private static final long serialVersionUID = 1L;
 

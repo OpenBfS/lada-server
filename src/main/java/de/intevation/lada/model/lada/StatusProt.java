@@ -36,7 +36,7 @@ import de.intevation.lada.validation.groups.PostAuthorization;
 
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ StatusProt.class, DatabaseConstraints.class })
 @ValidDependenciesFinalStatus(groups = PostAuthorization.class)
 @HaveDependenciesNotifications(groups = Notifications.class)

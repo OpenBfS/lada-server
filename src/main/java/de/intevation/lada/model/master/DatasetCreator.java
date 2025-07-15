@@ -28,7 +28,7 @@ import jakarta.validation.constraints.Size;
 
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ DatasetCreator.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = DatasetCreator.class,

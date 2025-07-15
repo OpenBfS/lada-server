@@ -54,7 +54,7 @@ import de.intevation.lada.validation.groups.Warnings;
 // process!
 @Entity
 @DynamicInsert(true)
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ Measm.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = Measm.class, fields = { "minSampleId", "sampleId" })

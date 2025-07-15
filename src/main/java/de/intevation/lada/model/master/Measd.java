@@ -27,7 +27,7 @@ import jakarta.validation.constraints.Size;
 
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ Measd.class, DatabaseConstraints.class })
 public class Measd implements Serializable {
     private static final long serialVersionUID = 1L;

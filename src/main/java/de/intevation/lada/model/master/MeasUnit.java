@@ -24,7 +24,7 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 
 @Entity
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 public class MeasUnit implements Serializable {
     private static final long serialVersionUID = 1L;
 

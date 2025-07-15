@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @NamedQuery(name = "FilterValue.findAll", query = "SELECT f FROM FilterValue f")
-@Table(schema = SchemaName.NAME)
+@Table(schema = Names.SCHEMA_NAME)
 public class FilterValue implements Serializable {
     private static final long serialVersionUID = 1L;
 
