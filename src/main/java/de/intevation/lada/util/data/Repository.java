@@ -14,6 +14,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceProperty;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,10 @@ import jakarta.ws.rs.NotFoundException;
  *
  * Classes calling these methods have to ensure to do this inside
  * a transaction context.
+ *
+ * The enclosed EntityManager is set to flushMode MANUAL. The state of the
+ * persistence context is synchronized to database by the data modifying
+ * methods ({@code create}, {@code update}, {@code delete}).
  *
  * The enclosed EntityManager can be accessed also outside a transaction
  * context. Use with caution, if outside a transaction context!
@@ -41,8 +46,9 @@ import jakarta.ws.rs.NotFoundException;
         NonUniqueResultException.class})
 public class Repository {
 
-    @PersistenceContext
-    EntityManager em;
+    @PersistenceContext(properties = @PersistenceProperty(
+            name = "org.hibernate.flushMode", value = "MANUAL"))
+    private EntityManager em;
 
     /**
      * Create and persist a new object in the database.
