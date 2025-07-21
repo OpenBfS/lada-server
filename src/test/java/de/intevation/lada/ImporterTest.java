@@ -278,7 +278,7 @@ public class ImporterTest extends BaseTest {
 
     private void assertMeasValIsReplaced(JsonObject report) {
         // Assert that measVal is replaced
-        final int existingMeasValId = 10000;
+        final int existingMeasValId = 1;
         Collection<MeasVal> measVals = JSONBConfig.JSONB
             .fromJson(getImportedSample(report).toString(), Sample.class)
             .getMeasms().get(0).getMeasVals();
