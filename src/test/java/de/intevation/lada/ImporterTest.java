@@ -567,9 +567,10 @@ public class ImporterTest extends BaseTest {
         laf.setMainSampleId(lafSampleId);
         laf.setMeasFacilId("06011");
 
-        assertSampleForbidden(testAsyncLaf9Import(
+        assertForbidden(testAsyncLaf9Import(
                 laf, lafSampleId, false, false, expectedAttrs),
-            lafSampleId);
+            lafSampleId,
+            "Sample");
     }
 
     /**
@@ -584,15 +585,38 @@ public class ImporterTest extends BaseTest {
         laf.setExtId(foreignExtId);
         laf.setMeasFacilId(mstId);
 
-        assertSampleForbidden(testAsyncLaf9Import(
+        assertForbidden(testAsyncLaf9Import(
                 laf, foreignExtId, false, true, expectedAttrs),
-            foreignExtId);
+            foreignExtId,
+            "Sample");
     }
 
-    private void assertSampleForbidden(JsonObject report, String sampleId) {
+    /**
+     * Failing authorization of tagging sample with LAF9.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncLaf9TagSampleAuthFail()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = new Sample();
+        final String foreignExtId = "foreign";
+        laf.setExtId(foreignExtId);
+        Tag existingTag = new Tag();
+        existingTag.setName(existingNotAssociatedTag);
+        laf.setTags(List.of(existingTag));
+
+        assertForbidden(testAsyncLaf9Import(
+                laf, foreignExtId, false, true, expectedAttrs),
+            foreignExtId,
+            "TagLinkSample");
+    }
+
+    private void assertForbidden(
+        JsonObject report, String sampleId, String valueKey
+    ) {
         JsonObject expectedError = Json.createObjectBuilder()
             .add(REPORT_ITEM_KEY_KEY, BaseTest.testUser)
-            .add(REPORT_ITEM_VALUE_KEY, "Sample")
+            .add(REPORT_ITEM_VALUE_KEY, valueKey)
             .add(REPORT_ITEM_CODE_KEY, MSG_FORBIDDEN)
             .build();
         MatcherAssert.assertThat(

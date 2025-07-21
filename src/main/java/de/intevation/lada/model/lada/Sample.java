@@ -557,10 +557,7 @@ public class Sample extends BaseModel implements Serializable {
         if (this.tagLinks == null) {
             this.tagLinks = new HashSet<>();
         }
-        TagLinkSample tagLink = new TagLinkSample();
-        tagLink.setTagId(tag.getId());
-        tagLink.setSampleId(this.id);
-        if (this.tagLinks.add(tagLink)) {
+        if (this.tagLinks.add(new TagLinkSample(tag.getId(), this.id))) {
             if (this.tags == null) {
                 this.tags = new ArrayList<>();
             }

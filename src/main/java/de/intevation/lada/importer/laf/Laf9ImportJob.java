@@ -42,6 +42,7 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLinkMeasm;
+import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.rest.TagLinkService;
@@ -287,11 +288,15 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     validator.validate(
                         finalTag, Warnings.class, Notifications.class),
                     MSG_KEY_PREFIX + tagsKey);
-                if (repository.entityManager().contains(finalTag)) {
-                    // TODO: Authorize
+                if (repository.entityManager().contains(finalTag)
+                    && isAuthorized(
+                        new TagLinkSample(
+                            finalTag.getId(), targetSample.getId()),
+                        RequestMethod.POST)
+                ) {
                     targetSample.addTag(finalTag);
+                    // TODO: Extend tag expiring time?
                 }
-                // TODO: Extend tag expiring time?
             }
             // Persist tag links added to sample
             repository.update(targetSample);

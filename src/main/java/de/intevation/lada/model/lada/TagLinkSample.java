@@ -35,6 +35,15 @@ public class TagLinkSample extends TagLink {
         groups = DatabaseConstraints.class, clazz = Sample.class)
     private Integer sampleId;
 
+
+    public TagLinkSample() { };
+
+    public TagLinkSample(Integer tagId, Integer sampleId) {
+        this.tagId = tagId;
+        this.sampleId = sampleId;
+    }
+
+
     public Integer getId() {
         return id;
     }
