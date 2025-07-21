@@ -11,6 +11,7 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import jakarta.json.Json;
@@ -91,7 +92,7 @@ public class ProbeTest extends ServiceTest {
             CoreMatchers.hasItem(expectedWarningKey));
 
         /* Assert that validation of constraints from Default as well as
-           CreateErrors group are performed. */
+           CreateErrors group is performed. */
         Sample forbiddenExtIdSample = new Sample();
         forbiddenExtIdSample.setExtId("ZDB123456789012Y");
         List<ResteasyConstraintViolation> viols = create(
@@ -99,14 +100,14 @@ public class ProbeTest extends ServiceTest {
             forbiddenExtIdSample,
             Response.Status.BAD_REQUEST,
             ViolationReport.class).getParameterViolations();
-        Map<String,String> errs = viols.stream().collect(
-            Collectors.toMap(
+        Collector<ResteasyConstraintViolation, ?, Map<String, String>>
+            violsToErrs = Collectors.toMap(
                 err -> {
                     String[] pElems = err.getPath().split("\\.");
                     return pElems[pElems.length - 1];
                 },
-                err -> err.getMessage()
-            ));
+                err -> err.getMessage());
+        Map<String,String> errs = viols.stream().collect(violsToErrs);
         MatcherAssert.assertThat(errs.entrySet(),
             CoreMatchers.hasItems(
                 new AbstractMap.SimpleImmutableEntry<>(
@@ -115,6 +116,25 @@ public class ProbeTest extends ServiceTest {
                 new AbstractMap.SimpleImmutableEntry<>(
                     Sample_.REGULATION_ID,
                     "Wert nicht gesetzt")));
+
+        /* Assert that validation of constraints from DatabaseConstraints
+           group is performed if CreateErrors group passes. */
+        JsonObject notUniqueSample = Json.createObjectBuilder(create)
+            .add(Sample_.MAIN_SAMPLE_ID, "120510002")
+            .add(Sample_.IS_TEST, false).build();
+        List<ResteasyConstraintViolation> databaseConstraintsViols = create(
+            SAMPLE_SERVICE_URL,
+            notUniqueSample,
+            Response.Status.BAD_REQUEST,
+            ViolationReport.class).getParameterViolations();
+        Map<String,String> databaseConstraintsErrs =
+            databaseConstraintsViols.stream().collect(violsToErrs);
+        MatcherAssert.assertThat(databaseConstraintsErrs.entrySet(),
+            CoreMatchers.hasItem(
+                new AbstractMap.SimpleImmutableEntry<>(
+                    Sample_.MAIN_SAMPLE_ID,
+                    "Nicht eindeutige Werte-Kombination für "
+                    + "[mainSampleId, isTest, measFacilId]")));
 
         final String updateFieldKey = Sample_.MAIN_SAMPLE_ID;
         final String newValue = "130510002";

@@ -54,6 +54,10 @@ abstract class Authorizer<T extends BaseModel> {
         RequestMethod method
     ) throws AuthorizationException {
         if (RequestMethod.PUT.equals(method)) {
+            /* Avoid confusion in case entity identity is already present
+               in persistence context */
+            repository.entityManager().detach(data);
+
             // Authorize that persistent state can be changed
             @SuppressWarnings("unchecked")
             Class<T> entityClass = (Class<T>) data.getClass();

@@ -31,6 +31,10 @@ import jakarta.ws.rs.NotFoundException;
  * Classes calling these methods have to ensure to do this inside
  * a transaction context.
  *
+ * The enclosed EntityManager is set to flushMode MANUAL. The state of the
+ * persistence context is synchronized to database by the data modifying
+ * methods ({@code create}, {@code update}, {@code delete}).
+ *
  * The enclosed EntityManager can be accessed also outside a transaction
  * context. Use with caution, if outside a transaction context!
  *
