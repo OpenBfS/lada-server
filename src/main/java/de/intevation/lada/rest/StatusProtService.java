@@ -26,6 +26,7 @@ import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Names;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.StatusMp;
@@ -117,13 +118,10 @@ public class StatusProtService extends LadaIntegerIdEntityService {
                 .getQuery()
             ).isEmpty();
         if (newKombi.getStatusVal().getId() == 7 && hasNoValidMeasVals) {
-            List<MeasVal> messwerte = repository.filter(repository
-                .queryBuilder(MeasVal.class)
-                .and(MeasVal_.measm, messung)
-                .getQuery());
-            for (MeasVal measVal : messwerte) {
-                repository.delete(measVal);
-            }
+            repository.entityManager()
+                .createNamedQuery(Names.QUERY_DELETE_MEAS_VALS)
+                .setParameter("m", messung)
+                .executeUpdate();
         }
 
         //Set datum to null to use database timestamp
