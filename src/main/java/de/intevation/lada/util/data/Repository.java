@@ -16,9 +16,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceProperty;
 import jakarta.persistence.Query;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
@@ -47,8 +46,9 @@ import jakarta.ws.rs.NotFoundException;
         NonUniqueResultException.class})
 public class Repository {
 
-    @PersistenceContext
-    EntityManager em;
+    @PersistenceContext(properties = @PersistenceProperty(
+            name = "org.hibernate.flushMode", value = "MANUAL"))
+    private EntityManager em;
 
     /**
      * Create and persist a new object in the database.
@@ -93,20 +93,7 @@ public class Repository {
      */
     public void delete(Object object) {
         em.remove(em.contains(object) ? object : em.merge(object));
-
-        /* Hibernate's flushing executes DELETE statements last, regardless
-           of the order in which EntityManager operations have been used.
-           Removal of entity instances, which are still referenced as an
-           association, is even completely ignored by flushing.
-           Both can cause constraint violations, if e.g. something is added
-           in the same transaction, which expects object to be removed, before.
-           Thus, ensure a DELETE statement here and now: */
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaDelete<?> deleteQuery = builder.createCriteriaDelete(
-            object.getClass());
-        deleteQuery = deleteQuery.where(
-            builder.equal(deleteQuery.getRoot(), object));
-        em.createQuery(deleteQuery).executeUpdate();
+        em.flush();
     }
 
     /**
