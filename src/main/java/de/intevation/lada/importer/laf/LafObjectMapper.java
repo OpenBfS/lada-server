@@ -648,8 +648,7 @@ public class LafObjectMapper {
         validate(newMessung, "validation#messung");
         // ... and messwerte
         for (MeasVal messwert: messwerte) {
-            // Validation already done in ObjectMerger
-            validate(messwert, "validation#messwert", false, true);
+            validate(messwert, "validation#messwert");
         }
 
         // Validate / Create Status

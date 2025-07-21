@@ -3,6 +3,7 @@
     <!-- authentication data -->
     <master.network id = "06" />
     <master.meas_facil id = "06010" network_id = "06" />
+    <master.meas_facil id = "06011" network_id = "06" />
     <master.auth
         ldap_gr = "mst_06_status"
         network_id = "06"
@@ -148,5 +149,17 @@
         id = "1"
         tag_id = "1"
         sample_id = "1"
+    />
+
+    <lada.sample
+        id = "2"
+        ext_id = "foreign"
+        opr_mode_id = "1"
+        regulation_id = "2"
+        meas_facil_id = "06011"
+        appr_lab_id = "06011"
+        is_test = "false"
+        main_sample_id = "120510003"
+        sample_meth_id = "1"
     />
 </dataset>

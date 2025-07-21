@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
@@ -36,6 +37,7 @@ import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Names;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.StatusProt;
@@ -43,10 +45,13 @@ import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.rest.TagLinkService;
+import de.intevation.lada.util.auth.Authorization;
+import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.JSONBConfig;
+import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.groups.Notifications;
@@ -68,6 +73,11 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     @Inject
     private Validator validator;
+
+    @Inject
+    private I18n i18n;
+
+    private Authorization authorization;
 
     @Inject
     private TagLinkService<TagLinkMeasm> tagLinkMeasmService;
@@ -112,6 +122,14 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         this.idSetters = Map.copyOf(collectSetters);
     }
 
+     @Override
+     public void setUserInfo(UserInfo userInfo) {
+        super.setUserInfo(userInfo);
+
+        this.authorization = new Authorization(
+            this.userInfo, this.i18n, this.repository);
+     }
+
     /**
      * Run the import job.
      */
@@ -130,7 +148,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 this.currentReportKey = inputSample.getExtId() != null
                     ? inputSample.getExtId() : inputSample.getMainSampleId();
 
-                // TODO: Authorize
                 try {
                     Sample finalSample =
                         identification.getExisting(inputSample);
@@ -271,6 +288,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                         finalTag, Warnings.class, Notifications.class),
                     MSG_KEY_PREFIX + tagsKey);
                 if (repository.entityManager().contains(finalTag)) {
+                    // TODO: Authorize
                     targetSample.addTag(finalTag);
                 }
                 // TODO: Extend tag expiring time?
@@ -293,7 +311,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         reportValidationMessages(
             validator.validate(inputObject, CreateErrors.class),
             MSG_KEY_PREFIX + msgKey);
-        if (!inputObject.hasErrors()) {
+        if (!inputObject.hasErrors()
+            && isAuthorized(inputObject, RequestMethod.POST)
+        ) {
             return repository.create(inputObject);
         }
         return inputObject;
@@ -302,16 +322,34 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     private <T extends BaseModel> T merge(
         T persistent, JsonObject rawObject, String msgKey
     ) {
-        merger.merge(persistent, rawObject);
-        reportValidationMessages(
-            validator.validate(persistent, Default.class),
-            MSG_KEY_PREFIX + msgKey);
-        if (persistent.hasErrors()) {
-            repository.entityManager().detach(persistent);
-        } else {
-            persistent = repository.update(persistent);
+        boolean changed = merger.merge(persistent, rawObject);
+        if (changed) {
+            reportValidationMessages(
+                validator.validate(persistent, Default.class),
+                MSG_KEY_PREFIX + msgKey);
+            if (!persistent.hasErrors()
+                && isAuthorized(persistent, RequestMethod.PUT)
+            ) {
+                persistent = repository.update(persistent);
+            } else {
+                repository.entityManager().detach(persistent);
+            }
         }
         return persistent;
+    }
+
+    private boolean isAuthorized(BaseModel object, RequestMethod method) {
+        String err = authorization.isAuthorizedMessage(object, method);
+        if (err == null) {
+            return true;
+        }
+        this.fileResponseData.addError(currentReportKey,
+            new ReportItem(
+                this.userInfo.getName(),
+                repository.entityManager().getMetamodel().entity(
+                    object.getClass()).getName(),
+                err));
+        return false;
     }
 
     private void mergeMeasmChilds(Measm targetMeasm, JsonObject rawMeasm) {
@@ -321,10 +359,23 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         // measVals
         Collection<MeasVal> newMeasVals = srcMeasm.getMeasVals();
         if (newMeasVals != null) {
-            merger.mergeMeasVals(targetMeasm, newMeasVals);
+            // Existing measVals are completely replaced
+            targetMeasm.getMeasVals().clear();
+            repository.entityManager()
+                .createNamedQuery(Names.QUERY_DELETE_MEAS_VALS)
+                .setParameter("m", targetMeasm)
+                .executeUpdate();
             for (MeasVal m : newMeasVals) {
-                // Validation already done in ObjectMerger
-                reportValidationMessages(m, MSG_KEY_PREFIX + "messwert");
+                /* Ignore IDs in input to prevent Hibernate from
+                   considering new objects as transient */
+                m.setId(null);
+
+                m.setMeasm(targetMeasm);
+                reportValidationMessages(
+                    validator.validate(m), MSG_KEY_PREFIX + "messwert");
+                if (!m.hasErrors() && isAuthorized(m, RequestMethod.POST)) {
+                    repository.create(m);
+                }
             }
         }
 
@@ -352,7 +403,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 newEntry.setMeasm(target);
                 reportValidationMessages(
                     validator.validate(newEntry), "Status ");
-                if (!newEntry.hasErrors()) {
+                if (!newEntry.hasErrors()
+                    && isAuthorized(newEntry, RequestMethod.POST)
+                ) {
                     repository.create(newEntry);
                 }
             }

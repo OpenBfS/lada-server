@@ -12,6 +12,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -31,7 +32,6 @@ import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.JSONBConfig;
-import de.intevation.lada.validation.Validator;
 
 
 /**
@@ -42,9 +42,6 @@ public class ObjectMerger {
     @Inject
     private Repository repository;
 
-    @Inject
-    private Validator validator;
-
     /**
      * Merge attribute values from JSON object into
      * {@link jakarta.persistence.Entity} instance.
@@ -54,15 +51,21 @@ public class ObjectMerger {
      * associations and read-only attributes (without setter method)
      * are ignored.
      *
+     * Attributes are set to a new value if the old value in {@code target}
+     * and the deserialized value from {@code src} differ in terms of
+     * {@link Objects::equals}.
+     *
      * @param target entity instance at which attributes are set
      * @param src JSON object from which attribute values are taken
+     * @return true, if any attribute in {@code target} was changed
      * @throws IllegalArgumentException if {@code target} is not an entity
      */
-    public void merge(Object target, JsonObject src) {
+    public boolean merge(Object target, JsonObject src) {
         Class<?> clazz = target.getClass();
         EntityType<?> type = repository.entityManager().getMetamodel()
             .entity(clazz);
         Object srcObject = JSONBConfig.JSONB.fromJson(src.toString(), clazz);
+        boolean anyAttrChanged = false;
         for (String name : src.keySet()) {
             Attribute<?, ?> attr;
             try {
@@ -91,11 +94,16 @@ public class ObjectMerger {
             try {
                 Method setter = p.getWriteMethod();
                 Method getter = p.getReadMethod();
-                setter.invoke(target, getter.invoke(srcObject));
+                Object newValue = getter.invoke(srcObject);
+                if (!Objects.equals(getter.invoke(target), newValue)) {
+                    setter.invoke(target, newValue);
+                    anyAttrChanged = true;
+                }
             } catch (ReflectiveOperationException e) {
                 throw new RuntimeException(e);
             }
         }
+        return anyAttrChanged;
     }
 
     /**
@@ -263,15 +271,8 @@ public class ObjectMerger {
             .setParameter("m", target)
             .executeUpdate();
         for (MeasVal m: measVals) {
-            /* Ignore IDs in input to prevent Hibernate from
-               considering new objects as transient */
-            m.setId(null);
-
             m.setMeasm(target);
-            validator.validate(m);
-            if (!m.hasErrors()) {
-                repository.create(m);
-            }
+            repository.create(m);
         }
         return this;
     }

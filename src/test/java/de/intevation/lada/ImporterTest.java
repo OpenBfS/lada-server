@@ -86,6 +86,7 @@ public class ImporterTest extends BaseTest {
     private static final String REPORT_ITEM_KEY_KEY = "key";
     private static final String REPORT_ITEM_VALUE_KEY = "value";
     private static final String REPORT_ITEM_CODE_KEY = "code";
+    private static final String MSG_FORBIDDEN = "Forbidden";
 
     private static final Jsonb JSONB_SPARSE = JsonbBuilder.create(
         JSONBConfig.JSONB_CONFIG.withNullValues(false));
@@ -552,6 +553,51 @@ public class ImporterTest extends BaseTest {
                 .replaceAll("(\\[|\\])", "").split(", ")),
             CoreMatchers.hasItems(
                 existingExtId, "false", newMainSampleId, mstId));
+    }
+
+    /**
+     * Failing sample creation authorization with LAF9.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncLaf9AuthFail()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        Sample laf = prepareLaf9Data();
+        laf.setMainSampleId(lafSampleId);
+        laf.setMeasFacilId("06011");
+
+        assertSampleForbidden(testAsyncLaf9Import(
+                laf, lafSampleId, false, false, expectedAttrs),
+            lafSampleId);
+    }
+
+    /**
+     * Failing sample update authorization with LAF9.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncLaf9UpdateAuthFail()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = new Sample();
+        final String foreignExtId = "foreign";
+        laf.setExtId(foreignExtId);
+        laf.setMeasFacilId(mstId);
+
+        assertSampleForbidden(testAsyncLaf9Import(
+                laf, foreignExtId, false, true, expectedAttrs),
+            foreignExtId);
+    }
+
+    private void assertSampleForbidden(JsonObject report, String sampleId) {
+        JsonObject expectedError = Json.createObjectBuilder()
+            .add(REPORT_ITEM_KEY_KEY, BaseTest.testUser)
+            .add(REPORT_ITEM_VALUE_KEY, "Sample")
+            .add(REPORT_ITEM_CODE_KEY, MSG_FORBIDDEN)
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject(ERRORS_KEY).getJsonArray(sampleId),
+            CoreMatchers.hasItem(expectedError));
     }
 
     /**

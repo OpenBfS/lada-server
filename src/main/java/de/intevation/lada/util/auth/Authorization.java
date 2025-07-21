@@ -183,6 +183,25 @@ public class Authorization {
         }
     }
 
+    /**
+     * Check whether a user is authorized to operate on the given data.
+     *
+     * @param data      The data to test.
+     * @param method    The Http request type.
+     * @return null if the user is authorized, else localized error message.
+     */
+    public <T extends BaseModel> String isAuthorizedMessage(
+        T data,
+        RequestMethod method
+    ) {
+        try {
+            doAuthorize(data, method);
+            return null;
+        } catch (AuthorizationException ae) {
+            return i18n.getString(ae.getMessage());
+        }
+    }
+
     private <T extends BaseModel> T doAuthorize(
         T data,
         RequestMethod method
