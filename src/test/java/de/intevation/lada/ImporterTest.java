@@ -278,10 +278,16 @@ public class ImporterTest extends BaseTest {
 
     private void assertMeasValIsReplaced(JsonObject report) {
         // Assert that measVal is replaced
-        final int existingMeasValId = 1;
-        Collection<MeasVal> measVals = JSONBConfig.JSONB
+        final int existingMeasmId = 1;
+        List<Measm> measms = JSONBConfig.JSONB
             .fromJson(getImportedSample(report).toString(), Sample.class)
-            .getMeasms().get(0).getMeasVals();
+            .getMeasms();
+        Assert.assertEquals(1, measms.size());
+        MatcherAssert.assertThat(
+            measms.stream().map(Measm::getId).toList(),
+            CoreMatchers.hasItem(existingMeasmId));
+        final int existingMeasValId = 1;
+        Collection<MeasVal> measVals = measms.get(0).getMeasVals();
         Assert.assertEquals(1, measVals.size());
         MatcherAssert.assertThat(
             measVals.stream().map(MeasVal::getId).toList(),
