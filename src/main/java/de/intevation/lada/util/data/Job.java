@@ -133,6 +133,9 @@ public abstract class Job implements Runnable {
             this.runWithTx();
         } catch (NotSupportedException | SystemException e) {
             throw new RuntimeException(e.getMessage());
+        } catch (RuntimeException e) {
+            logger.error("Exception occured in transaction context", e);
+            throw e;
         } finally {
             try {
                 if (this.tx.getStatus() != STATUS_NO_TRANSACTION) {
