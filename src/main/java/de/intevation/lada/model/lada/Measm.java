@@ -8,11 +8,12 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.CascadeType;
@@ -75,7 +76,9 @@ import de.intevation.lada.validation.groups.Warnings;
 @CheckHQL
 @NamedQuery(name = Names.QUERY_DELETE_MEAS_VALS,
     query = "delete from MeasVal where measm = :m")
-public class Measm extends BelongsToSample implements Serializable {
+public class Measm extends BelongsToSample
+    implements Taggable<TagLinkMeasm>, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -134,12 +137,16 @@ public class Measm extends BelongsToSample implements Serializable {
 
     /* Work around the fact that hibernate does not provide means to have
     a ManyToMany association without cascading to the link table */
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REFRESH},
+        fetch = FetchType.EAGER)
     @JoinColumn(name = "measm_id", insertable = false, updatable = false)
     @JsonbTransient
-    private Set<TagLinkMeasm> tagLinks;
+    private Set<TagLinkMeasm> tagLinks = new HashSet<>();
     @Transient
-    private Set<Tag> tags;
+    private List<Tag> tags;
 
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
@@ -324,19 +331,27 @@ public class Measm extends BelongsToSample implements Serializable {
         this.measVals = measVals;
     }
 
+    @Override
     public Set<TagLinkMeasm> getTagLinks() {
         return this.tagLinks;
     }
 
-    public Set<Tag> getTags() {
+    @Override
+    public List<Tag> getTags() {
         if (this.tags == null && this.tagLinks != null) {
-            this.tags = this.tagLinks.stream().map(link -> link.tag)
-                .collect(Collectors.toSet());
+            this.tags = new ArrayList<>(
+                this.tagLinks.stream().map(link -> link.tag).toList());
         }
         return this.tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    @Override
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    @Override
+    public TagLinkMeasm createTagLink(Tag tag) {
+        return new TagLinkMeasm(tag.getId(), this.id);
     }
 }

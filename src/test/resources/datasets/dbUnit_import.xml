@@ -162,4 +162,12 @@
         main_sample_id = "120510003"
         sample_meth_id = "1"
     />
+    <lada.measm
+        id = "2"
+        sample_id = "2"
+        ext_id = "453"
+        mmt_id = "A3"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
 </dataset>

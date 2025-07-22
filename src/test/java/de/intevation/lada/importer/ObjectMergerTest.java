@@ -83,9 +83,9 @@ public class ObjectMergerTest extends BaseTest {
     public final void skipsReadOnlyAttribute() {
         Sample target = new Sample();
         JsonObject src = Json.createObjectBuilder()
-            .add(Sample_.TAG_LINKS, JsonValue.EMPTY_JSON_ARRAY).build();
+            .add(Sample_.TAG_LINKS, JsonValue.NULL).build();
         merger.merge(target, src);
-        Assert.assertNull(target.getTagLinks());
+        Assert.assertNotNull(target.getTagLinks());
     }
 
     @Test

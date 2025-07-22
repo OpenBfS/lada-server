@@ -33,6 +33,15 @@ public class TagLinkMeasm extends TagLink {
         groups = DatabaseConstraints.class, clazz = Measm.class)
     private Integer measmId;
 
+
+    public TagLinkMeasm() { };
+
+    public TagLinkMeasm(Integer tagId, Integer measmId) {
+        this.tagId = tagId;
+        this.measmId = measmId;
+    }
+
+
     public Integer getId() {
         return id;
     }

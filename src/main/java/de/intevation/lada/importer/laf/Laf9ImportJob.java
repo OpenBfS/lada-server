@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import de.intevation.lada.i18n.I18n;
@@ -41,14 +40,10 @@ import de.intevation.lada.model.lada.Names;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.model.lada.TagLinkMeasm;
-import de.intevation.lada.model.lada.TagLinkSample;
+import de.intevation.lada.model.lada.Taggable;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.model.master.Tag_;
-import de.intevation.lada.rest.TagLinkService;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.JSONBConfig;
@@ -79,9 +74,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     private I18n i18n;
 
     private Authorization authorization;
-
-    @Inject
-    private TagLinkService<TagLinkMeasm> tagLinkMeasmService;
 
     private Map<String, Method> belongsToSampleGetters;
 
@@ -180,12 +172,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                             finalSample, Warnings.class, Notifications.class),
                         MSG_KEY_PREFIX + msgKey);
 
-                    // Handle associated tags
-                    // TODO: Handle tag links outside request scope
-                    // for (Measm m: sample.getMeasms()) {
-                    //     handleMeasmTags(m);
-                    // }
-
                     // TODO: Handle geolocat.site_id
                 } catch (IdentificationException e) {
                     reportIdentificationException(e);
@@ -261,8 +247,22 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             }
         }
 
-        // Merge tags
-        List<Tag> srcTags = srcSample.getTags();
+        mergeTags(srcSample, rawSample, targetSample);
+
+        // Merge and validate child objects and validate imported measms
+        for (Measm importedMeasm : importedMeasms.keySet()) {
+            mergeMeasmChilds(importedMeasm, importedMeasms.get(importedMeasm));
+            reportValidationMessages(
+                validator.validate(
+                    importedMeasm, Warnings.class, Notifications.class),
+                MSG_KEY_PREFIX + Sample_.MEASMS);
+        }
+    }
+
+    private void mergeTags(
+        Taggable<?> src, JsonObject raw, Taggable<?> target
+    ) {
+        List<Tag> srcTags = src.getTags();
         if (srcTags != null && !srcTags.isEmpty()) {
             for (int i = 0; i < srcTags.size(); i++) {
                 Tag srcTag = srcTags.get(i);
@@ -281,7 +281,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     finalTag = create(srcTag, tagsKey);
                 } else {
                     JsonObject rawTag
-                        = rawSample.getJsonArray(tagsKey).getJsonObject(i);
+                        = raw.getJsonArray(tagsKey).getJsonObject(i);
                     finalTag = merge(finalTag, rawTag, tagsKey);
                 }
                 reportValidationMessages(
@@ -289,26 +289,15 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                         finalTag, Warnings.class, Notifications.class),
                     MSG_KEY_PREFIX + tagsKey);
                 if (repository.entityManager().contains(finalTag)
-                    && isAuthorized(
-                        new TagLinkSample(
-                            finalTag.getId(), targetSample.getId()),
+                    && isAuthorized(target.createTagLink(finalTag),
                         RequestMethod.POST)
                 ) {
-                    targetSample.addTag(finalTag);
+                    target.addTag(finalTag);
                     // TODO: Extend tag expiring time?
                 }
             }
-            // Persist tag links added to sample
-            repository.update(targetSample);
-        }
-
-        // Merge and validate child objects and validate imported measms
-        for (Measm importedMeasm : importedMeasms.keySet()) {
-            mergeMeasmChilds(importedMeasm, importedMeasms.get(importedMeasm));
-            reportValidationMessages(
-                validator.validate(
-                    importedMeasm, Warnings.class, Notifications.class),
-                MSG_KEY_PREFIX + Sample_.MEASMS);
+            // Persist added tag links
+            repository.update(target);
         }
     }
 
@@ -360,6 +349,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     private void mergeMeasmChilds(Measm targetMeasm, JsonObject rawMeasm) {
         Measm srcMeasm = JSONBConfig.JSONB.fromJson(
             rawMeasm.toString(), Measm.class);
+
+        mergeTags(srcMeasm, rawMeasm, targetMeasm);
 
         // measVals
         Collection<MeasVal> newMeasVals = srcMeasm.getMeasVals();
@@ -449,45 +440,5 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     ) {
         fileResponseData.addValidationMessages(
             currentReportKey, key, validatedObject);
-    }
-
-    private void handleMeasmTags(Measm measm) {
-        Set<Tag> tags = measm.getTags();
-        List<TagLinkMeasm> tagLinks = new ArrayList<>();
-        for (Tag tag : tags) {
-            Optional<Tag> currentTag = upsertTag(tag);
-            if (currentTag.isPresent()) {
-                TagLinkMeasm tagLink = new TagLinkMeasm();
-                tagLink.setMeasmId(measm.getId());
-                tagLink.setTagId(currentTag.get().getId());
-                tagLinks.add(tagLink);
-            } else {
-                tags.remove(tag);
-            }
-        }
-        tagLinkMeasmService.createTagReference(tagLinks);
-    }
-
-    private Optional<Tag> upsertTag(Tag tag) {
-        Optional<Tag> currentTag = findInDB(tag);
-        if (currentTag.isPresent()) {
-            return currentTag;
-        }
-        if (!validator.validate(tag, Default.class).hasErrors()) {
-            currentTag = Optional.of(repository.create(tag));
-        }
-        return currentTag;
-    }
-
-     private Optional<Tag> findInDB(Tag tag) {
-        Optional<Tag> currentTag = Optional.empty();
-        QueryBuilder<Tag> builderTag = repository.queryBuilder(Tag.class)
-            .and(Tag_.measFacilId, tag.getMeasFacilId())
-            .and(Tag_.name, tag.getName());
-        List<Tag> foundTag = repository.filter(builderTag.getQuery());
-        if (foundTag.size() == 1) {
-            currentTag = Optional.of(foundTag.get(0));
-        }
-        return currentTag;
     }
 }

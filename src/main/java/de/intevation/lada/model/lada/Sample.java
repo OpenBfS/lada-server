@@ -108,7 +108,9 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @LFGBEnvDescripHasS11(groups = Notifications.class)
 @LFGBEnvDescripHasS3(groups = Notifications.class)
 @ExtIdLFGB(groups = CreateErrors.class)
-public class Sample extends BaseModel implements Serializable {
+public class Sample extends BaseModel
+    implements Taggable<TagLinkSample>, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -243,7 +245,7 @@ public class Sample extends BaseModel implements Serializable {
         fetch = FetchType.EAGER)
     @JoinColumn(name = "sample_id", insertable = false, updatable = false)
     @JsonbTransient
-    private Set<TagLinkSample> tagLinks;
+    private Set<TagLinkSample> tagLinks = new HashSet<>();
     @Transient
     private List<Tag> tags;
 
@@ -538,31 +540,28 @@ public class Sample extends BaseModel implements Serializable {
         this.measms = measms;
     }
 
+    @Override
     public Set<TagLinkSample> getTagLinks() {
         return this.tagLinks;
     }
 
+    @Override
     public List<Tag> getTags() {
         if (this.tags == null && this.tagLinks != null) {
-            this.tags = this.tagLinks.stream().map(link -> link.tag).toList();
+            this.tags = new ArrayList<>(
+                this.tagLinks.stream().map(link -> link.tag).toList());
         }
         return this.tags;
     }
 
+    @Override
     public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
-    public void addTag(Tag tag) {
-        if (this.tagLinks == null) {
-            this.tagLinks = new HashSet<>();
-        }
-        if (this.tagLinks.add(new TagLinkSample(tag.getId(), this.id))) {
-            if (this.tags == null) {
-                this.tags = new ArrayList<>();
-            }
-            this.tags.add(tag);
-        }
+    @Override
+    public TagLinkSample createTagLink(Tag tag) {
+        return new TagLinkSample(tag.getId(), this.id);
     }
 
     public List<CommSample> getCommSamples() {

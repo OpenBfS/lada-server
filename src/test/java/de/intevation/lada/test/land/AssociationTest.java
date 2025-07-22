@@ -115,7 +115,7 @@ public class AssociationTest extends ServiceTest {
         measm.setStatusProts(List.of(statusProtSampleMeasm));
         MeasVal measValSample = getMeasVal(56, 207);
         measm.setMeasVals(List.of(measValSample));
-        measm.setTags(Set.of(tag));
+        measm.setTags(List.of(tag));
         SampleSpecifMeasVal sampleSpecifMeasVal =
             getSampleSpecificMeasVal("A74");
 
@@ -148,7 +148,8 @@ public class AssociationTest extends ServiceTest {
         String sampleMeasmId = "?measmId=" + createdSampleMeasm.getId();
         Assert.assertEquals(2, createdSampleMeasm.getStatusProts().size());
         Assert.assertEquals(1, createdSampleMeasm.getMeasVals().size());
-        Assert.assertEquals(1, createdSampleMeasm.getTags().size());
+        // Import creates additional tag
+        Assert.assertEquals(2, createdSampleMeasm.getTags().size());
         assertRelatedObjectsArePresent(
             createdMeasms,
             createdTags,
@@ -579,9 +580,9 @@ public class AssociationTest extends ServiceTest {
         Assert.assertEquals(created.getId().intValue(),
                 get(geolocatPath + newGeolocat.getId(), JsonObject.class)
                         .getInt("sampleId"));
-        Optional<Tag> t = createdSampleMeasm.getTags().stream().findFirst();
-        Tag createdSampleMeasmTag = t.get();
-        Assert.assertEquals(createdSampleMeasmTag.getId(), createdTag.getId());
+        MatcherAssert.assertThat(
+            createdSampleMeasm.getTags().stream().map(Tag::getId).toList(),
+            CoreMatchers.hasItem(createdTag.getId()));
     }
 
     private void testOneToMany(

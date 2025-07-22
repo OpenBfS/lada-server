@@ -81,6 +81,7 @@ public class ImporterTest extends BaseTest {
     private static final String ASYNC_IMPORT_URL = "data/import/async/";
 
     public static final String SAMPLE_IDS_KEY = "sampleIds";
+    private static final String TAGS_KEY = "tags";
     private static final String ERRORS_KEY = "errors";
     private static final String OWNER_KEY = "owner";
     private static final String REPORT_ITEM_KEY_KEY = "key";
@@ -92,6 +93,7 @@ public class ImporterTest extends BaseTest {
         JSONBConfig.JSONB_CONFIG.withNullValues(false));
 
     private final String existingExtId = "T001";
+    private final String foreignExtId = "foreign";
     private final String existingMainSampleId = "120510002";
     private final int existingMeasmExtId = 453;
     private final String mstId = "06010";
@@ -243,6 +245,7 @@ public class ImporterTest extends BaseTest {
         Tag generatedTag = new Tag();
         generatedTag.setIsAutoTag(true);
         expected.getTags().add(generatedTag);
+        expected.getMeasms().forEach(m -> m.getTags().add(generatedTag));
 
         JsonObject report = testAsyncLaf9Import(
             laf, lafSampleId, true, false, expected, OWNER_KEY);
@@ -336,7 +339,7 @@ public class ImporterTest extends BaseTest {
         laf.setMeasms(List.of(measmUpdate, measmNew));
 
         testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, laf, OWNER_KEY);
+            laf, existingMainSampleId, true, true, laf, OWNER_KEY, TAGS_KEY);
     }
 
     /**
@@ -361,7 +364,7 @@ public class ImporterTest extends BaseTest {
         laf.setMeasms(List.of(measm));
 
         JsonObject report = testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, laf, OWNER_KEY);
+            laf, existingMainSampleId, true, true, laf, OWNER_KEY, TAGS_KEY);
         assertMeasValIsReplaced(report);
     }
 
@@ -425,6 +428,38 @@ public class ImporterTest extends BaseTest {
 
         Sample expected = new Sample();
         expected.setExtId(existingExtId);
+        // Import creates an additional tag
+        Tag importTag = new Tag();
+        importTag.setIsAutoTag(true);
+        expected.setTags(List.of(associatedTag, existingTag, tag, importTag));
+
+        testAsyncLaf9Import(
+            laf, existingMainSampleId, true, true, expected, OWNER_KEY);
+    }
+
+    /**
+     * Asynchronous LAF9 update import of tags does not remove existing tags.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9UpdateTagsLeaveExisting()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = new Sample();
+        laf.setExtId(existingExtId);
+        // Existing tag
+        Tag existingTag = new Tag();
+        existingTag.setName(existingNotAssociatedTag);
+        // New tag
+        Tag tag = new Tag();
+        tag.setName("test");
+        tag.setMeasFacilId(mstId);
+        laf.setTags(List.of(existingTag, tag));
+
+        Sample expected = new Sample();
+        expected.setExtId(existingExtId);
+        // Existing already associated tag
+        Tag associatedTag = new Tag();
+        associatedTag.setName(existingAssociatedTag);
         // Import creates an additional tag
         Tag importTag = new Tag();
         importTag.setIsAutoTag(true);
@@ -581,7 +616,6 @@ public class ImporterTest extends BaseTest {
     public final void asyncLaf9UpdateAuthFail()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
-        final String foreignExtId = "foreign";
         laf.setExtId(foreignExtId);
         laf.setMeasFacilId(mstId);
 
@@ -599,7 +633,6 @@ public class ImporterTest extends BaseTest {
     public final void asyncLaf9TagSampleAuthFail()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
-        final String foreignExtId = "foreign";
         laf.setExtId(foreignExtId);
         Tag existingTag = new Tag();
         existingTag.setName(existingNotAssociatedTag);
@@ -609,6 +642,29 @@ public class ImporterTest extends BaseTest {
                 laf, foreignExtId, false, true, expectedAttrs),
             foreignExtId,
             "TagLinkSample");
+    }
+
+    /**
+     * Failing authorization of tagging Measm with LAF9.
+     */
+    @Test
+    @RunAsClient
+    public final void asyncLaf9TagMeasmAuthFail()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = new Sample();
+        laf.setExtId(foreignExtId);
+        final int existingMeasmExtId = 453;
+        Measm measm = new Measm();
+        measm.setExtId(existingMeasmExtId);
+        Tag existingTag = new Tag();
+        existingTag.setName(existingNotAssociatedTag);
+        measm.setTags(List.of(existingTag));
+        laf.setMeasms(List.of(measm));
+
+        assertForbidden(testAsyncLaf9Import(
+                laf, foreignExtId, false, true, expectedAttrs),
+            foreignExtId,
+            "TagLinkMeasm");
     }
 
     private void assertForbidden(
@@ -821,7 +877,7 @@ public class ImporterTest extends BaseTest {
 
         testAsyncLaf9ImportNoWarnings(
             laf, lafSampleId, true, false, laf,
-            OWNER_KEY, Site_.REFERENCE_COUNT, Sample_.MEASMS, "tags");
+            OWNER_KEY, Site_.REFERENCE_COUNT, Sample_.MEASMS, TAGS_KEY);
     }
 
     /**
@@ -1250,6 +1306,7 @@ public class ImporterTest extends BaseTest {
 
         Measm measm = new Measm();
         measm.setMmtId(mmtId);
+        measm.setTags(new ArrayList<>(List.of(tag)));
         laf9Template.setMeasms(new ArrayList<>(List.of(measm)));
 
         MeasVal measVal = new MeasVal();
