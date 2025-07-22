@@ -84,18 +84,17 @@ public class OrtFactory {
             if (!orte.isEmpty()) {
                 if (orte.size() == 1) {
                     return orte.get(0);
-                } else {
-                    AdminUnit v = repository.getById(
-                        AdminUnit.class, ort.getAdminUnitId());
-                    for (Site oElem : orte) {
-                        //Todo: Check for different kda-types
-                        if (oElem.getCoordXExt().equals(
-                                String.valueOf(v.getGeomCenter().getX()))
-                            && oElem.getCoordYExt().equals(
-                                String.valueOf(v.getGeomCenter().getY()))
-                        ) {
-                            return oElem;
-                        }
+                }
+                AdminUnit v = repository.getById(
+                    AdminUnit.class, ort.getAdminUnitId());
+                for (Site oElem : orte) {
+                    // TODO: Check for different KDA-types
+                    if (oElem.getCoordXExt().equals(
+                            String.valueOf(v.getGeomCenter().getX()))
+                        && oElem.getCoordYExt().equals(
+                            String.valueOf(v.getGeomCenter().getY()))
+                    ) {
+                        return oElem;
                     }
                 }
             }
