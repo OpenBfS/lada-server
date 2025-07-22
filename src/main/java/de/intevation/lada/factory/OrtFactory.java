@@ -61,16 +61,12 @@ public class OrtFactory {
      * @return The matching existing Site object or null if no match was found.
      */
     public Site findExistingSite(Site ort) {
-        boolean hasKoord = false;
-
-        // Search for matching existing site and return it
         QueryBuilder<Site> builder = repository.queryBuilder(Site.class)
             .and(Site_.networkId, ort.getNetworkId());
         if (ort.getSpatRefSysId() != null
             && ort.getCoordXExt() != null
             && ort.getCoordYExt() != null
         ) {
-            hasKoord = true;
             builder.and(Site_.spatRefSysId, ort.getSpatRefSysId())
                 .and(Site_.coordXExt, ort.getCoordXExt())
                 .and(Site_.coordYExt, ort.getCoordYExt());
@@ -98,24 +94,20 @@ public class OrtFactory {
                     }
                 }
             }
-        } else  if (ort.getStateId() != null) {
+            QueryBuilder<Site> builderExists = repository
+                .queryBuilder(Site.class)
+                .and(Site_.networkId, ort.getNetworkId())
+                .andLike(Site_.extId, "%" + ort.getAdminUnitId());
+            List<Site> ortExists = repository.filter(builderExists.getQuery());
+            if (!ortExists.isEmpty()) {
+                return ortExists.get(0);
+            }
+        } else if (ort.getStateId() != null) {
             builder.and(Site_.stateId, ort.getStateId())
                 .and(Site_.siteClassId, Site.SiteClassId.ST);
             List<Site> orte = repository.filter(builder.getQuery());
             if (!orte.isEmpty()) {
                 return orte.get(0);
-            }
-        }
-        //Ort exists - check for OrtId
-        if (ort.getAdminUnitId() != null && !hasKoord) {
-            QueryBuilder<Site> builderExists =
-                repository.queryBuilder(Site.class)
-                .and(Site_.networkId, ort.getNetworkId())
-                .andLike(Site_.extId, "%" + ort.getAdminUnitId());
-            List<Site> ortExists = repository.filter(
-                builderExists.getQuery());
-            if (!ortExists.isEmpty()) {
-                return ortExists.get(0);
             }
         }
         return null;
