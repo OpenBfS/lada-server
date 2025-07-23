@@ -310,12 +310,9 @@ public class ImporterTest extends BaseTest {
         final int updateRegId = 2;
         laf.setRegulationId(updateRegId);
 
-        Map<String, JsonValue> verify = new HashMap<>(expectedAttrs);
-        verify.put(
-            Sample_.MAIN_SAMPLE_ID, Json.createValue(existingMainSampleId));
-        verify.put(Sample_.REGULATION_ID, Json.createValue(updateRegId));
-
-        testAsyncLaf9Import(laf, existingMainSampleId, true, true, verify);
+        testAsyncLaf9Import(
+            laf, existingMainSampleId, true, true, laf,
+            "readonly", OWNER_KEY, Measm_.STATUS_PROTS, TAGS_KEY);
     }
 
     /**
