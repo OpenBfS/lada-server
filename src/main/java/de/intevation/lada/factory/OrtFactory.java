@@ -61,16 +61,12 @@ public class OrtFactory {
      * @return The matching existing Site object or null if no match was found.
      */
     public Site findExistingSite(Site ort) {
-        boolean hasKoord = false;
-
-        // Search for matching existing site and return it
         QueryBuilder<Site> builder = repository.queryBuilder(Site.class)
             .and(Site_.networkId, ort.getNetworkId());
         if (ort.getSpatRefSysId() != null
             && ort.getCoordXExt() != null
             && ort.getCoordYExt() != null
         ) {
-            hasKoord = true;
             builder.and(Site_.spatRefSysId, ort.getSpatRefSysId())
                 .and(Site_.coordXExt, ort.getCoordXExt())
                 .and(Site_.coordYExt, ort.getCoordYExt());
@@ -84,39 +80,34 @@ public class OrtFactory {
             if (!orte.isEmpty()) {
                 if (orte.size() == 1) {
                     return orte.get(0);
-                } else {
-                    AdminUnit v = repository.getById(
-                        AdminUnit.class, ort.getAdminUnitId());
-                    for (Site oElem : orte) {
-                        //Todo: Check for different kda-types
-                        if (oElem.getCoordXExt().equals(
-                                String.valueOf(v.getGeomCenter().getX()))
-                            && oElem.getCoordYExt().equals(
-                                String.valueOf(v.getGeomCenter().getY()))
-                        ) {
-                            return oElem;
-                        }
+                }
+                AdminUnit v = repository.getById(
+                    AdminUnit.class, ort.getAdminUnitId());
+                for (Site oElem : orte) {
+                    // TODO: Check for different KDA-types
+                    if (oElem.getCoordXExt().equals(
+                            String.valueOf(v.getGeomCenter().getX()))
+                        && oElem.getCoordYExt().equals(
+                            String.valueOf(v.getGeomCenter().getY()))
+                    ) {
+                        return oElem;
                     }
                 }
             }
-        } else  if (ort.getStateId() != null) {
+            QueryBuilder<Site> builderExists = repository
+                .queryBuilder(Site.class)
+                .and(Site_.networkId, ort.getNetworkId())
+                .andLike(Site_.extId, "%" + ort.getAdminUnitId());
+            List<Site> ortExists = repository.filter(builderExists.getQuery());
+            if (!ortExists.isEmpty()) {
+                return ortExists.get(0);
+            }
+        } else if (ort.getStateId() != null) {
             builder.and(Site_.stateId, ort.getStateId())
                 .and(Site_.siteClassId, Site.SiteClassId.ST);
             List<Site> orte = repository.filter(builder.getQuery());
             if (!orte.isEmpty()) {
                 return orte.get(0);
-            }
-        }
-        //Ort exists - check for OrtId
-        if (ort.getAdminUnitId() != null && !hasKoord) {
-            QueryBuilder<Site> builderExists =
-                repository.queryBuilder(Site.class)
-                .and(Site_.networkId, ort.getNetworkId())
-                .andLike(Site_.extId, "%" + ort.getAdminUnitId());
-            List<Site> ortExists = repository.filter(
-                builderExists.getQuery());
-            if (!ortExists.isEmpty()) {
-                return ortExists.get(0);
             }
         }
         return null;
