@@ -8,12 +8,12 @@
 package de.intevation.lada.importer.identification;
 
 import java.beans.IntrospectionException;
+import java.lang.reflect.ParameterizedType;
+import java.util.Iterator;
 
-import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
 
@@ -24,13 +24,7 @@ import jakarta.persistence.NoResultException;
 public class Identification {
 
     @Inject
-    private Identifier<Sample> sampleIdentifier;
-
-    @Inject
-    private Identifier<Measm> measmIdentifier;
-
-    @Inject
-    private Identifier<Tag> tagIdentifier;
+    Instance<Identifier<?>> identifiers;
 
     @Inject
     private Repository repository;
@@ -45,12 +39,14 @@ public class Identification {
     @SuppressWarnings("unchecked")
     public <T> T getExisting(T object) throws IdentificationException {
         // Use type-specific identifier, if available
-        if (object instanceof Sample sample) {
-            return (T) sampleIdentifier.getExisting(sample);
-        } else if (object instanceof Measm measm) {
-            return (T) measmIdentifier.getExisting(measm);
-        } else if (object instanceof Tag tag) {
-            return (T) tagIdentifier.getExisting(tag);
+        Iterator<Identifier<?>> iterator = identifiers.iterator();
+        while (iterator.hasNext()) {
+            Identifier<?> identifier = iterator.next();
+            ParameterizedType type = (ParameterizedType) identifier
+                .getClass().getGenericInterfaces()[0];
+            if (object.getClass().equals(type.getActualTypeArguments()[0])) {
+                return ((Identifier<T>) identifier).getExisting(object);
+            }
         }
 
         // Otherwise identify using ID attribute
