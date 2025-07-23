@@ -91,6 +91,22 @@
 
     <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
 
+    <master.state
+        id = "0"
+        ctry = "Atlantic"
+        ctry_orig_id = "1"
+        coord_x_ext = "0"
+        coord_y_ext = "0"
+        spat_ref_sys_id = "4"
+    />
+
+    <master.admin_unit
+        id = "dA"
+        name = "Lada"
+        state_id = "Diffa"
+        geom_center = "SRID=4326;POINT(13.29 12.65)"
+    />
+
     <master.site
         id = "1"
         network_id = "06"

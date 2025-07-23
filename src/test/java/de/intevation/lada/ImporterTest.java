@@ -88,6 +88,7 @@ public class ImporterTest extends BaseTest {
     private static final String REPORT_ITEM_VALUE_KEY = "value";
     private static final String REPORT_ITEM_CODE_KEY = "code";
     private static final String MSG_FORBIDDEN = "Forbidden";
+    private static final String TYPE_REGULATION_E = "E";
 
     private static final Jsonb JSONB_SPARSE = JsonbBuilder.create(
         JSONBConfig.JSONB_CONFIG.withNullValues(false));
@@ -96,6 +97,7 @@ public class ImporterTest extends BaseTest {
     private final String foreignExtId = "foreign";
     private final String existingMainSampleId = "120510002";
     private final int existingMeasmExtId = 453;
+    private final String existingSiteExtId = "D_00191";
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
@@ -198,14 +200,8 @@ public class ImporterTest extends BaseTest {
         Map<String, JsonValue> verify = new HashMap<>(expectedAttrs);
         verify.put(Sample_.MAIN_SAMPLE_ID, Json.createValue(lafSampleId));
         JsonObject report = testAsyncLaf8Import(laf, lafSampleId, true, verify);
-        JsonObject expectedWarning = Json.createObjectBuilder()
-            .add(REPORT_ITEM_KEY_KEY, "validation#probe")
-            .add(REPORT_ITEM_VALUE_KEY, "geolocats")
-            .add(REPORT_ITEM_CODE_KEY, "A sampling location must be provided")
-            .build();
-        MatcherAssert.assertThat(
-            report.getJsonObject("warnings").getJsonArray(lafSampleId),
-            CoreMatchers.hasItem(expectedWarning));
+
+        assertHasGeolocatWarning(report, lafSampleId);
 
         JsonObject expectedNotification = Json.createObjectBuilder()
             .add("key", "validation#messwert")
@@ -247,11 +243,34 @@ public class ImporterTest extends BaseTest {
         expected.getTags().add(generatedTag);
         expected.getMeasms().forEach(m -> m.getTags().add(generatedTag));
 
-        JsonObject report = testAsyncLaf9Import(
-            laf, lafSampleId, true, false, expected, OWNER_KEY);
+        testAsyncLaf9Import(
+            laf, lafSampleId, true, false, expected,
+            OWNER_KEY, Site_.REFERENCE_COUNT);
+    }
+
+    /**
+     * Test asynchronous LAF9 import of a Sample without geolocats.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9ImportNoGeolocats()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        Sample laf = prepareLaf9Sample();
+        laf.setMainSampleId(lafSampleId);
+
+        assertHasGeolocatWarning(
+            testAsyncLaf9Import(
+                laf, lafSampleId, true, false, laf, OWNER_KEY, TAGS_KEY),
+            lafSampleId);
+    }
+
+    private void assertHasGeolocatWarning(
+        JsonObject report, String lafSampleId
+    ) {
         JsonObject expectedWarning = Json.createObjectBuilder()
             .add(REPORT_ITEM_KEY_KEY, "validation#probe")
-            .add(REPORT_ITEM_VALUE_KEY, "geolocats")
+            .add(REPORT_ITEM_VALUE_KEY, Sample_.GEOLOCATS)
             .add(REPORT_ITEM_CODE_KEY, "A sampling location must be provided")
             .build();
         MatcherAssert.assertThat(
@@ -299,20 +318,26 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test successful asynchronous LAF9 update import of a Sample object.
+     * Test successful asynchronous LAF9 update import.
      */
     @Test
     @RunAsClient
     public final void testAsyncLaf9UpdateImport()
         throws InterruptedException, CharacterCodingException {
         Sample laf = prepareLaf9Data();
+
+        // Update sample
         laf.setMainSampleId(existingMainSampleId);
         final int updateRegId = 2;
         laf.setRegulationId(updateRegId);
 
+        // Update site
+        laf.getGeolocats().get(0).getSite().setExtId(existingSiteExtId);
+
         testAsyncLaf9Import(
             laf, existingMainSampleId, true, true, laf,
-            "readonly", OWNER_KEY, Measm_.STATUS_PROTS, TAGS_KEY);
+            "readonly", OWNER_KEY, Measm_.STATUS_PROTS, TAGS_KEY,
+            Site_.REFERENCE_COUNT);
     }
 
     /**
@@ -865,15 +890,14 @@ public class ImporterTest extends BaseTest {
         laf.setMainSampleId(lafSampleId);
 
         Geolocat samplingLocation = new Geolocat();
-        samplingLocation.setTypeRegulation("E");
+        samplingLocation.setTypeRegulation(TYPE_REGULATION_E);
         Site site = new Site();
-        final int existingSiteId = 1;
-        site.setId(existingSiteId);
+        site.setExtId(existingSiteExtId);
         samplingLocation.setSite(site);
         laf.setGeolocats(List.of(samplingLocation));
 
         testAsyncLaf9ImportNoWarnings(
-            laf, lafSampleId, true, false, laf,
+            laf, lafSampleId, true, true, laf,
             OWNER_KEY, Site_.REFERENCE_COUNT, Sample_.MEASMS, TAGS_KEY);
     }
 
@@ -1277,7 +1301,7 @@ public class ImporterTest extends BaseTest {
         return report;
     }
 
-    private Sample prepareLaf9Data() {
+    private Sample prepareLaf9Sample() {
         Sample laf9Template = new Sample();
         laf9Template.setMeasFacilId(mstId);
         laf9Template.setApprLabId(mstId);
@@ -1287,10 +1311,22 @@ public class ImporterTest extends BaseTest {
         laf9Template.setIsTest(false);
         laf9Template.setEnvDescripDisplay(envDescrip);
         laf9Template.setSampleStartDate(new Date(0l));
+        return laf9Template;
+    }
+
+    private Sample prepareLaf9Data() {
+        Sample laf9Template = prepareLaf9Sample();
 
         SampleSpecifMeasVal sampleSpecif = new SampleSpecifMeasVal();
         sampleSpecif.setSampleSpecifId(sampleSpecifId);
         laf9Template.setSampleSpecifMeasVals(List.of(sampleSpecif));
+
+        Site site = new Site();
+        site.setAdminUnitId("dA");
+        Geolocat geolocat = new Geolocat();
+        geolocat.setSite(site);
+        geolocat.setTypeRegulation(TYPE_REGULATION_E);
+        laf9Template.setGeolocats(List.of(geolocat));
 
         // Existing tag
         Tag existingTag = new Tag();

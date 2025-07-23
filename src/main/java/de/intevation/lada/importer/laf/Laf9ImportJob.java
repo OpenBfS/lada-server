@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.identification.Identification;
@@ -34,6 +35,8 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Names;
@@ -41,6 +44,8 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.Taggable;
+import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.UserInfo;
@@ -72,6 +77,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     @Inject
     private I18n i18n;
+
+    @Inject
+    private OrtFactory ortFactory;
 
     private Authorization authorization;
 
@@ -172,7 +180,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                             finalSample, Warnings.class, Notifications.class),
                         MSG_KEY_PREFIX + msgKey);
 
-                    // TODO: Handle geolocat.site_id
                 } catch (IdentificationException e) {
                     reportIdentificationException(e);
                 }
@@ -193,7 +200,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         Sample srcSample = JSONBConfig.JSONB.fromJson(
             rawSample.toString(), Sample.class);
         Map<Measm, JsonObject> importedMeasms = new HashMap<>();
-        // TODO: Merge other associations
         for (String attrName : belongsToSampleGetters.keySet()) {
             List<BelongsToSample> srcObjects =
                 getChildList(attrName, srcSample);
@@ -203,6 +209,55 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             for (int i = 0; i < srcObjects.size(); i++) {
                 BelongsToSample srcObject = srcObjects.get(i);
                 srcObject.setSample(targetSample);
+                JsonObject rawObject =
+                    rawSample.getJsonArray(attrName).getJsonObject(i);
+
+                // Merge Site for geolocats
+                if (srcObject instanceof Geolocat loc) {
+                    Site srcSite = loc.getSite();
+                    if (srcSite.getNetworkId() == null) {
+                        // Retrieve default from sample
+                        srcSite.setNetworkId(
+                            repository.getById(
+                                MeasFacil.class, targetSample.getMeasFacilId())
+                            .getNetworkId());
+                    }
+                    Site finalSite = null;
+                    try {
+                        finalSite = identification.getExisting(srcSite);
+                    } catch (IdentificationException e) {
+                        reportIdentificationException(e);
+                        continue;
+                    }
+
+                    final String msgKey = Geolocat_.SITE;
+                    if (finalSite == null) {
+                        reportValidationMessages(
+                            validator.validate(srcSite, CreateErrors.class),
+                            MSG_KEY_PREFIX + msgKey);
+                        if (!srcSite.hasErrors()
+                            && isAuthorized(srcSite, RequestMethod.POST)
+                        ) {
+                            /* Ignore IDs in input to prevent Hibernate from
+                               considering new objects as transient */
+                            srcSite.setId(null);
+
+                            ortFactory.completeSite(srcSite);
+                            finalSite = repository.create(srcSite);
+                        }
+                    } else if (
+                        /* If identification found something not identified
+                           by extId, use it as is */
+                        finalSite.getExtId().equals(srcSite.getExtId())
+                    ) {
+                        finalSite = merge(
+                            finalSite,
+                            rawObject.getJsonObject(Geolocat_.SITE),
+                            msgKey);
+                    }
+                     // Set site for identification of Geolocat
+                    loc.setSite(finalSite);
+                }
 
                 BelongsToSample finalObject = null;
                 if (!isNewSample) {
@@ -216,8 +271,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 }
 
                 // Merge existent or add new object
-                JsonObject rawObject =
-                    rawSample.getJsonArray(attrName).getJsonObject(i);
                 if (finalObject == null) {
                     /* Ignore IDs in input to prevent Hibernate from
                        considering new objects as transient */
