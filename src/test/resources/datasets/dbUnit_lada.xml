@@ -91,6 +91,7 @@
         is_munic = "true"
         is_rural_dist = "true"
         is_gov_dist = "false"
+        geom_center = "SRID=4326;POINT(52.5 13.5)"
     />
     <master.sampler
         id = "726"

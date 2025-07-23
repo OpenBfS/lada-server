@@ -348,7 +348,7 @@ CREATE TABLE admin_unit (
     is_gov_dist boolean DEFAULT false NOT NULL,
     is_state boolean DEFAULT false NOT NULL,
     zip character varying(6) CHECK (trim(both ' ' from zip) <> ''),
-    geom_center public.geometry(Point)
+    geom_center public.geometry(Point) NOT NULL
 );
 
 CREATE TABLE network (
