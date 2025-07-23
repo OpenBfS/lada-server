@@ -49,6 +49,7 @@ import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
@@ -1320,6 +1321,11 @@ public class ImporterTest extends BaseTest {
         SampleSpecifMeasVal sampleSpecif = new SampleSpecifMeasVal();
         sampleSpecif.setSampleSpecifId(sampleSpecifId);
         laf9Template.setSampleSpecifMeasVals(List.of(sampleSpecif));
+
+        CommSample commSample = new CommSample();
+        commSample.setText("sample comment");
+        commSample.setMeasFacilId(mstId);
+        laf9Template.setCommSamples(List.of(commSample));
 
         Site site = new Site();
         site.setAdminUnitId("dA");
