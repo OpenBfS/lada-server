@@ -134,6 +134,8 @@ public class BaseTest {
     protected String testDatasetName;
 
     private static final String DATASETS_DIR = "datasets";
+    private static final String INIT_SEQ_SCRIPT =
+        DATASETS_DIR + "/init_sequences.sql";
     private static final String CLEANUP_SCRIPT = DATASETS_DIR + "/cleanup.sql";
     private static final String NULL_PLACEHOLDER = "[null]";
 
@@ -161,7 +163,12 @@ public class BaseTest {
             new PostgresqlDataTypeFactory());
 
         // Insert test data
-        doDbOperation(DatabaseOperation.CLEAN_INSERT);
+        IDataSet dataset = new FlatXmlDataSetBuilder()
+            .setColumnSensing(true)
+            .build(getClass().getClassLoader()
+                .getResourceAsStream(testDatasetName));
+        DatabaseOperation.CLEAN_INSERT.execute(con, dataset);
+        executeSql(INIT_SEQ_SCRIPT);
 
         this.client = ClientBuilder.newClient().register(JSONBConfig.class);
         this.target = client.target(baseUrl.toString());
@@ -229,7 +236,7 @@ public class BaseTest {
         this.client.close();
 
         // Ensure clean database after test
-        cleanup();
+        executeSql(CLEANUP_SCRIPT);
         con.close();
     }
 
@@ -493,26 +500,15 @@ public class BaseTest {
             containsPath.get());
     }
 
-    private void doDbOperation(
-        DatabaseOperation op
-    ) throws DatabaseUnitException, SQLException {
-        IDataSet dataset = new FlatXmlDataSetBuilder()
-            .setColumnSensing(true)
-            .build(getClass().getClassLoader()
-                .getResourceAsStream(testDatasetName));
-
-        op.execute(con, dataset);
-    }
-
-    private void cleanup()
+    private void executeSql(String scriptName)
         throws DatabaseUnitException, SQLException, IOException {
         String sql;
         //Read cleanup script
         try (InputStream is = getClass().getClassLoader()
-                .getResourceAsStream(CLEANUP_SCRIPT)) {
+                .getResourceAsStream(scriptName)) {
             if (is == null) {
                 throw new IOException(
-                    "Could not find cleanup script: " + CLEANUP_SCRIPT);
+                    "Could not find SQL script: " + scriptName);
             }
             try (InputStreamReader isr = new InputStreamReader(is);
             BufferedReader reader = new BufferedReader(isr)) {
