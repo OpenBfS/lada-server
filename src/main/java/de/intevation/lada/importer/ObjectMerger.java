@@ -155,12 +155,12 @@ public class ObjectMerger {
         Sample target,
         List<SampleSpecifMeasVal> zusatzwerte
     ) {
-        QueryBuilder<SampleSpecifMeasVal> builder =
-            repository.queryBuilder(SampleSpecifMeasVal.class);
         for (int i = 0; i < zusatzwerte.size(); i++) {
-            builder.and(SampleSpecifMeasVal_.sampleId, target.getId());
-            builder.and(SampleSpecifMeasVal_.sampleSpecifId,
-                zusatzwerte.get(i).getSampleSpecifId());
+            QueryBuilder<SampleSpecifMeasVal> builder = repository
+                .queryBuilder(SampleSpecifMeasVal.class)
+                .and(SampleSpecifMeasVal_.sampleId, target.getId())
+                .and(SampleSpecifMeasVal_.sampleSpecifId,
+                    zusatzwerte.get(i).getSampleSpecifId());
             List<SampleSpecifMeasVal> found =
                 repository.filter(builder.getQuery());
             if (found.isEmpty()) {
