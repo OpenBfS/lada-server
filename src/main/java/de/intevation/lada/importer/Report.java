@@ -79,18 +79,11 @@ public class Report {
         return errors;
     }
 
-    public void addErrors(Map<String, Set<ReportItem>> newErrors) {
-        for (Map.Entry<String, Set<ReportItem>> entry
-                 : newErrors.entrySet()) {
-            addErrors(entry.getKey(), entry.getValue());
-        }
-    }
-
     public void addErrors(String key, Set<ReportItem> newErrors) {
         if (this.errors.containsKey(key)) {
             this.errors.get(key).addAll(newErrors);
         } else {
-            this.errors.put(key, newErrors);
+            this.errors.put(key, new HashSet<>(newErrors));
         }
     }
 
@@ -106,18 +99,11 @@ public class Report {
         return warnings;
     }
 
-    public void addWarnings(Map<String, Set<ReportItem>> newWarnings) {
-        for (Map.Entry<String, Set<ReportItem>> entry
-                 : newWarnings.entrySet()) {
-            addWarnings(entry.getKey(), entry.getValue());
-        }
-    }
-
     public void addWarnings(String key, Set<ReportItem> newWarnings) {
         if (this.warnings.containsKey(key)) {
             this.warnings.get(key).addAll(newWarnings);
         } else {
-            this.warnings.put(key, newWarnings);
+            this.warnings.put(key, new HashSet<>(newWarnings));
         }
     }
 
@@ -133,20 +119,11 @@ public class Report {
         return notifications;
     }
 
-    public void addNotifications(
-        Map<String, Set<ReportItem>> newNotifications
-    ) {
-        for (Map.Entry<String, Set<ReportItem>> entry
-                 : newNotifications.entrySet()) {
-            addNotifications(entry.getKey(), entry.getValue());
-        }
-    }
-
     public void addNotifications(String key, Set<ReportItem> newNotifications) {
         if (this.notifications.containsKey(key)) {
             this.notifications.get(key).addAll(newNotifications);
         } else {
-            this.notifications.put(key, newNotifications);
+            this.notifications.put(key, new HashSet<>(newNotifications));
         }
     }
 
