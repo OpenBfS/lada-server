@@ -28,6 +28,7 @@ import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.importer.Identifier;
+import de.intevation.lada.importer.Identifier.IdentificationException;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
@@ -117,6 +118,9 @@ public class LafObjectMapper {
 
     @Inject
     private Identifier<Measm> messungIdentifier;
+
+    @Inject
+    private Identifier<SampleSpecifMeasVal> sampleSpecifMeasValIdentifier;
 
     @Inject
     private ObjectMerger merger;
@@ -313,16 +317,9 @@ public class LafObjectMapper {
                 }
 
                 // Create zusatzwert objects
-                List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<>();
                 for (Map<String, String> raw: currentSample.getZusatzwerte()) {
-                    SampleSpecifMeasVal tmp =
-                        createZusatzwert(raw, newProbe.getId());
-                    if (tmp != null) {
-                        zusatzwerte.add(tmp);
-                    }
+                    createOrUpdateSampleSpecifMeasVal(raw, newProbe.getId());
                 }
-                // Persist zusatzwert objects
-                merger.mergeSampleSpecifMeasVals(newProbe, zusatzwerte);
 
                 // Create site objects
                 this.configMapper.applyConfigs(currentSample.getEntnahmeOrt());
@@ -733,14 +730,51 @@ public class LafObjectMapper {
         repository.create(kommentar);
     }
 
-    private SampleSpecifMeasVal createZusatzwert(
+    private void createOrUpdateSampleSpecifMeasVal(
         Map<String, String> attributes,
         int probeId
     ) {
         this.configMapper.applyConfigs(attributes);
 
         SampleSpecifMeasVal zusatzwert = new SampleSpecifMeasVal();
+
+        // Set identifying attributes
         zusatzwert.setSampleId(probeId);
+        String attribute = attributes.get("PZS");
+        boolean isId = false;
+        if (attribute == null) {
+            attribute = attributes.get("PZS_ID");
+            isId = true;
+        }
+        SingularAttribute<SampleSpecif, String> field = isId
+            ? SampleSpecif_.id : SampleSpecif_.extId;
+        QueryBuilder<SampleSpecif> builder = repository
+            .queryBuilder(SampleSpecif.class)
+            .and(field, attribute);
+        List<SampleSpecif> zusatz = repository.filter(builder.getQuery());
+        if (zusatz == null || zusatz.isEmpty()) {
+            addWarning(new ReportItem(
+                    isId ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
+                    attribute,
+                    StatusCodes.IMP_INVALID_VALUE));
+            return;
+        }
+        zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
+
+        // Identify existing entry
+        try {
+            SampleSpecifMeasVal existing
+                = sampleSpecifMeasValIdentifier.getExisting(zusatzwert);
+            if (existing != null) {
+                zusatzwert = existing;
+            }
+        } catch (IdentificationException e) {
+            addError(new ReportItem(
+                    "identification",
+                    "SampleSpecifMeasVal",
+                    StatusCodes.IMP_INVALID_VALUE));
+            return;
+        }
 
         if (attributes.containsKey("MESSFEHLER")) {
             zusatzwert.setError(
@@ -755,31 +789,14 @@ public class LafObjectMapper {
         }
         zusatzwert.setMeasVal(Double.valueOf(wert.replaceAll(",", ".")));
 
-        String attribute = attributes.get("PZS");
-        boolean isId = false;
-        if (attribute == null) {
-            attribute = attributes.get("PZS_ID");
-            isId = true;
-        }
-
-        SingularAttribute<SampleSpecif, String> field = isId
-            ? SampleSpecif_.id : SampleSpecif_.extId;
-        QueryBuilder<SampleSpecif> builder = repository
-            .queryBuilder(SampleSpecif.class)
-            .and(field, attribute);
-        List<SampleSpecif> zusatz = repository.filter(builder.getQuery());
-        if (zusatz == null || zusatz.isEmpty()) {
-            addWarning(new ReportItem(
-                    isId ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
-                    attribute,
-                    StatusCodes.IMP_INVALID_VALUE));
-            return null;
-        }
-        zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
-
         validate(zusatzwert, "validation#probe");
-
-        return zusatzwert;
+        if (!zusatzwert.hasErrors()) {
+            if (repository.entityManager().contains(zusatzwert)) {
+                repository.update(zusatzwert);
+            } else {
+                repository.create(zusatzwert);
+            }
+        }
     }
 
     private MeasVal createMesswert(

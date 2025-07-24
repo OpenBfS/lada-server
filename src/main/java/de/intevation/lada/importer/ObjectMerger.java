@@ -20,8 +20,6 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -142,41 +140,6 @@ public class ObjectMerger {
             target.setMmtId(src.getMmtId());
         }
         repository.update(target);
-        return this;
-    }
-
-    /**
-     * Merge sampleSpecifMeasVals.
-     *
-     * @param target the resulting object
-     * @param sampleSpecifMeasVals the source object
-     * @return the merge instance
-     */
-    public ObjectMerger mergeSampleSpecifMeasVals(
-        Sample target,
-        List<SampleSpecifMeasVal> sampleSpecifMeasVals
-    ) {
-        for (SampleSpecifMeasVal val : sampleSpecifMeasVals) {
-            QueryBuilder<SampleSpecifMeasVal> builder = repository
-                .queryBuilder(SampleSpecifMeasVal.class)
-                .and(SampleSpecifMeasVal_.sampleId, target.getId())
-                .and(SampleSpecifMeasVal_.sampleSpecifId,
-                    val.getSampleSpecifId());
-            SampleSpecifMeasVal found;
-            try {
-                found = repository.getSingle(builder.getQuery());
-            } catch (NoResultException e) {
-                // Create new entry
-                repository.create(val);
-                continue;
-            }
-
-            // Update existing entry
-            // TODO: Why only these two attributes?
-            found.setError(val.getError());
-            found.setMeasVal(val.getMeasVal());
-            repository.update(found);
-        }
         return this;
     }
 
