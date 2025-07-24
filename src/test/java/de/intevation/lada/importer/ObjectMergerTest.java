@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.importer;
 
-import static de.intevation.lada.model.NamingStrategy.camelToSnake;
-
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -26,8 +24,6 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -119,41 +115,6 @@ public class ObjectMergerTest extends BaseTest {
             "datasets/dbUnit_import_merge_match_messung.xml",
             "lada.measm",
             new String[]{"status", "last_mod", "tree_mod"});
-    }
-
-    /**
-     * Merge zusatzwert objects.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    public final void mergeZusatzwert() throws Exception {
-        transaction.begin();
-        Sample probe = repository.getById(Sample.class, PID1000);
-
-        // Update existing entry
-        SampleSpecifMeasVal wert1 = new SampleSpecifMeasVal();
-        wert1.setSampleId(PID1000);
-        wert1.setError(1.2f);
-        // TODO: Update only implemented for measVal and error
-        // wert1.setSmallerThan("<");
-        wert1.setSampleSpecifId("A74");
-
-        // Create new entry
-        SampleSpecifMeasVal wert2 = new SampleSpecifMeasVal();
-        wert2.setSampleId(PID1000);
-        wert2.setError(0.1f);
-        wert2.setMeasVal(2d);
-        wert2.setSampleSpecifId("A75");
-        wert2.setSmallerThan("<");
-
-        merger.mergeZusatzwerte(probe, List.of(wert1, wert2));
-        transaction.commit();
-
-        shouldMatchDataSet(
-            "datasets/dbUnit_import_merge_match_zusatzwert.xml",
-            "lada.sample_specif_meas_val",
-            new String[]{camelToSnake(SampleSpecifMeasVal_.LAST_MOD),
-                camelToSnake(SampleSpecifMeasVal_.TREE_MOD)});
     }
 
     /**

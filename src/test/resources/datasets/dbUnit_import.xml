@@ -114,6 +114,13 @@
         main_sample_id = "120510002"
         sample_meth_id = "1"
     />
+    <lada.sample_specif_meas_val
+        id = "1"
+        sample_id = "1000"
+        sample_specif_id = "A1"
+        meas_val = "0"
+        error = "1"
+    />
     <lada.geolocat
         id = "1000"
         type_regulation = "E"

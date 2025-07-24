@@ -20,8 +20,6 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -142,46 +140,6 @@ public class ObjectMerger {
             target.setMmtId(src.getMmtId());
         }
         repository.update(target);
-        return this;
-    }
-
-    /**
-     * Merge zusatzwerte.
-     * @param target the resulting object
-     * @param zusatzwerte the source object
-     * @return the merge instance
-     */
-    public ObjectMerger mergeZusatzwerte(
-        Sample target,
-        List<SampleSpecifMeasVal> zusatzwerte
-    ) {
-        for (int i = 0; i < zusatzwerte.size(); i++) {
-            QueryBuilder<SampleSpecifMeasVal> builder = repository
-                .queryBuilder(SampleSpecifMeasVal.class)
-                .and(SampleSpecifMeasVal_.sampleId, target.getId())
-                .and(SampleSpecifMeasVal_.sampleSpecifId,
-                    zusatzwerte.get(i).getSampleSpecifId());
-            List<SampleSpecifMeasVal> found =
-                repository.filter(builder.getQuery());
-            if (found.isEmpty()) {
-                repository.create(zusatzwerte.get(i));
-                continue;
-            } else if (found.size() > 1) {
-                // something is wrong (probeId and pzsId should be unique).
-                // Continue and skip this zusatzwert.
-                continue;
-            }
-            // Update the objects.
-            // direktly update the db or update the list!?
-            // Updating the list could be a problem. List objects are detatched.
-            //
-            // Current solution:
-            // Remove all db objects to be able to create new ones.
-            found.get(0).setError(zusatzwerte.get(i).getError());
-            found.get(0).setMeasVal(zusatzwerte.get(i).getMeasVal());
-            repository.update(found.get(0));
-            builder = builder.getEmptyBuilder();
-        }
         return this;
     }
 
