@@ -322,7 +322,7 @@ public class LafObjectMapper {
                     }
                 }
                 // Persist zusatzwert objects
-                merger.mergeZusatzwerte(newProbe, zusatzwerte);
+                merger.mergeSampleSpecifMeasVals(newProbe, zusatzwerte);
 
                 // Create site objects
                 this.configMapper.applyConfigs(currentSample.getEntnahmeOrt());

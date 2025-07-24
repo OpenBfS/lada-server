@@ -146,41 +146,36 @@ public class ObjectMerger {
     }
 
     /**
-     * Merge zusatzwerte.
+     * Merge sampleSpecifMeasVals.
+     *
      * @param target the resulting object
-     * @param zusatzwerte the source object
+     * @param sampleSpecifMeasVals the source object
      * @return the merge instance
      */
-    public ObjectMerger mergeZusatzwerte(
+    public ObjectMerger mergeSampleSpecifMeasVals(
         Sample target,
-        List<SampleSpecifMeasVal> zusatzwerte
+        List<SampleSpecifMeasVal> sampleSpecifMeasVals
     ) {
-        for (int i = 0; i < zusatzwerte.size(); i++) {
+        for (SampleSpecifMeasVal val : sampleSpecifMeasVals) {
             QueryBuilder<SampleSpecifMeasVal> builder = repository
                 .queryBuilder(SampleSpecifMeasVal.class)
                 .and(SampleSpecifMeasVal_.sampleId, target.getId())
                 .and(SampleSpecifMeasVal_.sampleSpecifId,
-                    zusatzwerte.get(i).getSampleSpecifId());
-            List<SampleSpecifMeasVal> found =
-                repository.filter(builder.getQuery());
-            if (found.isEmpty()) {
-                repository.create(zusatzwerte.get(i));
-                continue;
-            } else if (found.size() > 1) {
-                // something is wrong (probeId and pzsId should be unique).
-                // Continue and skip this zusatzwert.
+                    val.getSampleSpecifId());
+            SampleSpecifMeasVal found;
+            try {
+                found = repository.getSingle(builder.getQuery());
+            } catch (NoResultException e) {
+                // Create new entry
+                repository.create(val);
                 continue;
             }
-            // Update the objects.
-            // direktly update the db or update the list!?
-            // Updating the list could be a problem. List objects are detatched.
-            //
-            // Current solution:
-            // Remove all db objects to be able to create new ones.
-            found.get(0).setError(zusatzwerte.get(i).getError());
-            found.get(0).setMeasVal(zusatzwerte.get(i).getMeasVal());
-            repository.update(found.get(0));
-            builder = builder.getEmptyBuilder();
+
+            // Update existing entry
+            // TODO: Why only these two attributes?
+            found.setError(val.getError());
+            found.setMeasVal(val.getMeasVal());
+            repository.update(found);
         }
         return this;
     }

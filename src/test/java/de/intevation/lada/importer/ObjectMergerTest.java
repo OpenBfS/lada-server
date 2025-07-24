@@ -146,7 +146,7 @@ public class ObjectMergerTest extends BaseTest {
         wert2.setSampleSpecifId("A75");
         wert2.setSmallerThan("<");
 
-        merger.mergeZusatzwerte(probe, List.of(wert1, wert2));
+        merger.mergeSampleSpecifMeasVals(probe, List.of(wert1, wert2));
         transaction.commit();
 
         shouldMatchDataSet(
