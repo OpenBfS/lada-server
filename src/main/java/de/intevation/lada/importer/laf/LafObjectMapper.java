@@ -312,15 +312,9 @@ public class LafObjectMapper {
                 }
 
                 // Create zusatzwert objects
-                List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<>();
                 for (Map<String, String> raw: currentSample.getZusatzwerte()) {
-                    SampleSpecifMeasVal tmp = createZusatzwert(raw, newProbe);
-                    if (tmp != null) {
-                        zusatzwerte.add(tmp);
-                    }
+                    createOrUpdateSampleSpecifMeasVal(raw, newProbe);
                 }
-                // Persist zusatzwert objects
-                merger.mergeZusatzwerte(newProbe, zusatzwerte);
 
                 // Create site objects
                 this.configMapper.applyConfigs(currentSample.getEntnahmeOrt());
@@ -729,14 +723,51 @@ public class LafObjectMapper {
         repository.create(kommentar);
     }
 
-    private SampleSpecifMeasVal createZusatzwert(
+    private void createOrUpdateSampleSpecifMeasVal(
         Map<String, String> attributes,
         Sample sample
     ) {
         this.configMapper.applyConfigs(attributes);
 
         SampleSpecifMeasVal zusatzwert = new SampleSpecifMeasVal();
+
+        // Set identifying attributes
         zusatzwert.setSample(sample);
+        String attribute = attributes.get("PZS");
+        boolean isId = false;
+        if (attribute == null) {
+            attribute = attributes.get("PZS_ID");
+            isId = true;
+        }
+        SingularAttribute<SampleSpecif, String> field = isId
+            ? SampleSpecif_.id : SampleSpecif_.extId;
+        QueryBuilder<SampleSpecif> builder = repository
+            .queryBuilder(SampleSpecif.class)
+            .and(field, attribute);
+        List<SampleSpecif> zusatz = repository.filter(builder.getQuery());
+        if (zusatz == null || zusatz.isEmpty()) {
+            addWarning(new ReportItem(
+                    isId ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
+                    attribute,
+                    StatusCodes.IMP_INVALID_VALUE));
+            return;
+        }
+        zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
+
+        // Identify existing entry
+        try {
+            SampleSpecifMeasVal existing
+                = identification.getExisting(zusatzwert);
+            if (existing != null) {
+                zusatzwert = existing;
+            }
+        } catch (IdentificationException e) {
+            addError(new ReportItem(
+                    "identification",
+                    "SampleSpecifMeasVal",
+                    StatusCodes.IMP_INVALID_VALUE));
+            return;
+        }
 
         if (attributes.containsKey("MESSFEHLER")) {
             zusatzwert.setError(
@@ -751,31 +782,14 @@ public class LafObjectMapper {
         }
         zusatzwert.setMeasVal(Double.valueOf(wert.replaceAll(",", ".")));
 
-        String attribute = attributes.get("PZS");
-        boolean isId = false;
-        if (attribute == null) {
-            attribute = attributes.get("PZS_ID");
-            isId = true;
-        }
-
-        SingularAttribute<SampleSpecif, String> field = isId
-            ? SampleSpecif_.id : SampleSpecif_.extId;
-        QueryBuilder<SampleSpecif> builder = repository
-            .queryBuilder(SampleSpecif.class)
-            .and(field, attribute);
-        List<SampleSpecif> zusatz = repository.filter(builder.getQuery());
-        if (zusatz == null || zusatz.isEmpty()) {
-            addWarning(new ReportItem(
-                    isId ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
-                    attribute,
-                    StatusCodes.IMP_INVALID_VALUE));
-            return null;
-        }
-        zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
-
         validate(zusatzwert, "validation#probe");
-
-        return zusatzwert;
+        if (!zusatzwert.hasErrors()) {
+            if (repository.entityManager().contains(zusatzwert)) {
+                repository.update(zusatzwert);
+            } else {
+                repository.create(zusatzwert);
+            }
+        }
     }
 
     private MeasVal createMesswert(Map<String, String> attributes) {

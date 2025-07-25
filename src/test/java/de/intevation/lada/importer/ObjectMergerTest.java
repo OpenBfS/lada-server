@@ -8,7 +8,6 @@
 package de.intevation.lada.importer;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -20,7 +19,6 @@ import jakarta.transaction.UserTransaction;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,7 +28,6 @@ import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -45,9 +42,6 @@ public class ObjectMergerTest extends BaseTest {
     private static final double MESS15D = 1.5d;
     private static final int MGID56 = 56;
     private static final int MEHID207 = 207;
-    private static final double MESS18D = 1.8d;
-    private static final float MESSFEHLER02F = 0.2f;
-    private static final float MESSFEHLER12F = 1.2f;
     private static final int MDAUER1000 = 1000;
     private static final int MID1200 = 1200;
     private static final int PNID = 726;
@@ -185,50 +179,6 @@ public class ObjectMergerTest extends BaseTest {
             "datasets/dbUnit_import_merge_match_messung.xml",
             "lada.measm",
             new String[]{"status", "last_mod", "tree_mod"});
-    }
-
-    // TODO Record order can get mixed up here which cause the test to fail as
-    //       different records get compared to each other (e.g. A74 <-> A76)
-    /**
-     * Merge zusatzwert objects.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @Ignore
-    public final void mergeZusatzwert() throws Exception {
-        transaction.begin();
-        Sample probe = repository.getById(Sample.class, PID1000);
-        List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<SampleSpecifMeasVal>();
-        SampleSpecifMeasVal wert1 = new SampleSpecifMeasVal();
-        wert1.setSample(probe);
-        wert1.setError(MESSFEHLER12F);
-        wert1.setSmallerThan("<");
-        wert1.setSampleSpecifId("A74");
-
-        SampleSpecifMeasVal wert2 = new SampleSpecifMeasVal();
-        wert2.setSample(probe);
-        wert2.setError(MESSFEHLER02F);
-        wert2.setMeasVal(MESS18D);
-        wert1.setSmallerThan(null);
-        wert2.setSampleSpecifId("A75");
-
-        SampleSpecifMeasVal wert3 = new SampleSpecifMeasVal();
-        wert3.setSample(probe);
-        wert3.setError(MESSFEHLER02F);
-        wert3.setMeasVal(MESS18D);
-        wert1.setSmallerThan(null);
-        wert3.setSampleSpecifId("A76");
-
-        zusatzwerte.add(wert1);
-        zusatzwerte.add(wert2);
-        zusatzwerte.add(wert3);
-        merger.mergeZusatzwerte(probe, zusatzwerte);
-        transaction.commit();
-
-        shouldMatchDataSet(
-            "datasets/dbUnit_import_merge_match_zusatzwert.xml",
-            "lada.sample_specif_meas_val",
-            new String[]{"id", "last_mod", "tree_mod"});
     }
 
     /**
