@@ -332,6 +332,13 @@ public class ImporterTest extends BaseTest {
         final int updateRegId = 2;
         laf.setRegulationId(updateRegId);
 
+        // Update sampleSpecifMeasVal
+        SampleSpecifMeasVal sampleSpecifMeasVal
+            = laf.getSampleSpecifMeasVals().get(0);
+        sampleSpecifMeasVal.setMeasVal(1d);
+        sampleSpecifMeasVal.setError(0f);
+        sampleSpecifMeasVal.setSmallerThan("<");
+
         // Update site
         laf.getGeolocats().get(0).getSite().setExtId(existingSiteExtId);
 
