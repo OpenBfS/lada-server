@@ -29,7 +29,6 @@ import org.junit.runners.model.MultipleFailureException;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.GeolocatMpg;
@@ -88,7 +87,7 @@ public class AuthorizerTest extends BaseTest {
     public record TestConfig(
         boolean getResult, boolean postResult,
         boolean putResult, boolean deleteResult,
-        // Whether BaseModel.readonly can be derived from putResult
+        // Whether Authorizable::readonly can be derived from putResult
         boolean readOnlyViaPut,
         String testDescription) { }
 
@@ -184,7 +183,7 @@ public class AuthorizerTest extends BaseTest {
 
         //Test parameters
         @Parameter(0)
-        public BaseModel testObject;
+        public Authorizable testObject;
         @Parameter(1)
         public RequestMethod method;
         @Parameter(2)
@@ -241,7 +240,7 @@ public class AuthorizerTest extends BaseTest {
 
         //Test parameters
         @Parameter(0)
-        public BaseModel testObject;
+        public Authorizable testObject;
         @Parameter(1)
         public Boolean expectedReadonly;
         @Parameter(2)

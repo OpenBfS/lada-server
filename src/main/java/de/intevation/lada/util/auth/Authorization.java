@@ -16,7 +16,6 @@ import jakarta.ws.rs.core.Response;
 import java.util.Collection;
 
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.BelongsToMpg;
 import de.intevation.lada.model.lada.BelongsToSample;
@@ -120,7 +119,7 @@ public class Authorization {
      * @param data object at which attributes should be set
      * @return data object with attributes set
      */
-    public <T extends BaseModel> T filter(T data) {
+    public <T extends Authorizable> T filter(T data) {
         try {
             return doAuthorize(data, null);
         } catch (AuthorizationException ae) {
@@ -136,7 +135,7 @@ public class Authorization {
      * @param Collection of data objects at which attributes should be set
      * @return Collection of data objects with attributes set
      */
-    public <T extends BaseModel> Collection<T> filter(Collection<T> data) {
+    public <T extends Authorizable> Collection<T> filter(Collection<T> data) {
         for (T object: data) {
             filter(object);
         }
@@ -150,7 +149,7 @@ public class Authorization {
      * @param method    The Http request type.
      * @throws ForbiddenException if the user is not authorized.
      */
-    public <T extends BaseModel> T authorize(
+    public <T extends Authorizable> T authorize(
         T data,
         RequestMethod method
     ) {
@@ -171,7 +170,7 @@ public class Authorization {
      * @param method    The Http request type.
      * @return True if the user is authorized else returns false.
      */
-    public <T extends BaseModel> boolean isAuthorized(
+    public <T extends Authorizable> boolean isAuthorized(
         T data,
         RequestMethod method
     ) {
@@ -183,7 +182,7 @@ public class Authorization {
         }
     }
 
-    private <T extends BaseModel> T doAuthorize(
+    private <T extends Authorizable> T doAuthorize(
         T data,
         RequestMethod method
     ) throws AuthorizationException {
