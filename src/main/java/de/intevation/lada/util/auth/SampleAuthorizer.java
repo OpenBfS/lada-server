@@ -9,6 +9,7 @@ package de.intevation.lada.util.auth;
 
 import java.util.List;
 
+import de.intevation.lada.model.lada.MeasFacilOwned;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
@@ -21,6 +22,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 class SampleAuthorizer extends Authorizer<Sample> {
 
     private Authorizer<Measm> messungAuthorizer;
+    private Authorizer<MeasFacilOwned> measFacilAuthorizer;
 
     SampleAuthorizer(
         UserInfo userInfo,
@@ -30,6 +32,8 @@ class SampleAuthorizer extends Authorizer<Sample> {
 
         this.messungAuthorizer = new MeasmAuthorizer(
             this.userInfo, this.repository, this);
+        this.measFacilAuthorizer = new MeasFacilOwnedAuthorizer(
+            this.userInfo, this.repository);
     }
 
     /**
@@ -43,6 +47,8 @@ class SampleAuthorizer extends Authorizer<Sample> {
         super(userInfo, repository);
 
         this.messungAuthorizer = messungAuthorizer;
+        this.measFacilAuthorizer = new MeasFacilOwnedAuthorizer(
+            this.userInfo, this.repository);
     }
 
     @Override
@@ -50,18 +56,13 @@ class SampleAuthorizer extends Authorizer<Sample> {
         Sample probe,
         RequestMethod method
     ) throws AuthorizationException {
-        if (method == RequestMethod.PUT
-            || method == RequestMethod.DELETE) {
-            if (!anyMeasmReadOnly(probe.getId(), userInfo)
-                && getAuthorization(userInfo, probe)) {
-                return;
-            }
+        measFacilAuthorizer.authorizeMethod(probe, method);
+        if ((method == RequestMethod.PUT
+                || method == RequestMethod.DELETE)
+            && anyMeasmReadOnly(probe.getId(), userInfo)
+        ) {
             throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         }
-        if (getAuthorization(userInfo, probe)) {
-            return;
-        }
-        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
     }
 
     @Override
@@ -88,9 +89,5 @@ class SampleAuthorizer extends Authorizer<Sample> {
             }
         }
         return false;
-    }
-
-    private boolean getAuthorization(UserInfo userInfo, Sample sample) {
-        return userInfo.getMessstellen().contains(sample.getMeasFacilId());
     }
 }

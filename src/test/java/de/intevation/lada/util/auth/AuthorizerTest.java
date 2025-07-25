@@ -395,6 +395,9 @@ public class AuthorizerTest extends BaseTest {
         final int authorizedMeasmId = 1200;
         hijacked.setMeasmId(authorizedMeasmId);
 
+        final int foreignCommentId = 1004;
+        CommMeasm foreignMeasFacil = em.find(CommMeasm.class, foreignCommentId);
+
         return Map.of(
             noStatus, new TestConfig(true, true, true, true, true,
                 "measmIdNoStatus"),
@@ -405,7 +408,9 @@ public class AuthorizerTest extends BaseTest {
             lockedBySample, new TestConfig(false, false, false, false, true,
                 "measmIDLockedBySample"),
             hijacked, new TestConfig(true, true, false, true, false,
-                "belongsToMeasmHijacked")
+                "belongsToMeasmHijacked"),
+            foreignMeasFacil, new TestConfig(true, false, false, false, true,
+                "foreignMeasFacilCommMeasm")
         );
     }
 
@@ -538,6 +543,9 @@ public class AuthorizerTest extends BaseTest {
         CommSample statusLocked = em.find(CommSample.class, commSampleId);
         statusLocked.setSampleId(SAMPLE_ID_LOCKED_BY_STATUS);
 
+        final int foreignCommentId = 1004;
+        CommMeasm foreignMeasFacil = em.find(CommMeasm.class, foreignCommentId);
+
         return Map.of(
             authorized, new TestConfig(true, true, true, true, true,
                 "sampleIdAuthorized"),
@@ -546,7 +554,9 @@ public class AuthorizerTest extends BaseTest {
             hijacked, new TestConfig(true, true, false, true, false,
                 "belongsToSampleHijacked"),
             statusLocked, new TestConfig(false, false, false, false, true,
-                "sampleIdStatusLocked")
+                "sampleIdStatusLocked"),
+            foreignMeasFacil, new TestConfig(true, false, false, false, true,
+                "foreignMeasFacilCommSample")
         );
     }
 

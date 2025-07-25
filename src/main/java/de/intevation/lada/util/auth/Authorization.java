@@ -19,6 +19,8 @@ import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.BelongsToMpg;
 import de.intevation.lada.model.lada.BelongsToSample;
+import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
@@ -54,6 +56,8 @@ public class Authorization {
     private Authorizer<Site> siteAuthorizer;
     private Authorizer<Sampler> samplerAuthorizer;
     private Authorizer<StatusProt> statusAuthorizer;
+    private Authorizer<CommSample> commSampleAuthorizer;
+    private Authorizer<CommMeasm> commMeasmAuthorizer;
     private Authorizer<BelongsToSample> pIdAuthorizer;
     private Authorizer<BelongsToMeasm> mIdAuthorizer;
     private Authorizer<BelongsToMpg> mpgIdAuthorizer;
@@ -94,6 +98,10 @@ public class Authorization {
             new SamplerAuthorizer(userInfo, repository);
         this.statusAuthorizer =
             new StatusProtAuthorizer(userInfo, repository);
+        this.commSampleAuthorizer =
+            new CommSampleAuthorizer(userInfo, repository);
+        this.commMeasmAuthorizer =
+            new CommMeasmAuthorizer(userInfo, repository);
         this.pIdAuthorizer =
             new BelongsToSampleAuthorizer(userInfo, repository);
         this.mIdAuthorizer =
@@ -239,6 +247,18 @@ public class Authorization {
                 this.statusAuthorizer.setAuthAttrs(o);
             } else {
                 this.statusAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof CommSample o) {
+            if (method == null) {
+                this.commSampleAuthorizer.setAuthAttrs(o);
+            } else {
+                this.commSampleAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof CommMeasm o) {
+            if (method == null) {
+                this.commMeasmAuthorizer.setAuthAttrs(o);
+            } else {
+                this.commMeasmAuthorizer.authorize(o, method);
             }
         } else if (data instanceof BelongsToSample o) {
             if (method == null) {

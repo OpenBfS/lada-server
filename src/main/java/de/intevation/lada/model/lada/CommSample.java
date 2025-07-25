@@ -31,7 +31,8 @@ import jakarta.validation.constraints.Size;
 @Unique(fields = {"text", "sampleId"},
     groups = DatabaseConstraints.class, clazz = CommSample.class)
 @GroupSequence({ CommSample.class, DatabaseConstraints.class })
-public class CommSample extends BelongsToSample implements Serializable {
+public class CommSample extends BelongsToSample
+    implements MeasFacilOwned, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -69,6 +70,7 @@ public class CommSample extends BelongsToSample implements Serializable {
         this.date = date;
     }
 
+    @Override
     public String getMeasFacilId() {
         return this.measFacilId;
     }
