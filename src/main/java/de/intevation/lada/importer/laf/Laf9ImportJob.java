@@ -266,8 +266,14 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                             rawObject.getJsonObject(Geolocat_.SITE),
                             msgKey);
                     }
-                     // Set site for identification of Geolocat
-                    loc.setSite(finalSite);
+                    if (repository.entityManager().contains(finalSite)) {
+                        /* Successfully imported site.
+                           Set site for identification of Geolocat */
+                        loc.setSite(finalSite);
+                    } else {
+                        // Skip Geolocat with invalid site
+                        continue;
+                    }
                 }
 
                 BelongsToSample finalObject = null;

@@ -910,6 +910,24 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test asynchronous import with invalid site.
+     */
+    @Test
+    @RunAsClient
+    public final void laf9InvalidSite()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        Sample laf = prepareLaf9Data();
+        laf.setMainSampleId(lafSampleId);
+
+        Site site = laf.getGeolocats().get(0).getSite();
+        site.setAdminUnitId(null);
+        site.setLongText("This site misses required attributes");
+
+        testAsyncLaf9Import(laf, lafSampleId, false, true, laf);
+    }
+
+    /**
      * Test asynchronous import updating sampling location.
      */
     @Test
@@ -1246,6 +1264,8 @@ public class ImporterTest extends BaseTest {
         LafImportParameters<?> requestJson,
         boolean expectSuccess
     ) throws InterruptedException {
+        LOG.tracef(
+            "Request payload: %s", JSONBConfig.JSONB.toJson(requestJson));
         Response importCreated = target.path(ASYNC_IMPORT_URL)
             .path(path)
             .request()
