@@ -29,7 +29,6 @@ import org.junit.runners.model.MultipleFailureException;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.GeolocatMpg;
@@ -88,7 +87,7 @@ public class AuthorizerTest extends BaseTest {
     public record TestConfig(
         boolean getResult, boolean postResult,
         boolean putResult, boolean deleteResult,
-        // Whether BaseModel.readonly can be derived from putResult
+        // Whether Authorizable::readonly can be derived from putResult
         boolean readOnlyViaPut,
         String testDescription) { }
 
@@ -184,7 +183,7 @@ public class AuthorizerTest extends BaseTest {
 
         //Test parameters
         @Parameter(0)
-        public BaseModel testObject;
+        public Authorizable testObject;
         @Parameter(1)
         public RequestMethod method;
         @Parameter(2)
@@ -241,7 +240,7 @@ public class AuthorizerTest extends BaseTest {
 
         //Test parameters
         @Parameter(0)
-        public BaseModel testObject;
+        public Authorizable testObject;
         @Parameter(1)
         public Boolean expectedReadonly;
         @Parameter(2)
@@ -397,6 +396,9 @@ public class AuthorizerTest extends BaseTest {
         final int authorizedMeasmId = 1200;
         hijacked.setMeasm(em.find(Measm.class, authorizedMeasmId));
 
+        final int foreignCommentId = 1004;
+        CommMeasm foreignMeasFacil = em.find(CommMeasm.class, foreignCommentId);
+
         return Map.of(
             noStatus, new TestConfig(true, true, true, true, true,
                 "measmIdNoStatus"),
@@ -407,7 +409,9 @@ public class AuthorizerTest extends BaseTest {
             lockedBySample, new TestConfig(false, false, false, false, true,
                 "measmIDLockedBySample"),
             hijacked, new TestConfig(true, true, false, true, false,
-                "belongsToMeasmHijacked")
+                "belongsToMeasmHijacked"),
+            foreignMeasFacil, new TestConfig(true, false, false, false, true,
+                "foreignMeasFacilCommMeasm")
         );
     }
 
@@ -540,6 +544,9 @@ public class AuthorizerTest extends BaseTest {
         CommSample statusLocked = em.find(CommSample.class, commSampleId);
         statusLocked.setSample(em.find(Sample.class, SAMPLE_ID_LOCKED_BY_STATUS));
 
+        final int foreignCommentId = 1004;
+        CommMeasm foreignMeasFacil = em.find(CommMeasm.class, foreignCommentId);
+
         return Map.of(
             authorized, new TestConfig(true, true, true, true, true,
                 "sampleIdAuthorized"),
@@ -548,7 +555,9 @@ public class AuthorizerTest extends BaseTest {
             hijacked, new TestConfig(true, true, false, true, false,
                 "belongsToSampleHijacked"),
             statusLocked, new TestConfig(false, false, false, false, true,
-                "sampleIdStatusLocked")
+                "sampleIdStatusLocked"),
+            foreignMeasFacil, new TestConfig(true, false, false, false, true,
+                "foreignMeasFacilCommSample")
         );
     }
 

@@ -16,10 +16,11 @@ import jakarta.ws.rs.core.Response;
 import java.util.Collection;
 
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.BelongsToMpg;
 import de.intevation.lada.model.lada.BelongsToSample;
+import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
@@ -55,6 +56,8 @@ public class Authorization {
     private Authorizer<Site> siteAuthorizer;
     private Authorizer<Sampler> samplerAuthorizer;
     private Authorizer<StatusProt> statusAuthorizer;
+    private Authorizer<CommSample> commSampleAuthorizer;
+    private Authorizer<CommMeasm> commMeasmAuthorizer;
     private Authorizer<BelongsToSample> pIdAuthorizer;
     private Authorizer<BelongsToMeasm> mIdAuthorizer;
     private Authorizer<BelongsToMpg> mpgIdAuthorizer;
@@ -95,6 +98,10 @@ public class Authorization {
             new SamplerAuthorizer(userInfo, repository);
         this.statusAuthorizer =
             new StatusProtAuthorizer(userInfo, repository);
+        this.commSampleAuthorizer =
+            new CommSampleAuthorizer(userInfo, repository);
+        this.commMeasmAuthorizer =
+            new CommMeasmAuthorizer(userInfo, repository);
         this.pIdAuthorizer =
             new BelongsToSampleAuthorizer(userInfo, repository);
         this.mIdAuthorizer =
@@ -120,7 +127,7 @@ public class Authorization {
      * @param data object at which attributes should be set
      * @return data object with attributes set
      */
-    public <T extends BaseModel> T filter(T data) {
+    public <T extends Authorizable> T filter(T data) {
         try {
             return doAuthorize(data, null);
         } catch (AuthorizationException ae) {
@@ -136,7 +143,7 @@ public class Authorization {
      * @param Collection of data objects at which attributes should be set
      * @return Collection of data objects with attributes set
      */
-    public <T extends BaseModel> Collection<T> filter(Collection<T> data) {
+    public <T extends Authorizable> Collection<T> filter(Collection<T> data) {
         for (T object: data) {
             filter(object);
         }
@@ -150,7 +157,7 @@ public class Authorization {
      * @param method    The Http request type.
      * @throws ForbiddenException if the user is not authorized.
      */
-    public <T extends BaseModel> T authorize(
+    public <T extends Authorizable> T authorize(
         T data,
         RequestMethod method
     ) {
@@ -171,7 +178,7 @@ public class Authorization {
      * @param method    The Http request type.
      * @return True if the user is authorized else returns false.
      */
-    public <T extends BaseModel> boolean isAuthorized(
+    public <T extends Authorizable> boolean isAuthorized(
         T data,
         RequestMethod method
     ) {
@@ -190,7 +197,7 @@ public class Authorization {
      * @param method    The Http request type.
      * @return null if the user is authorized, else localized error message.
      */
-    public <T extends BaseModel> String isAuthorizedMessage(
+    public <T extends Authorizable> String isAuthorizedMessage(
         T data,
         RequestMethod method
     ) {
@@ -202,7 +209,7 @@ public class Authorization {
         }
     }
 
-    private <T extends BaseModel> T doAuthorize(
+    private <T extends Authorizable> T doAuthorize(
         T data,
         RequestMethod method
     ) throws AuthorizationException {
@@ -259,6 +266,18 @@ public class Authorization {
                 this.statusAuthorizer.setAuthAttrs(o);
             } else {
                 this.statusAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof CommSample o) {
+            if (method == null) {
+                this.commSampleAuthorizer.setAuthAttrs(o);
+            } else {
+                this.commSampleAuthorizer.authorize(o, method);
+            }
+        } else if (data instanceof CommMeasm o) {
+            if (method == null) {
+                this.commMeasmAuthorizer.setAuthAttrs(o);
+            } else {
+                this.commMeasmAuthorizer.authorize(o, method);
             }
         } else if (data instanceof BelongsToSample o) {
             if (method == null) {

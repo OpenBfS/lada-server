@@ -12,12 +12,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.intevation.lada.util.auth.Authorizable;
 import jakarta.json.bind.annotation.JsonbTransient;
 
 /**
  * Provides shared attributes for model entities.
  */
-public abstract class BaseModel {
+public abstract class BaseModel implements Authorizable {
     private Map<String, Set<String>> errors = new HashMap<>();
     private Map<String, Set<String>> warnings = new HashMap<>();
     private Map<String, Set<String>> notifications = new HashMap<>();
@@ -173,10 +174,12 @@ public abstract class BaseModel {
         this.notifications.clear();
     }
 
+    @Override
     public boolean isReadonly() {
         return readonly;
     }
 
+    @Override
     public void setReadonly(boolean readonly) {
         this.readonly = readonly;
     }

@@ -109,7 +109,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @LFGBEnvDescripHasS3(groups = Notifications.class)
 @ExtIdLFGB(groups = CreateErrors.class)
 public class Sample extends BaseModel
-    implements Taggable<TagLinkSample>, Serializable {
+    implements MeasFacilOwned, Taggable<TagLinkSample>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -423,6 +423,7 @@ public class Sample extends BaseModel
         this.mpgId = mpgId;
     }
 
+    @Override
     public String getMeasFacilId() {
         return this.measFacilId;
     }

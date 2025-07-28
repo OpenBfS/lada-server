@@ -1,0 +1,25 @@
+/* Copyright (C) 2025 by Bundesamt fuer Strahlenschutz
+ * Software engineering by Intevation GmbH
+ *
+ * This file is Free Software under the GNU GPL (v>=3)
+ * and comes with ABSOLUTELY NO WARRANTY! Check out
+ * the documentation coming with IMIS-Labordaten-Application for details.
+ */
+package de.intevation.lada.util.auth;
+
+
+/**
+ * Represents authorizable entities.
+ */
+public interface Authorizable {
+
+    /**
+     * @return true, if this entity is read-only.
+     */
+    public boolean isReadonly();
+
+    /**
+     * @param readonly Set read-only state of this entity.
+     */
+    public void setReadonly(boolean readonly);
+}

@@ -223,6 +223,12 @@
         text = "Testkommentar"
         measm_id = "1200"
     />
+    <lada.comm_measm
+        id = "1004"
+        meas_facil_id = "01010"
+        text = "not your Measfacil"
+        measm_id = "1200"
+    />
     <lada.measm
         id = "1209"
         sample_id = "1000"
@@ -303,7 +309,7 @@
     />
     <lada.comm_sample
         id = "1001"
-        meas_facil_id = "01010"
+        meas_facil_id = "06010"
         text = "Testkommentar"
         sample_id = "1001"
     />
@@ -364,7 +370,14 @@
         meas_facil_id = "06010"
         text = "Testkommentar"
         sample_id = "1099"
-        />
+    />
+    <lada.comm_sample
+        id = "1004"
+        meas_facil_id = "01010"
+        text = "not your MeasFacil"
+        sample_id = "1099"
+    />
+
     <!--Sample locked by measm status-->
     <lada.sample
         id = "1100"
