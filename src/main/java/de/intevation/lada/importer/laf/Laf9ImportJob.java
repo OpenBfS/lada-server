@@ -184,6 +184,17 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     reportIdentificationException(e);
                 }
             }
+
+            // Reporting
+            if (!fileResponseData.getErrors().isEmpty()) {
+                this.currentStatus.setErrors(true);
+            }
+            if (!fileResponseData.getWarnings().isEmpty()) {
+                this.currentStatus.setWarnings(true);
+            }
+            if (!fileResponseData.getNotifications().isEmpty()) {
+                this.currentStatus.setNotifications(true);
+            }
             importData.put(fileName, fileResponseData);
             importedSampleIds.addAll(fileResponseData.getSampleIds());
         });
