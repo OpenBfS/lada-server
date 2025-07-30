@@ -426,11 +426,14 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         Collection<MeasVal> newMeasVals = srcMeasm.getMeasVals();
         if (newMeasVals != null) {
             // Existing measVals are completely replaced
-            targetMeasm.getMeasVals().clear();
-            repository.entityManager()
-                .createNamedQuery(Names.QUERY_DELETE_MEAS_VALS)
-                .setParameter("m", targetMeasm)
-                .executeUpdate();
+            List<MeasVal> targetMeasVals = targetMeasm.getMeasVals();
+            if (targetMeasVals != null && !targetMeasVals.isEmpty()) {
+                targetMeasVals.clear();
+                repository.entityManager()
+                    .createNamedQuery(Names.QUERY_DELETE_MEAS_VALS)
+                    .setParameter("m", targetMeasm)
+                    .executeUpdate();
+            }
             for (MeasVal m : newMeasVals) {
                 /* Ignore IDs in input to prevent Hibernate from
                    considering new objects as transient */
