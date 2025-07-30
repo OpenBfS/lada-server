@@ -10,6 +10,7 @@ package de.intevation.lada.model.lada;
 
 import java.util.Objects;
 
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Entity;
@@ -38,8 +39,9 @@ public class TagLinkSample extends TagLink {
 
     public TagLinkSample() { };
 
-    public TagLinkSample(Integer tagId, Integer sampleId) {
-        this.tagId = tagId;
+    public TagLinkSample(Tag tag, Integer sampleId) {
+        this.tag = tag;
+        this.tagId = tag.getId();
         this.sampleId = sampleId;
     }
 

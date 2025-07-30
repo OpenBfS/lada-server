@@ -352,6 +352,6 @@ public class Measm extends BelongsToSample
 
     @Override
     public TagLinkMeasm createTagLink(Tag tag) {
-        return new TagLinkMeasm(tag.getId(), this.id);
+        return new TagLinkMeasm(tag, this.id);
     }
 }

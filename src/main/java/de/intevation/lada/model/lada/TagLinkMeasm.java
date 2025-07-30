@@ -8,6 +8,7 @@
 
 package de.intevation.lada.model.lada;
 
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Entity;
@@ -36,8 +37,9 @@ public class TagLinkMeasm extends TagLink {
 
     public TagLinkMeasm() { };
 
-    public TagLinkMeasm(Integer tagId, Integer measmId) {
-        this.tagId = tagId;
+    public TagLinkMeasm(Tag tag, Integer measmId) {
+        this.tag = tag;
+        this.tagId = tag.getId();
         this.measmId = measmId;
     }
 

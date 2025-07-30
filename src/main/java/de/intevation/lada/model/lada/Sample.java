@@ -562,7 +562,7 @@ public class Sample extends BaseModel
 
     @Override
     public TagLinkSample createTagLink(Tag tag) {
-        return new TagLinkSample(tag.getId(), this.id);
+        return new TagLinkSample(tag, this.id);
     }
 
     public List<CommSample> getCommSamples() {
