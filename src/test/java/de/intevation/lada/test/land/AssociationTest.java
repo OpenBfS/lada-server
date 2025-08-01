@@ -41,6 +41,7 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
@@ -807,8 +808,8 @@ public class AssociationTest extends ServiceTest {
             int sampleId = ImporterTest.runAsyncImport(
                 target, "laf9", Locale.getDefault(), params, true)
                 .getJsonObject(fileName)
-                .getJsonArray(ImporterTest.SAMPLE_IDS_KEY)
-                .getInt(0);
+                .getJsonArray(ImporterTest.SAMPLES_KEY)
+                .getJsonObject(0).getInt(Sample_.ID);
             return get(samplePath + sampleId, Sample.class);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

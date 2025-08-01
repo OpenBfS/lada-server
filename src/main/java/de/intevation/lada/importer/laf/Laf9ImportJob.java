@@ -30,7 +30,6 @@ import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
 import de.intevation.lada.importer.Report;
-import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.BelongsToSample;
@@ -41,8 +40,8 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Names;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.model.lada.Taggable;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Site;
@@ -61,7 +60,9 @@ import de.intevation.lada.validation.groups.Warnings;
 
 public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
-    private static final String MSG_KEY_PREFIX = "validation#";
+    public static final String ERR_AUTHORIZATION_KEY = "authorization";
+
+    public static final String ERR_IDENTIFICATION_KEY = "identification";
 
     @Inject
     private Identification identification;
@@ -87,8 +88,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     private Map<Class<?>, Method> idSetters;
 
-    private Report fileResponseData;
-    private String currentReportKey;
+    private Laf9Report fileResponseData;
 
     @PostConstruct
     private void init() {
@@ -141,31 +141,27 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
         // Import each file
         this.files.forEach((fileName, content) -> {
-            this.fileResponseData = new Report();
+            this.fileResponseData = new Laf9Report();
             for (JsonObject rawSample: content) {
                 Sample inputSample = JSONBConfig.JSONB.fromJson(
                     rawSample.toString(), Sample.class);
 
-                this.currentReportKey = inputSample.getExtId() != null
-                    ? inputSample.getExtId() : inputSample.getMainSampleId();
-
+                Sample finalSample;
                 try {
-                    Sample finalSample =
-                        identification.getExisting(inputSample);
+                    finalSample = identification.getExisting(inputSample);
                     boolean isNewSample = finalSample == null;
-                    final String msgKey = "probe";
                     if (isNewSample) {
                         /* Ignore IDs in input to prevent Hibernate from
                            considering new objects as transient */
                         inputSample.setId(null);
-                        finalSample = create(inputSample, msgKey);
+                        finalSample = create(inputSample);
                     } else {
-                        finalSample = merge(finalSample, rawSample, msgKey);
+                        finalSample = merge(finalSample, rawSample);
                     }
                     /* Merge child objects if parent has no errors,
                        i.e. was persisted */
                     if (repository.entityManager().contains(finalSample)) {
-                        fileResponseData.addSampleId(finalSample.getId());
+                        importedSampleIds.add(finalSample.getId());
                         mergeSampleChilds(
                             finalSample,
                             isNewSample,
@@ -175,28 +171,34 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
                     /* Add warnings and notifications to final state
                        with child objects merged */
-                    reportValidationMessages(
-                        validator.validate(
-                            finalSample, Warnings.class, Notifications.class),
-                        MSG_KEY_PREFIX + msgKey);
-
+                    validator.validate(
+                        finalSample, Warnings.class, Notifications.class);
                 } catch (IdentificationException e) {
-                    reportIdentificationException(e);
+                    reportIdentificationException(inputSample);
+                    finalSample = inputSample;
                 }
+
+                fileResponseData.getSamples().add(
+                    getInstanceForReport(finalSample, inputSample));
             }
 
             // Reporting
-            if (!fileResponseData.getErrors().isEmpty()) {
+            if (fileResponseData.getSamples().stream().anyMatch(
+                    Sample::hasErrorsWithChilds)
+            ) {
                 this.currentStatus.setErrors(true);
             }
-            if (!fileResponseData.getWarnings().isEmpty()) {
+            if (fileResponseData.getSamples().stream().anyMatch(
+                    Sample::hasWarningsWithChilds)
+            ) {
                 this.currentStatus.setWarnings(true);
             }
-            if (!fileResponseData.getNotifications().isEmpty()) {
+            if (fileResponseData.getSamples().stream().anyMatch(
+                    Sample::hasNotificationsWithChilds)
+            ) {
                 this.currentStatus.setNotifications(true);
             }
             importData.put(fileName, fileResponseData);
-            importedSampleIds.addAll(fileResponseData.getSampleIds());
         });
 
         tagImportedData(importedSampleIds, this.mst);
@@ -210,6 +212,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     ) {
         Sample srcSample = JSONBConfig.JSONB.fromJson(
             rawSample.toString(), Sample.class);
+
+        mergeTags(srcSample, rawSample, targetSample);
+
         Map<Measm, JsonObject> importedMeasms = new HashMap<>();
         for (String attrName : belongsToSampleGetters.keySet()) {
             List<BelongsToSample> srcObjects =
@@ -237,15 +242,13 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     try {
                         finalSite = identification.getExisting(srcSite);
                     } catch (IdentificationException e) {
-                        reportIdentificationException(e);
+                        reportIdentificationException(srcSite);
+                        targetSample.getGeolocats().add(loc);
                         continue;
                     }
 
-                    final String msgKey = Geolocat_.SITE;
                     if (finalSite == null) {
-                        reportValidationMessages(
-                            validator.validate(srcSite, CreateErrors.class),
-                            MSG_KEY_PREFIX + msgKey);
+                        validator.validate(srcSite, CreateErrors.class);
                         if (!srcSite.hasErrors()
                             && isAuthorized(srcSite, RequestMethod.POST)
                         ) {
@@ -255,6 +258,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
                             ortFactory.completeSite(srcSite);
                             finalSite = repository.create(srcSite);
+                        } else {
+                            // Just for error reporting
+                            finalSite = srcSite;
                         }
                     } else if (
                         /* If identification found something not identified
@@ -263,26 +269,31 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     ) {
                         finalSite = merge(
                             finalSite,
-                            rawObject.getJsonObject(Geolocat_.SITE),
-                            msgKey);
+                            rawObject.getJsonObject(Geolocat_.SITE));
                     }
+                    validator.validate(
+                        finalSite, Warnings.class, Notifications.class);
                     if (repository.entityManager().contains(finalSite)) {
                         /* Successfully imported site.
                            Set site for identification of Geolocat */
                         loc.setSite(finalSite);
                     } else {
-                        // Skip Geolocat with invalid site
+                        loc.setSite(getInstanceForReport(finalSite, srcSite));
+                        targetSample.getGeolocats().add(loc);
                         continue;
                     }
                 }
 
                 BelongsToSample finalObject = null;
+                List<BelongsToSample> targetList =
+                    getChildList(attrName, targetSample);
                 if (!isNewSample) {
                     // Identify
                     try {
                         finalObject = identification.getExisting(srcObject);
                     } catch (IdentificationException e) {
-                        reportIdentificationException(e);
+                        reportIdentificationException(srcObject);
+                        targetList.add(srcObject); // Reporting
                         continue;
                     }
                 }
@@ -297,9 +308,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     } catch (ReflectiveOperationException e) {
                         throw new RuntimeException(e);
                     }
-                    finalObject = create(srcObject, attrName);
+                    finalObject = create(srcObject);
                 } else {
-                    finalObject = merge(finalObject, rawObject, attrName);
+                    finalObject = merge(finalObject, rawObject);
                 }
 
                 /* Merge Measm child objects if parent has no errors,
@@ -309,30 +320,31 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 ) {
                     importedMeasms.put(targetMeasm, rawObject);
                 } else {
-                    reportValidationMessages(
-                        validator.validate(
-                            finalObject, Warnings.class, Notifications.class),
-                        MSG_KEY_PREFIX + attrName);
+                    validator.validate(
+                        finalObject, Warnings.class, Notifications.class);
                 }
+
+                targetList.add(getInstanceForReport(finalObject, srcObject));
             }
         }
-
-        mergeTags(srcSample, rawSample, targetSample);
 
         // Merge and validate child objects and validate imported measms
         for (Measm importedMeasm : importedMeasms.keySet()) {
             mergeMeasmChilds(importedMeasm, importedMeasms.get(importedMeasm));
-            reportValidationMessages(
-                validator.validate(
-                    importedMeasm, Warnings.class, Notifications.class),
-                MSG_KEY_PREFIX + Sample_.MEASMS);
+            validator.validate(
+                importedMeasm, Warnings.class, Notifications.class);
         }
     }
 
+    /**
+     * Involves synchronizing {@code target} to database, which implies
+     * purging any detached associated entities.
+     */
     private void mergeTags(
         Taggable<?> src, JsonObject raw, Taggable<?> target
     ) {
         List<Tag> srcTags = src.getTags();
+        List<Tag> erroneousTags = new ArrayList<>();
         if (srcTags != null && !srcTags.isEmpty()) {
             for (int i = 0; i < srcTags.size(); i++) {
                 Tag srcTag = srcTags.get(i);
@@ -340,7 +352,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 try {
                     finalTag = identification.getExisting(srcTag);
                 } catch (IdentificationException e) {
-                    reportIdentificationException(e);
+                    reportIdentificationException(srcTag);
+                    erroneousTags.add(srcTag);
                     continue;
                 }
                 final String tagsKey = "tags";
@@ -348,33 +361,34 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     /* Ignore IDs in input to prevent Hibernate from
                        considering new objects as transient */
                     srcTag.setId(null);
-                    finalTag = create(srcTag, tagsKey);
+                    finalTag = create(srcTag);
                 } else {
                     JsonObject rawTag
                         = raw.getJsonArray(tagsKey).getJsonObject(i);
-                    finalTag = merge(finalTag, rawTag, tagsKey);
+                    finalTag = merge(finalTag, rawTag);
                 }
-                reportValidationMessages(
-                    validator.validate(
-                        finalTag, Warnings.class, Notifications.class),
-                    MSG_KEY_PREFIX + tagsKey);
+                validator.validate(
+                    finalTag, Warnings.class, Notifications.class);
+                TagLink tagLink = target.createTagLink(finalTag);
                 if (repository.entityManager().contains(finalTag)
-                    && isAuthorized(target.createTagLink(finalTag),
-                        RequestMethod.POST)
+                    && isAuthorized(tagLink, RequestMethod.POST)
                 ) {
                     target.addTag(finalTag);
                     // TODO: Extend tag expiring time?
+                } else {
+                    Tag reportTag = getInstanceForReport(finalTag, srcTag);
+                    reportTag.addErrors(tagLink.getErrors());
+                    erroneousTags.add(reportTag);
                 }
             }
             // Persist added tag links
             repository.update(target);
+            target.getTags().addAll(erroneousTags); // Reporting
         }
     }
 
-    private <T extends BaseModel> T create(T inputObject, String msgKey) {
-        reportValidationMessages(
-            validator.validate(inputObject, CreateErrors.class),
-            MSG_KEY_PREFIX + msgKey);
+    private <T extends BaseModel> T create(T inputObject) {
+        validator.validate(inputObject, CreateErrors.class);
         if (!inputObject.hasErrors()
             && isAuthorized(inputObject, RequestMethod.POST)
         ) {
@@ -383,14 +397,10 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         return inputObject;
     }
 
-    private <T extends BaseModel> T merge(
-        T persistent, JsonObject rawObject, String msgKey
-    ) {
+    private <T extends BaseModel> T merge(T persistent, JsonObject rawObject) {
         boolean changed = merger.merge(persistent, rawObject);
         if (changed) {
-            reportValidationMessages(
-                validator.validate(persistent, Default.class),
-                MSG_KEY_PREFIX + msgKey);
+            validator.validate(persistent, Default.class);
             if (!persistent.hasErrors()
                 && isAuthorized(persistent, RequestMethod.PUT)
             ) {
@@ -407,13 +417,24 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         if (err == null) {
             return true;
         }
-        this.fileResponseData.addError(currentReportKey,
-            new ReportItem(
-                this.userInfo.getName(),
-                repository.entityManager().getMetamodel().entity(
-                    object.getClass()).getName(),
-                err));
+        object.addError(ERR_AUTHORIZATION_KEY, err);
         return false;
+    }
+
+    /**
+     * Reporting: Use input in case of error to avoid disclosure
+     * of merged information.
+     */
+    private <T extends BaseModel> T getInstanceForReport(
+        T withMessages, T input
+    ) {
+        if (withMessages != input && withMessages.hasErrors()) {
+            input.addErrors(withMessages.getErrors());
+            input.addWarnings(withMessages.getWarnings());
+            input.addNotifications(withMessages.getNotifications());
+            return input;
+        }
+        return withMessages;
     }
 
     private void mergeMeasmChilds(Measm targetMeasm, JsonObject rawMeasm) {
@@ -423,7 +444,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         mergeTags(srcMeasm, rawMeasm, targetMeasm);
 
         // measVals
-        Collection<MeasVal> newMeasVals = srcMeasm.getMeasVals();
+        List<MeasVal> newMeasVals = srcMeasm.getMeasVals();
         if (newMeasVals != null) {
             // Existing measVals are completely replaced
             List<MeasVal> targetMeasVals = targetMeasm.getMeasVals();
@@ -440,43 +461,66 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 m.setId(null);
 
                 m.setMeasm(targetMeasm);
-                reportValidationMessages(
-                    validator.validate(m), MSG_KEY_PREFIX + "messwert");
+                validator.validate(m);
                 if (!m.hasErrors() && isAuthorized(m, RequestMethod.POST)) {
                     repository.create(m);
                 }
             }
+            // Just for reporting
+            if (targetMeasVals == null) {
+                targetMeasm.setMeasVals(newMeasVals);
+            } else {
+                targetMeasVals.addAll(newMeasVals);
+            }
         }
 
         // statusProts and commMeasms can only be added, not updated
-        addBelongsToMeasms(targetMeasm, srcMeasm.getCommMeasms());
+        List<CommMeasm> newCommMeasms = srcMeasm.getCommMeasms();
+        if (newCommMeasms != null) {
+            addBelongsToMeasms(targetMeasm, newCommMeasms);
+            // Reporting
+            List<CommMeasm> targetCommMeasms = targetMeasm.getCommMeasms();
+            if (targetCommMeasms == null) {
+                targetMeasm.setCommMeasms(newCommMeasms);
+            } else {
+                targetCommMeasms.addAll(newCommMeasms);
+            }
+        }
+
         /* Put statusProts last, because validating requires
            the final state of all objects */
-        addBelongsToMeasms(targetMeasm, srcMeasm.getStatusProts());
+        List<StatusProt> newStatusProts = srcMeasm.getStatusProts();
+        if (newStatusProts != null) {
+            addBelongsToMeasms(targetMeasm, newStatusProts);
+            // Reporting
+            List<StatusProt> targetStatusProts = targetMeasm.getStatusProts();
+            if (targetStatusProts == null) {
+                targetMeasm.setStatusProts(newStatusProts);
+            } else {
+                targetStatusProts.addAll(newStatusProts);
+            }
+        }
     }
 
     private void addBelongsToMeasms(
         Measm target,
         Collection<? extends BelongsToMeasm> newEntries
     ) {
-        if (newEntries != null) {
-            for (BelongsToMeasm newEntry : newEntries) {
-                /* Ignore IDs in input to prevent Hibernate from
-                   considering new objects as transient */
-                if (newEntry instanceof CommMeasm cm) {
-                    cm.setId(null);
-                } else if (newEntry instanceof StatusProt sp) {
-                    sp.setId(null);
-                }
+        for (BelongsToMeasm newEntry : newEntries) {
+            /* Ignore IDs in input to prevent Hibernate from
+               considering new objects as transient */
+            if (newEntry instanceof CommMeasm cm) {
+                cm.setId(null);
+            } else if (newEntry instanceof StatusProt sp) {
+                sp.setId(null);
+            }
 
-                newEntry.setMeasm(target);
-                reportValidationMessages(
-                    validator.validate(newEntry), "Status ");
-                if (!newEntry.hasErrors()
-                    && isAuthorized(newEntry, RequestMethod.POST)
-                ) {
-                    repository.create(newEntry);
-                }
+            newEntry.setMeasm(target);
+            validator.validate(newEntry);
+            if (!newEntry.hasErrors()
+                && isAuthorized(newEntry, RequestMethod.POST)
+            ) {
+                repository.create(newEntry);
             }
         }
     }
@@ -491,27 +535,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         }
     }
 
-    private void reportIdentificationException(
-        IdentificationException exception
-    ) {
-        Map<String, Object> failedAttrs = exception.getIdentifyingAttributes();
-        ReportItem reportItem;
-        if (failedAttrs != null) {
-            reportItem = new ReportItem(
-                failedAttrs.keySet().toString(),
-                failedAttrs.values().toString(),
-                StatusCodes.IMP_INVALID_VALUE);
-        } else {
-            reportItem = new ReportItem(
-                "identification", "", StatusCodes.IMP_INVALID_VALUE);
-        }
-        fileResponseData.addError(currentReportKey, reportItem);
-    }
-
-    private void reportValidationMessages(
-        BaseModel validatedObject, String key
-    ) {
-        fileResponseData.addValidationMessages(
-            currentReportKey, key, validatedObject);
+    private void reportIdentificationException(BaseModel object) {
+        object.addError(ERR_IDENTIFICATION_KEY,
+            String.valueOf(StatusCodes.IMP_INVALID_VALUE));
     }
 }

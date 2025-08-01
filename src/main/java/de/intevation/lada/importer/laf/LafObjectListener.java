@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.util.data.StatusCodes;
 
@@ -31,7 +30,7 @@ public class LafObjectListener extends LafBaseListener {
     private Set<ReportItem> currentErrors;
     private Set<ReportItem> currentWarnings;
     private Set<ReportItem> parserWarnings;
-    private Report report;
+    private Laf8Report report;
 
     private boolean hasDatenbasis = false;
     private boolean hasMessprogramm = false;
@@ -44,7 +43,7 @@ public class LafObjectListener extends LafBaseListener {
     private boolean hasEKoordinaten = false;
     private boolean probenNrContext = false;
 
-    public LafObjectListener(Report report) {
+    public LafObjectListener(Laf8Report report) {
         data = new LafRawData();
         this.report = report;
         this.currentErrors = new HashSet<>();

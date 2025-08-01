@@ -15,7 +15,6 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import de.intevation.lada.data.requests.Laf8ImportParameters;
-import de.intevation.lada.importer.Report;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -56,7 +55,7 @@ public class Laf8ImportJob extends ImportJob<String> {
             }
             importer.doImport(content, userInfo, mstId, config);
 
-            Report fileResponseData = importer.getReport();
+            Laf8Report fileResponseData = importer.getReport();
             if (!fileResponseData.getErrors().isEmpty()) {
                 this.currentStatus.setErrors(true);
             }

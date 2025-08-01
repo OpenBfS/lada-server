@@ -23,7 +23,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.util.auth.UserInfo;
@@ -40,7 +39,7 @@ public class LafImporter {
     @Inject
     private LafObjectMapper mapper;
 
-    private Report report;
+    private Laf8Report report;
 
     /**
      * Start the import of the LAF data.
@@ -59,7 +58,7 @@ public class LafImporter {
         // Every line can be the last line, so it is easier to append a
         // newline here than to extend the grammar with EOF for every line.
         lafString += "\r\n";
-        report = new Report();
+        report = new Laf8Report();
 
         try {
             CharStream ais = CharStreams.fromStream(new ByteArrayInputStream(
@@ -106,7 +105,7 @@ public class LafImporter {
         }
     }
 
-    public Report getReport() {
+    public Laf8Report getReport() {
         return this.report;
     }
 }

@@ -26,7 +26,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.importer.Report;
+import de.intevation.lada.importer.laf.Laf8Report;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
@@ -68,7 +68,7 @@ public class LafImportService extends LadaService {
     @POST
     @Path("laf")
     @Consumes(MediaType.TEXT_PLAIN)
-    public Report upload(
+    public Laf8Report upload(
         String content,
         @Context HttpServletRequest request
     ) {
@@ -98,7 +98,7 @@ public class LafImportService extends LadaService {
             config = repository.filter(builder.getQuery());
         }
         importer.doImport(content, userInfo, mstId, config);
-        Report respData = importer.getReport();
+        Laf8Report respData = importer.getReport();
         Boolean success = true;
         if (respData.getErrors().values().stream().anyMatch(
                 elem -> elem.stream().anyMatch(

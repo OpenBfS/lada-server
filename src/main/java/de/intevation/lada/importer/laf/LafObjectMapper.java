@@ -29,7 +29,6 @@ import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.importer.ObjectMerger;
-import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
@@ -144,14 +143,14 @@ public class LafObjectMapper {
 
     private ImportConfigMapper configMapper;
 
-    private Report report;
+    private Laf8Report report;
 
     /**
      * Map the raw data to database objects.
      * @param data the raw data from laf parser
      * @param report Report to collect information about import process
      */
-    public void mapObjects(LafRawData data, Report report) {
+    public void mapObjects(LafRawData data, Laf8Report report) {
         validator = new Validator();
         this.report = report;
         for (LafRawData.Sample sample: data.getProben()) {

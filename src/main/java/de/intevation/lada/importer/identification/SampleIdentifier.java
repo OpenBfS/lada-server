@@ -10,9 +10,6 @@ package de.intevation.lada.importer.identification;
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -69,12 +66,6 @@ class SampleIdentifier implements Identifier<Sample> {
         } catch (NoResultException e) {
             return null;
         }
-
-        Map<String, Object> failedAttrs = new HashMap<>();
-        failedAttrs.put(Sample_.EXT_ID, probe.getExtId());
-        failedAttrs.put(Sample_.MAIN_SAMPLE_ID, probe.getMainSampleId());
-        failedAttrs.put(Sample_.MEAS_FACIL_ID, probe.getMeasFacilId());
-        failedAttrs.put(Sample_.IS_TEST, probe.getIsTest());
-        throw new IdentificationException(failedAttrs);
+        throw new IdentificationException();
     }
 }

@@ -135,4 +135,20 @@ public class Geolocat extends BelongsToSample implements Serializable {
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
     }
+
+    @Override
+    public boolean hasErrorsWithChilds() {
+        return this.hasErrors() || this.site.hasErrorsWithChilds();
+    }
+
+    @Override
+    public boolean hasWarningsWithChilds() {
+        return this.hasWarnings() || this.site.hasWarningsWithChilds();
+    }
+
+    @Override
+    public boolean hasNotificationsWithChilds() {
+        return this.hasNotifications()
+            || this.site.hasNotificationsWithChilds();
+    }
 }

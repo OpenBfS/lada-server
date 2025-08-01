@@ -9,10 +9,13 @@ package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.json.bind.annotation.JsonbCreator;
@@ -620,5 +623,33 @@ public class Sample extends BaseModel
 
     public void setGemId(String gemId) {
         this.gemId = gemId;
+    }
+
+    @Override
+    public boolean hasErrorsWithChilds() {
+        return this.hasErrors()
+            || hasMessagesWithChilds(BaseModel::hasErrorsWithChilds);
+    }
+
+    @Override
+    public boolean hasWarningsWithChilds() {
+        return this.hasWarnings()
+            || hasMessagesWithChilds(BaseModel::hasWarningsWithChilds);
+    }
+
+    @Override
+    public boolean hasNotificationsWithChilds() {
+        return this.hasNotifications()
+            || hasMessagesWithChilds(BaseModel::hasNotificationsWithChilds);
+    }
+
+    private boolean hasMessagesWithChilds(Predicate<BaseModel> p) {
+        return Stream.of(
+            this.measms,
+            this.commSamples,
+            this.sampleSpecifMeasVals,
+            this.geolocats,
+            this.getTags()
+        ).filter(c -> c != null).flatMap(Collection::stream).anyMatch(p);
     }
 }

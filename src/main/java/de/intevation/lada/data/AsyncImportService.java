@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -24,11 +27,13 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-
+import jakarta.ws.rs.core.MediaType;
 import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Report;
+import de.intevation.lada.importer.laf.Laf8Report;
+import de.intevation.lada.importer.laf.Laf9Report;
 import de.intevation.lada.util.data.JobManager;
 import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.LadaService;
@@ -94,6 +99,11 @@ public class AsyncImportService extends AsyncLadaService {
     @GET
     @Path("result/{jobId}")
     @Operation(summary = "Get import result report data")
+    @APIResponse(
+        description = "Import result report data",
+        responseCode = "200",
+        content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM,
+            schema = @Schema(oneOf = {Laf8Report.class, Laf9Report.class})))
     public Map<String, Report> getResult(
         @PathParam("jobId") String id
     ) {

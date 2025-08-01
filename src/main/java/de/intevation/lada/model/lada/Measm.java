@@ -9,11 +9,14 @@ package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.CascadeType;
@@ -40,6 +43,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.processing.CheckHQL;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulation1;
@@ -353,5 +357,32 @@ public class Measm extends BelongsToSample
     @Override
     public TagLinkMeasm createTagLink(Tag tag) {
         return new TagLinkMeasm(tag, this.id);
+    }
+
+    @Override
+    public boolean hasErrorsWithChilds() {
+        return this.hasErrors()
+            || hasMessagesWithChilds(BaseModel::hasErrorsWithChilds);
+    }
+
+    @Override
+    public boolean hasWarningsWithChilds() {
+        return this.hasWarnings()
+            || hasMessagesWithChilds(BaseModel::hasWarningsWithChilds);
+    }
+
+    @Override
+    public boolean hasNotificationsWithChilds() {
+        return this.hasNotifications()
+            || hasMessagesWithChilds(BaseModel::hasNotificationsWithChilds);
+    }
+
+    private boolean hasMessagesWithChilds(Predicate<BaseModel> p) {
+        return Stream.of(
+            this.statusProts,
+            this.commMeasms,
+            this.measVals,
+            this.getTags()
+        ).filter(c -> c != null).flatMap(Collection::stream).anyMatch(p);
     }
 }

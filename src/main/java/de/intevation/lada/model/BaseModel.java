@@ -148,6 +148,19 @@ public abstract class BaseModel implements Authorizable {
     }
 
     /**
+     * Check whether this object or any associated
+     * child object has validation errors associated.
+     *
+     * Default implementation equals {@code hasErrors}. Override in classes
+     * with associated child objects.
+     *
+     * @return true if errors are associated
+     */
+    public boolean hasErrorsWithChilds() {
+        return this.hasErrors();
+    }
+
+    /**
      * Check whether this object has any validation errors associated.
      *
      * @return true if warnings are associated
@@ -157,12 +170,38 @@ public abstract class BaseModel implements Authorizable {
     }
 
     /**
+     * Check whether this object or any associated
+     * child object has validation warnings associated.
+     *
+     * Default implementation equals {@code hasWarnings}. Override in classes
+     * with associated child objects.
+     *
+     * @return true if warnings are associated
+     */
+    public boolean hasWarningsWithChilds() {
+        return this.hasWarnings();
+    }
+
+    /**
      * Check whether this object has any validation errors associated.
      *
      * @return true if notifications are associated
      */
     public boolean hasNotifications() {
         return !this.notifications.isEmpty();
+    }
+
+    /**
+     * Check whether this object or any associated
+     * child object has validation notifications associated.
+     *
+     * Default implementation equals {@code hasNotifications}.
+     * Override in classes with associated child objects.
+     *
+     * @return true if notifications are associated
+     */
+    public boolean hasNotificationsWithChilds() {
+        return this.hasNotifications();
     }
 
     /**
