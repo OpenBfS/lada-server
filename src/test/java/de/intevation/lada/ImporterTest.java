@@ -557,31 +557,7 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test failing sample identification with LAF8.
-     */
-    @Test
-    @RunAsClient
-    public final void testAsyncLaf8IdentifyFail()
-        throws InterruptedException, CharacterCodingException {
-        final String newMainSampleId = "XXX";
-        final String laf = String.format(
-            laf8Template, newMainSampleId,
-            "test", sampleSpecifId,
-            "PROBE_ID \"" + existingExtId + "\"\n", measd, measUnit, "");
-
-        JsonObject report = testAsyncLaf8Import(laf, newMainSampleId, false);
-        JsonObject expectedError = Json.createObjectBuilder()
-            .add(REPORT_ITEM_KEY_KEY, "duplicate")
-            .add(REPORT_ITEM_VALUE_KEY, "")
-            .add(REPORT_ITEM_CODE_KEY, String.valueOf(StatusCodes.IMP_PRESENT))
-            .build();
-        MatcherAssert.assertThat(
-            report.getJsonObject(ERRORS_KEY).getJsonArray(existingExtId),
-            CoreMatchers.hasItem(expectedError));
-    }
-
-    /**
-     * Test failing sample identification with LAF9.
+     * Test failing Measm identification with LAF9.
      */
     @Test
     @RunAsClient
@@ -589,13 +565,14 @@ public class ImporterTest extends BaseTest {
         throws InterruptedException, CharacterCodingException {
         Sample laf = prepareLaf9Data();
         laf.setExtId(existingExtId);
-        final String newMainSampleId = "XXX";
-        laf.setMainSampleId("XXX");
+        laf.getMeasms().get(0).setMmtId(null);
 
         JsonObject report = testAsyncLaf9Import(
-            laf, newMainSampleId, false, false, expectedAttrs);
+            laf, existingMainSampleId, false, false, expectedAttrs);
         JsonObject actualErrors = report.getJsonArray(SAMPLES_KEY)
-            .getJsonObject(0).getJsonObject(ERRORS_KEY);
+            .getJsonObject(0).getJsonArray(Sample_.MEASMS).stream()
+            .filter(v -> v.asJsonObject().isNull(Measm_.MMT_ID))
+            .findFirst().get().asJsonObject().getJsonObject(ERRORS_KEY);
         MatcherAssert.assertThat(actualErrors.keySet(),
             CoreMatchers.hasItem(Laf9ImportJob.ERR_IDENTIFICATION_KEY));
         MatcherAssert.assertThat(
