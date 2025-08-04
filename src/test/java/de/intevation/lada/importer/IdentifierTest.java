@@ -109,32 +109,15 @@ public class IdentifierTest extends BaseTest {
     }
 
     /**
-     * Identify probe object by external id as reject.
+     * Identify Sample object by extId for update of mainSampleId.
      * @throws Exception that can occur during the test.
-     */
-    @Test
-    @Transactional
-    public final void identifyProbeByExterneProbeIdReject() throws Exception {
-        Sample probe = new Sample();
-        probe.setExtId("T001");
-        probe.setMainSampleId("120510003");
-        probe.setMeasFacilId(mstId);
-
-        Assert.assertThrows(
-            Identifier.IdentificationException.class,
-            () -> probeIdentifier.getExisting(probe));
-    }
-
-    /**
-     * Identify probe object by external id as update.
-     * @throws Exception that ca occur during the test.
      */
     @Test
     @Transactional
     public final void identifyProbeByExterneProbeIdUpdate() throws Exception {
         Sample probe = new Sample();
         probe.setExtId("T001");
-        probe.setMainSampleId("");
+        probe.setMainSampleId("120510003");
         probe.setMeasFacilId(mstId);
 
         Assert.assertNotNull(probeIdentifier.getExisting(probe));

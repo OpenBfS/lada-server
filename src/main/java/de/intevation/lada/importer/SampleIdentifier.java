@@ -27,8 +27,15 @@ public class SampleIdentifier implements Identifier<Sample> {
         throws Identifier.IdentificationException {
         QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
 
-        if (probe.getExtId() == null
-            && probe.getMainSampleId() != null
+        if (probe.getExtId() != null) {
+            builder.and(Sample_.extId, probe.getExtId());
+            try {
+                return repository.getSingle(builder.getQuery());
+            } catch (NoResultException e) {
+                // continue
+            }
+        }
+        if (probe.getMainSampleId() != null
             && probe.getMeasFacilId() != null
             && probe.getIsTest() != null
         ) {
@@ -38,33 +45,9 @@ public class SampleIdentifier implements Identifier<Sample> {
             try {
                 return repository.getSingle(builder.getQuery());
             } catch (NoResultException e) {
-                return null;
-            }
-        } else if (probe.getExtId() != null
-            && (probe.getMainSampleId() == null
-                || probe.getMeasFacilId() == null)
-        ) {
-            builder.and(Sample_.extId, probe.getExtId());
-            try {
-                return repository.getSingle(builder.getQuery());
-            } catch (NoResultException e) {
-                return null;
+                // continue
             }
         }
-        builder.and(Sample_.extId, probe.getExtId());
-        try {
-            Sample found = repository.getSingle(builder.getQuery());
-            if (found.getMainSampleId() == null
-                || found.getMainSampleId().equals(
-                    probe.getMainSampleId())
-                || probe.getMainSampleId().isEmpty()
-                || found.getMainSampleId().isEmpty()
-            ) {
-                return found;
-            }
-        } catch (NoResultException e) {
-            return null;
-        }
-        throw new Identifier.IdentificationException();
+        return null;
     }
 }
