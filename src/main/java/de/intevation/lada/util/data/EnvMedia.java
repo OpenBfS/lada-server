@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
 import jakarta.persistence.metamodel.SingularAttribute;
 
 import de.intevation.lada.model.master.EnvDescrip;
@@ -217,7 +218,7 @@ public class EnvMedia {
                 if (i == 1) {
                     ndParent = envDescripId;
                 }
-            } catch (NoResultException e) {
+            } catch (NoResultException | NonUniqueResultException e) {
                 throw new InvalidEnvDescripDisplayException(
                     envDescripLevelFieldName(i));
             }
