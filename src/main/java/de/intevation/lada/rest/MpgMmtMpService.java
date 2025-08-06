@@ -7,9 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -23,7 +21,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.lada.MpgMmtMp_;
-import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -74,7 +71,6 @@ public class MpgMmtMpService extends LadaIntegerIdEntityService {
     public MpgMmtMp create(
         @Valid MpgMmtMp messprogrammmmt
     ) throws BadRequestException {
-        setMessgroesseObjects(messprogrammmmt);
         return repository.create(messprogrammmmt);
     }
 
@@ -89,8 +85,6 @@ public class MpgMmtMpService extends LadaIntegerIdEntityService {
     public MpgMmtMp update(
         @Valid MpgMmtMp messprogrammmmt
     ) throws BadRequestException {
-        setMessgroesseObjects(messprogrammmmt);
-
         return repository.update(messprogrammmmt);
     }
 
@@ -104,19 +98,5 @@ public class MpgMmtMpService extends LadaIntegerIdEntityService {
             MpgMmtMp.class, id);
         authorization.authorize(messprogrammmmtObj, RequestMethod.DELETE);
         repository.delete(messprogrammmmtObj);
-    }
-
-    /**
-     * Initialize referenced objects from given IDs.
-     */
-    private void setMessgroesseObjects(MpgMmtMp mm) {
-        Set<Measd> mos = new HashSet<>();
-        for (Integer mId: mm.getMeasds()) {
-            Measd m = repository.getById(Measd.class, mId);
-            if (m != null) {
-                mos.add(m);
-            }
-        }
-        mm.setMeasdObjects(mos);
     }
 }

@@ -28,7 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ import java.util.stream.Collectors;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
@@ -471,6 +474,45 @@ public class BaseTest {
             }
             if (entry.getValue() instanceof JsonObject expectedChild) {
                 verify(expectedChild, actual.get(key).asJsonObject(), exclude);
+            } else if (entry.getValue() instanceof JsonArray expectedArray
+                && actual.get(key) instanceof JsonArray actualArray
+                && expectedArray.size() == actualArray.size()
+            ) {
+                List<JsonValue> orderedInput = new ArrayList<>(actualArray);
+                orderedInput.sort(new Comparator<JsonValue>() {
+                    private static final String ID_KEY = "id";
+
+                    @Override
+                    public int compare(JsonValue arg0, JsonValue arg1) {
+                        if (arg0 instanceof JsonObject o0
+                            && arg1 instanceof JsonObject o1
+                            && o0.containsKey(ID_KEY)
+                            && o1.containsKey(ID_KEY)
+                        ) {
+                            JsonValue id0 = o0.get(ID_KEY);
+                            JsonValue id1 = o1.get(ID_KEY);
+                            if (id0 instanceof JsonNumber n0
+                                && id1 instanceof JsonNumber n1
+                            ) {
+                                return n0.bigDecimalValue().compareTo(
+                                    n1.bigDecimalValue());
+                            }
+                            return id0.toString().compareTo(id1.toString());
+                        }
+                        return 0;
+                    }
+                });
+                for (int i = 0; i < expectedArray.size(); i++) {
+                    JsonValue expectedValue = expectedArray.get(i);
+                    JsonValue actualValue = orderedInput.get(i);
+                    if (expectedValue instanceof JsonObject expectedObject
+                        && actualValue instanceof JsonObject actualObject
+                    ) {
+                        verify(expectedObject, actualObject, exclude);
+                    } else {
+                        Assert.assertEquals(expectedValue, actualValue);
+                    }
+                }
             } else {
                 Assert.assertEquals(
                     String.format("%s:", key),

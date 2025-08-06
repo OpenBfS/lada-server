@@ -1,5 +1,9 @@
 {
     "mpgId": 1000,
     "mmtId": "A3",
-    "measds": [56]
+    "measds": [{
+        "id": 56,
+        "isRefNucl": false,
+        "name": "Mangan"
+    }]
 }

@@ -34,6 +34,7 @@ import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp_;
+import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.EnvMedia;
@@ -483,9 +484,9 @@ public class ProbeFactory {
             messung.setMmtId(mmt.getMmtId());
             messung.setSampleId(probe.getId());
             createObject(messung, dryrun);
-            for (int mw : mmt.getMeasds()) {
+            for (Measd mw : mmt.getMeasds()) {
                 MeasVal wert = new MeasVal();
-                wert.setMeasdId(mw);
+                wert.setMeasdId(mw.getId());
                 wert.setMeasmId(messung.getId());
                 if (messprogramm.getMeasUnitId() != null) {
                     wert.setMeasUnitId(messprogramm.getMeasUnitId());

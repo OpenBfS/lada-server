@@ -16,6 +16,8 @@ import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.MpgMmtMp;
+import de.intevation.lada.model.lada.MpgMmtMp_;
+import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -30,11 +32,16 @@ public class MessprogrammMmtTest extends ServiceTest {
         super.init(t);
 
         // Prepare expected object
+        final String testData = "datasets/dbUnit_lada.xml";
         JsonObject messprogrammMmt =
-            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", MpgMmtMp.class)
+            BaseTest.readXmlResource(testData, MpgMmtMp.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogrammMmt);
-        builder.add("measds", Json.createArrayBuilder().add(56));
+        final int measdId = 56;
+        JsonObject measd = BaseTest.filterJsonArrayById(
+            BaseTest.readXmlResource(testData, Measd.class), measdId);
+        builder.add(MpgMmtMp_.MEASDS, Json.createArrayBuilder().add(
+                convertObject(measd)));
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 
