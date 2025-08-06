@@ -9,16 +9,14 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.persistence.TypedQuery;
 import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.model.master.Measd;
-import de.intevation.lada.model.master.Measd_;
 import de.intevation.lada.model.master.Names;
+
 
 /**
  * REST service for Measd objects.
@@ -43,14 +41,10 @@ public class MeasdService extends LadaIntegerIdEntityService {
             return repository.getAll(Measd.class);
         }
 
-        TypedQuery<Integer> query = repository.entityManager()
-            .createNamedQuery(Names.QUERY_GET_MEASD_FOR_MMT, Integer.class)
-            .setParameter("mmt", mmtId);
-        List<Integer> ids = query.getResultList();
-        QueryBuilder<Measd> builder2 =
-            repository.queryBuilder(Measd.class);
-        builder2.orIntList(Measd_.id, ids);
-        return repository.filter(builder2.getQuery());
+        return repository.entityManager()
+            .createNamedQuery(Names.QUERY_GET_MEASD_FOR_MMT, Measd.class)
+            .setParameter("mmt", mmtId)
+            .getResultList();
     }
 
     /**

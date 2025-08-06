@@ -20,8 +20,9 @@ import jakarta.persistence.Table;
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
 @CheckHQL
-@NamedQuery(name = Names.QUERY_GET_MEASD_FOR_MMT,
-    query = "select measdId from MmtMeasdView where mmtId = :mmt")
+@NamedQuery(name = Names.QUERY_GET_MEASD_FOR_MMT, query = """
+    select m from Measd m join MmtMeasdView on m.id = measdId
+    where mmtId = :mmt""")
 public class MmtMeasdView implements Serializable {
     private static final long serialVersionUID = 1L;
 
