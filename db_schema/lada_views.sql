@@ -31,10 +31,11 @@ CREATE VIEW public.lada_meas_val AS
     meas_val.is_threshold,
     status_prot.status_mp_id,
     meas_val.last_mod
-   FROM ((lada.meas_val
-     JOIN lada.measm ON ((meas_val.measm_id = measm.id)))
-     JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_mp_id <> 1))));
+   FROM lada.meas_val
+     JOIN lada.measm ON meas_val.measm_id = measm.id
+     JOIN lada.status_prot ON measm.status = status_prot.id AND status_prot.status_mp_id <> 1;
 
+-- TODO: Unused duplicate of public.lada_meas_val?
 CREATE OR REPLACE VIEW lada.meas_val_view
  AS
  SELECT meas_val.id,
