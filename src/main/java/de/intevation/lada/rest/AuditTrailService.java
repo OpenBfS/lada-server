@@ -11,23 +11,25 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import jakarta.json.JsonValue.ValueType;
-import jakarta.persistence.Query;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-
+import de.intevation.lada.model.NamingStrategy;
 import de.intevation.lada.model.lada.AuditTrailMeasmView;
 import de.intevation.lada.model.lada.AuditTrailMeasmView_;
 import de.intevation.lada.model.lada.AuditTrailMpgView;
@@ -36,9 +38,33 @@ import de.intevation.lada.model.lada.AuditTrailSampleView;
 import de.intevation.lada.model.lada.AuditTrailSampleView_;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
+import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.MeasUnit_;
+import de.intevation.lada.model.master.Measd;
+import de.intevation.lada.model.master.Measd_;
+import de.intevation.lada.model.master.MpgCateg;
+import de.intevation.lada.model.master.MpgCateg_;
+import de.intevation.lada.model.master.NuclFacilGr;
+import de.intevation.lada.model.master.NuclFacilGr_;
+import de.intevation.lada.model.master.OprMode;
+import de.intevation.lada.model.master.OprMode_;
+import de.intevation.lada.model.master.Regulation;
+import de.intevation.lada.model.master.Regulation_;
+import de.intevation.lada.model.master.ReiAgGr;
+import de.intevation.lada.model.master.ReiAgGr_;
+import de.intevation.lada.model.master.SampleMeth;
+import de.intevation.lada.model.master.SampleMeth_;
+import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.model.master.Sampler_;
+import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -73,23 +99,23 @@ public class AuditTrailService extends LadaService {
     /**
      * Class to store tablename and value field for foreign key mappings.
      */
-    private class TableMapper {
-        private String mappingTable;
-        private String valueField;
+    private class TableMapper<T> {
+        private Class<T> mappingTable;
+        private SingularAttribute<T, ?> valueField;
 
         TableMapper(
-            String mTable,
-            String vField
+            Class<T> mTable,
+            SingularAttribute<T, ?> vField
         ) {
             this.mappingTable = mTable;
             this.valueField = vField;
         }
 
-        public String getMappingTable() {
+        public Class<T> getMappingTable() {
             return mappingTable;
         }
 
-        public String getValueField() {
+        public SingularAttribute<T, ?> getValueField() {
             return valueField;
         }
     }
@@ -103,49 +129,42 @@ public class AuditTrailService extends LadaService {
     /**
      * Map foreign key to their associated table and the display value.
      */
-    private Map<String, TableMapper> mappings;
+    private Map<String, TableMapper<?>> mappings = Map.ofEntries(
+        Map.entry(MeasVal_.MEASD_ID,
+            new TableMapper<Measd>(Measd.class, Measd_.name)),
+        Map.entry(MeasVal_.MEAS_UNIT_ID,
+            new TableMapper<MeasUnit>(MeasUnit.class, MeasUnit_.unitSymbol)),
+        Map.entry(Geolocat_.SITE_ID,
+            new TableMapper<Site>(Site.class, Site_.extId)),
+        Map.entry(Sample_.REGULATION_ID,
+            new TableMapper<Regulation>(Regulation.class, Regulation_.name)),
+        Map.entry(Sample_.OPR_MODE_ID,
+            new TableMapper<OprMode>(OprMode.class, OprMode_.name)),
+        Map.entry(Mpg_.MPG_CATEG_ID,
+            new TableMapper<MpgCateg>(MpgCateg.class, MpgCateg_.extId)),
+        Map.entry(Sample_.SAMPLE_METH_ID,
+            new TableMapper<SampleMeth>(SampleMeth.class, SampleMeth_.extId)),
+        Map.entry(Sample_.SAMPLER_ID,
+            new TableMapper<Sampler>(Sampler.class, Sampler_.extId)),
+        Map.entry(Sample_.NUCL_FACIL_GR_ID,
+            new TableMapper<NuclFacilGr>(NuclFacilGr.class, NuclFacilGr_.extId)),
+        Map.entry(Sample_.REI_AG_GR_ID,
+            new TableMapper<ReiAgGr>(ReiAgGr.class, ReiAgGr_.name)),
+        Map.entry("measds",
+            new TableMapper<Measd>(Measd.class, Measd_.name))
+    );
 
-    /**
-     * Initialize the object with key <-> table mappings.
-     */
-    @PostConstruct
-    public void initialize() {
-        mappings = new HashMap<String, TableMapper>();
-        mappings.put("measd_id",
-            new TableMapper("measd", "name"));
-        mappings.put("meas_unit_id",
-            new TableMapper("meas_unit", "unit_symbol"));
-        mappings.put("site_id",
-            new TableMapper("site", "ext_id"));
-        mappings.put("regulation_id",
-            new TableMapper("regulation", "name"));
-        mappings.put("opr_mode_id",
-            new TableMapper("opr_mode", "name"));
-        mappings.put("mpg_categ_id",
-            new TableMapper("mpg_categ", "ext_id"));
-        mappings.put("sample_meth_id",
-            new TableMapper("sample_meth", "ext_id"));
-        mappings.put("sampler_id",
-            new TableMapper("sampler", "ext_id"));
-        mappings.put("sample_start_date",
-            new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("sample_end_date",
-            new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("sched_start_date",
-                new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("sched_end_date",
-                new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("mid_coll_pd",
-                new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("measm_start_date",
-                new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("nucl_facil_gr_id",
-            new TableMapper("nucl_facil_gr", "ext_id"));
-        mappings.put("rei_ag_gr_id",
-            new TableMapper("rei_ag_gr", "name"));
-        mappings.put("measds",
-            new TableMapper("measd", "name"));
-    }
+    private Map<String, String> mappedAttrs = mappings.keySet().stream()
+        .collect(Collectors.toMap(NamingStrategy::camelToSnake, k -> k));
+
+    private List<String> dateAttrs = Set.of(
+        Sample_.SAMPLE_START_DATE,
+        Sample_.SAMPLE_END_DATE,
+        Sample_.SCHED_START_DATE,
+        Sample_.SCHED_END_DATE,
+        "mid_coll_pd",
+        Measm_.MEASM_START_DATE
+    ).stream().map(NamingStrategy::camelToSnake).toList();
 
     /**
      * Service to generate audit trail for sample objects.
@@ -246,11 +265,8 @@ public class AuditTrailService extends LadaService {
             break;
         case "geolocat":
             String value = translateId(
-                "site",
-                "ext_id",
-                audit.getRowDataJson().get("site_id").toString(),
-                "id",
-                de.intevation.lada.model.master.Names.SCHEMA_NAME);
+                Geolocat_.SITE_ID,
+                audit.getRowDataJson().get("site_id").toString());
             node.setIdentifier(value);
             break;
         case "measm":
@@ -275,11 +291,8 @@ public class AuditTrailService extends LadaService {
                 break;
             case "meas_val":
                 String value = translateId(
-                    "measd",
-                    "name",
-                    audit.getRowDataJson().get("measd_id").toString(),
-                    "id",
-                    de.intevation.lada.model.master.Names.SCHEMA_NAME);
+                    MeasVal_.MEASD_ID,
+                    audit.getRowDataJson().get("measd_id").toString());
                 identifier.setIdentifier(value);
                 break;
             default:
@@ -356,11 +369,8 @@ public class AuditTrailService extends LadaService {
             break;
         case "meas_val":
             String value = translateId(
-                "measd",
-                "name",
-                audit.getRowDataJson().get("measd_id").toString(),
-                "id",
-                de.intevation.lada.model.master.Names.SCHEMA_NAME);
+                MeasVal_.MEASD_ID,
+                audit.getRowDataJson().get("measd_id").toString());
             node.setIdentifier(value);
             break;
         default:
@@ -409,11 +419,8 @@ public class AuditTrailService extends LadaService {
 
         if ("mpg_mmt_mp_measd".equals(audit.getTableName())) {
             String value = translateId(
-                "measd",
-                "name",
-                audit.getRowDataJson().get("measd_id").toString(),
-                "id",
-                de.intevation.lada.model.master.Names.SCHEMA_NAME);
+                MeasVal_.MEASD_ID,
+                audit.getRowDataJson().get("measd_id").toString());
             node.setIdentifier(value);
         }
         if ("mpg_sample_specif".equals(audit.getTableName())) {
@@ -424,11 +431,8 @@ public class AuditTrailService extends LadaService {
         }
         if ("geolocat_mpg".equals(audit.getTableName())) {
             String value = translateId(
-                "site",
-                "ext_id",
-                audit.getRowDataJson().get("site_id").toString(),
-                "id",
-                de.intevation.lada.model.master.Names.SCHEMA_NAME);
+                Geolocat_.SITE_ID,
+                audit.getRowDataJson().get("site_id").toString());
             node.setIdentifier(value);
         }
         return node;
@@ -436,38 +440,36 @@ public class AuditTrailService extends LadaService {
 
 
     /**
-     * Translate a foreign key into the associated value.
+     * Translate a foreign key value into the associated value.
      */
-    private String translateId(
-        String table,
-        String field,
-        String id,
-        String idField,
-        String schema
-    ) {
-        if (id == null) {
+    private String translateId(String key, String value) {
+        if (value == null) {
             return "";
         }
 
-        String sql = "SELECT " + field
-            + " FROM " + schema + "." + table
-            + " WHERE " + idField + " = :id ;";
-        Query query = repository.queryFromString(sql);
+        Object id;
         try {
-            int value = Integer.parseInt(id);
-            query.setParameter("id", value);
+            id = Integer.parseInt(value);
         } catch (NumberFormatException nfe) {
-            query.setParameter("id", id);
+            id = value;
         }
-        List<?> result = query.getResultList();
-        if (!result.isEmpty()) {
-            return result.get(0).toString();
-        } else {
+
+        EntityType<?> table = repository.entityManager().getMetamodel().entity(
+            mappings.get(key).getMappingTable());
+        String sql = String.format("select %s from %s where %s = :id",
+            mappings.get(key).getValueField().getName(),
+            table.getName(),
+            table.getId(table.getIdType().getJavaType()).getName());
+        try {
+            return repository.entityManager().createQuery(sql)
+                .setParameter("id", id)
+                .getSingleResult().toString();
+        } catch (NoResultException e) {
             return "(Object wurde gelöscht)";
         }
     }
 
-    private Long formatDate(String format, String date) {
+    private Long formatDate(String date) {
         DateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         try {
             return inFormat.parse(date).getTime();
@@ -482,20 +484,14 @@ public class AuditTrailService extends LadaService {
     private JsonObject translateValues(JsonObject node) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         node.forEach((key, val) -> {
-            if (!mappings.containsKey(key)) {
-                builder.add(key, val);
-                return;
-            }
-            TableMapper m = mappings.get(key);
-            if (m.getMappingTable().equals("date")) {
+            if (dateAttrs.contains(key)) {
                 if (node.isNull(key)) {
                     builder.add(key, JsonValue.NULL);
                 } else {
-                    Long value =
-                        formatDate(m.getValueField(), node.getString(key));
+                    Long value = formatDate(node.getString(key));
                     builder.add(key, value);
                 }
-            } else {
+            } else if (mappedAttrs.containsKey(key)) {
                 String id;
                 if (node.containsKey(key) && node.get(key)
                         .getValueType() == ValueType.NUMBER) {
@@ -503,13 +499,10 @@ public class AuditTrailService extends LadaService {
                 } else {
                     id = node.getString(key, null);
                 }
-                String value = translateId(
-                    m.getMappingTable(),
-                    m.getValueField(),
-                    id,
-                    "id",
-                    de.intevation.lada.model.master.Names.SCHEMA_NAME);
+                String value = translateId(mappedAttrs.get(key), id);
                 builder.add(key, value);
+            } else {
+                builder.add(key, val);
             }
         });
         return builder.build();
