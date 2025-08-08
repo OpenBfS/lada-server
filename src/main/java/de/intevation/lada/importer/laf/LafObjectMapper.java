@@ -619,7 +619,7 @@ public class LafObjectMapper {
 
         // Add measVals
         List<MeasVal> messwerte = new ArrayList<MeasVal>();
-        List<Integer> messgroessenListe = new ArrayList<Integer>();
+        List<String> messgroessenListe = new ArrayList<>();
         for (Map<String, String> measValRaw: object.getMesswerte()) {
             MeasVal tmp =
                 createMesswert(measValRaw, newMessung.getId());
@@ -809,11 +809,13 @@ public class LafObjectMapper {
         messwert.setMeasmId(messungsId);
 
         if (attributes.containsKey("MESSGROESSE_ID")) {
-            Measd measd = repository.entityManager().find(
-                Measd.class,
-                Integer.valueOf(attributes.get("MESSGROESSE_ID"))
-            );
-            if (measd == null) {
+            QueryBuilder<Measd> builder = repository.queryBuilder(Measd.class)
+                .and(Measd_.idOld,
+                    Integer.valueOf(attributes.get("MESSGROESSE_ID")));
+            try {
+                messwert.setMeasdId(
+                    repository.getSingle(builder.getQuery()).getId());
+            } catch (NoResultException e) {
                 addWarning(
                     new ReportItem(
                         "MESSWERT - MESSGROESSE_ID",
@@ -821,8 +823,6 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMeasdId(
-                Integer.valueOf(attributes.get("MESSGROESSE_ID")));
         } else if (attributes.containsKey("MESSGROESSE")) {
             String attribute = attributes.get("MESSGROESSE");
             // accept various nuclide notations (e.g.
@@ -837,10 +837,10 @@ public class LafObjectMapper {
                         .toLowerCase();
             }
 
-            QueryBuilder<Measd> builder = repository.queryBuilder(Measd.class)
-                .and(Measd_.name, messgroesseString);
-            List<Measd> groesse = repository.filter(builder.getQuery());
-            if (groesse == null || groesse.isEmpty()) {
+            Measd groesse = repository.entityManager().find(
+                Measd.class,
+                messgroesseString);
+            if (groesse == null) {
                 addWarning(
                     new ReportItem(
                         "MESSWERT - MESSGROESSE",
@@ -848,7 +848,7 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMeasdId(groesse.get(0).getId());
+            messwert.setMeasdId(groesse.getId());
         }
         if (attributes.containsKey("MESSEINHEIT_ID")) {
             MeasUnit measUnit = repository.entityManager().find(

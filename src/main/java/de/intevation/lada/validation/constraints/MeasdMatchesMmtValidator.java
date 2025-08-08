@@ -52,7 +52,7 @@ public class MeasdMatchesMmtValidator
             return true;
         }
 
-        final SingularAttribute<MmtMeasdView, Integer> measdIdKey
+        final SingularAttribute<MmtMeasdView, String> measdIdKey
             = MmtMeasdView_.measdId;
         QueryBuilder<MmtMeasdView> mmtBuilder = repository
             .queryBuilder(MmtMeasdView.class)

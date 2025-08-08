@@ -78,7 +78,7 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
     @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Measd.class)
-    private Integer measdId;
+    private String measdId;
 
     @Positive(groups = Notifications.class)
     private Double measVal;
@@ -134,11 +134,11 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
         this.error = error;
     }
 
-    public Integer getMeasdId() {
+    public String getMeasdId() {
         return this.measdId;
     }
 
-    public void setMeasdId(Integer measdId) {
+    public void setMeasdId(String measdId) {
         this.measdId = measdId;
     }
 

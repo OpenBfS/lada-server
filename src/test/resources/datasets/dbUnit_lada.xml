@@ -58,8 +58,8 @@
         env_medium_id = "L6"
     />
 
-    <master.measd id = "56" name = "Mangan" />
-    <master.measd id = "57" name = "Iron" />
+    <master.measd id_old = "56" id = "Mangan" />
+    <master.measd id_old = "57" id = "Iron" />
     <master.mmt id = "A3" />
     <master.mmt id = "B3" />
 
@@ -153,7 +153,7 @@
     />
     <lada.mpg_mmt_mp_measd
         mpg_mmt_mp_id = "1000"
-        measd_id = "56"
+        measd_id = "Mangan"
     />
     <lada.geolocat_mpg
         id = "1000"
@@ -226,7 +226,7 @@
     <lada.meas_val
         id = "10000"
         measm_id = "1200"
-        measd_id = "56"
+        measd_id = "Mangan"
         less_than_LOD = "&lt;"
         error = "3.3"
         detect_lim = "2.4"
@@ -281,7 +281,7 @@
     <lada.meas_val
         id = "10001"
         measm_id = "1201"
-        measd_id = "56"
+        measd_id = "Mangan"
         error = "3.3"
         detect_lim = "2.4"
         meas_unit_id = "207"
@@ -302,7 +302,7 @@
     <lada.meas_val
         id = "104000"
         measm_id = "1400"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "1"
         meas_unit_id = "207"
     />
@@ -310,7 +310,7 @@
     <lada.meas_val
         id = "104001"
         measm_id = "1400"
-        measd_id = "57"
+        measd_id = "Iron"
         meas_unit_id = "207"
     />
 

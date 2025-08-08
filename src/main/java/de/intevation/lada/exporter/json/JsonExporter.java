@@ -58,7 +58,6 @@ import de.intevation.lada.model.master.EnvDescrip_;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.MeasUnit;
-import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.model.master.OprMode;
@@ -552,12 +551,6 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
                 meh == null
                 ? nullableString("")
                 : nullableString(meh.getUnitSymbol()));
-            Measd mg = repository.getById(
-                Measd.class,
-                messwert.getMeasdId()
-            );
-            messwertJsonObjectBuilder.add("measd",
-                mg == null ? nullableString("") : nullableString(mg.getName()));
             messwerteJsonObjectBuilders.add(messwertJsonObjectBuilder);
         }
         messungJsonObjectBuilder.add("measVals",

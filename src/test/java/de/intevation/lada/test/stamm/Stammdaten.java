@@ -64,7 +64,7 @@ public class Stammdaten extends ServiceTest {
                 "idfExtId",
                 "isRefNucl",
                 "bvlFormatId",
-                "name"
+                "idOld"
             )
         );
         matchers.put("mmt",

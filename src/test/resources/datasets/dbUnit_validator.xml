@@ -50,38 +50,38 @@
     <master.mmt id = "A4" />
     <master.mmt id = "A5" />
     <master.mmt id = "A6" />
-    <master.measd id = "56" name = "Mangan" />
-    <master.measd id = "57" name = "Other" />
-    <master.measd id = "58" name = "Unmatched" />
+    <master.measd id_old = "56" id = "Mangan" />
+    <master.measd id_old = "57" id = "Other" />
+    <master.measd id_old = "58" id = "Unmatched" />
     <master.measd_gr id = "1" />
-    <master.measd_gr_mp measd_id = "56" measd_gr_id = "1" />
-    <master.measd_gr_mp measd_id = "57" measd_gr_id = "1" />
+    <master.measd_gr_mp measd_id = "Mangan" measd_gr_id = "1" />
+    <master.measd_gr_mp measd_id = "Other" measd_gr_id = "1" />
     <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
     <master.oblig_measd_mp
         id = "1"
         mmt_id = "A3"
-        measd_id = "56"
+        measd_id = "Mangan"
         regulation_id = "9"
         env_medium_id = "L61"
     />
     <master.oblig_measd_mp
         id = "2"
         mmt_id = "A4"
-        measd_id = "57"
+        measd_id = "Other"
         regulation_id = "9"
         env_medium_id = "L61"
     />
     <master.oblig_measd_mp
         id = "3"
         mmt_id = "A5"
-        measd_id = "57"
+        measd_id = "Other"
         regulation_id = "9"
         env_medium_id = "L6"
     />
     <master.oblig_measd_mp
         id = "4"
         mmt_id = "A6"
-        measd_id = "57"
+        measd_id = "Other"
         regulation_id = "9"
         env_medium_id = "L"
     />
@@ -397,7 +397,7 @@
     <lada.meas_val
         id = "10000"
         measm_id = "1200"
-        measd_id = "56"
+        measd_id = "Mangan"
         less_than_LOD = "&lt;"
         error = "3.3"
         detect_lim = "2.4"

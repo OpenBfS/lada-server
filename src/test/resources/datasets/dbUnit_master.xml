@@ -86,7 +86,7 @@
         name = "Volumenstrom"
         ext_id = "VOLSTR"
     />
-    <master.measd id = "56" name = "Mangan" />
+    <master.measd id_old = "56" id = "Mangan" />
     <master.rei_ag_gr
         id = "101"
         name = "name"

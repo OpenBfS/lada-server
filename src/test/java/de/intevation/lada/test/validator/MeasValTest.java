@@ -21,9 +21,9 @@ public class MeasValTest extends ValidatorBaseTest {
     //Other constants
     private static final int EXISTING_MEASM_ID = 1200;
     private static final int EXISTING_EMPTY_MEASM_ID = 1201;
-    private static final int EXISTING_MEASD_ID = 57;
-    private static final int OTHER_MEASD_ID = 56;
-    private static final int UNMATCHED_MEASD_ID = 58;
+    private static final String EXISTING_MEASD_ID = "Other";
+    private static final String OTHER_MEASD_ID = "Mangan";
+    private static final String UNMATCHED_MEASD_ID = "Unmatched";
     private static final String LESS_THAN_LOD_SMALLER_THAN = "<";
     private static final int EXISTING_ENV_MEDIUM_PRIMARY_UNIT = 207;
     private static final int EXISTING_ENV_MEDIUM_SECONDARY_UNIT = 208;

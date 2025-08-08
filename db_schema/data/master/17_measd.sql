@@ -1,10 +1,3 @@
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 9.6.2
--- Dumped by pg_dump version 10.4
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -15,11 +8,7 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Data for Name: measd; Type: TABLE DATA; Schema: master; Owner: postgres
---
-
-COPY master.measd (id, descr, name, def_color, idf_ext_id, is_ref_nucl, eudf_nucl_id, bvl_format_id) FROM stdin;
+COPY master.measd (id_old, descr, id, def_color, idf_ext_id, is_ref_nucl, eudf_nucl_id, bvl_format_id) FROM stdin;
 555	Tantal	Ta-178	\N	\N	f	\N	\N
 554	Tantal	Ta-178m	\N	Ta178	f	\N	\N
 578	Rhenium	Re-182m	\N	Re182	f	\N	\N
@@ -907,16 +896,3 @@ COPY master.measd (id, descr, name, def_color, idf_ext_id, is_ref_nucl, eudf_nuc
 891	Iod, elementar und organisch gebunden	I-133GO	\N	I133GO	f	\N	\N
 892	Iod, elementar und organisch gebunden	I-135GO	\N	I135GO	f	\N	\N
 \.
-
-
---
--- Name: measd_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('master.measd_id_seq', 1041, true);
-
-
---
--- PostgreSQL database dump complete
---
-

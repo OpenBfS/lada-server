@@ -45,9 +45,9 @@
     />
 
     <master.mmt id = "A3" />
-    <master.measd id = "56" name = "Mangan" />
+    <master.measd id_old = "56" id = "Mangan" />
     <master.measd_gr id = "1" />
-    <master.measd_gr_mp measd_id = "56" measd_gr_id = "1" />
+    <master.measd_gr_mp measd_id = "Mangan" measd_gr_id = "1" />
     <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
 
     <master.env_descrip id = "1" lev = "0" lev_val = "1" name = "s00"/>
@@ -130,7 +130,7 @@
     <lada.meas_val
         id = "10000"
         measm_id = "1200"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -176,7 +176,7 @@
     <lada.meas_val
         id = "10002"
         measm_id = "1202"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -197,7 +197,7 @@
     <lada.meas_val
         id = "10003"
         measm_id = "1203"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -246,7 +246,7 @@
     <lada.meas_val
         id = "10001"
         measm_id = "4200"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -295,7 +295,7 @@
     <lada.meas_val
         id = "10010"
         measm_id = "1210"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -340,7 +340,7 @@
     <lada.meas_val
         id = "10011"
         measm_id = "1211"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"

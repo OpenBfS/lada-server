@@ -597,7 +597,7 @@ public class ImporterTest extends BaseTest {
         MeasVal importedMeasVal = parseResponse(
             importedMeasValResponse, new GenericType<List<MeasVal>>() { })
             .get(0);
-        Assert.assertEquals(1, (int) importedMeasVal.getMeasdId());
+        Assert.assertEquals(measd, importedMeasVal.getMeasdId());
         Assert.assertEquals(1, (int) importedMeasVal.getMeasUnitId());
 
         return fileReport;

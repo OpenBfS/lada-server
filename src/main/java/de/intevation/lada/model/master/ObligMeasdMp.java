@@ -25,7 +25,7 @@ public class ObligMeasdMp implements Serializable {
     @Id
     private Integer id;
 
-    private Integer measdId;
+    private String measdId;
 
     private Integer regulationId;
 
@@ -48,11 +48,11 @@ public class ObligMeasdMp implements Serializable {
         this.id = id;
     }
 
-    public Integer getMeasdId() {
+    public String getMeasdId() {
         return this.measdId;
     }
 
-    public void setMeasdId(Integer measdId) {
+    public void setMeasdId(String measdId) {
         this.measdId = measdId;
     }
 

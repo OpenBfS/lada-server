@@ -24,7 +24,7 @@ import de.intevation.lada.model.master.Names;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "measd")
-public class MeasdService extends LadaIntegerIdEntityService {
+public class MeasdService extends LadaStringIdEntityService {
 
     /**
      * Get Measd objects.

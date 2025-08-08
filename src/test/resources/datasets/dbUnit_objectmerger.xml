@@ -5,8 +5,8 @@
 
     <master.meas_unit id = "207" />
     <master.meas_unit id = "208" />
-    <master.measd id = "56" name = "Mangan" />
-    <master.measd id = "57" name = "Iron" />
+    <master.measd id_old = "56" id = "Mangan" />
+    <master.measd id_old = "57" id = "Iron" />
 
     <master.mmt id = "A3" />
 
@@ -91,14 +91,14 @@
     <lada.meas_val
         id = "1000"
         measm_id = "1200"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "1000.8"
         meas_unit_id = "207"
     />
     <lada.meas_val
         id = "1001"
         measm_id = "1200"
-        measd_id = "57"
+        measd_id = "Iron"
         meas_val = "1000.8"
         meas_unit_id = "208"
     />

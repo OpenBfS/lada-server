@@ -255,7 +255,7 @@ public class ExporterTest extends BaseTest {
         final int measValId = 1000;
         assertHasAssociated(measm, "measVals", 2, measValId, Map.of(
                 "unit", "Sv",
-                "measd", "test"));
+                "measdId", "test"));
         assertHasAssociated(measm, "commMeasms", 1, Map.of(
                 measFacilAttrs[0], measFacilName));
         assertHasAssociated(measm, "statusProtocol", 1, Map.of(

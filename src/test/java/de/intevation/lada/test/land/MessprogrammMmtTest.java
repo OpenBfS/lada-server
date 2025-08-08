@@ -10,6 +10,7 @@ package de.intevation.lada.test.land;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.WebTarget;
 
 import org.junit.Assert;
@@ -37,7 +38,7 @@ public class MessprogrammMmtTest extends ServiceTest {
             BaseTest.readXmlResource(testData, MpgMmtMp.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogrammMmt);
-        final int measdId = 56;
+        final JsonValue measdId = Json.createValue("Mangan");
         JsonObject measd = BaseTest.filterJsonArrayById(
             BaseTest.readXmlResource(testData, Measd.class), measdId);
         builder.add(MpgMmtMp_.MEASDS, Json.createArrayBuilder().add(

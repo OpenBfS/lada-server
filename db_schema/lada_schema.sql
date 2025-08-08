@@ -249,7 +249,7 @@ CREATE TRIGGER last_mod_mpg_mmt_mp BEFORE UPDATE ON mpg_mmt_mp FOR EACH ROW EXEC
 CREATE TABLE mpg_mmt_mp_measd (
     id serial PRIMARY KEY,
     mpg_mmt_mp_id integer NOT NULL REFERENCES mpg_mmt_mp ON DELETE CASCADE,
-    measd_id integer NOT NULL REFERENCES master.measd,
+    measd_id character varying(50) NOT NULL REFERENCES master.measd,
     UNIQUE (mpg_mmt_mp_id, measd_id)
 );
 
@@ -412,7 +412,7 @@ CREATE TABLE comm_measm (
 CREATE TABLE meas_val (
     id serial PRIMARY KEY,
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
-    measd_id integer NOT NULL REFERENCES master.measd,
+    measd_id character varying(50) NOT NULL REFERENCES master.measd,
     less_than_lod character varying(1) CHECK (trim(both ' ' from less_than_lod) <> ''),
     meas_val double precision,
     error real,

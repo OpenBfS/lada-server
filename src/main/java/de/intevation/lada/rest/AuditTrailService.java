@@ -47,8 +47,6 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.MeasUnit_;
-import de.intevation.lada.model.master.Measd;
-import de.intevation.lada.model.master.Measd_;
 import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.model.master.MpgCateg_;
 import de.intevation.lada.model.master.NuclFacilGr;
@@ -130,8 +128,6 @@ public class AuditTrailService extends LadaService {
      * Map foreign key to their associated table and the display value.
      */
     private Map<String, TableMapper<?>> mappings = Map.ofEntries(
-        Map.entry(MeasVal_.MEASD_ID,
-            new TableMapper<Measd>(Measd.class, Measd_.name)),
         Map.entry(MeasVal_.MEAS_UNIT_ID,
             new TableMapper<MeasUnit>(MeasUnit.class, MeasUnit_.unitSymbol)),
         Map.entry(Geolocat_.SITE_ID,
@@ -149,9 +145,7 @@ public class AuditTrailService extends LadaService {
         Map.entry(Sample_.NUCL_FACIL_GR_ID,
             new TableMapper<NuclFacilGr>(NuclFacilGr.class, NuclFacilGr_.extId)),
         Map.entry(Sample_.REI_AG_GR_ID,
-            new TableMapper<ReiAgGr>(ReiAgGr.class, ReiAgGr_.name)),
-        Map.entry("measds",
-            new TableMapper<Measd>(Measd.class, Measd_.name))
+            new TableMapper<ReiAgGr>(ReiAgGr.class, ReiAgGr_.name))
     );
 
     private Map<String, String> mappedAttrs = mappings.keySet().stream()
@@ -290,10 +284,8 @@ public class AuditTrailService extends LadaService {
                     audit.getRowDataJson().get("date").toString());
                 break;
             case "meas_val":
-                String value = translateId(
-                    MeasVal_.MEASD_ID,
+                identifier.setIdentifier(
                     audit.getRowDataJson().get("measd_id").toString());
-                identifier.setIdentifier(value);
                 break;
             default:
                 // Do nothing
@@ -368,10 +360,8 @@ public class AuditTrailService extends LadaService {
             node.setIdentifier(audit.getRowDataJson().get("date").toString());
             break;
         case "meas_val":
-            String value = translateId(
-                MeasVal_.MEASD_ID,
+            node.setIdentifier(
                 audit.getRowDataJson().get("measd_id").toString());
-            node.setIdentifier(value);
             break;
         default:
             // Do nothing
@@ -418,10 +408,8 @@ public class AuditTrailService extends LadaService {
         node.setChangedFields(audit.getChangedFieldsJson());
 
         if ("mpg_mmt_mp_measd".equals(audit.getTableName())) {
-            String value = translateId(
-                MeasVal_.MEASD_ID,
+            node.setIdentifier(
                 audit.getRowDataJson().get("measd_id").toString());
-            node.setIdentifier(value);
         }
         if ("mpg_sample_specif".equals(audit.getTableName())) {
             node.setIdentifier(audit.getRowDataJson().get("sample_specif_id"));

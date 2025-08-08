@@ -22,8 +22,6 @@ SELECT pg_catalog.setval('lada_user_id_seq', (SELECT max(id) FROM lada_user)+1, 
 
 SELECT pg_catalog.setval('meas_unit_id_seq', (SELECT max(id) FROM meas_unit), true);
 
-SELECT pg_catalog.setval('measd_id_seq', (SELECT max(id) FROM measd), true);
-
 SELECT pg_catalog.setval('measd_gr_id_seq', (SELECT max(id) FROM measd_gr), true);
 
 SELECT pg_catalog.setval('mpg_categ_id_seq', (SELECT max(id) FROM mpg_categ), true);
@@ -39,3 +37,6 @@ SELECT pg_catalog.setval('sampler_id_seq', (SELECT max(id) FROM sampler), true);
 SELECT pg_catalog.setval('base_query_id_seq', (SELECT max(id) FROM base_query), true);
 
 SELECT pg_catalog.setval('state_id_seq', (SELECT max(id) FROM state), true);
+
+SELECT pg_catalog.setval(pg_get_serial_sequence('master.measd', 'id_old'),
+    (SELECT max(id_old) FROM master.measd));

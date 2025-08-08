@@ -18,10 +18,10 @@
     <!--master data-->
     <master.meas_unit id = "1" unit_symbol = "Bq/kgFM"/>
 
-    <master.measd id = "1" name = "H-3" />
+    <master.measd id_old = "1" id = "H-3" />
     <master.mmt id = "A3" />
     <master.measd_gr id = "1" />
-    <master.measd_gr_mp measd_id = "1" measd_gr_id = "1" />
+    <master.measd_gr_mp measd_id = "H-3" measd_gr_id = "1" />
     <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
 
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
