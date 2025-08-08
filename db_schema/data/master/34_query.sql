@@ -184,7 +184,7 @@ COPY master.filter (id, sql, param, filter_type_id, name) FROM stdin;
 83	state.ctry ~ :staatBez	staatBez	0	staat_text
 84	poi.id ~ :ozId	ozId	0	ozId_text
 85	poi.name ~:oz	oz	0	oz_text
-86	(lada_meas_val.measd_id IN ( :messgroesseId ) OR lada_messwert.measd_id IS NULL)	messgroesseId	5	messgroesse
+86	(lada_meas_val.measd_id IN ( :messgroesseId ) OR lada_meas_val.measd_id IS NULL)	messgroesseId	5	messgroesse
 87	ort_uo.ext_id ~ :uOrtId	uOrtId	0	ort_uo_ort_id
 88	status_prot.date BETWEEN to_timestamp(cast(:fromStatusDatum AS DOUBLE PRECISION)) AND to_timestamp(cast(:toStatusDatum AS DOUBLE PRECISION))	fromStatusDatum,toStatusDatum	6	StatusDatum
 89	site.rei_opr_mode ~ :mpArt	mpArt	0	mpArt
