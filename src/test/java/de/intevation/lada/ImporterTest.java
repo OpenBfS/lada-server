@@ -373,6 +373,24 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test import MeasVal using "MESSWERT_S".
+     */
+    @Test
+    @RunAsClient
+    public final void asyncImportMeasValS()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        testAsyncImportProbe(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId, "",
+                measd, measUnit,
+                "MESSWERT_S 1 42.0 1 0.42\n"),
+            lafSampleId,
+            true);
+    }
+
+    /**
      * Test "Zeitbasis" handling in LAF8 import.
      */
     @Test
