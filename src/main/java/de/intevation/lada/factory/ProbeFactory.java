@@ -35,7 +35,6 @@ import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp_;
 import de.intevation.lada.model.master.SampleSpecif;
-import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -406,8 +405,7 @@ public class ProbeFactory {
         String gemId = "";
         for (GeolocatMpg ort : orte) {
             if ("E".equals(ort.getTypeRegulation())) {
-                gemId = repository.getById(
-                    Site.class, ort.getSiteId()).getAdminUnitId();
+                gemId = ort.getSite().getAdminUnitId();
             }
         }
 
@@ -499,7 +497,7 @@ public class ProbeFactory {
             Geolocat ortP = new Geolocat();
             ortP.setTypeRegulation(ort.getTypeRegulation());
             ortP.setSample(probe);
-            ortP.setSite(repository.getById(Site.class, ort.getSiteId()));
+            ortP.setSite(ort.getSite());
             ortP.setPoiId(ort.getPoiId());
             ortP.setAddSiteText(ort.getAddSiteText());
             createObject(ortP, dryrun);

@@ -11,14 +11,13 @@ import java.util.List;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.UriBuilder;
-
-import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.Geolocat;
@@ -29,27 +28,36 @@ import de.intevation.lada.rest.GeolocatService;
 import de.intevation.lada.rest.SiteService;
 import de.intevation.lada.test.ServiceTest;
 
+
 /**
  * Test ortzuordnung entities.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class OrtszuordnungTest extends ServiceTest {
 
-    private JsonObject expectedSite;
-    private JsonObject expectedById;
-    private JsonObject create;
+    protected String urlPath;
 
-    private final int expectedId = 1000;
+    protected JsonObject expectedSite;
+    protected JsonObject expectedById;
+    protected JsonObject create;
 
-    final String urlPath = UriBuilder.fromResource(GeolocatService.class)
-        .build().getPath() + "/";
+    protected final int expectedId = 1000;
+
+    protected String getParam;
+
+    protected String parentIdField;
 
     @Override
     public void init(WebTarget t) {
         super.init(t);
 
+        urlPath = UriBuilder.fromResource(GeolocatService.class)
+            .build().getPath() + "/";
+
+        getParam = "sampleId";
+
         // Attributes to be converted
-        geomPointAttributes = List.of("geom");
+        geomPointAttributes = List.of(Site_.GEOM);
 
         final int expectedSiteId = 1000;
         expectedSite = convertObject(BaseTest.filterJsonArrayById(
@@ -65,19 +73,19 @@ public class OrtszuordnungTest extends ServiceTest {
             .add("owner", JsonValue.TRUE)
             .build();
 
-        // Load probe object to test POST request
         create = Json.createObjectBuilder(
             readJsonResource("/datasets/ortszuordnung.json"))
             .add(Geolocat_.SITE, expectedSite)
             .build();
-        Assert.assertNotNull(create);
+
+        parentIdField = "sampleId";
     }
 
     /**
      * Execute the tests.
      */
     public final void execute() {
-        get(urlPath + "?sampleId=1000");
+        get(urlPath + "?" + getParam + "=1000");
         getById(urlPath + expectedId, expectedById);
 
         // Test creating Geolocat including associated Site
@@ -85,7 +93,8 @@ public class OrtszuordnungTest extends ServiceTest {
         verify(expectedSite, created.getJsonObject(Geolocat_.SITE));
         // Ensure Site is persistently associated
         final int newId = created.getInt(Geolocat_.ID);
-        getById(urlPath + newId, created, "referenceCount");
+        getById(urlPath + newId, created,
+            Site_.REFERENCE_COUNT, Site_.REFERENCE_COUNT_MP);
 
         // Update basic value
         update(
@@ -112,24 +121,28 @@ public class OrtszuordnungTest extends ServiceTest {
             .build().getPath());
 
         // Ensure that pre-existing site is a prerequisite
-        Geolocat loc = get(urlPath + expectedId, Geolocat.class);
-        // set sampleId for serialization
-        final int expectedSampleId = 1000;
-        loc.getSample().setId(expectedSampleId);
+        JsonObjectBuilder locBuilder = Json.createObjectBuilder(
+            get(urlPath + expectedId).asJsonObject());
+        // set parent ID for serialization
+        final int expectedParentId = 1000;
+        locBuilder.add(parentIdField, expectedParentId);
 
         // Associate site without ID
-        Site site = new Site();
-        site.setNetworkId("06");
-        loc.setSite(site);
+        locBuilder.add(Geolocat_.SITE, Json.createObjectBuilder()
+            .add(Site_.NETWORK_ID, "06"));
+        JsonObject loc = locBuilder.build();
         assertSiteMustExist(loc);
 
         // Associate site with not existing ID
         final int notExistingSiteId = 9999;
-        site.setId(notExistingSiteId);
-        assertSiteMustExist(loc);
+        locBuilder = Json.createObjectBuilder(loc);
+        locBuilder.add(Geolocat_.SITE, Json.createObjectBuilder()
+            .add(Site_.ID, notExistingSiteId)
+            .add(Site_.NETWORK_ID, "06"));
+        assertSiteMustExist(locBuilder.build());
     }
 
-    private void assertSiteMustExist(Geolocat loc) {
+    private void assertSiteMustExist(JsonObject loc) {
         create(urlPath, loc, Status.NOT_FOUND);
         BaseTest.parseResponse(target.path(urlPath + expectedId)
             .request()

@@ -7,57 +7,42 @@
  */
 package de.intevation.lada.test.land;
 
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
+import jakarta.json.Json;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.WebTarget;
-
-import org.junit.Assert;
+import jakarta.ws.rs.core.UriBuilder;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.GeolocatMpg;
-import de.intevation.lada.test.ServiceTest;
+import de.intevation.lada.model.lada.GeolocatMpg_;
+import de.intevation.lada.rest.GeolocatMpgService;
 
-public class GeolocatMpgTest extends ServiceTest {
 
-    private static final long TS1 = 1450371851654L;
-    private JsonObject expectedById;
-    private JsonObject create;
+public class GeolocatMpgTest extends OrtszuordnungTest {
 
     @Override
     public void init(WebTarget t) {
         super.init(t);
 
-        // Prepare expected probe object
-        JsonObject geolocat =
-            BaseTest.readXmlResource("datasets/dbUnit_lada.xml", GeolocatMpg.class)
-            .getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(geolocat);
-        builder.add("parentModified", TS1);
-        builder.add("readonly", JsonValue.FALSE);
-        builder.add("owner", JsonValue.TRUE);
-        expectedById = builder.build();
-        Assert.assertNotNull(expectedById);
+        urlPath = UriBuilder.fromResource(GeolocatMpgService.class)
+            .build().getPath() + "/";
 
-        // Load probe object to test POST request
-        create = readJsonResource("/datasets/geolocatMpg.json");
-        Assert.assertNotNull(create);
-    }
+        getParam = "mpgId";
 
-    /**
-     * Execute the tests.
-     */
-    public final void execute() {
-        get("rest/geolocatmpg?mpgId=1000");
-        getById("rest/geolocatmpg/1000", expectedById);
-        JsonObject created =
-            create("rest/geolocatmpg", create);
-        update(
-            "rest/geolocatmpg/1000",
-            "addSiteText",
-            "Test",
-            "Test geändert");
-        delete(
-            "rest/geolocatmpg/" + created.get("id"));
+        expectedById = convertObject(BaseTest.filterJsonArrayById(
+                BaseTest.readXmlResource(
+                    "datasets/dbUnit_lada.xml", GeolocatMpg.class),
+                expectedId))
+            .add(GeolocatMpg_.SITE, expectedSite)
+            .add("readonly", JsonValue.FALSE)
+            .add("owner", JsonValue.TRUE)
+            .build();
+
+        create = Json.createObjectBuilder(
+            readJsonResource("/datasets/geolocatMpg.json"))
+            .add(GeolocatMpg_.SITE, expectedSite)
+            .build();
+
+        parentIdField = GeolocatMpg_.MPG_ID;
     }
 }

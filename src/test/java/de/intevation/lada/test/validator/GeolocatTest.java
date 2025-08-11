@@ -143,7 +143,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
-        loc.setSiteId(EXISTING_SITE_ID);
+        loc.setSite(repository.getById(Site.class, EXISTING_SITE_ID));
 
         validator.validate(loc);
         assertHasErrors(
@@ -160,7 +160,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_R);
         loc.setMpgId(MPG_WITH_R_GEOLOCAT);
-        loc.setSiteId(EXISTING_SITE_ID);
+        loc.setSite(repository.getById(Site.class, EXISTING_SITE_ID));
 
         validator.validate(loc);
         assertHasErrors(
@@ -177,7 +177,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_R);
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
-        loc.setSiteId(EXISTING_SITE_ID);
+        loc.setSite(repository.getById(Site.class, EXISTING_SITE_ID));
 
         validator.validate(loc);
         assertHasErrors(
@@ -191,13 +191,13 @@ public class GeolocatTest extends ValidatorBaseTest {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
-        loc.setSiteId(REFERENCED_SITE_ID);
+        loc.setSite(repository.getById(Site.class, REFERENCED_SITE_ID));
 
         validator.validate(loc);
         assertHasErrors(
             loc,
             Geolocat_.TYPE_REGULATION,
-            "Non-unique value combination for [typeRegulation, mpgId, siteId]");
+            "Non-unique value combination for [typeRegulation, mpgId, site]");
     }
 
     /**
@@ -208,7 +208,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setMpgId(MPG_WITHOUT_E_GEOLOCAT);
-        loc.setSiteId(EXISTING_SITE_ID);
+        loc.setSite(repository.getById(Site.class, EXISTING_SITE_ID));
 
         assertNoMessages(validator.validate(loc));
     }
@@ -222,7 +222,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_U);
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
-        loc.setSiteId(EXISTING_SITE_ID);
+        loc.setSite(repository.getById(Site.class, EXISTING_SITE_ID));
 
         assertNoMessages(validator.validate(loc));
     }

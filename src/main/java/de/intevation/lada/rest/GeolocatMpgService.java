@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -21,6 +22,7 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.GeolocatMpg_;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -66,11 +68,13 @@ public class GeolocatMpgService extends LadaIntegerIdEntityService {
      *
      * @return A response object containing the created Ort.
      * @throws BadRequestException if any constraint violations are detected.
+     * @throws NotFoundException if associated Site does not exist
      */
     @POST
     public GeolocatMpg create(
         @Valid GeolocatMpg ort
     ) throws BadRequestException {
+        siteExists(ort);
         return repository.create(ort);
     }
 
@@ -79,12 +83,14 @@ public class GeolocatMpgService extends LadaIntegerIdEntityService {
      *
      * @return the updated GeolocatMpg object.
      * @throws BadRequestException if any constraint violations are detected.
+     * @throws NotFoundException if associated Site does not exist
      */
     @PUT
     @Path("{id}")
     public GeolocatMpg update(
         @Valid GeolocatMpg ort
     ) throws BadRequestException {
+        siteExists(ort);
         return repository.update(ort);
     }
 
@@ -100,5 +106,13 @@ public class GeolocatMpgService extends LadaIntegerIdEntityService {
             GeolocatMpg.class, id);
         authorization.authorize(ortObj, RequestMethod.DELETE);
         repository.delete(ortObj);
+    }
+
+    private void siteExists(GeolocatMpg loc) {
+        Integer siteId = loc.getSite().getId();
+        if (siteId == null) {
+            throw new NotFoundException();
+        }
+        repository.getById(Site.class, siteId);
     }
 }

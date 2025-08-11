@@ -15,6 +15,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -35,7 +36,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ GeolocatMpg.class, DatabaseConstraints.class })
-@Unique(fields = {"typeRegulation", "mpgId", "siteId"},
+@Unique(fields = {"typeRegulation", "mpgId", "site"},
     groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
 @Unique(fields = {"mpgId"},
     predicateFields = { "typeRegulation" },
@@ -56,9 +57,8 @@ public class GeolocatMpg extends BelongsToMpg implements Serializable {
     private Date lastMod;
 
     @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Site.class)
-    private Integer siteId;
+    @ManyToOne
+    private Site site;
 
     @NotBlank
     @Size(max = 1)
@@ -96,12 +96,12 @@ public class GeolocatMpg extends BelongsToMpg implements Serializable {
         this.lastMod = lastMod;
     }
 
-    public Integer getSiteId() {
-        return this.siteId;
+    public Site getSite() {
+        return this.site;
     }
 
-    public void setSiteId(Integer siteId) {
-        this.siteId = siteId;
+    public void setSite(Site site) {
+        this.site = site;
     }
 
     public String getTypeRegulation() {
