@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!-- authentication data -->
-    <master.network id = "06" />
-    <master.network id = "01" />
+    <master.network id = "06" name = "test" />
+    <master.network id = "01" name = "test1" />
     <master.meas_facil id = "06010" network_id = "06" />
     <master.meas_facil id = "01010" network_id = "01" />
     <master.auth
@@ -22,7 +22,8 @@
     />
     <!-- Initial data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "9" />
+    <master.regulation id = "9" name = "test" />
+    <master.regulation id = "2" name = "test2" />
     <master.sampler
         id = "726"
         network_id = "06"
@@ -33,10 +34,16 @@
     <master.meas_unit id = "207" />
     <master.meas_unit id = "208" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
-    <master.mmt id = "A3" />
-    <master.spat_ref_sys id = "4" />
-    <master.spat_ref_sys id = "5" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
+    <master.mmt id = "A3" name = "test" />
+    <master.spat_ref_sys id = "4" name = "test1" />
+    <master.spat_ref_sys id = "5" name = "test2" />
+    <master.spat_ref_sys id = "6" name = "test" idf_geo_key = "t" />
     <master.state
         id = "0"
         ctry = "Deutschland"
@@ -75,7 +82,6 @@
         is_gov_dist = "false"
         geom_center = "POINT(32487017 5519769)"
     />
-    <master.regulation id = "2" />
     <master.sample_specif
         id = "A74"
         name = "Volumenstrom"
@@ -605,12 +611,6 @@
     <lada.mpg_sample_specif
         sample_specif_id = "A75"
         mpg_id = "1020"
-    />
-    <!--Spat ref sys-->
-    <master.spat_ref_sys
-        id = "6"
-        name = "test"
-        idf_geo_key = "t"
     />
     <!--Tag link data-->
     <lada.sample

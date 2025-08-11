@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!--Auth data-->
-    <master.network id = "06" />
+    <master.network id = "06" name = "test" />
     <master.meas_facil id = "06010" network_id = "06" />
 
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "1" />
-    <master.regulation id = "4" />
-    <master.regulation id = "9" />
-    <master.type_regulation id = "E" />
-    <master.type_regulation id = "U" />
-    <master.type_regulation id = "R" />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
-    <master.sample_meth id = "3" ext_id = "S" eudf_sample_meth_id = "A" />
+    <master.regulation id = "1" name = "test" />
+    <master.regulation id = "4" name = "test1" />
+    <master.regulation id = "9" name = "test2" />
+    <master.type_regulation id = "E" name = "testE" />
+    <master.type_regulation id = "U" name = "testU" />
+    <master.type_regulation id = "R" name = "testR" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test1"
+    />
+    <master.sample_meth
+        id = "3"
+        ext_id = "S"
+        eudf_sample_meth_id = "A"
+        name = "test2"
+    />
     <master.env_medium id = "L61" name = "Aerosole" />
 
     <master.admin_unit
@@ -26,7 +36,7 @@
         is_gov_dist = "false"
         geom_center = "SRID=4326;POINT(52.5 13.5)"
     />
-    <master.spat_ref_sys id = "5" />
+    <master.spat_ref_sys id = "5" name = "test" />
     <master.state
         id = "0"
         ctry = "Deutschland"

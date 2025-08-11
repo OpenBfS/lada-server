@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!-- authentication data -->
-    <master.network id = "06" />
-    <master.network id = "01" />
+    <master.network id = "06" name = "test"/>
+    <master.network id = "01" name = "test1"/>
     <master.meas_facil id = "06010" network_id = "06" />
     <master.meas_facil id = "01010" network_id = "01" />
     <master.auth
@@ -26,7 +26,7 @@
 
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "9" />
+    <master.regulation id = "9" name = "test" />
     <master.type_regulation id = "U" name = "TestU"/>
 
     <master.sampler
@@ -69,11 +69,16 @@
     <master.meas_unit id = "207" />
     <master.meas_unit id = "208" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
-    <master.mmt id = "A3" />
-    <master.mmt id = "A4" />
-    <master.mmt id = "A5" />
-    <master.spat_ref_sys id = "5" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
+    <master.mmt id = "A3" name = "test" />
+    <master.mmt id = "A4" name = "test1" />
+    <master.mmt id = "A5" name = "test2" />
+    <master.spat_ref_sys id = "5" name = "test" />
     <master.state
         id = "0"
         ctry = "Deutschland"

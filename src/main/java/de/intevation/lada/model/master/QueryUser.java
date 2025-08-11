@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.intevation.lada.validation.constraints.Unique;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -27,6 +29,9 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
+@Unique(fields = {QueryUser_.NAME, QueryUser_.LADA_USER_ID},
+    groups = DatabaseConstraints.class,
+    clazz = QueryUser.class)
 public class QueryUser implements Serializable {
     private static final long serialVersionUID = 1L;
 

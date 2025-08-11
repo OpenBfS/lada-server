@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <master.network id = "06" />
+    <master.network id = "06" name = "test" />
     <master.meas_facil id = "06010" network_id = "06" />
 
     <master.meas_unit id = "207" />
@@ -8,12 +8,22 @@
     <master.measd id_old = "56" id = "Mangan" />
     <master.measd id_old = "57" id = "Iron" />
 
-    <master.mmt id = "A3" />
+    <master.mmt id = "A3" name = "test" />
 
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "9" />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
-    <master.sample_meth id = "2" ext_id = "S" eudf_sample_meth_id = "B" />
+    <master.regulation id = "9" name = "test" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test1"
+    />
+    <master.sample_meth
+        id = "2"
+        ext_id = "S"
+        eudf_sample_meth_id = "B"
+        name = "test2"
+    />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" />
 

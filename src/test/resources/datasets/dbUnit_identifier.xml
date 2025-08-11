@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <master.network id = "06" />
+    <master.network id = "06" name = "test" />
     <master.meas_facil id = "06010" network_id = "06" />
 
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "9" />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.regulation id = "9" name = "test" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
 
-    <master.mmt id = "A3" />
-    <master.mmt id = "42" />
-    <master.mmt id = "43" />
+    <master.mmt id = "A3" name = "test" />
+    <master.mmt id = "42" name = "test1" />
+    <master.mmt id = "43" name = "test2" />
 
     <lada.sample
         id = "1000"

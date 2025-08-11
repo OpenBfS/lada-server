@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!-- authentication data -->
-    <master.network id = "06" />
+    <master.network id = "06" name = "test" />
     <master.meas_facil id = "06010" network_id = "06" name = "test"/>
     <master.auth
         ldap_gr = "mst_06_status"
@@ -25,7 +25,12 @@
         id = "1"
         unit_symbol = "Sv"
     />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "1" />
     <master.env_descrip
         id = "1"
@@ -59,7 +64,7 @@
         meas_unit_id = "1"
     />
     <master.type_regulation id = "U" name = "TestU"/>
-    <master.spat_ref_sys id = "4" />
+    <master.spat_ref_sys id = "4" name = "test" />
     <master.state
         id = "0"
         ctry = "Deutschland"
