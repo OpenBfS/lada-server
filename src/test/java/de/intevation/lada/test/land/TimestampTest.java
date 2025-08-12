@@ -10,9 +10,12 @@ package de.intevation.lada.test.land;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.junit.Assert;
 
+import de.intevation.lada.model.lada.Sample_;
+import de.intevation.lada.rest.SampleService;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -29,7 +32,7 @@ public class TimestampTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        final String sampleStartDateKey = "sampleStartDate";
+        final String sampleStartDateKey = Sample_.SAMPLE_START_DATE;
         final String expectedOutput = "2015-02-08T09:58:00.000Z";
         String[] input = {
             expectedOutput, // like JavaScript's Date.toISOString()
@@ -39,15 +42,17 @@ public class TimestampTest extends ServiceTest {
         };
         for (String i: input) {
             JsonObject create = Json.createObjectBuilder()
-                .add("oprModeId", 1)
-                .add("regulationId", 2)
-                .add("measFacilId", "06010")
-                .add("apprLabId", "06010")
-                .add("sampleMethId", 1)
-                .add("isTest", true)
+                .add(Sample_.OPR_MODE_ID, 1)
+                .add(Sample_.REGULATION_ID, 2)
+                .add(Sample_.MEAS_FACIL_ID, "06010")
+                .add(Sample_.APPR_LAB_ID, "06010")
+                .add(Sample_.SAMPLE_METH_ID, 1)
+                .add(Sample_.IS_TEST, true)
                 .add(sampleStartDateKey, i)
                 .build();
-            JsonObject created = create("rest/sample", create);
+            JsonObject created = create(
+                UriBuilder.fromResource(SampleService.class).build().getPath(),
+                create);
             Assert.assertEquals(
                 expectedOutput,
                 created.getString(sampleStartDateKey));
