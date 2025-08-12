@@ -246,7 +246,7 @@ CREATE VIEW land.messwert_view AS SELECT
 	is_threshold AS grenzwertueberschreitung,
 	status_mp_id AS status_kombi,
 	last_mod AS letzte_aenderung
-FROM lada.meas_val_view;
+FROM public.lada_meas_val;
 
 CREATE VIEW land.ortszuordnung AS SELECT
 	id,
