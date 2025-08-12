@@ -177,6 +177,7 @@ public class Sample extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date sampleStartDate;
 
+    @PastOrPresent(groups = Warnings.class)
     @Temporal(TIMESTAMP)
     private Date sampleEndDate;
 
