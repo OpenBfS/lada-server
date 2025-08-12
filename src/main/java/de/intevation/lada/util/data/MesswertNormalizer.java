@@ -10,7 +10,7 @@ package de.intevation.lada.util.data;
 import java.util.List;
 
 import jakarta.inject.Inject;
-
+import jakarta.persistence.NoResultException;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.UnitConvers;
@@ -27,20 +27,21 @@ public class MesswertNormalizer {
     }
 
     /**
-     * Get the list of conversion for the given meh ids.
-     * @param mehIdTo MehId to convert to
-     * @param mehIdFrom MehId to convert from
-     * @return Conversions as list
+     * Get conversion for the given MeasUnits.
+     * @param mehIdTo MeasUnit to convert to
+     * @param mehIdFrom MeasUnit to convert from
+     * @return Conversion
+     * @throws NoResultException if no such conversion exists
      */
-    private List<UnitConvers> getConversions(
+    private UnitConvers getConversion(
         Integer mehIdTo,
         Integer mehIdFrom
-    ) {
+    ) throws NoResultException {
         QueryBuilder<UnitConvers> builder = repository
             .queryBuilder(UnitConvers.class)
             .and(UnitConvers_.toUnitId, mehIdTo)
             .and(UnitConvers_.fromUnitId, mehIdFrom);
-        return repository.filter(builder.getQuery());
+        return repository.getSingle(builder.getQuery());
     }
 
     /**
@@ -71,22 +72,24 @@ public class MesswertNormalizer {
                 // no conversion needed
                 continue;
             }
-            //Get the conversion factors
-            List<UnitConvers> primaryMeu = getConversions(
-                    mehIdToConvertTo, messwert.getMeasUnitId());
-            List<UnitConvers> secondaryMeu = getConversions(
-                    secMehIdToConvertTo, messwert.getMeasUnitId());
-            if (primaryMeu.size() == 0 && secondaryMeu.size() == 0) {
-                //No suitable conversion found: continue
-                continue;
+
+            //Get the conversion factor
+            UnitConvers meu;
+            try {
+                meu = getConversion(mehIdToConvertTo, messwert.getMeasUnitId());
+            } catch (NoResultException e) {
+                try {
+                    meu = getConversion(
+                        secMehIdToConvertTo, messwert.getMeasUnitId());
+                } catch (NoResultException e2) {
+                    //No suitable conversion found: continue
+                    continue;
+                }
             }
-            UnitConvers meu = primaryMeu.size() > 0
-                    ? primaryMeu.get(0) : secondaryMeu.get(0);
             Double factor = meu.getFactor();
 
             //Update einheit
-            messwert.setMeasUnitId(
-                primaryMeu.size() > 0 ? mehIdToConvertTo : secMehIdToConvertTo);
+            messwert.setMeasUnitId(meu.getToUnitId());
             //Update messwert
             if (messwert.getMeasVal() != null) {
                 messwert.setMeasVal(messwert.getMeasVal() * factor);
