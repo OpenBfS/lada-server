@@ -9,6 +9,8 @@ package de.intevation.lada.rest;
 
 import java.util.Collection;
 
+import org.jboss.logging.Logger;
+
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.InvocationContext;
@@ -32,6 +34,8 @@ import de.intevation.lada.validation.groups.PostAuthorization;
  * @param <I> Type of resource identifier provided in URL paths
  */
 abstract class LadaEntityService<I> extends LadaService {
+
+    private static final Logger LOG = Logger.getLogger(LadaEntityService.class);
 
     @Inject
     protected Repository repository;
@@ -66,6 +70,9 @@ abstract class LadaEntityService<I> extends LadaService {
     @AroundInvoke
     @SuppressWarnings("unchecked")
     public Object intercept(InvocationContext ctx) throws Exception {
+        if (this instanceof SamplerService) {
+            LOG.debug("Start processing request");
+        }
         ThreadLocale.set(request.getLocale());
 
         // Create validator with request/thread locale
@@ -126,6 +133,9 @@ abstract class LadaEntityService<I> extends LadaService {
                 validator.validate(
                     r, Warnings.class, Notifications.class);
             }
+        }
+        if (this instanceof SamplerService) {
+            LOG.debug("Finished processing request");
         }
         return result;
     }

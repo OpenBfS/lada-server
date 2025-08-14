@@ -9,6 +9,8 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
+import org.jboss.logging.Logger;
+
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
@@ -28,6 +30,8 @@ import de.intevation.lada.util.rest.RequestMethod;
 @Path(LadaService.PATH_REST + "sampler")
 public class SamplerService extends LadaIntegerIdEntityService {
 
+    private static final Logger LOG = Logger.getLogger(SamplerService.class);
+
     /**
      * Get all Sampler objects.
      *
@@ -35,7 +39,10 @@ public class SamplerService extends LadaIntegerIdEntityService {
      */
     @GET
     public List<Sampler> get() {
-        return repository.getAll(Sampler.class);
+        LOG.debug("Start fetching samplers");
+        List<Sampler> result = repository.getAll(Sampler.class);
+        LOG.debug("Finished fetching samplers");
+        return result;
     }
 
     /**
