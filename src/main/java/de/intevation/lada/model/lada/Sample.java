@@ -130,7 +130,7 @@ public class Sample extends BaseModel implements MeasFacilOwned, Serializable {
     private String mainSampleId;
 
     @NotEmptyNorWhitespace
-    @Size(max = 16)
+    @Size(max = 19)
     @Pattern(regexp = "^(?!ZDB).*$", groups = CreateErrors.class)
     private String extId;
 
