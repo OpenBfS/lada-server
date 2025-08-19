@@ -527,6 +527,7 @@ CREATE INDEX sample_regulation_id_idx ON lada.sample USING btree (regulation_id)
 CREATE INDEX sample_rei_ag_gr_id_idx ON lada.sample USING btree (rei_ag_gr_id);
 CREATE INDEX sample_sample_start_date_idx ON lada.sample USING btree (sample_start_date);
 CREATE INDEX state_sample_mid_collect_period_id_ndx ON lada.sample USING btree (mid_coll_pd);
+CREATE INDEX sample_sampler_id_idx ON lada.sample (sampler_id);
 CREATE INDEX measm_status_idx ON lada.measm USING btree (status ASC NULLS LAST) TABLESPACE pg_default;
 --CREATE INDEX audit_trail_object_id_idx ON lada.audit_trail USING btree (object_id ASC NULLS LAST) TABLESPACE pg_default;
 --CREATE INDEX audit_trail_table_name_idx ON lada.audit_trail USING btree (table_name COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
@@ -534,6 +535,8 @@ CREATE INDEX mpg_meas_facil_id_idx ON lada.mpg USING btree (meas_facil_id COLLAT
 CREATE INDEX mpg_mmt_mp_mpg_id_idx ON lada.mpg_mmt_mp USING btree (mpg_id ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX status_prot_status_mp_id_idx ON lada.status_prot USING btree (status_mp_id ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX meas_val_measd_id_idx ON lada.meas_val USING btree (measd_id ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX geolocat_site_id_idx ON lada.geolocat (site_id);
+CREATE INDEX geolocat_mpg_site_id_idx ON lada.geolocat_mpg (site_id);
 
 --
 -- Name: COLUMN geolocat.type_regulation; Type: COMMENT; Schema: lada; Owner: -
