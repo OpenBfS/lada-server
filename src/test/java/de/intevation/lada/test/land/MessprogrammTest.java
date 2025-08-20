@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.Response.Status;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.test.ServiceTest;
 
@@ -87,7 +88,7 @@ public class MessprogrammTest extends ServiceTest {
             .add("active", true)
             .add("ids", Json.createArrayBuilder().add(createdId))
             .build();
-        BaseTest.parseResponse(target.path("rest/mpg/active")
+        ClientBaseTest.parseResponse(target.path("rest/mpg/active")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

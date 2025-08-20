@@ -18,6 +18,7 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.test.ServiceTest;
 
@@ -84,7 +85,7 @@ public class MesswertTest extends ServiceTest {
             .put(null);
 
         // The following makes assumptions about the first entry only
-        JsonObject normalizedMesswert = BaseTest.parseResponse(normalized)
+        JsonObject normalizedMesswert = ClientBaseTest.parseResponse(normalized)
             .asJsonArray().getJsonObject(0);
 
         /* Verify normalized unit */

@@ -43,6 +43,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.NamingStrategy;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.test.land.ProbeTest;
@@ -257,7 +258,7 @@ public class ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .get();
-        return BaseTest.parseResponse(response, entityType, expectedStatus);
+        return ClientBaseTest.parseResponse(response, entityType, expectedStatus);
     }
 
     /**
@@ -279,7 +280,7 @@ public class ServiceTest {
             .accept(MediaType.APPLICATION_JSON)
             .get();
         /* Verify the response*/
-        JsonObject object = BaseTest.parseResponse(response).asJsonObject();
+        JsonObject object = ClientBaseTest.parseResponse(response).asJsonObject();
         List<String> defaultExcludes = List.of(
             "parentModified", Sample_.TREE_MOD, Sample_.LAST_MOD);
         List<String> excludes = new ArrayList<>(Arrays.asList(exclude));
@@ -382,7 +383,7 @@ public class ServiceTest {
             .accept(MediaType.APPLICATION_JSON)
             .acceptLanguage(acceptLanguage)
             .post(Entity.entity(create, MediaType.APPLICATION_JSON));
-        return BaseTest.parseResponse(response, entityType, expectedStatus);
+        return ClientBaseTest.parseResponse(response, entityType, expectedStatus);
     }
 
     /**
@@ -455,7 +456,7 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON);
-        JsonObject oldObject = BaseTest.parseResponse(
+        JsonObject oldObject = ClientBaseTest.parseResponse(
             requestBuilder.get(), JsonObject.class);
 
         BaseTest.assertContains(oldObject, updateAttribute);
@@ -479,7 +480,7 @@ public class ServiceTest {
         });
 
         /* Send modified object via put request*/
-        JsonValue updated = BaseTest.parseResponse(requestBuilder
+        JsonValue updated = ClientBaseTest.parseResponse(requestBuilder
             .put(Entity.entity(
                     updateBuilder.build(), MediaType.APPLICATION_JSON)),
             expectedStatus);
@@ -535,7 +536,7 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .delete();
-        BaseTest.parseResponse(response, expectedStatus);
+        ClientBaseTest.parseResponse(response, expectedStatus);
         if (Response.Status.Family.SUCCESSFUL.equals(
                 expectedStatus.getFamily())
         ) {
@@ -560,7 +561,7 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject data = BaseTest.parseResponse(response).asJsonObject();
+        JsonObject data = ClientBaseTest.parseResponse(response).asJsonObject();
 
         final String auditKey = "audit";
         BaseTest.assertContains(data, auditKey);

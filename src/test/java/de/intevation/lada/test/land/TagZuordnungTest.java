@@ -21,6 +21,7 @@ import jakarta.ws.rs.core.Response;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.test.ServiceTest;
 
@@ -126,7 +127,7 @@ public class TagZuordnungTest extends ServiceTest {
             .accept(MediaType.APPLICATION_JSON)
             .post(Entity.entity(
                     payload.toString(), MediaType.APPLICATION_JSON));
-        JsonArray content = BaseTest.parseResponse(response).asJsonArray();
+        JsonArray content = ClientBaseTest.parseResponse(response).asJsonArray();
         //Check each result
         final String successKey = "success", messageKey = "message";
         content.forEach(object -> {

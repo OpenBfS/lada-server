@@ -34,7 +34,7 @@ import de.intevation.lada.test.stamm.TagTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-public class StammdatenTest extends BaseTest {
+public class StammdatenTest extends ClientBaseTest {
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;

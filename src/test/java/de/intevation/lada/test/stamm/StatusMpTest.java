@@ -18,6 +18,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -57,7 +58,7 @@ public class StatusMpTest extends ServiceTest {
                     Json.createArrayBuilder().add(measmId).build().toString(),
                     MediaType.APPLICATION_JSON));
         final JsonArray reachable =
-            BaseTest.parseResponse(response).asJsonArray();
+            ClientBaseTest.parseResponse(response).asJsonArray();
         MatcherAssert.assertThat(
             reachable,
             CoreMatchers.hasItems(

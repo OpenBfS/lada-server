@@ -20,6 +20,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -266,7 +267,7 @@ public class Stammdaten extends ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject content = BaseTest.parseResponse(response).asJsonObject();
+        JsonObject content = ClientBaseTest.parseResponse(response).asJsonObject();
         /* Verify the response*/
         MatcherAssert.assertThat(content.keySet(), matchers.get(type));
     }

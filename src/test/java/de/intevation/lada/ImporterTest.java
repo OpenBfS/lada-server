@@ -56,7 +56,7 @@ import de.intevation.lada.util.data.StatusCodes;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-public class ImporterTest extends BaseTest {
+public class ImporterTest extends ClientBaseTest {
 
     private static final Logger LOG = Logger.getLogger(ImporterTest.class);
 

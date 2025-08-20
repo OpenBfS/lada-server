@@ -39,7 +39,7 @@ import de.intevation.lada.rest.UniversalService.UniversalResponse;
  *
  */
 @RunWith(Arquillian.class)
-public class UniversalServiceTest extends BaseTest {
+public class UniversalServiceTest extends ClientBaseTest {
 
     @PersistenceContext
     EntityManager em;
@@ -193,7 +193,6 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test interface to retrieve SQL statement with parameters.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient

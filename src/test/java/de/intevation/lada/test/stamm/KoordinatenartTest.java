@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.Response;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.master.SpatRefSys;
 import de.intevation.lada.test.ServiceTest;
 
@@ -70,7 +71,7 @@ public class KoordinatenartTest extends ServiceTest {
                     requestJson.toString(), MediaType.APPLICATION_JSON));
 
         /* Verify the response*/
-        JsonObject data = BaseTest.parseResponse(response).asJsonObject();
+        JsonObject data = ClientBaseTest.parseResponse(response).asJsonObject();
         BaseTest.assertContains(data, xKey);
         BaseTest.assertContains(data, yKey);
         Assert.assertEquals(coord, data.getString(xKey));

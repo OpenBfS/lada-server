@@ -38,7 +38,7 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-public class LandTest extends BaseTest {
+public class LandTest extends ClientBaseTest {
 
     @PersistenceContext
     EntityManager em;

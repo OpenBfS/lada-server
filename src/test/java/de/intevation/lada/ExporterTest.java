@@ -54,7 +54,7 @@ import de.intevation.lada.util.data.Job.JobStatus;
  *
  */
 @RunWith(Arquillian.class)
-public class ExporterTest extends BaseTest {
+public class ExporterTest extends ClientBaseTest {
 
     private static final String ASYNC_EXPORT_URL =
         UriBuilder.fromResource(AsyncExportService.class).build() + "/";
