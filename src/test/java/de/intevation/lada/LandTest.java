@@ -75,7 +75,6 @@ public class LandTest extends BaseTest {
         geolocatMpgTest = new GeolocatMpgTest();
         timestampTest = new TimestampTest();
         validationTest = new ValidationTest();
-        verboseLogging = false;
 
         testDatasetName = "datasets/dbUnit_lada.xml";
     }

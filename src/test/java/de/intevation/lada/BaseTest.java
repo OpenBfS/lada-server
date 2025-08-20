@@ -129,11 +129,6 @@ public class BaseTest {
      */
     private IDatabaseConnection con;
 
-    /**
-     * Enable verbose output for tests.
-     */
-    protected static boolean verboseLogging = false;
-
     protected String testDatasetName;
 
     private static final String DATASETS_DIR = "datasets";

@@ -69,7 +69,7 @@ public class StammdatenTest extends BaseTest {
         tagZuordnungTest = new TagZuordnungTest();
         municDivTest = new MunicDivTest();
         statusMpTest = new StatusMpTest();
-        verboseLogging = false;
+
         testDatasetName = "datasets/dbUnit_master.xml";
     }
 
