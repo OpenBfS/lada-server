@@ -26,7 +26,7 @@
         <hamcrest.version>3.0</hamcrest.version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
         <shrinkwrap-resolvers.version>2.2.7</shrinkwrap-resolvers.version>
-        <arquillian.version>1.9.1.Final</arquillian.version>
+        <arquillian.version>1.10.0.Final</arquillian.version>
         <checkstyle.plugin.version>3.1.2</checkstyle.plugin.version>
     </properties>
 
