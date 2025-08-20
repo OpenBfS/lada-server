@@ -84,7 +84,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for probe operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -96,7 +95,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for pkommentar operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -108,7 +106,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for ortszurodnung operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -121,7 +118,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for zusatzwert operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -131,9 +127,9 @@ public class LandTest extends BaseTest {
         zusatzwertTest.init(this.target);
         zusatzwertTest.execute();
     }
+
     /**
      * Tests for messung operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -146,7 +142,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for mkommentar operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -159,7 +154,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for mkommentar operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -172,7 +166,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for status operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -185,7 +178,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for messprogramm operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -198,7 +190,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for messprogrammMmt operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -211,7 +202,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Tests for query operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -224,7 +214,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Test probe generation from a messprogramm record via url.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -237,7 +226,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Test geolocat mpg service operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -250,7 +238,6 @@ public class LandTest extends BaseTest {
 
     /**
      * Test timestamp formats.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test

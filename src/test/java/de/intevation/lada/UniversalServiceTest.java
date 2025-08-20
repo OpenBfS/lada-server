@@ -103,7 +103,6 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching all data returned by a query.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -124,7 +123,6 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching data returned by a query using pages.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -151,7 +149,6 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test interface to retrieve SQL statement.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -171,7 +168,6 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching data returned by a query with filter.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -222,7 +218,6 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching data returned by a query with empty result set.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -253,7 +248,6 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching data returned by a single-column query.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
