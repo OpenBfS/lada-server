@@ -646,7 +646,12 @@ public class LafObjectMapper {
         merger.mergeMesswerte(newMessung, messwerte);
 
         // Check for warnings and errors for messung ...
-        validate(newMessung, "validation#messung");
+        validate(
+            newMessung,
+            "validation#messung",
+            false,
+            false,
+            "#" + newMessung.getMinSampleId());
         // ... and messwerte
         for (MeasVal messwert: messwerte) {
             validate(messwert, "validation#messwert");
@@ -1885,6 +1890,16 @@ public class LafObjectMapper {
         boolean errorsToWarnings,
         boolean validated
     ) {
+        validate(object, key, errorsToWarnings, validated, "");
+    }
+
+    private void validate(
+        BaseModel object,
+        String key,
+        boolean errorsToWarnings,
+        boolean validated,
+        String suffix
+    ) {
         if (!validated) {
             validator.validate(object);
         }
@@ -1893,7 +1908,7 @@ public class LafObjectMapper {
             object.getWarnings().clear();
         }
         report.addValidationMessages(
-            currentSample.getIdentifier(), key, object);
+            currentSample.getIdentifier(), key, suffix, object);
     }
 
     private void addError(ReportItem error) {
