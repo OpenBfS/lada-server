@@ -138,18 +138,19 @@ public class Report {
     public void addValidationMessages(
         String key,
         String itemKey,
+        String suf,
         BaseModel validatedObject
     ) {
         validatedObject.getErrors().forEach(
             (k, v) -> v.forEach(value ->
-                addError(key, new ReportItem(itemKey, k, value))));
+                addError(key, new ReportItem(itemKey, k + suf, value))));
 
         validatedObject.getWarnings().forEach(
             (k, v) -> v.forEach(value ->
-                addWarning(key, new ReportItem(itemKey, k, value))));
+                addWarning(key, new ReportItem(itemKey, k + suf, value))));
 
         validatedObject.getNotifications().forEach(
             (k, v) -> v.forEach(value ->
-                addNotification(key, new ReportItem(itemKey, k, value))));
+                addNotification(key, new ReportItem(itemKey, k + suf, value))));
     }
 }
