@@ -7,8 +7,12 @@
  */
 package de.intevation.lada.validation.constraints;
 
+import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.VARIABLES;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.persistence.metamodel.SingularAttribute;
@@ -49,21 +53,6 @@ public class HasObligMeasdsValidator
             return true;
         }
 
-        final SingularAttribute<ObligMeasdMp, String>
-            mmtIdKey = ObligMeasdMp_.mmtId,
-            envMediumIdKey = ObligMeasdMp_.envMediumId;
-        final SingularAttribute<ObligMeasdMp, Integer>
-            regulationIdKey = ObligMeasdMp_.regulationId;
-
-        ctx.disableDefaultConstraintViolation();
-        ctx.buildConstraintViolationWithTemplate(this.message)
-            .addPropertyNode(mmtIdKey.getName())
-            .addConstraintViolation();
-        // Short path if no measVals can be referenced
-        if (messung.getId() == null) {
-            return false;
-        }
-
         Repository repository = CDI.current().getBeanContainer()
             .createInstance().select(Repository.class).get();
         Sample probe = repository.entityManager().find(
@@ -78,6 +67,12 @@ public class HasObligMeasdsValidator
         if (regulationId == null || mmtId == null || envMediumId == null) {
             return true;
         }
+
+        final SingularAttribute<ObligMeasdMp, String>
+            mmtIdKey = ObligMeasdMp_.mmtId,
+            envMediumIdKey = ObligMeasdMp_.envMediumId;
+        final SingularAttribute<ObligMeasdMp, Integer>
+            regulationIdKey = ObligMeasdMp_.regulationId;
 
         // Match by complete envMediumId
         QueryBuilder<ObligMeasdMp> builder = repository
@@ -124,6 +119,16 @@ public class HasObligMeasdsValidator
         pflicht.removeAll(tmp);
 
         if (!pflicht.isEmpty()) {
+            HibernateConstraintValidatorContext hibernateCtx = ctx.unwrap(
+                HibernateConstraintValidatorContext.class
+            );
+            hibernateCtx.disableDefaultConstraintViolation();
+            hibernateCtx.addExpressionVariable("missing",
+                pflicht.stream().map(ObligMeasdMp::getMeasdId).toList())
+                .buildConstraintViolationWithTemplate(this.message)
+                .enableExpressionLanguage(VARIABLES)
+                .addPropertyNode(mmtIdKey.getName())
+                .addConstraintViolation();
             return false;
         }
         return true;
