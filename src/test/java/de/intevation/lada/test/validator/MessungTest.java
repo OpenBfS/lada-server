@@ -35,6 +35,7 @@ public class MessungTest extends ValidatorBaseTest {
     private static final int EXISTING_MEASM_ID = 1200;
     private static final String EXISTING_MIN_SAMPLE_ID = "T100";
     private static final String EXISTING_MMT_ID = "A3";
+    private static final String MEASD_ID_OTHER = "Other";
     private static final String EXISTING_SAMPLE_START_DATE
         = "2012-05-03 13:07:00";
 
@@ -46,8 +47,8 @@ public class MessungTest extends ValidatorBaseTest {
     private static final String MIN_SAMPLE_ID_00G2 = "00G2";
 
     private static final String MSG_VALUE_MISSING = "A value must be provided";
-    private static final String MSG_VAL_OBL_MEASURE =
-        "Obligatory measurand missing";
+    private static final String MSG_VAL_OBL_MEASURE_TPL =
+        "Obligatory measurand missing: [%s]";
 
     /**
      * Test valid measm.
@@ -257,7 +258,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MMT_ID,
-            MSG_VAL_OBL_MEASURE);
+            String.format(MSG_VAL_OBL_MEASURE_TPL, "Mangan"));
     }
 
     /**
@@ -271,7 +272,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MMT_ID,
-            MSG_VAL_OBL_MEASURE);
+            String.format(MSG_VAL_OBL_MEASURE_TPL, MEASD_ID_OTHER));
     }
 
     /**
@@ -285,7 +286,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MMT_ID,
-            MSG_VAL_OBL_MEASURE);
+            String.format(MSG_VAL_OBL_MEASURE_TPL, MEASD_ID_OTHER));
     }
 
     /**
@@ -299,7 +300,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MMT_ID,
-            MSG_VAL_OBL_MEASURE);
+            String.format(MSG_VAL_OBL_MEASURE_TPL, MEASD_ID_OTHER));
     }
 
     /**
