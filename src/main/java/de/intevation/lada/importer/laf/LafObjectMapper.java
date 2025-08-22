@@ -1038,7 +1038,11 @@ public class LafObjectMapper {
             } else {
                 addError(
                     new ReportItem(
-                        "Statusvergabe", "Status", StatusCodes.VALUE_MISSING));
+                        "Statusvergabe",
+                        "Status#" + (messung.getMinSampleId() != null
+                            ? messung.getMinSampleId()
+                            : messung.getExtId()),
+                        StatusCodes.VALUE_MISSING));
                 return;
             }
         }
