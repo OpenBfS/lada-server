@@ -7,18 +7,26 @@
  */
 package de.intevation.lada.test.stamm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.List;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
+import de.intevation.lada.rest.TagService;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -26,7 +34,11 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class TagTest extends ServiceTest {
 
-    private final String tagUrl = "rest/tag/";
+    private static final String TAG_URL =
+        UriBuilder.fromResource(TagService.class).build().getPath() + "/";
+
+    private static final String NETWORK_ID = "06";
+    private static final String MEAS_FACIL_ID = "06010";
 
     @Override
     public void init(WebTarget t) {
@@ -39,8 +51,9 @@ public class TagTest extends ServiceTest {
     public void execute() {
         testMstTag();
         testNetzbetreiberTag();
-        promoteMstTag();
-        delete(tagUrl + "1003"); // Delete tag with assignment
+        promoteToNetwork();
+        promoteToGlobal();
+        delete(TAG_URL + "1003"); // Delete tag with assignment
     }
 
     /**
@@ -48,7 +61,7 @@ public class TagTest extends ServiceTest {
      */
     public void testMstTag() {
         Tag tagToTest = new Tag();
-        tagToTest.setMeasFacilId("06010");
+        tagToTest.setMeasFacilId(MEAS_FACIL_ID);
         tagToTest.setName("mstTag");
         testTagCRUD(tagToTest);
     }
@@ -58,24 +71,46 @@ public class TagTest extends ServiceTest {
      */
     public void testNetzbetreiberTag() {
         Tag tagToTest = new Tag();
-        tagToTest.setNetworkId("06");
+        tagToTest.setNetworkId(NETWORK_ID);
         tagToTest.setName("nbTag");
         testTagCRUD(tagToTest);
     }
 
     /**
+     * Promote a measFacil tag to network.
+     */
+    public void promoteToNetwork() {
+        final String name = "test";
+        Tag tagToTest = new Tag();
+        tagToTest.setMeasFacilId(MEAS_FACIL_ID);
+        tagToTest.setName(name);
+        Tag created = create(TAG_URL, tagToTest, Tag.class);
+        created.setMeasFacilId(null);
+        created.setNetworkId(NETWORK_ID);
+        Tag updated = target.path(TAG_URL + created.getId()).request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
+            .put(Entity.entity(created, MediaType.APPLICATION_JSON), Tag.class);
+        assertEquals(name, updated.getName());
+        assertNull(updated.getMeasFacilId());
+        assertEquals(NETWORK_ID, updated.getNetworkId());
+        assertNull(updated.getValUntil());
+    }
+
+    /**
      * Promote a mst tag to global.
      */
-    public void promoteMstTag() {
+    public void promoteToGlobal() {
         Tag tagToTest = new Tag();
-        tagToTest.setMeasFacilId("06010");
+        tagToTest.setMeasFacilId(MEAS_FACIL_ID);
         tagToTest.setName("mstTagPromoted");
-        JsonObject createResponse = create(tagUrl, tagToTest);
-        long createdId = createResponse.getInt("id");
+        JsonObject createResponse = create(TAG_URL, tagToTest);
+        long createdId = createResponse.getInt(Tag_.ID);
         update(
-            tagUrl + createdId,
+            TAG_URL + createdId,
             Tag_.MEAS_FACIL_ID,
-            Json.createValue("06010"),
+            Json.createValue(MEAS_FACIL_ID),
             null,
             Status.FORBIDDEN);
     }
@@ -85,20 +120,20 @@ public class TagTest extends ServiceTest {
      * @param tagToTest Tag to test
      */
     private void testTagCRUD(Tag tagToTest) {
-        Tag createResponse = create(tagUrl, tagToTest, Tag.class);
+        Tag createResponse = create(TAG_URL, tagToTest, Tag.class);
         if (createResponse.getMeasFacilId() != null) {
             long diff = getDaysFromNow(createResponse.getValUntil());
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
         String tagUpdated = tagToTest.getName() + "-mod";
         int createdId = createResponse.getId();
-        JsonObject updateResponse = update(tagUrl + createdId,
-            "name",
+        JsonObject updateResponse = update(TAG_URL + createdId,
+            Tag_.NAME,
             tagToTest.getName(),
             tagUpdated).asJsonObject();
         Assert.assertFalse(
-            get(tagUrl, new GenericType<List<Tag>>() { }).isEmpty());
-        getById(tagUrl + createdId, updateResponse);
-        delete(tagUrl + createdId);
+            get(TAG_URL, new GenericType<List<Tag>>() { }).isEmpty());
+        getById(TAG_URL + createdId, updateResponse);
+        delete(TAG_URL + createdId);
     }
 }
