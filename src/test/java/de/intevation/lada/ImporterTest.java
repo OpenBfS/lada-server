@@ -11,6 +11,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +28,7 @@ import jakarta.ws.rs.client.SyncInvoker;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
@@ -38,13 +40,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.rest.TagService;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
+import de.intevation.lada.data.AsyncImportService;
 import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Job.JobStatus;
 import de.intevation.lada.util.data.StatusCodes;
@@ -60,7 +65,8 @@ public class ImporterTest extends ClientBaseTest {
 
     private static final Logger LOG = Logger.getLogger(ImporterTest.class);
 
-    private static final String ASYNC_IMPORT_URL = "data/import/async/";
+    private static final String ASYNC_IMPORT_URL = UriBuilder
+        .fromResource(AsyncImportService.class).build().getPath() + "/";
 
     private final String sampleIdsKey = "sampleIds";
 
@@ -599,6 +605,25 @@ public class ImporterTest extends ClientBaseTest {
             .get(0);
         Assert.assertEquals(measd, importedMeasVal.getMeasdId());
         Assert.assertEquals(1, (int) importedMeasVal.getMeasUnitId());
+
+        // Assert that generated Tag has expected validity
+        List<Tag> tags = target
+            .path(UriBuilder.fromResource(TagService.class).build().getPath())
+            .queryParam("sampleId", sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get(new GenericType<List<Tag>>() { });
+        final String tagName = fileReport.getString("tag");
+        MatcherAssert.assertThat(tags.stream().map(Tag::getName).toList(),
+            CoreMatchers.hasItem(tagName));
+        Tag tag = tags.stream().filter(t -> tagName.equals(t.getName()))
+            .findFirst().get();
+        Assert.assertEquals(Tag.GENERATED_EXPIRATION_TIME,
+            /* +1 because until calculates complete units and the tag has
+               been generated a few moments ago */
+            1 + Instant.now().until(
+                tag.getValUntil().toInstant(), ChronoUnit.DAYS));
 
         return fileReport;
     }
