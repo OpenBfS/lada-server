@@ -651,7 +651,9 @@ public class LafObjectMapper {
             "validation#messung",
             false,
             false,
-            "#" + newMessung.getMinSampleId());
+            "#" + (newMessung.getMinSampleId() != null
+                ? newMessung.getMinSampleId()
+                : String.valueOf(newMessung.getExtId())));
         // ... and messwerte
         for (MeasVal messwert: messwerte) {
             validate(messwert, "validation#messwert");
