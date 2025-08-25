@@ -169,6 +169,41 @@ public class ImporterTest extends ClientBaseTest {
     }
 
     /**
+     * Assert that generated Tag has expected validity.
+     */
+    @Test
+    @RunAsClient
+    public final void tagValidity()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        final String laf = String.format(
+            lafTemplate, lafSampleId,
+            regulation, sampleSpecifId, "", measd, measUnit, "");
+        JsonObject fileReport = testAsyncImportProbe(laf, lafSampleId, true);
+        final int sampleId = fileReport.getJsonArray(sampleIdsKey)
+            .getJsonNumber(0).intValue();
+
+        // Assert that generated Tag has expected validity
+        List<Tag> tags = target
+            .path(UriBuilder.fromResource(TagService.class).build().getPath())
+            .queryParam("sampleId", sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get(new GenericType<List<Tag>>() { });
+        final String tagName = fileReport.getString("tag");
+        MatcherAssert.assertThat(tags.stream().map(Tag::getName).toList(),
+            CoreMatchers.hasItem(tagName));
+        Tag tag = tags.stream().filter(t -> tagName.equals(t.getName()))
+            .findFirst().get();
+        Assert.assertEquals(Tag.GENERATED_EXPIRATION_TIME,
+            /* +1 because until calculates complete units and the tag has
+               been generated a few moments ago */
+            1 + Instant.now().until(
+                tag.getValUntil().toInstant(), ChronoUnit.DAYS));
+    }
+
+    /**
      * Test import with lowercase LAF keywords.
      */
     @Test
@@ -605,25 +640,6 @@ public class ImporterTest extends ClientBaseTest {
             .get(0);
         Assert.assertEquals(measd, importedMeasVal.getMeasdId());
         Assert.assertEquals(1, (int) importedMeasVal.getMeasUnitId());
-
-        // Assert that generated Tag has expected validity
-        List<Tag> tags = target
-            .path(UriBuilder.fromResource(TagService.class).build().getPath())
-            .queryParam("sampleId", sampleId)
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .get(new GenericType<List<Tag>>() { });
-        final String tagName = fileReport.getString("tag");
-        MatcherAssert.assertThat(tags.stream().map(Tag::getName).toList(),
-            CoreMatchers.hasItem(tagName));
-        Tag tag = tags.stream().filter(t -> tagName.equals(t.getName()))
-            .findFirst().get();
-        Assert.assertEquals(Tag.GENERATED_EXPIRATION_TIME,
-            /* +1 because until calculates complete units and the tag has
-               been generated a few moments ago */
-            1 + Instant.now().until(
-                tag.getValUntil().toInstant(), ChronoUnit.DAYS));
 
         return fileReport;
     }
