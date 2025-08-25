@@ -451,20 +451,17 @@
         id = "102"
         name = "network"
         network_id = "06"
-        val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />
     <master.tag
         id = "112"
         name = "networkUnAuth"
         network_id = "01"
-        val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />
     <master.tag
         id = "103"
         name = "global"
-        val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />
     <lada.tag_link_sample

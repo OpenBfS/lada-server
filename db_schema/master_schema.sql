@@ -973,7 +973,9 @@ CREATE TABLE tag (
     lada_user_id INTEGER REFERENCES lada_user ON DELETE SET NULL,
     val_until TIMESTAMP without time zone,
     created_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    CHECK(network_id IS NULL OR meas_facil_id IS NULL)
+    CHECK(network_id IS NULL OR meas_facil_id IS NULL),
+    -- Only generated and meas_facil tags can have validity:
+    CHECK(val_until IS NULL OR meas_facil_id IS NOT NULL OR is_auto_tag)
 );
 CREATE UNIQUE INDEX global_tag_unique_idx ON master.tag (name)
     WHERE network_id IS NULL AND meas_facil_id IS NULL;

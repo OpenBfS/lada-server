@@ -112,11 +112,6 @@ public class TagService extends LadaIntegerIdEntityService {
     public Tag update(
         @Valid Tag tag
     ) throws BadRequestException {
-        // Drop validity for network-tags
-        if (tag.getNetworkId() != null) {
-            tag.setValUntil(null);
-        }
-
         // Set default validity for measFacil-tags
         if (tag.getMeasFacilId() != null && tag.getValUntil() == null) {
             tag.setValUntil(TagUtil.getMstTagDefaultExpiration());

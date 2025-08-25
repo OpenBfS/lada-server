@@ -7,9 +7,12 @@
  */
 package de.intevation.lada.test.validator;
 
+import java.util.Date;
+
 import org.junit.Test;
 
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.Tag_;
 
 
 /**
@@ -93,6 +96,46 @@ public class TagTest extends ValidatorBaseTest {
             validator.validate(tag),
             "name",
             "Non-unique name for global tag");
+    }
+
+    @Test
+    public void measFacilTagWithValidity() {
+        Tag tag = createMinimumValidTag();
+        tag.setMeasFacilId(MEAS_FACIL);
+        tag.setValUntil(new Date());
+        assertNoMessages(validator.validate(tag));
+    }
+
+    @Test
+    public void generatedTagWithValidity() {
+        Tag tag = createMinimumValidTag();
+        tag.setName("generated");
+        tag.setNetworkId(NETWORK_ID);
+        tag.setIsAutoTag(true);
+        tag.setValUntil(new Date());
+        assertNoMessages(validator.validate(tag));
+    }
+
+    @Test
+    public void globalTagWithValidity() {
+        Tag tag = createMinimumValidTag();
+        assertValidityNotAllowed(tag);
+    }
+
+    @Test
+    public void networkTagWithValidity() {
+        Tag tag = createMinimumValidTag();
+        tag.setNetworkId(NETWORK_ID);
+        assertValidityNotAllowed(tag);
+    }
+
+    private void assertValidityNotAllowed(Tag tag) {
+        tag.setValUntil(new Date());
+        assertHasErrors(
+            validator.validate(tag),
+            Tag_.VAL_UNTIL,
+            "Validity can only be set if referencing measurement facility "
+            + "or for generated tags");
     }
 
     /**

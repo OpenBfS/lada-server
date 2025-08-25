@@ -15,15 +15,18 @@ import java.util.List;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.rest.TagService;
@@ -87,11 +90,22 @@ public class TagTest extends ServiceTest {
         Tag created = create(TAG_URL, tagToTest, Tag.class);
         created.setMeasFacilId(null);
         created.setNetworkId(NETWORK_ID);
-        Tag updated = target.path(TAG_URL + created.getId()).request()
+
+        Invocation.Builder builder = target
+            .path(TAG_URL + created.getId())
+            .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .accept(MediaType.APPLICATION_JSON)
-            .put(Entity.entity(created, MediaType.APPLICATION_JSON), Tag.class);
+            .accept(MediaType.APPLICATION_JSON);
+
+        // Requires unsetting valUntil
+        ClientBaseTest.parseResponse(
+            builder.put(Entity.entity(created, MediaType.APPLICATION_JSON)),
+            Tag.class,
+            Response.Status.BAD_REQUEST);
+        created.setValUntil(null);
+        Tag updated = builder.put(
+            Entity.entity(created, MediaType.APPLICATION_JSON), Tag.class);
         assertEquals(name, updated.getName());
         assertNull(updated.getMeasFacilId());
         assertEquals(NETWORK_ID, updated.getNetworkId());
@@ -99,18 +113,18 @@ public class TagTest extends ServiceTest {
     }
 
     /**
-     * Promote a mst tag to global.
+     * Promote a tag to global.
      */
     public void promoteToGlobal() {
         Tag tagToTest = new Tag();
-        tagToTest.setMeasFacilId(MEAS_FACIL_ID);
-        tagToTest.setName("mstTagPromoted");
+        tagToTest.setNetworkId(NETWORK_ID);
+        tagToTest.setName("TagPromoted");
         JsonObject createResponse = create(TAG_URL, tagToTest);
         long createdId = createResponse.getInt(Tag_.ID);
         update(
             TAG_URL + createdId,
-            Tag_.MEAS_FACIL_ID,
-            Json.createValue(MEAS_FACIL_ID),
+            Tag_.NETWORK_ID,
+            Json.createValue(NETWORK_ID),
             null,
             Status.FORBIDDEN);
     }
