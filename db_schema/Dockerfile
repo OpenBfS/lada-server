@@ -67,6 +67,12 @@ RUN sed -i '/logging_collector/s/on/off/' $PGCONF
 #
 EXPOSE 5432
 
+# Download German administrative borders used in setup-db.sh
+ENV ADMIN_BORDERS_ZIP=/var/lib/postgresql/admin_borders.zip
+ADD --chown=postgres \
+    https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_0101/aktuell/vg250_01-01.utm32s.shape.ebenen.zip \
+    $ADMIN_BORDERS_ZIP
+
 #
 # Add context as working directory
 #
@@ -85,6 +91,7 @@ RUN /usr/lib/postgresql/16/bin/pg_ctl start -wo "--config_file=$PGCONF" && \
     /opt/lada_sql/setup-db.sh && \
     /opt/lada_sql/setup-db.sh -n lada_test && \
     /usr/lib/postgresql/16/bin/pg_ctl stop
+RUN rm $ADMIN_BORDERS_ZIP
 
 #
 # Set the default command to run when starting the container

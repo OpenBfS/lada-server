@@ -10,6 +10,11 @@
 #   ROLE_PW    login password  (default = ROLE_NAME)
 #   DB_NAME    name of the databaes (default = ROLE_NAME)
 #
+# Requires a ZIP file with administrative borders, which can be downloaded from
+# https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_0101/aktuell/vg250_01-01.utm32s.shape.ebenen.zip
+# By default, it is expected in the same directory as this script.
+# Set environment variable ADMIN_BORDERS_ZIP to provide an alternative path.
+#
 # There will be used a remote database server if there exists the
 # enviroment variable DB_SRV and optional DB_PORT
 
@@ -39,6 +44,12 @@ ROLE_PW=${2:-$ROLE_NAME}
 echo "ROLE_PW = $ROLE_PW"
 DB_NAME=${3:-$ROLE_NAME}
 echo "DB_NAME = $DB_NAME"
+
+ADMIN_BORDERS_ZIP=${ADMIN_BORDERS_ZIP:-$DIR/vg250_01-01.utm32s.shape.ebenen.zip}
+if [ ! -f ${ADMIN_BORDERS_ZIP} ]; then
+    echo "ERROR: Missing ZIP file with administrative borders"
+    exit 1
+fi
 
 # Stop on error any execution of SQL via psql
 DB_CONNECT_STRING="-v ON_ERROR_STOP=on "
@@ -109,26 +120,20 @@ psql $DB_CONNECT_STRING -d $DB_NAME \
  --command "GRANT ALL ON ALL TABLES IN SCHEMA lada, master TO $ROLE_NAME;"\
  --command "GRANT ALL ON ALL SEQUENCES IN SCHEMA lada, master TO $ROLE_NAME;"
 
-echo download german administrative borders
-cd /tmp
-SRC_URI=https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_0101/aktuell/vg250_01-01.utm32s.shape.ebenen.zip
-BASE_NAME=vg250_01-01.utm32s.shape.ebenen
-SHAPE_DIR=${BASE_NAME}/vg250_ebenen_0101
-if [ ! -f ${BASE_NAME}.zip ]; then
-    curl -sfO ${SRC_URI}
-fi
-unzip -u ${BASE_NAME}.zip "*VG250_*"
-
 echo create schema geo
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
      "CREATE SCHEMA geo AUTHORIZATION $ROLE_NAME"
+
+echo extract german administrative borders from ZIP file
 # Only create the tables without importing the data
+TMP_DIR=$(mktemp -d)
 for file_table in "GEM gem" "KRS kr" "RBZ rb" "LAN bl"
 do
-    FILE=$(echo $file_table | awk '{print $1}')
+    FILE="VG250_"$(echo $file_table | awk '{print $1}')
     TABLE=$(echo $file_table | awk '{print $2}')
+    unzip -uj $ADMIN_BORDERS_ZIP "*$FILE.*" -d $TMP_DIR
     shp2pgsql -p -s 25832:4326 \
-        ${SHAPE_DIR}/VG250_${FILE} \
+        ${TMP_DIR}/${FILE} \
         geo.vg250_${TABLE} |\
         sed "1iSET role $ROLE_NAME;" |\
         psql -q $DB_CONNECT_STRING -d $DB_NAME
@@ -153,7 +158,7 @@ if [ "$NO_DATA" != "true" ]; then
         FILE=$(echo $file_table | awk '{print $1}')
         TABLE=$(echo $file_table | awk '{print $2}')
         shp2pgsql -a -s 25832:4326 \
-            ${SHAPE_DIR}/VG250_${FILE} \
+            ${TMP_DIR}/VG250_${FILE} \
             geo.vg250_${TABLE} | psql -q $DB_CONNECT_STRING -d $DB_NAME
     done
     echo refresh main border view
