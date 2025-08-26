@@ -47,12 +47,6 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @NetworkOrMeasFacil
 public class Tag extends BaseModel {
 
-    // Default time after which mst tags expire in days
-    public static final int MST_TAG_EXPIRATION_TIME = 365;
-
-    // Default time after which auto tags expire in days
-    public static final int GENERATED_EXPIRATION_TIME = 584;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

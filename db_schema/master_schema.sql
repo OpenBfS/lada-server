@@ -286,6 +286,22 @@ AS $BODY$
   END;
 $BODY$;
 
+CREATE FUNCTION tag_val_until_meas_facil_default()
+    RETURNS timestamp without time zone STABLE PARALLEL SAFE
+    RETURN current_timestamp AT TIME ZONE 'utc' + '365 days';
+
+CREATE FUNCTION set_tag_val_until() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN
+        CASE
+            WHEN NEW.meas_facil_id IS NOT NULL THEN
+                NEW.val_until = master.tag_val_until_meas_facil_default();
+            WHEN NEW.is_auto_tag THEN
+                NEW.val_until = current_timestamp AT TIME ZONE 'utc' + '584 days';
+        END CASE;
+        RETURN NEW;
+    END;
+$$;
+
 
 CREATE TABLE spat_ref_sys (
     id serial PRIMARY KEY,
@@ -983,6 +999,11 @@ CREATE UNIQUE INDEX network_tag_unique_idx ON master.tag (name, network_id)
     WHERE meas_facil_id IS NULL;
 CREATE UNIQUE INDEX meas_facil_tag_unique_idx ON master.tag (name, meas_facil_id)
     WHERE network_id IS NULL;
+CREATE TRIGGER default_val_until BEFORE INSERT OR UPDATE OF val_until
+    ON tag FOR EACH ROW
+    WHEN (NEW.val_until IS NULL
+        AND (NEW.meas_facil_id IS NOT NULL OR NEW.is_auto_tag))
+    EXECUTE PROCEDURE set_tag_val_until();
 
 CREATE TABLE master.convers_dm_fm(
   id serial PRIMARY KEY,

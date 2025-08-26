@@ -38,6 +38,11 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class TagTest extends ServiceTest {
 
+    /**
+     * Default time in days after which measFacil tags expire.
+     */
+    public static final int MF_TAG_EXPIRATION_DAYS = 365;
+
     private static final String TAG_URL =
         UriBuilder.fromResource(TagService.class).build().getPath() + "/";
 
@@ -177,7 +182,7 @@ public class TagTest extends ServiceTest {
             Date valUntil = tag.getValUntil();
             Assert.assertNotNull(valUntil);
             long diff = getDaysFromNow(valUntil);
-            Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
+            Assert.assertEquals(MF_TAG_EXPIRATION_DAYS, diff);
         }
     }
 }

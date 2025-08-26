@@ -129,6 +129,19 @@ CREATE OR REPLACE FUNCTION update_status_measm() RETURNS trigger
     END
 $$;
 
+CREATE FUNCTION extend_tag_val_until() RETURNS trigger LANGUAGE plpgsql AS $$
+    DECLARE new_validity CONSTANT timestamp without time zone
+        = master.tag_val_until_meas_facil_default();
+    BEGIN
+        UPDATE master.tag SET val_until = new_validity
+            WHERE meas_facil_id IS NOT NULL
+                AND val_until < new_validity
+                AND id IN(SELECT tag_id FROM added_tag_links);
+        RETURN NULL;
+    END;
+$$;
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -455,6 +468,9 @@ CREATE TABLE tag_link_measm
         NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (measm_id, tag_id)
 );
+CREATE TRIGGER extend_tag_val_until AFTER INSERT ON tag_link_measm
+    REFERENCING NEW TABLE AS added_tag_links
+    FOR EACH STATEMENT EXECUTE PROCEDURE extend_tag_val_until();
 
 CREATE TABLE tag_link_sample
 (
@@ -465,6 +481,9 @@ CREATE TABLE tag_link_sample
         NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (sample_id, tag_id)
 );
+CREATE TRIGGER extend_tag_val_until AFTER INSERT ON tag_link_sample
+    REFERENCING NEW TABLE AS added_tag_links
+    FOR EACH STATEMENT EXECUTE PROCEDURE extend_tag_val_until();
 
 --
 -- Name: measm_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:

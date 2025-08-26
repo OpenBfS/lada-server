@@ -68,6 +68,8 @@ public class ImporterTest extends ClientBaseTest {
     private static final String ASYNC_IMPORT_URL = UriBuilder
         .fromResource(AsyncImportService.class).build().getPath() + "/";
 
+    private static final int GENERATED_EXPIRATION_TIME = 584;
+
     private final String sampleIdsKey = "sampleIds";
 
     private final String existingMainSampleId = "120510002";
@@ -196,7 +198,7 @@ public class ImporterTest extends ClientBaseTest {
             CoreMatchers.hasItem(tagName));
         Tag tag = tags.stream().filter(t -> tagName.equals(t.getName()))
             .findFirst().get();
-        Assert.assertEquals(Tag.GENERATED_EXPIRATION_TIME,
+        Assert.assertEquals(GENERATED_EXPIRATION_TIME,
             /* +1 because until calculates complete units and the tag has
                been generated a few moments ago */
             1 + Instant.now().until(

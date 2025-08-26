@@ -14,15 +14,12 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.intevation.lada.model.lada.TagLink;
-import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 
 public abstract class TagLinkService<T extends TagLink> extends LadaService {
@@ -97,7 +94,6 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
         List<Response<T>> responseList = new ArrayList<>();
 
         for (T tagLink: tagLinks) {
-            Integer tagId = tagLink.getTagId();
             if (isExisting(tagLink)) {
                 responseList.add(new Response<T>(
                         true, StatusCodes.OK, tagLink));
@@ -110,17 +106,6 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
                 continue;
             }
 
-            //Extend tag expiring time
-            Tag tag = repository.getById(Tag.class, tagId);
-            if (tag.getMeasFacilId() != null) {
-                Timestamp defaultExpiration =
-                    TagUtil.getMstTagDefaultExpiration();
-                if (tag.getValUntil() == null
-                    || defaultExpiration.after(tag.getValUntil())
-                ) {
-                    tag.setValUntil(defaultExpiration);
-                }
-            }
             responseList.add(new Response<T>(
                     true, StatusCodes.OK, repository.create(tagLink)));
         }
