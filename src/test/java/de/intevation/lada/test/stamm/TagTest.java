@@ -10,6 +10,7 @@ package de.intevation.lada.test.stamm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.Date;
 import java.util.List;
 
 import jakarta.json.Json;
@@ -56,6 +57,7 @@ public class TagTest extends ServiceTest {
         testNetzbetreiberTag();
         promoteToNetwork();
         promoteToGlobal();
+        resetValidity();
         delete(TAG_URL + "1003"); // Delete tag with assignment
     }
 
@@ -113,6 +115,28 @@ public class TagTest extends ServiceTest {
     }
 
     /**
+     * Resetting validity of measFacil tag.
+     */
+    public void resetValidity() {
+        final String name = "test";
+        Tag tagToTest = new Tag();
+        tagToTest.setMeasFacilId(MEAS_FACIL_ID);
+        tagToTest.setName(name);
+        Tag created = create(TAG_URL, tagToTest, Tag.class);
+
+        created.setValUntil(null);
+        Tag updated = target
+            .path(TAG_URL + created.getId())
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
+            .put(Entity.entity(created, MediaType.APPLICATION_JSON), Tag.class);
+        assertEquals(MEAS_FACIL_ID, updated.getMeasFacilId());
+        checkValUntil(updated);
+    }
+
+    /**
      * Promote a tag to global.
      */
     public void promoteToGlobal() {
@@ -135,10 +159,7 @@ public class TagTest extends ServiceTest {
      */
     private void testTagCRUD(Tag tagToTest) {
         Tag createResponse = create(TAG_URL, tagToTest, Tag.class);
-        if (createResponse.getMeasFacilId() != null) {
-            long diff = getDaysFromNow(createResponse.getValUntil());
-            Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
-        }
+        checkValUntil(createResponse);
         String tagUpdated = tagToTest.getName() + "-mod";
         int createdId = createResponse.getId();
         JsonObject updateResponse = update(TAG_URL + createdId,
@@ -149,5 +170,14 @@ public class TagTest extends ServiceTest {
             get(TAG_URL, new GenericType<List<Tag>>() { }).isEmpty());
         getById(TAG_URL + createdId, updateResponse);
         delete(TAG_URL + createdId);
+    }
+
+    private void checkValUntil(Tag tag) {
+        if (tag.getMeasFacilId() != null) {
+            Date valUntil = tag.getValUntil();
+            Assert.assertNotNull(valUntil);
+            long diff = getDaysFromNow(valUntil);
+            Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
+        }
     }
 }
