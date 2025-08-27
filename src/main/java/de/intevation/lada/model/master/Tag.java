@@ -21,6 +21,7 @@ import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.validation.constraints.CanHaveValUntil;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NetworkOrMeasFacil;
 import de.intevation.lada.validation.constraints.Unique;
@@ -42,14 +43,9 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Unique(groups = DatabaseConstraints.class,
     clazz = Tag.class, fields = { "name", "measFacilId" },
     predicateFields = { "networkId" }, predicateIsNull = { true })
+@CanHaveValUntil
 @NetworkOrMeasFacil
 public class Tag extends BaseModel {
-
-    // Default time after which mst tags expire in days
-    public static final int MST_TAG_EXPIRATION_TIME = 365;
-
-    // Default time after which auto tags expire in days
-    public static final int GENERATED_EXPIRATION_TIME = 584;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

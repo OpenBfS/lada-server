@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <master.network id = "06" />
+    <master.network id = "06" name = "test" />
     <master.meas_facil id = "06010" network_id = "06" />
 
     <master.tag

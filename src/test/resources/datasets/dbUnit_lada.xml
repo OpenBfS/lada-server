@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!-- authentication data -->
-    <master.network id = "06" />
-    <master.network id = "01" />
-    <master.network id = "07" />
+    <master.network id = "06" name = "test" />
+    <master.network id = "01" name = "test1" />
+    <master.network id = "07" name = "test2" />
     <master.meas_facil id = "06010" network_id = "06" />
     <master.meas_facil id = "01010" network_id = "01" />
     <master.meas_facil id = "06011" network_id = "07" />
@@ -59,7 +59,12 @@
     <master.regulation id = "2" name = "reg-2"/>
     <master.regulation id = "9" name = "reg-9"/>
     <master.regulation id = "10" name = "reg-10"/>
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
     <master.meas_unit id = "207" unit_symbol = "u207"/>
     <master.meas_unit id = "208" unit_symbol = "u208"/>
     <master.unit_convers
@@ -71,6 +76,8 @@
     <master.env_descrip id = "1" lev = "0" lev_val = "10" name = "s00"/>
     <master.env_descrip
         id = "2" lev = "1" lev_val = "11" pred_id = "1" name = "s01"/>
+    <master.env_descrip
+        id = "3" lev = "1" lev_val = "12" pred_id = "1" name = "s01_2"/>
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
     <master.env_medium id = "A3" name = "Mülldeponie" />
@@ -83,27 +90,27 @@
     <master.env_descrip_env_medium_mp
         id = "2"
         s00 = "1"
-        s01 = "2"
+        s01 = "3"
         env_medium_id = "A3"
     />
 
     <master.measd_gr id = "15" name = "Test" />
     <master.measd_gr id = "16" name = "Test2" />
 
-    <master.measd id = "56" name = "Mangan" />
-    <master.measd id = "57" name = "Iron" />
-    <master.measd id = "58" name = "Tritium" />
-    <master.measd id = "59" name = "Silizium" />
-    <master.measd_gr_mp measd_gr_id = "15" measd_id = "56" />
-    <master.measd_gr_mp measd_gr_id = "15" measd_id = "57" />
-    <master.measd_gr_mp measd_gr_id = "15" measd_id = "58" />
-    <master.measd_gr_mp measd_gr_id = "15" measd_id = "59" />
-    <master.measd_gr_mp measd_gr_id = "16" measd_id = "56" />
-    <master.measd_gr_mp measd_gr_id = "16" measd_id = "57" />
-    <master.measd_gr_mp measd_gr_id = "16" measd_id = "58" />
-    <master.measd_gr_mp measd_gr_id = "16" measd_id = "59" />
-    <master.mmt id = "A3" />
-    <master.mmt id = "B3" />
+    <master.measd id_old = "56" id = "Mangan" />
+    <master.measd id_old = "57" id = "Iron" />
+    <master.measd id_old = "58" id = "Tritium" />
+    <master.measd id_old = "59" id = "Silizium" />
+    <master.measd_gr_mp measd_gr_id = "15" measd_id = "Mangan" />
+    <master.measd_gr_mp measd_gr_id = "15" measd_id = "Iron" />
+    <master.measd_gr_mp measd_gr_id = "15" measd_id = "Tritium" />
+    <master.measd_gr_mp measd_gr_id = "15" measd_id = "Silizium" />
+    <master.measd_gr_mp measd_gr_id = "16" measd_id = "Mangan" />
+    <master.measd_gr_mp measd_gr_id = "16" measd_id = "Iron" />
+    <master.measd_gr_mp measd_gr_id = "16" measd_id = "Tritium" />
+    <master.measd_gr_mp measd_gr_id = "16" measd_id = "Silizium" />
+    <master.mmt id = "A3" name = "test" />
+    <master.mmt id = "B3" name = "test1" />
     <master.mmt_measd_gr_mp measd_gr_id = "15" mmt_id = "A3"/>
     <master.mmt_measd_gr_mp measd_gr_id = "16" mmt_id = "A3" />
 
@@ -145,7 +152,7 @@
         descr = "test"
         short_text = "test"
     />
-    <master.spat_ref_sys id = "4" />
+    <master.spat_ref_sys id = "4" name = "test" />
     <master.state
         id = "0"
         ctry = "Deutschland"
@@ -210,7 +217,7 @@
     />
     <lada.mpg_mmt_mp_measd
         mpg_mmt_mp_id = "1000"
-        measd_id = "56"
+        measd_id = "Mangan"
     />
     <lada.geolocat_mpg
         id = "1000"
@@ -283,7 +290,7 @@
     <lada.meas_val
         id = "10000"
         measm_id = "1200"
-        measd_id = "56"
+        measd_id = "Mangan"
         less_than_LOD = "&lt;"
         error = "3.3"
         detect_lim = "2.4"
@@ -338,7 +345,7 @@
     <lada.meas_val
         id = "10001"
         measm_id = "1201"
-        measd_id = "56"
+        measd_id = "Mangan"
         error = "3.3"
         detect_lim = "2.4"
         meas_unit_id = "207"
@@ -359,7 +366,7 @@
     <lada.meas_val
         id = "104000"
         measm_id = "1400"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "1"
         meas_unit_id = "207"
     />
@@ -367,7 +374,7 @@
     <lada.meas_val
         id = "104001"
         measm_id = "1400"
-        measd_id = "57"
+        measd_id = "Iron"
         meas_unit_id = "207"
     />
 

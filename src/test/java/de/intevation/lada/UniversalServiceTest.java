@@ -7,8 +7,6 @@
  */
 package de.intevation.lada;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,6 +15,7 @@ import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 import java.util.List;
 
@@ -29,6 +28,9 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.GridColConf;
+import de.intevation.lada.rest.MeasmService;
+import de.intevation.lada.rest.SqlService;
+import de.intevation.lada.rest.UniversalService;
 import de.intevation.lada.rest.UniversalService.UniversalResponse;
 
 
@@ -37,10 +39,18 @@ import de.intevation.lada.rest.UniversalService.UniversalResponse;
  *
  */
 @RunWith(Arquillian.class)
-public class UniversalServiceTest extends BaseTest {
+public class UniversalServiceTest extends ClientBaseTest {
 
     @PersistenceContext
     EntityManager em;
+
+    private List<GridColConf> requestJson;
+    private List<GridColConf> filteredRequestJson;
+
+    private String universalServiceUrl =
+        UriBuilder.fromResource(UniversalService.class).build().getPath();
+    private String sqlServiceUrl =
+        UriBuilder.fromResource(SqlService.class).build().getPath();
 
     // The size of the "land.probe" array in dbUnit_probe_query.json
     private final int totalCount = 2;
@@ -52,28 +62,24 @@ public class UniversalServiceTest extends BaseTest {
 
     public UniversalServiceTest() {
         this.testDatasetName = "datasets/dbUnit_query.xml";
-    }
+
+        GridColConf col1 = new GridColConf();
+        col1.setColIndex(0);
+        col1.setGridColMpId(1);
+        GridColConf col2 = new GridColConf();
+        col2.setColIndex(1);
+        col2.setGridColMpId(2);
+        this.requestJson = List.of(col1, col2);
+
+        GridColConf filteredCol1 = new GridColConf();
+        filteredCol1.setColIndex(0);
+        filteredCol1.setGridColMpId(1);
+        filteredCol1.setFilterVal(filterValue);
+        filteredCol1.setIsFilterActive(true);
+        this.filteredRequestJson = List.of(filteredCol1, col2);
+}
 
     private Invocation.Builder universalRequestBuilder;
-
-    private JsonArray requestJson = Json.createArrayBuilder()
-        .add(Json.createObjectBuilder()
-            .add("colIndex", 0)
-            .add("filterVal", "")
-            .add("isFilterActive", false)
-            .add("isFilterNull", false)
-            .add("isFilterNegate", false)
-            .add("isFilterRegex", false)
-            .add("gridColMpId", 1))
-        .add(Json.createObjectBuilder()
-            .add("colIndex", 1)
-            .add("filterVal", "")
-            .add("isFilterActive", false)
-            .add("isFilterNull", false)
-            .add("isFilterNegate", false)
-            .add("isFilterRegex", false)
-            .add("gridColMpId", 2))
-        .build();
 
     // Expected statement according to master.base_query.sql
     // in dbUnit_query.json
@@ -85,29 +91,10 @@ public class UniversalServiceTest extends BaseTest {
     // A 'main_sample_id' from lada.sample in dbUnit_query.json
     private final String filterValue = "12051,0001";
 
-    private JsonArray filteredRequestJson = Json.createArrayBuilder()
-        .add(Json.createObjectBuilder()
-            .add("colIndex", 0)
-            .add("filterVal", filterValue)
-            .add("isFilterActive", true)
-            .add("isFilterNull", false)
-            .add("isFilterNegate", false)
-            .add("isFilterRegex", false)
-            .add("gridColMpId", 1))
-        .add(Json.createObjectBuilder()
-            .add("colIndex", 1)
-            .add("filterVal", "")
-            .add("isFilterActive", false)
-            .add("isFilterNull", false)
-            .add("isFilterNegate", false)
-            .add("isFilterRegex", false)
-            .add("gridColMpId", 2))
-        .build();
 
     @Before
     public void prepareBuilder() {
-        this.universalRequestBuilder = this.target
-            .path("rest/universal")
+        this.universalRequestBuilder = this.target.path(universalServiceUrl)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -116,7 +103,6 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching all data returned by a query.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -137,14 +123,12 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching data returned by a query using pages.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
     public final void testGetPaged() {
         final int limit = 1;
-        Response response = target
-            .path("rest/universal")
+        Response response = target.path(universalServiceUrl)
             .queryParam("start", 1)
             .queryParam("limit", limit)
             .request()
@@ -165,12 +149,11 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test interface to retrieve SQL statement.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
     public final void testGetSql() {
-        Response response = target.path("rest/sql")
+        Response response = target.path(sqlServiceUrl)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -185,7 +168,6 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching data returned by a query with filter.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -211,12 +193,11 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test interface to retrieve SQL statement with parameters.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
     public final void testGetSqlWithParameter() {
-        Response response = target.path("rest/sql")
+        Response response = target.path(sqlServiceUrl)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -236,32 +217,22 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching data returned by a query with empty result set.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
     public final void testGetEmpty() {
-        JsonArray requestEmpty = Json.createArrayBuilder()
-            .add(Json.createObjectBuilder()
-                .add("colIndex", 0)
-                .add("filterVal", "not existing value")
-                .add("isFilterActive", true)
-                .add("isFilterNull", false)
-                .add("isFilterNegate", false)
-                .add("isFilterRegex", false)
-                .add("gridColMpId", 1))
-            .add(Json.createObjectBuilder()
-                .add("colIndex", 1)
-                .add("filterVal", "")
-                .add("isFilterActive", false)
-                .add("isFilterNull", false)
-                .add("isFilterNegate", false)
-                .add("isFilterRegex", false)
-                .add("gridColMpId", 2))
-            .build();
+        GridColConf col1 = new GridColConf();
+        col1.setColIndex(0);
+        col1.setFilterVal("not existing value");
+        col1.setIsFilterActive(true);
+        col1.setGridColMpId(1);
+        GridColConf col2 = new GridColConf();
+        col2.setColIndex(1);
+        col2.setGridColMpId(2);
 
         Response response = universalRequestBuilder
-            .post(Entity.entity(requestEmpty, MediaType.APPLICATION_JSON));
+            .post(Entity.entity(
+                    List.of(col1, col2), MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
         assertContains(responseJson, totalCountKey);
@@ -276,24 +247,17 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Test fetching data returned by a single-column query.
      *
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
     public final void testGetSingleColumn() {
-        JsonArray request = Json.createArrayBuilder()
-            .add(Json.createObjectBuilder()
-                .add("colIndex", 0)
-                .add("filterVal", "")
-                .add("isFilterActive", false)
-                .add("isFilterNull", false)
-                .add("isFilterNegate", false)
-                .add("isFilterRegex", false)
-                .add("gridColMpId", 3))
-            .build();
+        GridColConf gridColConf = new GridColConf();
+        gridColConf.setColIndex(0);
+        gridColConf.setGridColMpId(3);
 
         Response response = universalRequestBuilder
-            .post(Entity.entity(request, MediaType.APPLICATION_JSON));
+            .post(Entity.entity(
+                    List.of(gridColConf), MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
         // single-column query should result in JSON objects with
@@ -314,7 +278,8 @@ public class UniversalServiceTest extends BaseTest {
     public void testAuth() {
         // Retrieve expected values from MeasmService
         final int notSetMeasmId = 1200, plausibleMeasmId = 1201;
-        WebTarget measmTarget = target.path("rest/measm");
+        WebTarget measmTarget = target.path(
+            UriBuilder.fromResource(MeasmService.class).build().getPath());
         boolean expectedNotSet = measmTarget
             .path(String.valueOf(notSetMeasmId))
             .request()

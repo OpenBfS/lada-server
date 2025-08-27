@@ -19,6 +19,7 @@ import org.jboss.resteasy.api.validation.Validation;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.rest.SampleService;
 import de.intevation.lada.test.ServiceTest;
@@ -56,7 +57,7 @@ public class ValidationTest extends ServiceTest {
         final Response response400 = builderNonExistant
             .put(Entity.entity(sample, MediaType.APPLICATION_JSON));
         assertNoValidationError(response400);
-        BaseTest.parseResponse(response400, Status.BAD_REQUEST);
+        ClientBaseTest.parseResponse(response400, Status.BAD_REQUEST);
 
         // IDs in path and payload match
         sample.setId(nonExistantID);
@@ -65,7 +66,7 @@ public class ValidationTest extends ServiceTest {
         final Response response404 = builderNonExistant
             .put(Entity.entity(sample, MediaType.APPLICATION_JSON));
         assertNoValidationError(response404);
-        BaseTest.parseResponse(response404, Status.NOT_FOUND);
+        ClientBaseTest.parseResponse(response404, Status.NOT_FOUND);
 
 
         // PUT with payload not matching ID in path
@@ -85,7 +86,7 @@ public class ValidationTest extends ServiceTest {
         final Response responseExistant = builder
             .put(Entity.entity(anotherSample, MediaType.APPLICATION_JSON));
         assertNoValidationError(responseExistant);
-        BaseTest.parseResponse(responseExistant, Status.BAD_REQUEST);
+        ClientBaseTest.parseResponse(responseExistant, Status.BAD_REQUEST);
         final Sample anotherSampleAfter = get(
             SAMPLE_SERVICE_URL + anotherSampleId, Sample.class);
         Assert.assertEquals(
@@ -98,7 +99,7 @@ public class ValidationTest extends ServiceTest {
         final Response responseNonExistant = builder
             .put(Entity.entity(sample, MediaType.APPLICATION_JSON));
         assertNoValidationError(responseNonExistant);
-        BaseTest.parseResponse(responseNonExistant, Status.BAD_REQUEST);
+        ClientBaseTest.parseResponse(responseNonExistant, Status.BAD_REQUEST);
         get(SAMPLE_SERVICE_URL + nonExistantID, Status.NOT_FOUND);
 
         // No ID in payload
@@ -106,7 +107,7 @@ public class ValidationTest extends ServiceTest {
         final Response responseNoId = builder
             .put(Entity.entity(sample, MediaType.APPLICATION_JSON));
         assertNoValidationError(responseNoId);
-        BaseTest.parseResponse(responseNoId, Status.BAD_REQUEST);
+        ClientBaseTest.parseResponse(responseNoId, Status.BAD_REQUEST);
     }
 
     private void assertNoValidationError(Response response) {

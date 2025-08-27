@@ -246,7 +246,7 @@ CREATE VIEW land.messwert_view AS SELECT
 	is_threshold AS grenzwertueberschreitung,
 	status_mp_id AS status_kombi,
 	last_mod AS letzte_aenderung
-FROM lada.meas_val_view;
+FROM public.lada_meas_val;
 
 CREATE VIEW land.ortszuordnung AS SELECT
 	id,
@@ -604,9 +604,9 @@ CREATE VIEW stamm.mess_stelle AS SELECT
 FROM master.meas_facil;
 
 CREATE VIEW stamm.messgroesse AS SELECT
-	id,
+	id_old AS id,
 	descr AS beschreibung,
-	name AS messgroesse,
+	id AS messgroesse,
 	def_color AS default_farbe,
 	idf_ext_id AS idf_nuklid_key,
 	is_ref_nucl AS ist_leitnuklid,

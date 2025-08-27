@@ -20,8 +20,9 @@ import jakarta.persistence.Table;
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
 @CheckHQL
-@NamedQuery(name = Names.QUERY_GET_MEASD_FOR_MMT,
-    query = "select measdId from MmtMeasdView where mmtId = :mmt")
+@NamedQuery(name = Names.QUERY_GET_MEASD_FOR_MMT, query = """
+    select m from Measd m join MmtMeasdView on m.id = measdId
+    where mmtId = :mmt""")
 public class MmtMeasdView implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -29,7 +30,7 @@ public class MmtMeasdView implements Serializable {
     private MmtMeasdViewPK id;
 
     @Column(insertable = false, updatable = false)
-    private Integer measdId;
+    private String measdId;
 
     @Column(insertable = false, updatable = false)
     private String mmtId;
@@ -45,11 +46,11 @@ public class MmtMeasdView implements Serializable {
         this.id = i;
     }
 
-    public Integer getMeasdId() {
+    public String getMeasdId() {
         return this.measdId;
     }
 
-    public void setMeasdId(Integer measdId) {
+    public void setMeasdId(String measdId) {
         this.measdId = measdId;
     }
 

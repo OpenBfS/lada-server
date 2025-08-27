@@ -8,11 +8,8 @@
 
 package de.intevation.lada.util.data;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -98,14 +95,7 @@ public class TagUtil {
         currentTag.setNetworkId(netzbetreiberId);
         currentTag.setName(prefix + "_" + today + "_" + serNumber);
 
-        // Generated tags expire after 548 days
-        Instant then = Instant.now()
-            .plus(Tag.GENERATED_EXPIRATION_TIME, ChronoUnit.DAYS)
-            .truncatedTo(ChronoUnit.DAYS);
-        currentTag.setValUntil(Timestamp.from(then));
-
-        repository.create(currentTag);
-        return currentTag;
+        return repository.create(currentTag);
     }
 
     /**
@@ -142,15 +132,5 @@ public class TagUtil {
             zuordnung.setMeasmId(messung.getId());
             repository.create(zuordnung);
         });
-    }
-
-    /**
-     * @return Timestamp Tag.MST_TAG_EXPIRATION_TIME days after now.
-     */
-    public static Timestamp getMstTagDefaultExpiration() {
-        Instant then = Instant.now()
-            .plus(Tag.MST_TAG_EXPIRATION_TIME, ChronoUnit.DAYS)
-            .truncatedTo(ChronoUnit.DAYS);
-        return Timestamp.from(then);
     }
 }

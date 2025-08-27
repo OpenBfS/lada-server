@@ -34,11 +34,10 @@ import de.intevation.lada.test.stamm.TagTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-public class StammdatenTest extends BaseTest {
+public class StammdatenTest extends ClientBaseTest {
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
-    private static final int ID56 = 56;
     private static final int ID101 = 101;
     private static final int ID207 = 207;
     private static final String IDA = "A";
@@ -70,12 +69,11 @@ public class StammdatenTest extends BaseTest {
         tagZuordnungTest = new TagZuordnungTest();
         municDivTest = new MunicDivTest();
         statusMpTest = new StatusMpTest();
-        verboseLogging = false;
+
         testDatasetName = "datasets/dbUnit_master.xml";
     }
 
     /**
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -88,7 +86,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for probe operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -101,7 +98,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for probe operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -114,7 +110,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for probe operations.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -127,7 +122,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for datenbasis operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -138,7 +132,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for datenbasis by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -149,7 +142,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for messeinheit operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -160,7 +152,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for messeinheit by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -171,7 +162,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for messgroesse operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -182,13 +172,12 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for messgroesse by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
     public final void testMessgroesseById() {
         stammdatenTest.init(this.target);
-        stammdatenTest.getById("measd", ID56);
+        stammdatenTest.getById("measd", "Mangan");
     }
 
     @Test
@@ -200,7 +189,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for messmethode operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -211,7 +199,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for messmethode by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -222,7 +209,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for messstelle operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -233,7 +219,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for messstelle by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -244,7 +229,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for netzbetreiber operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -255,7 +239,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for netzbetreiber by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -266,7 +249,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for probeart operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -277,7 +259,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for probeart by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -288,7 +269,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for probenzusatz operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -299,7 +279,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for probenzusatz by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -317,7 +296,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for koordinatenart operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -328,7 +306,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for koordinatenart by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -339,7 +316,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for staat operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -350,7 +326,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for staat by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -361,7 +336,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for umwelt  operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -372,7 +346,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for umwelt by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -383,7 +356,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for verwaltungseinheit operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -394,7 +366,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for verwaltungseinheit by id operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -405,7 +376,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests deskriptoren service.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -418,7 +388,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests KoordinatenartService.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -431,7 +400,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Test Tag service.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -444,7 +412,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Test TagZuordnung service.
-     * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
@@ -457,7 +424,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests type regulation get all operation.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -468,7 +434,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests type regulation get by id operation.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -479,7 +444,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests poi get all operation.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -490,7 +454,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests poi get by id operation.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -501,7 +464,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for TargActMmtGr operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -512,7 +474,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for TargEnvGr operations.
-     * @param baseUrl The server url used for the request.
      */
     @Test
     @RunAsClient
@@ -523,7 +484,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests EnvSpecifMp get all operation.
-     * @param baseUrl The server url used for the request
      */
     @Test
     @RunAsClient
@@ -534,7 +494,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests EnvSpecifMp get all operation.
-     * @param baseUrl The server url used for the request
      */
     @Test
     @RunAsClient
@@ -545,7 +504,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Test MunicDiv serivce operations.
-     * @param baseUrl The server url used for the request
      */
     @Test
     @RunAsClient
@@ -556,7 +514,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests ReiAgGr get all operation.
-     * @param baseUrl The server url used for the request
      */
     @Test
     @RunAsClient
@@ -567,7 +524,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests ReiAgGR get all operation.
-     * @param baseUrl The server url used for the request
      */
     @Test
     @RunAsClient
@@ -578,7 +534,6 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests StatusMpService.
-     * @param baseUrl The server url used for the request
      */
     @Test
     @RunAsClient

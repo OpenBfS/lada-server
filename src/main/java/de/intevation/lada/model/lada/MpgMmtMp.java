@@ -9,7 +9,6 @@ package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -24,7 +23,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -59,16 +57,13 @@ public class MpgMmtMp extends BelongsToMpg implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "measd_id")
     )
     @Valid
-    private Set<Measd> measdObjects;
+    private Set<Measd> measds;
 
     @NotBlank
     @Size(max = 2)
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Mmt.class)
     private String mmtId;
-
-    @Transient
-    private Integer[] measds;
 
 
     public Integer getId() {
@@ -87,25 +82,11 @@ public class MpgMmtMp extends BelongsToMpg implements Serializable {
         this.lastMod = lastMod;
     }
 
-    public void setMeasdObjects(Set<Measd> measdObjects) {
-        this.measdObjects = measdObjects;
-    }
-
-    /**
-     * @return Integer[] IDs of associated Messgroesse objects.
-     */
-    public Integer[] getMeasds() {
-        if (this.measds == null && this.measdObjects != null) {
-            Set<Integer> ids = new HashSet<>();
-            for (Measd m: this.measdObjects) {
-                ids.add(m.getId());
-            }
-            this.measds = ids.toArray(new Integer[ids.size()]);
-        }
+    public Set<Measd> getMeasds() {
         return this.measds;
     }
 
-    public void setMeasds(Integer[] measds) {
+    public void setMeasds(Set<Measd> measds) {
         this.measds = measds;
     }
 

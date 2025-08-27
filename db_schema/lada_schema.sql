@@ -129,6 +129,19 @@ CREATE OR REPLACE FUNCTION update_status_measm() RETURNS trigger
     END
 $$;
 
+CREATE FUNCTION extend_tag_val_until() RETURNS trigger LANGUAGE plpgsql AS $$
+    DECLARE new_validity CONSTANT timestamp without time zone
+        = master.tag_val_until_meas_facil_default();
+    BEGIN
+        UPDATE master.tag SET val_until = new_validity
+            WHERE meas_facil_id IS NOT NULL
+                AND val_until < new_validity
+                AND id IN(SELECT tag_id FROM added_tag_links);
+        RETURN NULL;
+    END;
+$$;
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -249,7 +262,7 @@ CREATE TRIGGER last_mod_mpg_mmt_mp BEFORE UPDATE ON mpg_mmt_mp FOR EACH ROW EXEC
 CREATE TABLE mpg_mmt_mp_measd (
     id serial PRIMARY KEY,
     mpg_mmt_mp_id integer NOT NULL REFERENCES mpg_mmt_mp ON DELETE CASCADE,
-    measd_id integer NOT NULL REFERENCES master.measd,
+    measd_id character varying(50) NOT NULL REFERENCES master.measd,
     UNIQUE (mpg_mmt_mp_id, measd_id)
 );
 
@@ -259,7 +272,7 @@ CREATE TABLE mpg_mmt_mp_measd (
 
 CREATE TABLE sample (
     id serial PRIMARY KEY,
-    ext_id character varying(16) UNIQUE NOT NULL CHECK (trim(both ' ' from ext_id) <> ''),
+    ext_id character varying(19) UNIQUE NOT NULL CHECK (trim(both ' ' from ext_id) <> '') DEFAULT 'ZDB' || lpad(nextval('lada.sample_sample_id_seq')::varchar, 12, '0') || 'Y',
     is_test boolean DEFAULT false NOT NULL,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     appr_lab_id character varying(5) NOT NULL REFERENCES master.meas_facil,
@@ -295,30 +308,6 @@ CREATE TABLE sample (
 );
 CREATE TRIGGER last_mod_sample BEFORE UPDATE ON sample FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 CREATE TRIGGER tree_mod_sample BEFORE UPDATE ON sample FOR EACH ROW EXECUTE PROCEDURE update_tree_mod_sample();
-
-CREATE SEQUENCE IF NOT EXISTS lada.sample_lfgb_ext_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
-CREATE OR REPLACE FUNCTION lada.set_default_sample_ext_id()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF (NEW.regulation_id = 8 AND NEW.ext_id IS NULL) THEN
-        NEW.ext_id := 'LFGB' || lpad(((nextval('lada.sample_lfgb_ext_id_seq'::regclass))::character varying)::text, 12, '0'::text);
-    ELSIF (NEW.regulation_id <> 8 AND NEW.ext_id IS NULL) THEN
-        NEW.ext_id := ('ZDB'::text || lpad(((nextval('lada.sample_sample_id_seq'::regclass))::character varying)::text, 12, '0'::text)) || 'Y'::text;
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_set_sample_ext_id_default
-BEFORE INSERT ON lada.sample
-FOR EACH ROW
-EXECUTE FUNCTION lada.set_default_sample_ext_id();
 
 --
 -- Name: comm_sample; Type: TABLE; Schema: lada; Owner: -; Tablespace:
@@ -436,7 +425,7 @@ CREATE TABLE comm_measm (
 CREATE TABLE meas_val (
     id serial PRIMARY KEY,
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
-    measd_id integer NOT NULL REFERENCES master.measd,
+    measd_id character varying(50) NOT NULL REFERENCES master.measd,
     less_than_lod character varying(1) CHECK (trim(both ' ' from less_than_lod) <> ''),
     meas_val double precision,
     error real,
@@ -479,6 +468,9 @@ CREATE TABLE tag_link_measm
         NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (measm_id, tag_id)
 );
+CREATE TRIGGER extend_tag_val_until AFTER INSERT ON tag_link_measm
+    REFERENCING NEW TABLE AS added_tag_links
+    FOR EACH STATEMENT EXECUTE PROCEDURE extend_tag_val_until();
 
 CREATE TABLE tag_link_sample
 (
@@ -489,6 +481,9 @@ CREATE TABLE tag_link_sample
         NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (sample_id, tag_id)
 );
+CREATE TRIGGER extend_tag_val_until AFTER INSERT ON tag_link_sample
+    REFERENCING NEW TABLE AS added_tag_links
+    FOR EACH STATEMENT EXECUTE PROCEDURE extend_tag_val_until();
 
 --
 -- Name: measm_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
@@ -551,6 +546,7 @@ CREATE INDEX sample_regulation_id_idx ON lada.sample USING btree (regulation_id)
 CREATE INDEX sample_rei_ag_gr_id_idx ON lada.sample USING btree (rei_ag_gr_id);
 CREATE INDEX sample_sample_start_date_idx ON lada.sample USING btree (sample_start_date);
 CREATE INDEX state_sample_mid_collect_period_id_ndx ON lada.sample USING btree (mid_coll_pd);
+CREATE INDEX sample_sampler_id_idx ON lada.sample (sampler_id);
 CREATE INDEX measm_status_idx ON lada.measm USING btree (status ASC NULLS LAST) TABLESPACE pg_default;
 --CREATE INDEX audit_trail_object_id_idx ON lada.audit_trail USING btree (object_id ASC NULLS LAST) TABLESPACE pg_default;
 --CREATE INDEX audit_trail_table_name_idx ON lada.audit_trail USING btree (table_name COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
@@ -558,6 +554,8 @@ CREATE INDEX mpg_meas_facil_id_idx ON lada.mpg USING btree (meas_facil_id COLLAT
 CREATE INDEX mpg_mmt_mp_mpg_id_idx ON lada.mpg_mmt_mp USING btree (mpg_id ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX status_prot_status_mp_id_idx ON lada.status_prot USING btree (status_mp_id ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX meas_val_measd_id_idx ON lada.meas_val USING btree (measd_id ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX geolocat_site_id_idx ON lada.geolocat (site_id);
+CREATE INDEX geolocat_mpg_site_id_idx ON lada.geolocat_mpg (site_id);
 
 --
 -- Name: COLUMN geolocat.type_regulation; Type: COMMENT; Schema: lada; Owner: -

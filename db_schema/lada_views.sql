@@ -31,23 +31,6 @@ CREATE VIEW public.lada_meas_val AS
     meas_val.is_threshold,
     status_prot.status_mp_id,
     meas_val.last_mod
-   FROM ((lada.meas_val
-     JOIN lada.measm ON ((meas_val.measm_id = measm.id)))
-     JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_mp_id <> 1))));
-
-CREATE OR REPLACE VIEW lada.meas_val_view
- AS
- SELECT meas_val.id,
-    meas_val.measm_id,
-    meas_val.measd_id,
-    meas_val.less_than_lod,
-    meas_val.meas_val,
-    meas_val.error,
-    meas_val.detect_lim,
-    meas_val.meas_unit_id,
-    meas_val.is_threshold,
-    status_prot.status_mp_id,
-    meas_val.last_mod
    FROM lada.meas_val
      JOIN lada.measm ON meas_val.measm_id = measm.id
      JOIN lada.status_prot ON measm.status = status_prot.id AND status_prot.status_mp_id <> 1;
@@ -71,8 +54,8 @@ CREATE MATERIALIZED VIEW lada.mv_tags_array AS
  SELECT
     sample.id AS pid,
     measm.id as mid,
-    array_agg(tag.name) AS tags,
-    array_agg(tag.id) AS tagids
+    array_agg(DISTINCT tag.name) AS tags,
+    array_agg(DISTINCT tag.id) AS tagids
  FROM lada.sample
  INNER JOIN lada.measm ON sample.id = measm.sample_id
  LEFT OUTER JOIN lada.tag_link_measm ON measm.id = tag_link_measm.measm_id

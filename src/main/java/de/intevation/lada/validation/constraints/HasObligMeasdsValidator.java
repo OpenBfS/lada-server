@@ -7,8 +7,12 @@
  */
 package de.intevation.lada.validation.constraints;
 
+import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.VARIABLES;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.persistence.metamodel.SingularAttribute;
@@ -17,7 +21,6 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.ObligMeasdMp;
@@ -49,21 +52,6 @@ public class HasObligMeasdsValidator
             return true;
         }
 
-        final SingularAttribute<ObligMeasdMp, String>
-            mmtIdKey = ObligMeasdMp_.mmtId,
-            envMediumIdKey = ObligMeasdMp_.envMediumId;
-        final SingularAttribute<ObligMeasdMp, Integer>
-            regulationIdKey = ObligMeasdMp_.regulationId;
-
-        ctx.disableDefaultConstraintViolation();
-        ctx.buildConstraintViolationWithTemplate(this.message)
-            .addPropertyNode(mmtIdKey.getName())
-            .addConstraintViolation();
-        // Short path if no measVals can be referenced
-        if (messung.getId() == null) {
-            return false;
-        }
-
         Sample probe = messung.getSample();
         final Integer regulationId = probe.getRegulationId();
         final String mmtId = messung.getMmtId();
@@ -74,6 +62,12 @@ public class HasObligMeasdsValidator
 
         Repository repository = CDI.current().getBeanContainer()
             .createInstance().select(Repository.class).get();
+
+        final SingularAttribute<ObligMeasdMp, String>
+            mmtIdKey = ObligMeasdMp_.mmtId,
+            envMediumIdKey = ObligMeasdMp_.envMediumId;
+        final SingularAttribute<ObligMeasdMp, Integer>
+            regulationIdKey = ObligMeasdMp_.regulationId;
 
         // Match by complete envMediumId
         QueryBuilder<ObligMeasdMp> builder = repository
@@ -104,22 +98,30 @@ public class HasObligMeasdsValidator
             pflicht = repository.filter(builderGrp.getQuery());
         }
 
-        QueryBuilder<MeasVal> wertBuilder = repository
-            .queryBuilder(MeasVal.class)
-            .and(MeasVal_.measm, messung);
-        List<MeasVal> messwerte =
-            repository.filter(wertBuilder.getQuery());
+        List<MeasVal> messwerte = messung.getMeasVals();
         List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();
-        for (MeasVal wert : messwerte) {
-            for (ObligMeasdMp p : pflicht) {
-                if (p.getMeasdId().equals(wert.getMeasdId())) {
-                    tmp.add(p);
+        if (messwerte != null) {
+            for (MeasVal wert : messwerte) {
+                for (ObligMeasdMp p : pflicht) {
+                    if (p.getMeasdId().equals(wert.getMeasdId())) {
+                        tmp.add(p);
+                    }
                 }
             }
         }
         pflicht.removeAll(tmp);
 
         if (!pflicht.isEmpty()) {
+            HibernateConstraintValidatorContext hibernateCtx = ctx.unwrap(
+                HibernateConstraintValidatorContext.class
+            );
+            hibernateCtx.disableDefaultConstraintViolation();
+            hibernateCtx.addExpressionVariable("missing",
+                pflicht.stream().map(ObligMeasdMp::getMeasdId).toList())
+                .buildConstraintViolationWithTemplate(this.message)
+                .enableExpressionLanguage(VARIABLES)
+                .addPropertyNode(mmtIdKey.getName())
+                .addConstraintViolation();
             return false;
         }
         return true;

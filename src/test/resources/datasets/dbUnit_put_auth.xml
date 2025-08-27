@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!-- authentication data -->
-    <master.network id = "06" />
-    <master.network id = "01" />
+    <master.network id = "06" name = "test" />
+    <master.network id = "01" name = "test1" />
     <master.meas_facil id = "06010" network_id = "06" />
     <master.meas_facil id = "01010" network_id = "01" />
     <master.auth
@@ -19,8 +19,13 @@
 
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "9" />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.regulation id = "9" name = "test" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
 
     <!-- Unauthorized sample with no measms -->
     <lada.sample

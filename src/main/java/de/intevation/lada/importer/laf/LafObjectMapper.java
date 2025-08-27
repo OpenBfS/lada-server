@@ -611,8 +611,8 @@ public class LafObjectMapper {
         }
 
         // Add measVals
-        Collection<MeasVal> messwerte = new ArrayList<MeasVal>();
-        List<Integer> messgroessenListe = new ArrayList<Integer>();
+        Collection<MeasVal> messwerte = new ArrayList<>();
+        List<String> messgroessenListe = new ArrayList<>();
         for (Map<String, String> measValRaw: object.getMesswerte()) {
             MeasVal tmp = createMesswert(measValRaw);
             if (tmp != null) {
@@ -638,7 +638,14 @@ public class LafObjectMapper {
         merger.mergeMeasVals(newMessung, messwerte);
 
         // Check for warnings and errors for messung ...
-        validate(newMessung, "validation#messung");
+        validate(
+            newMessung,
+            "validation#messung",
+            false,
+            false,
+            "#" + (newMessung.getMinSampleId() != null
+                ? newMessung.getMinSampleId()
+                : String.valueOf(newMessung.getExtId())));
         // ... and messwerte
         for (MeasVal messwert: messwerte) {
             validate(messwert, "validation#messwert");
@@ -797,11 +804,13 @@ public class LafObjectMapper {
         MeasVal messwert = new MeasVal();
 
         if (attributes.containsKey("MESSGROESSE_ID")) {
-            Measd measd = repository.entityManager().find(
-                Measd.class,
-                Integer.valueOf(attributes.get("MESSGROESSE_ID"))
-            );
-            if (measd == null) {
+            QueryBuilder<Measd> builder = repository.queryBuilder(Measd.class)
+                .and(Measd_.idOld,
+                    Integer.valueOf(attributes.get("MESSGROESSE_ID")));
+            try {
+                messwert.setMeasdId(
+                    repository.getSingle(builder.getQuery()).getId());
+            } catch (NoResultException e) {
                 addWarning(
                     new ReportItem(
                         "MESSWERT - MESSGROESSE_ID",
@@ -809,8 +818,6 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMeasdId(
-                Integer.valueOf(attributes.get("MESSGROESSE_ID")));
         } else if (attributes.containsKey("MESSGROESSE")) {
             String attribute = attributes.get("MESSGROESSE");
             // accept various nuclide notations (e.g.
@@ -825,10 +832,10 @@ public class LafObjectMapper {
                         .toLowerCase();
             }
 
-            QueryBuilder<Measd> builder = repository.queryBuilder(Measd.class)
-                .and(Measd_.name, messgroesseString);
-            List<Measd> groesse = repository.filter(builder.getQuery());
-            if (groesse == null || groesse.isEmpty()) {
+            Measd groesse = repository.entityManager().find(
+                Measd.class,
+                messgroesseString);
+            if (groesse == null) {
                 addWarning(
                     new ReportItem(
                         "MESSWERT - MESSGROESSE",
@@ -836,7 +843,7 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMeasdId(groesse.get(0).getId());
+            messwert.setMeasdId(groesse.getId());
         }
         if (attributes.containsKey("MESSEINHEIT_ID")) {
             MeasUnit measUnit = repository.entityManager().find(
@@ -1019,7 +1026,11 @@ public class LafObjectMapper {
             } else {
                 addError(
                     new ReportItem(
-                        "Statusvergabe", "Status", StatusCodes.VALUE_MISSING));
+                        "Statusvergabe",
+                        "Status#" + (messung.getMinSampleId() != null
+                            ? messung.getMinSampleId()
+                            : messung.getExtId()),
+                        StatusCodes.VALUE_MISSING));
                 return;
             }
         }
@@ -1873,6 +1884,16 @@ public class LafObjectMapper {
         boolean errorsToWarnings,
         boolean validated
     ) {
+        validate(object, key, errorsToWarnings, validated, "");
+    }
+
+    private void validate(
+        BaseModel object,
+        String key,
+        boolean errorsToWarnings,
+        boolean validated,
+        String suffix
+    ) {
         if (!validated) {
             validator.validate(object);
         }
@@ -1881,7 +1902,7 @@ public class LafObjectMapper {
             object.getWarnings().clear();
         }
         report.addValidationMessages(
-            currentSample.getIdentifier(), key, object);
+            currentSample.getIdentifier(), key, suffix, object);
     }
 
     private void addError(ReportItem error) {

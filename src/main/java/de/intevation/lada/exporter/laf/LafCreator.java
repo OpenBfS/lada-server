@@ -36,7 +36,6 @@ import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.MeasUnit;
-import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.model.master.ReiAgGr;
@@ -528,8 +527,7 @@ implements Creator {
      */
     private String writeMesswert(MeasVal mw) {
         String tag = "MESSWERT";
-        String value = "\"" + repository.getById(
-            Measd.class, mw.getMeasdId()).getName() + "\"";
+        String value = "\"" + mw.getMeasdId() + "\"";
         value += " ";
         value += mw.getLessThanLOD() == null ? " " : mw.getLessThanLOD();
         value += mw.getLessThanLOD() == null

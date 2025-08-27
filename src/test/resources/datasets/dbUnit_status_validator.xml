@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!--Auth data-->
-    <master.network id = "06" />
+    <master.network id = "06" name = "test" />
     <master.meas_facil id = "06010" network_id = "06" />
 
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
 
-    <master.regulation id = "4" />
-    <master.regulation id = "9" />
+    <master.regulation id = "4" name = "test" />
+    <master.regulation id = "9" name = "test2" />
 
-    <master.type_regulation id = "E" />
-    <master.type_regulation id = "R" />
+    <master.type_regulation id = "E" name = "testE" />
+    <master.type_regulation id = "R" name = "testR" />
 
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
 
     <master.meas_unit id = "207" />
 
@@ -44,10 +49,10 @@
         short_text = "test"
     />
 
-    <master.mmt id = "A3" />
-    <master.measd id = "56" name = "Mangan" />
-    <master.measd_gr id = "1" />
-    <master.measd_gr_mp measd_id = "56" measd_gr_id = "1" />
+    <master.mmt id = "A3" name = "test" />
+    <master.measd id_old = "56" id = "Mangan" />
+    <master.measd_gr id = "1" name = "test" />
+    <master.measd_gr_mp measd_id = "Mangan" measd_gr_id = "1" />
     <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
 
     <master.env_descrip id = "1" lev = "0" lev_val = "1" name = "s00"/>
@@ -60,7 +65,7 @@
         env_medium_id = "N71"
     />
 
-    <master.spat_ref_sys id = "4" />
+    <master.spat_ref_sys id = "4" name = "test" />
     <master.state
         id = "0"
         ctry = "Deutschland"
@@ -130,7 +135,7 @@
     <lada.meas_val
         id = "10000"
         measm_id = "1200"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -176,7 +181,7 @@
     <lada.meas_val
         id = "10002"
         measm_id = "1202"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -197,7 +202,7 @@
     <lada.meas_val
         id = "10003"
         measm_id = "1203"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -246,7 +251,7 @@
     <lada.meas_val
         id = "10001"
         measm_id = "4200"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -295,7 +300,7 @@
     <lada.meas_val
         id = "10010"
         measm_id = "1210"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
@@ -340,7 +345,7 @@
     <lada.meas_val
         id = "10011"
         measm_id = "1211"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"

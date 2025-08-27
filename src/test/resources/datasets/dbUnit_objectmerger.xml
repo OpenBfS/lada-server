@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <master.network id = "06" />
+    <master.network id = "06" name = "test" />
     <master.meas_facil id = "06010" network_id = "06" />
 
     <master.meas_unit id = "207" />
     <master.meas_unit id = "208" />
-    <master.measd id = "56" name = "Mangan" />
-    <master.measd id = "57" name = "Iron" />
+    <master.measd id_old = "56" id = "Mangan" />
+    <master.measd id_old = "57" id = "Iron" />
 
-    <master.mmt id = "A3" />
+    <master.mmt id = "A3" name = "test" />
 
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "9" />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
-    <master.sample_meth id = "2" ext_id = "S" eudf_sample_meth_id = "B" />
+    <master.regulation id = "9" name = "test" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test1"
+    />
+    <master.sample_meth
+        id = "2"
+        ext_id = "S"
+        eudf_sample_meth_id = "B"
+        name = "test2"
+    />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" />
 
@@ -91,14 +101,14 @@
     <lada.meas_val
         id = "1000"
         measm_id = "1200"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "1000.8"
         meas_unit_id = "207"
     />
     <lada.meas_val
         id = "1001"
         measm_id = "1200"
-        measd_id = "57"
+        measd_id = "Iron"
         meas_val = "1000.8"
         meas_unit_id = "208"
     />

@@ -33,7 +33,6 @@ import de.intevation.lada.model.master.FilterType_;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.GridColMp;
 import de.intevation.lada.model.master.MeasUnit;
-import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.StatusLev;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.model.master.StatusVal;
@@ -219,10 +218,6 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
                     fieldValue = repository.getById(
                         MeasUnit.class, measVal.getMeasUnitId())
                         .getUnitSymbol();
-                    break;
-                case "measdId":
-                    fieldValue = repository.getById(
-                        Measd.class, measVal.getMeasdId()).getName();
                     break;
                 default:
                     fieldValue = getFieldByName(subDataColumn, measVal);

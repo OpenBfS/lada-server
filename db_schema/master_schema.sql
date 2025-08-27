@@ -286,10 +286,26 @@ AS $BODY$
   END;
 $BODY$;
 
+CREATE FUNCTION tag_val_until_meas_facil_default()
+    RETURNS timestamp without time zone STABLE PARALLEL SAFE
+    RETURN current_timestamp AT TIME ZONE 'utc' + '365 days';
+
+CREATE FUNCTION set_tag_val_until() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN
+        CASE
+            WHEN NEW.meas_facil_id IS NOT NULL THEN
+                NEW.val_until = master.tag_val_until_meas_facil_default();
+            WHEN NEW.is_auto_tag THEN
+                NEW.val_until = current_timestamp AT TIME ZONE 'utc' + '584 days';
+        END CASE;
+        RETURN NEW;
+    END;
+$$;
+
 
 CREATE TABLE spat_ref_sys (
     id serial PRIMARY KEY,
-    name character varying(50) CHECK (trim(both ' ' from name) <> ''),
+    name character varying(50) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
     idf_geo_key character varying(1) CHECK (trim(both ' ' from idf_geo_key) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
@@ -318,7 +334,7 @@ CREATE TRIGGER last_mod_unit_convers BEFORE UPDATE ON master.unit_convers FOR EA
 
 CREATE TABLE opr_mode (
     id smallint PRIMARY KEY,
-    name character varying(30) NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    name character varying(30) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_opr_mode BEFORE UPDATE ON master.opr_mode FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -353,7 +369,7 @@ CREATE TABLE admin_unit (
 
 CREATE TABLE network (
     id character varying(2) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),
-    name character varying(50) CHECK (trim(both ' ' from name) <> ''),
+    name character varying(50) NOT NULL CHECK (trim(both ' ' from name) <> ''),
     idf_network_id character varying(1) CHECK (trim(both ' ' from idf_network_id) <> ''),
     is_fmn boolean NOT NULL DEFAULT false,
     mail_list character varying(512) CHECK (trim(both ' ' from mail_list) <> ''),
@@ -376,11 +392,10 @@ CREATE TRIGGER last_mod_meas_facil BEFORE UPDATE ON meas_facil FOR EACH ROW EXEC
 CREATE TABLE env_medium (
     id character varying(3) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),
     descr character varying(300) CHECK (trim(both ' ' from descr) <> ''),
-    name character varying(80) NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    name character varying(80) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
     unit_1 integer REFERENCES meas_unit,
     unit_2 integer REFERENCES meas_unit,
     meas_facil_id character varying(5) REFERENCES meas_facil,
-    UNIQUE (name),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_env_medium BEFORE UPDATE ON master.env_medium FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -421,7 +436,7 @@ CREATE TRIGGER last_mod_auth_coord_ofc_env_medium_mp BEFORE UPDATE ON master.aut
 CREATE TABLE regulation (
     id serial PRIMARY KEY,
     descr character varying(30) CHECK (trim(both ' ' from descr) <> ''),
-    name character varying(12) CHECK (trim(both ' ' from name) <> ''),
+    name character varying(12) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_regulation BEFORE UPDATE ON master.regulation FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -468,28 +483,33 @@ CREATE TABLE env_descrip_env_medium_mp (
     s10 integer REFERENCES env_descrip,
     s11 integer REFERENCES env_descrip,
     env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE NULLS NOT DISTINCT
+        (s00, s01, s02, s03, s04, s05, s06, s07, s08, s09, s10, s11)
 );
 CREATE TRIGGER last_mod_env_descrip_env_medium_mp BEFORE UPDATE ON master.env_descrip_env_medium_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE lada_user (
     id serial PRIMARY KEY,
-    name character varying(80) NOT NULL CHECK (trim(both ' ' from name) <> ''),
-    UNIQUE (name)
+    name character varying(80) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> '')
 );
-
 
 CREATE TABLE base_query (
     id serial PRIMARY KEY,
-    sql text NOT NULL CHECK(sql <> ''), CHECK(check_sql(sql) AND sql ~ '^SELECT' AND sql !~* '.*DELETE.*|.*DROP.*|.*TRUNCATE.*|.*INSERT.*|.*UPDATE.*|.*GRANT.*|.*REVOKE.*')
+    sql text NOT NULL CHECK(
+        check_sql(sql)
+        AND sql ~ '^(SELECT|WITH)'
+        AND sql !~* '.*DELETE.*|.*DROP.*|.*TRUNCATE.*|.*INSERT.*|.*UPDATE.*|.*GRANT.*|.*REVOKE.*')
 );
+CREATE UNIQUE INDEX ON base_query (md5(sql));
 
 CREATE TABLE query_user (
     id serial PRIMARY KEY,
     name character varying(80) NOT NULL CHECK (trim(both ' ' from name) <> ''),
     lada_user_id integer NOT NULL REFERENCES lada_user,
     base_query_id integer NOT NULL REFERENCES base_query,
-    descr text NOT NULL CHECK (trim(both ' ' from descr) <> '')
+    descr text NOT NULL CHECK (trim(both ' ' from descr) <> ''),
+    UNIQUE (name, lada_user_id)
 );
 
 CREATE TABLE query_meas_facil_mp (
@@ -502,9 +522,8 @@ CREATE TABLE query_meas_facil_mp (
 
 CREATE TABLE filter_type (
     id serial PRIMARY KEY,
-    type character varying(12) NOT NULL CHECK (trim(both ' ' from type) <> ''),
-    is_multiselect boolean NOT NULL DEFAULT false,
-    UNIQUE(type)
+    type character varying(12) UNIQUE NOT NULL CHECK (trim(both ' ' from type) <> ''),
+    is_multiselect boolean NOT NULL DEFAULT false
 );
 INSERT INTO filter_type VALUES(0, 'text', false);
 INSERT INTO filter_type VALUES(1, 'number', false);
@@ -530,15 +549,15 @@ CREATE TABLE filter (
 CREATE TABLE mmt (
     id character varying(2) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),
     descr character varying(300) CHECK (trim(both ' ' from descr) <> ''),
-    name character varying(50) CHECK (trim(both ' ' from name) <> ''),
+    name character varying(50) NOT NULL CHECK (trim(both ' ' from name) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_mmt BEFORE UPDATE ON master.mmt FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE measd (
-    id serial PRIMARY KEY,
+    id character varying(50) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),
+    id_old serial UNIQUE NOT NULL, -- Kept for backwards compatibility in LAF8 imprt
     descr character varying(300) CHECK (trim(both ' ' from descr) <> ''),
-    name character varying(50) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
     def_color character varying(9) CHECK (trim(both ' ' from def_color) <> ''),
     idf_ext_id character varying(6) CHECK (trim(both ' ' from idf_ext_id) <> ''),
     is_ref_nucl boolean NOT NULL DEFAULT false,
@@ -550,7 +569,7 @@ CREATE TRIGGER last_mod_measd BEFORE UPDATE ON master.measd FOR EACH ROW EXECUTE
 
 CREATE TABLE measd_gr (
     id serial PRIMARY KEY,
-    name character varying(80) CHECK (trim(both ' ' from name) <> ''),
+    name character varying(80) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
     ref_nucl_gr character(1) DEFAULT NULL::bpchar,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
@@ -569,7 +588,7 @@ CREATE TRIGGER last_mod_mpg_categ BEFORE UPDATE ON mpg_categ FOR EACH ROW EXECUT
 
 CREATE TABLE measd_gr_mp (
     measd_gr_id integer REFERENCES measd_gr,
-    measd_id integer REFERENCES measd,
+    measd_id character varying(50) REFERENCES measd,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     PRIMARY KEY (measd_gr_id, measd_id)
 );
@@ -596,8 +615,8 @@ CREATE VIEW mmt_measd_view AS
 CREATE TABLE rei_ag
 (
     id serial PRIMARY KEY,
-    name character varying(10) NOT NULL CHECK (trim(both ' ' from name) <> ''),
-    descr character varying(120) CHECK (trim(both ' ' from descr) <> ''),
+    name character varying(10) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    descr character varying(120) NOT NULL CHECK (trim(both ' ' from descr) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_rei_ag BEFORE UPDATE ON master.rei_ag FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -605,8 +624,8 @@ CREATE TRIGGER last_mod_rei_ag BEFORE UPDATE ON master.rei_ag FOR EACH ROW EXECU
 CREATE TABLE rei_ag_gr
 (
     id serial PRIMARY KEY,
-    name character varying(30) CHECK (trim(both ' ' from name) <> ''),
-    descr character varying(120) CHECK (trim(both ' ' from descr) <> ''),
+    name character varying(30) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    descr character varying(120) NOT NULL CHECK (trim(both ' ' from descr) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_rei_ag_gr BEFORE UPDATE ON master.rei_ag_gr FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -643,8 +662,8 @@ CREATE TRIGGER last_mod_nucl_facil BEFORE UPDATE ON master.nucl_facil FOR EACH R
 CREATE TABLE nucl_facil_gr
 (
     id serial PRIMARY KEY,
-    ext_id character varying(7) NOT NULL CHECK (trim(both ' ' from ext_id) <> ''),
-    name character varying(120) CHECK (trim(both ' ' from name) <> ''),
+    ext_id character varying(7) UNIQUE NOT NULL CHECK (trim(both ' ' from ext_id) <> ''),
+    name character varying(120) NOT NULL CHECK (trim(both ' ' from name) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_nucl_facil_gr BEFORE UPDATE ON master.nucl_facil_gr FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -736,14 +755,14 @@ CREATE TRIGGER set_site_id_site BEFORE INSERT OR UPDATE ON site
 
 CREATE TABLE type_regulation (
     id character(1) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),
-    name character varying(60) CHECK (trim(both ' ' from name) <> ''),
+    name character varying(60) NOT NULL CHECK (trim(both ' ' from name) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_type_regulation BEFORE UPDATE ON master.type_regulation FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE oblig_measd_mp (
     id serial PRIMARY KEY,
-    measd_id integer NOT NULL REFERENCES measd,
+    measd_id character varying(50) NOT NULL REFERENCES measd,
     mmt_id character varying(2) NOT NULL REFERENCES mmt,
     env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
     regulation_id smallint NOT NULL REFERENCES regulation,
@@ -757,8 +776,7 @@ CREATE TABLE sample_specif (
     meas_unit_id integer REFERENCES meas_unit,
     name character varying(50) NOT NULL CHECK (trim(both ' ' from name) <> ''),
     ext_id character varying(7) NOT NULL CHECK (trim(both ' ' from ext_id) <> ''),
-    eudf_keyword character varying(40) CHECK (trim(both ' ' from eudf_keyword) <> ''),
-    UNIQUE (eudf_keyword),
+    eudf_keyword character varying(40) UNIQUE CHECK (trim(both ' ' from eudf_keyword) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_sample_specif BEFORE UPDATE ON master.sample_specif FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -774,8 +792,8 @@ CREATE TRIGGER last_mod_env_specif_mp BEFORE UPDATE ON master.env_specif_mp FOR 
 
 CREATE TABLE sample_meth (
     id serial PRIMARY KEY,
-    name character varying(30) CHECK (trim(both ' ' from name) <> ''),
-    ext_id character varying(5) NOT NULL CHECK (trim(both ' ' from ext_id) <> ''),
+    name character varying(30) NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    ext_id character varying(5) UNIQUE NOT NULL CHECK (trim(both ' ' from ext_id) <> ''),
     eudf_sample_meth_id character varying(1) NOT NULL CHECK (trim(both ' ' from eudf_sample_meth_id) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
@@ -807,7 +825,8 @@ CREATE TRIGGER last_mod_sampler BEFORE UPDATE ON sampler FOR EACH ROW EXECUTE PR
 CREATE TABLE disp (
     id  serial PRIMARY KEY,
     name character varying(12) NOT NULL CHECK (trim(both ' ' from name) <> ''),
-    format character varying(30) CHECK (trim(both ' ' from format) <> '')
+    format character varying(30) CHECK (trim(both ' ' from format) <> ''),
+    UNIQUE(name, format)
 );
 
 
@@ -970,7 +989,9 @@ CREATE TABLE tag (
     lada_user_id INTEGER REFERENCES lada_user ON DELETE SET NULL,
     val_until TIMESTAMP without time zone,
     created_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    CHECK(network_id IS NULL OR meas_facil_id IS NULL)
+    CHECK(network_id IS NULL OR meas_facil_id IS NULL),
+    -- Only generated and meas_facil tags can have validity:
+    CHECK(val_until IS NULL OR meas_facil_id IS NOT NULL OR is_auto_tag)
 );
 CREATE UNIQUE INDEX global_tag_unique_idx ON master.tag (name)
     WHERE network_id IS NULL AND meas_facil_id IS NULL;
@@ -978,6 +999,11 @@ CREATE UNIQUE INDEX network_tag_unique_idx ON master.tag (name, network_id)
     WHERE meas_facil_id IS NULL;
 CREATE UNIQUE INDEX meas_facil_tag_unique_idx ON master.tag (name, meas_facil_id)
     WHERE network_id IS NULL;
+CREATE TRIGGER default_val_until BEFORE INSERT OR UPDATE OF val_until
+    ON tag FOR EACH ROW
+    WHEN (NEW.val_until IS NULL
+        AND (NEW.meas_facil_id IS NOT NULL OR NEW.is_auto_tag))
+    EXECUTE PROCEDURE set_tag_val_until();
 
 CREATE TABLE master.convers_dm_fm(
   id serial PRIMARY KEY,
@@ -1014,8 +1040,8 @@ CREATE TRIGGER last_mod_ref_val BEFORE UPDATE ON master.ref_val FOR EACH ROW EXE
 CREATE TABLE IF NOT EXISTS master.targ_act_mmt_gr
 (
     id serial PRIMARY KEY,
-    name character varying(20) CHECK (trim(both ' ' from name) <> ''),
-    descr character varying(120) CHECK (trim(both ' ' from descr) <> ''),
+    name character varying(20) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    descr character varying(120) NOT NULL CHECK (trim(both ' ' from descr) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_act_mmt_gr BEFORE UPDATE ON master.targ_act_mmt_gr FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -1033,7 +1059,7 @@ CREATE TABLE IF NOT EXISTS master.targ_env_gr
 (
     id serial PRIMARY KEY,
     name character varying(20) CHECK (trim(both ' ' from name) <> ''),
-    targ_env_gr_displ character varying(120) CHECK (trim(both ' ' from targ_env_gr_displ) <> ''),
+    targ_env_gr_displ character varying(120) NOT NULL CHECK (trim(both ' ' from targ_env_gr_displ) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_env_gr BEFORE UPDATE ON master.targ_env_gr FOR EACH ROW EXECUTE PROCEDURE update_last_mod();

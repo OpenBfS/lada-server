@@ -30,12 +30,11 @@ import de.intevation.lada.model.lada.Sample;
 public class MessungTest extends ValidatorBaseTest {
 
     //ID constants from test dataset
-    private static final int EXISTING_SAMPLE_ID = 1000;
     private static final int EXISTING_SAMPLE_ID_SAMPLE_METH_CONT = 2000;
     private static final int EXISTING_SAMPLE_ID_REGULATION_161 = 3000;
     private static final int EXISTING_MEASM_ID = 1200;
     private static final String EXISTING_MIN_SAMPLE_ID = "T100";
-    private static final String EXISTING_MMT_ID = "A3";
+    private static final String MEASD_ID_OTHER = "Other";
     private static final String EXISTING_SAMPLE_START_DATE
         = "2012-05-03 13:07:00";
 
@@ -47,8 +46,8 @@ public class MessungTest extends ValidatorBaseTest {
     private static final String MIN_SAMPLE_ID_00G2 = "00G2";
 
     private static final String MSG_VALUE_MISSING = "A value must be provided";
-    private static final String MSG_VAL_OBL_MEASURE =
-        "Obligatory measurand missing";
+    private static final String MSG_VAL_OBL_MEASURE_TPL =
+        "Obligatory measurand missing: [%s]";
 
     /**
      * Test valid measm.
@@ -105,9 +104,11 @@ public class MessungTest extends ValidatorBaseTest {
     public void uniqueNebenprobenNrNew() {
         Measm messung = createMinimalValidMeasm();
         messung.setId(null);
+        messung.setExtId(null);
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
         validator.validate(messung);
-        Assert.assertFalse(messung.hasErrors());
+        Assert.assertFalse("Unexpected errors: " + messung.getErrors(),
+            messung.hasErrors());
     }
 
     /**
@@ -118,7 +119,8 @@ public class MessungTest extends ValidatorBaseTest {
         Measm messung = createMinimalValidMeasm();
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
         validator.validate(messung);
-        Assert.assertFalse(messung.hasErrors());
+        Assert.assertFalse("Unexpected errors: " + messung.getErrors(),
+            messung.hasErrors());
     }
 
     /**
@@ -251,12 +253,12 @@ public class MessungTest extends ValidatorBaseTest {
     @Test
     public void measmWithoutMeasVals() {
         Measm measm = createMinimalValidMeasm();
-        measm.setId(null);
+        measm.setMeasVals(null);
 
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MMT_ID,
-            MSG_VAL_OBL_MEASURE);
+            String.format(MSG_VAL_OBL_MEASURE_TPL, "Mangan"));
     }
 
     /**
@@ -270,7 +272,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MMT_ID,
-            MSG_VAL_OBL_MEASURE);
+            String.format(MSG_VAL_OBL_MEASURE_TPL, MEASD_ID_OTHER));
     }
 
     /**
@@ -284,7 +286,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MMT_ID,
-            MSG_VAL_OBL_MEASURE);
+            String.format(MSG_VAL_OBL_MEASURE_TPL, MEASD_ID_OTHER));
     }
 
     /**
@@ -298,7 +300,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             Measm_.MMT_ID,
-            MSG_VAL_OBL_MEASURE);
+            String.format(MSG_VAL_OBL_MEASURE_TPL, MEASD_ID_OTHER));
     }
 
     /**
@@ -321,13 +323,6 @@ public class MessungTest extends ValidatorBaseTest {
     }
 
     private Measm createMinimalValidMeasm() {
-        Measm measm = new Measm();
-        measm.setId(EXISTING_MEASM_ID);
-        measm.setSample(repository.getById(Sample.class, EXISTING_SAMPLE_ID));
-        measm.setMmtId(EXISTING_MMT_ID);
-        measm.setMinSampleId(MIN_SAMPLE_ID_00G2);
-        measm.setMeasPd(1);
-        measm.setMeasmStartDate(new Date());
-        return measm;
+        return repository.getById(Measm.class, EXISTING_MEASM_ID);
     }
 }

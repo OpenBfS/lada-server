@@ -11,6 +11,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -31,8 +32,10 @@ import jakarta.json.bind.JsonbBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.SyncInvoker;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
@@ -44,7 +47,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.rest.TagService;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
+import de.intevation.lada.data.AsyncImportService;
 import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
@@ -76,11 +81,14 @@ import de.intevation.lada.util.rest.JSONBConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-public class ImporterTest extends BaseTest {
+public class ImporterTest extends ClientBaseTest {
 
     private static final Logger LOG = Logger.getLogger(ImporterTest.class);
 
-    private static final String ASYNC_IMPORT_URL = "data/import/async/";
+    private static final String ASYNC_IMPORT_URL = UriBuilder
+        .fromResource(AsyncImportService.class).build().getPath() + "/";
+
+    private static final int GENERATED_EXPIRATION_TIME = 584;
 
     public static final String SAMPLES_KEY = "samples";
     private static final String SAMPLE_IDS_KEY = "sampleIds";
@@ -143,7 +151,7 @@ public class ImporterTest extends BaseTest {
             .add(Measm_.MMT_ID, mmtId)
             .add(Measm_.MEAS_VALS, Json.createArrayBuilder()
                 .add(Json.createObjectBuilder()
-                    .add(MeasVal_.MEASD_ID, 1)
+                    .add(MeasVal_.MEASD_ID, measd)
                     .add(MeasVal_.MEAS_UNIT_ID, 1))))
         .build()
     );
@@ -223,6 +231,41 @@ public class ImporterTest extends BaseTest {
         MatcherAssert.assertThat(
             report.getJsonObject("notifications").getJsonArray(lafSampleId),
             CoreMatchers.hasItem(expectedNotification));
+    }
+
+    /**
+     * Assert that generated Tag has expected validity.
+     */
+    @Test
+    @RunAsClient
+    public final void tagValidity()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        final String laf = String.format(
+            laf8Template, lafSampleId,
+            regulation, sampleSpecifId, "", measd, measUnit, "");
+        JsonObject fileReport = testAsyncLaf8Import(laf, lafSampleId, true);
+        final int sampleId = fileReport.getJsonArray(SAMPLE_IDS_KEY)
+            .getJsonNumber(0).intValue();
+
+        // Assert that generated Tag has expected validity
+        List<Tag> tags = target
+            .path(UriBuilder.fromResource(TagService.class).build().getPath())
+            .queryParam("sampleId", sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get(new GenericType<List<Tag>>() { });
+        final String tagName = fileReport.getString("tag");
+        MatcherAssert.assertThat(tags.stream().map(Tag::getName).toList(),
+            CoreMatchers.hasItem(tagName));
+        Tag tag = tags.stream().filter(t -> tagName.equals(t.getName()))
+            .findFirst().get();
+        Assert.assertEquals(GENERATED_EXPIRATION_TIME,
+            /* +1 because until calculates complete units and the tag has
+               been generated a few moments ago */
+            1 + Instant.now().until(
+                tag.getValUntil().toInstant(), ChronoUnit.DAYS));
     }
 
     /**
@@ -388,7 +431,7 @@ public class ImporterTest extends BaseTest {
         measm.setExtId(existingMeasmExtId);
 
         MeasVal measVal = new MeasVal();
-        measVal.setMeasdId(1);
+        measVal.setMeasdId(measd);
         measVal.setMeasUnitId(1);
         measm.setMeasVals(List.of(measVal));
 
@@ -414,10 +457,10 @@ public class ImporterTest extends BaseTest {
         measm.setExtId(existingMeasmExtId);
 
         MeasVal measVal1 = new MeasVal();
-        measVal1.setMeasdId(1);
+        measVal1.setMeasdId(measd);
         measVal1.setMeasUnitId(1);
         MeasVal measVal2 = new MeasVal();
-        measVal2.setMeasdId(1);
+        measVal2.setMeasdId(measd);
         measVal2.setMeasUnitId(1);
         measm.setMeasVals(List.of(measVal1, measVal2));
 
@@ -533,7 +576,7 @@ public class ImporterTest extends BaseTest {
         measm.setMmtId(invalidMmtId);
         laf.setMeasms(List.of(measm));
         MeasVal measVal = new MeasVal();
-        measVal.setMeasdId(2);
+        measVal.setMeasdId(""); // XXX
         measVal.setMeasUnitId(2);
         measm.setMeasVals(List.of(measVal));
 
@@ -1000,6 +1043,24 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test import MeasVal using "MESSWERT_S".
+     */
+    @Test
+    @RunAsClient
+    public final void asyncImportMeasValS()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        testAsyncLaf8Import(
+            String.format(
+                laf8Template, lafSampleId,
+                regulation, sampleSpecifId, "",
+                measd, measUnit,
+                "MESSWERT_S 1 42.0 1 0.42\n"),
+            lafSampleId,
+            true);
+    }
+
+    /**
      * Test "Zeitbasis" handling in LAF8 import.
      */
     @Test
@@ -1330,7 +1391,7 @@ public class ImporterTest extends BaseTest {
         laf9Template.setMeasms(new ArrayList<>(List.of(measm)));
 
         MeasVal measVal = new MeasVal();
-        measVal.setMeasdId(1);
+        measVal.setMeasdId(measd);
         measVal.setMeasUnitId(1);
         measVal.setMeasVal(1d);
         measVal.setError(1f);

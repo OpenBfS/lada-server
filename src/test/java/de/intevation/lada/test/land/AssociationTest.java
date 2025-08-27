@@ -84,6 +84,9 @@ public class AssociationTest extends ServiceTest {
 
     private final String measFacilId = "06011";
 
+    private final String measdId1 = "Mangan";
+    private final String measdId2 = "Iron";
+
     @Override
     public void init(WebTarget t) {
         super.init(t);
@@ -114,7 +117,7 @@ public class AssociationTest extends ServiceTest {
                 9,
                 "Test");
         measm.setStatusProts(List.of(statusProtSampleMeasm));
-        MeasVal measValSample = getMeasVal(56, 207);
+        MeasVal measValSample = getMeasVal(measdId1, 207);
         measm.setMeasVals(List.of(measValSample));
         measm.setTags(List.of(tag));
         SampleSpecifMeasVal sampleSpecifMeasVal =
@@ -173,7 +176,7 @@ public class AssociationTest extends ServiceTest {
         Measm newMeasm = new Measm();
         newMeasm.setMeasmStartDate(createDate(2023, 2, 1));
         newMeasm.setMeasPd(1);
-        MeasVal measVal = getMeasVal(56, 208);
+        MeasVal measVal = getMeasVal(measdId1, 208);
         CommMeasm commMeasm = getCommMeasm(commMeasmText, measFacilId);
         StatusProt statusProt = getStatusProt(
             newMeasm,
@@ -194,7 +197,7 @@ public class AssociationTest extends ServiceTest {
         // Add associations to newly created Measm
         measVal.setMeasm(createdMeasm);
         measVal = create(measValPath, measVal, MeasVal.class);
-        MeasVal measVal2 = getMeasVal(57, 207);
+        MeasVal measVal2 = getMeasVal(measdId2, 207);
         measVal2.setMeasm(createdMeasm);
         measVal2 = create(measValPath, measVal2, MeasVal.class);
         commMeasm = getCommMeasm(commMeasmText, measFacilId);
@@ -522,7 +525,7 @@ public class AssociationTest extends ServiceTest {
         Tag tag2 = new Tag();
         tag2.setName("another tag");
         CommMeasm commMeasm3 = getCommMeasm("new Comment2", measFacilId);
-        MeasVal measVal3 = getMeasVal(56, 209);
+        MeasVal measVal3 = getMeasVal(measdId1, 209);
         measm2.setMeasVals(List.of(measVal3));
         CommSample commSample2 = getCommSample(measFacilId,
             "new comment2");
@@ -785,7 +788,7 @@ public class AssociationTest extends ServiceTest {
         return site;
     }
 
-    private MeasVal getMeasVal(int measdId, int measUnitId) {
+    private MeasVal getMeasVal(String measdId, int measUnitId) {
         MeasVal m = new MeasVal();
         m.setMeasdId(measdId);
         m.setMeasUnitId(measUnitId);

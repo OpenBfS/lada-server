@@ -5,7 +5,7 @@
     <lada.meas_val
         id = "1003"
         measm_id = "1200"
-        measd_id = "56"
+        measd_id = "Mangan"
         meas_val = "1.5"
         meas_unit_id = "207"
         less_than_lod = "[null]"

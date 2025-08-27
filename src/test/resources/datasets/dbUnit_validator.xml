@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!--Auth data-->
-    <master.network id = "06" />
+    <master.network id = "06" name = "test" />
     <master.meas_facil id = "06010" network_id = "06" />
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "1" />
-    <master.regulation id = "2" />
-    <master.regulation id = "4" />
-    <master.regulation id = "9" />
-    <master.regulation id = "8" />
-    <master.type_regulation id = "E" />
-    <master.type_regulation id = "U" />
-    <master.type_regulation id = "R" />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
-    <master.sample_meth id = "3" ext_id = "S" eudf_sample_meth_id = "A" />
-    <master.sample_meth id = "9" ext_id = "X" eudf_sample_meth_id = "A" />
+    <master.regulation id = "1" name = "test1" />
+    <master.regulation id = "2" name = "test2" />
+    <master.regulation id = "4" name = "test4" />
+    <master.regulation id = "9" name = "test9" />
+    <master.regulation id = "8" name = "test8" />
+    <master.type_regulation id = "E" name = "E" />
+    <master.type_regulation id = "U" name = "U" />
+    <master.type_regulation id = "R" name = "R" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test1"
+    />
+    <master.sample_meth
+        id = "3"
+        ext_id = "S"
+        eudf_sample_meth_id = "A"
+        name = "test2"
+    />
+    <master.sample_meth
+        id = "9"
+        ext_id = "X"
+        eudf_sample_meth_id = "A"
+        name = "test3"
+    />
     <master.meas_unit id = "207" />
     <master.meas_unit id = "208" />
     <master.meas_unit id = "209" />
@@ -46,42 +61,42 @@
         descr = "test"
         short_text = "test"
     />
-    <master.mmt id = "A3" />
-    <master.mmt id = "A4" />
-    <master.mmt id = "A5" />
-    <master.mmt id = "A6" />
-    <master.measd id = "56" name = "Mangan" />
-    <master.measd id = "57" name = "Other" />
-    <master.measd id = "58" name = "Unmatched" />
-    <master.measd_gr id = "1" />
-    <master.measd_gr_mp measd_id = "56" measd_gr_id = "1" />
-    <master.measd_gr_mp measd_id = "57" measd_gr_id = "1" />
+    <master.mmt id = "A3" name = "test" />
+    <master.mmt id = "A4" name = "test4" />
+    <master.mmt id = "A5" name = "test5" />
+    <master.mmt id = "A6" name = "test6" />
+    <master.measd id_old = "56" id = "Mangan" />
+    <master.measd id_old = "57" id = "Other" />
+    <master.measd id_old = "58" id = "Unmatched" />
+    <master.measd_gr id = "1" name = "test" />
+    <master.measd_gr_mp measd_id = "Mangan" measd_gr_id = "1" />
+    <master.measd_gr_mp measd_id = "Other" measd_gr_id = "1" />
     <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
     <master.oblig_measd_mp
         id = "1"
         mmt_id = "A3"
-        measd_id = "56"
+        measd_id = "Mangan"
         regulation_id = "9"
         env_medium_id = "L61"
     />
     <master.oblig_measd_mp
         id = "2"
         mmt_id = "A4"
-        measd_id = "57"
+        measd_id = "Other"
         regulation_id = "9"
         env_medium_id = "L61"
     />
     <master.oblig_measd_mp
         id = "3"
         mmt_id = "A5"
-        measd_id = "57"
+        measd_id = "Other"
         regulation_id = "9"
         env_medium_id = "L6"
     />
     <master.oblig_measd_mp
         id = "4"
         mmt_id = "A6"
-        measd_id = "57"
+        measd_id = "Other"
         regulation_id = "9"
         env_medium_id = "L"
     />
@@ -188,12 +203,12 @@
         geom_center = "SRID=4326;POINT(52.5 13.5)"
     />
 
-    <master.spat_ref_sys id = "1" />
-    <master.spat_ref_sys id = "2" />
-    <master.spat_ref_sys id = "4" />
-    <master.spat_ref_sys id = "5" />
-    <master.spat_ref_sys id = "6" />
-    <master.spat_ref_sys id = "8" />
+    <master.spat_ref_sys id = "1" name = "test1" />
+    <master.spat_ref_sys id = "2" name = "test2" />
+    <master.spat_ref_sys id = "4" name = "test4" />
+    <master.spat_ref_sys id = "5" name = "test5" />
+    <master.spat_ref_sys id = "6" name = "test6" />
+    <master.spat_ref_sys id = "8" name = "test8" />
     <master.state
         id = "0"
         ctry = "Deutschland"
@@ -397,7 +412,7 @@
     <lada.meas_val
         id = "10000"
         measm_id = "1200"
-        measd_id = "56"
+        measd_id = "Mangan"
         less_than_LOD = "&lt;"
         error = "3.3"
         detect_lim = "2.4"

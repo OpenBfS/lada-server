@@ -25,7 +25,6 @@ import de.intevation.lada.model.lada.TagLinkSample_;
 import de.intevation.lada.model.lada.TagLink_;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
-import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 
 
@@ -112,16 +111,6 @@ public class TagService extends LadaIntegerIdEntityService {
     public Tag update(
         @Valid Tag tag
     ) throws BadRequestException {
-        // Drop validity for network-tags
-        if (tag.getNetworkId() != null) {
-            tag.setValUntil(null);
-        }
-
-        // Set default validity for measFacil-tags
-        if (tag.getMeasFacilId() != null && tag.getValUntil() == null) {
-            tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
-        }
-
         return repository.update(tag);
     }
 
@@ -137,12 +126,6 @@ public class TagService extends LadaIntegerIdEntityService {
         @Valid Tag tag
     ) throws BadRequestException {
         tag.setLadaUserId(authorization.getInfo().getUserId());
-
-        if (tag.getValUntil() == null
-            && tag.getMeasFacilId() != null
-        ) {
-            tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
-        }
         return repository.create(tag);
     }
 

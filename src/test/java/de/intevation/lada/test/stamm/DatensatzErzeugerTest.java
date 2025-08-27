@@ -10,11 +10,14 @@ package de.intevation.lada.test.stamm;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.DatasetCreator;
+import de.intevation.lada.model.master.DatasetCreator_;
+import de.intevation.lada.rest.DatasetCreatorService;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -46,17 +49,17 @@ public class DatensatzErzeugerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("rest/datasetcreator", DatasetCreator.class);
-        getById(
-            "rest/datasetcreator/1000",
-            expectedById);
+        final String url = UriBuilder.fromResource(DatasetCreatorService.class)
+            .build().getPath() + "/";
+        final int id = 1000;
+        get(url, DatasetCreator.class);
+        getById(url + id, expectedById);
         update(
-            "rest/datasetcreator/1000",
-            "descr",
+            url + id,
+            DatasetCreator_.DESCR,
             "Testbezeichnung",
             "geändert");
-        JsonObject created = create(
-            "rest/datasetcreator", create);
-        delete("rest/datasetcreator/" + created.get("id"));
+        JsonObject created = create(url, create);
+        delete(url + created.get(DatasetCreator_.ID));
     }
 }

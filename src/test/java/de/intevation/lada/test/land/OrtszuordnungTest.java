@@ -20,6 +20,7 @@ import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.UriBuilder;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.master.Site;
@@ -144,7 +145,7 @@ public class OrtszuordnungTest extends ServiceTest {
 
     private void assertSiteMustExist(JsonObject loc) {
         create(urlPath, loc, Status.NOT_FOUND);
-        BaseTest.parseResponse(target.path(urlPath + expectedId)
+        ClientBaseTest.parseResponse(target.path(urlPath + expectedId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!-- authentication data -->
-    <master.network id = "06" />
+    <master.network id = "06" name = "test"/>
     <master.meas_facil id = "06010" network_id = "06" />
     <master.meas_facil id = "06011" network_id = "06" />
     <master.auth
@@ -19,17 +19,22 @@
     <!--master data-->
     <master.meas_unit id = "1" unit_symbol = "Bq/kgFM"/>
 
-    <master.measd id = "1" name = "H-3" />
-    <master.mmt id = "A3" />
-    <master.mmt id = "I3" />
-    <master.measd_gr id = "1" />
-    <master.measd_gr_mp measd_id = "1" measd_gr_id = "1" />
+    <master.measd id_old = "1" id = "H-3" />
+    <master.mmt id = "A3" name = "test" />
+    <master.mmt id = "I3" name = "test1" />
+    <master.measd_gr id = "1" name = "test" />
+    <master.measd_gr_mp measd_id = "H-3" measd_gr_id = "1" />
     <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
 
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "1" name = "test" />
     <master.regulation id = "2" name = "test2" />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
 
     <master.env_descrip id = "1" lev = "0" lev_val = "1" name = "s00"/>
@@ -57,9 +62,9 @@
         regulation_id = "2"
     />
 
-    <master.spat_ref_sys id = "4"/>
+    <master.spat_ref_sys id = "4" name = "test"/>
 
-    <master.type_regulation id = "E"/>
+    <master.type_regulation id = "E" name = "E"/>
 
     <master.import_conf
         attribute = "datenbasis"
@@ -159,7 +164,7 @@
     <lada.meas_val
         id = "1"
         measm_id = "1"
-        measd_id = "1"
+        measd_id = "H-3"
         meas_unit_id = "1"
     />
     <lada.geolocat

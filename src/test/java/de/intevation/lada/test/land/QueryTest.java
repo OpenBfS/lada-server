@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.test.ServiceTest;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.Entity;
@@ -59,7 +60,7 @@ public class QueryTest extends ServiceTest {
             .accept(MediaType.APPLICATION_JSON)
             .put(Entity.entity(
                 updatePayload.toString(), MediaType.APPLICATION_JSON));
-        JsonObject updatedContent = BaseTest
+        JsonObject updatedContent = ClientBaseTest
             .parseResponse(updated)
             .asJsonObject();
         updatedContent.forEach((key, value) ->

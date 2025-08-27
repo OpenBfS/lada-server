@@ -139,7 +139,7 @@ public class Sample extends BaseModel
     private String mainSampleId;
 
     @NotEmptyNorWhitespace
-    @Size(max = 16)
+    @Size(max = 19)
     @Pattern(regexp = "^(?!ZDB).*$", groups = CreateErrors.class)
     private String extId;
 
@@ -190,6 +190,7 @@ public class Sample extends BaseModel
     @Temporal(TIMESTAMP)
     private Date sampleStartDate;
 
+    @PastOrPresent(groups = Warnings.class)
     @Temporal(TIMESTAMP)
     private Date sampleEndDate;
 

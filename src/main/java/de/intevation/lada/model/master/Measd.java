@@ -33,9 +33,13 @@ public class Measd implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @NotBlank
+    @Size(max = 50)
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Measd.class)
-    private Integer id;
+    private String id;
+
+    private Integer idOld;
 
     @Size(max = 300)
     @NotEmptyNorWhitespace
@@ -58,10 +62,6 @@ public class Measd implements Serializable {
     @NotEmptyNorWhitespace
     private String bvlFormatId;
 
-    @NotBlank
-    @Size(max = 50)
-    private String name;
-
     @Column(insertable = false)
     @Temporal(TIMESTAMP)
     private Date lastMod;
@@ -69,12 +69,20 @@ public class Measd implements Serializable {
     public Measd() {
     }
 
-    public Integer getId() {
+    public String getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public Integer getIdOld() {
+        return idOld;
+    }
+
+    public void setIdOld(Integer idOld) {
+        this.idOld = idOld;
     }
 
     public String getDescr() {
@@ -123,14 +131,6 @@ public class Measd implements Serializable {
 
     public void setBvlFormatId(String bvlFormatId) {
         this.bvlFormatId = bvlFormatId;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Date getLastMod() {

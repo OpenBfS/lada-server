@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <!-- authentication data -->
-    <master.network id = "06" />
+    <master.network id = "06" name = "test" />
     <master.meas_facil id = "06010" network_id = "06" name = "test"/>
     <master.auth
         ldap_gr = "mst_06_status"
@@ -14,18 +14,23 @@
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "9" name = "nine" />
     <master.measd
-        id = "1"
-        name = "test"
+        id_old = "1"
+        id = "test"
     />
     <master.measd
-        id = "2"
-        name = "test1"
+        id_old = "2"
+        id = "test1"
     />
     <master.meas_unit
         id = "1"
         unit_symbol = "Sv"
     />
-    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "1" />
     <master.env_descrip
         id = "1"
@@ -59,7 +64,7 @@
         meas_unit_id = "1"
     />
     <master.type_regulation id = "U" name = "TestU"/>
-    <master.spat_ref_sys id = "4" />
+    <master.spat_ref_sys id = "4" name = "test" />
     <master.state
         id = "0"
         ctry = "Deutschland"
@@ -316,14 +321,14 @@
     <lada.meas_val
         id = "1000"
         measm_id = "1200"
-        measd_id = "1"
+        measd_id = "test"
         meas_val = "1.1"
         meas_unit_id = "1"
     />
     <lada.meas_val
         id = "1001"
         measm_id = "1200"
-        measd_id = "2"
+        measd_id = "test1"
         meas_unit_id = "1"
     />
 </dataset>

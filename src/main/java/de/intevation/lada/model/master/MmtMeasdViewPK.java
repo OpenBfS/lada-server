@@ -19,21 +19,22 @@ public class MmtMeasdViewPK implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer measdId;
+    private String measdId;
 
     private String mmtId;
 
-    public MmtMeasdViewPK() {
-    }
-    public Integer getMeasdId() {
+    public String getMeasdId() {
         return this.measdId;
     }
-    public void setMeasdId(Integer measdId) {
+
+    public void setMeasdId(String measdId) {
         this.measdId = measdId;
     }
+
     public String getMmtId() {
         return this.mmtId;
     }
+
     public void setMmtId(String mmtId) {
         this.mmtId = mmtId;
     }

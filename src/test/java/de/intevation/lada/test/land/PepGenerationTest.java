@@ -27,6 +27,7 @@ import jakarta.ws.rs.core.Response;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.test.ServiceTest;
 import de.intevation.lada.util.data.StatusCodes;
@@ -526,7 +527,7 @@ public class PepGenerationTest extends ServiceTest {
                 .header("X-SHIB-user", BaseTest.testUser)
                 .header("X-SHIB-roles", BaseTest.testRoles)
                 .get();
-            JsonArray zwData = BaseTest.parseResponse(response).asJsonArray();
+            JsonArray zwData = ClientBaseTest.parseResponse(response).asJsonArray();
             Assert.assertFalse(zwData.isEmpty());
         });
     }
@@ -593,7 +594,7 @@ public class PepGenerationTest extends ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.json(payload.toString()));
 
-        JsonObject data = BaseTest.parseResponse(response).asJsonObject();
+        JsonObject data = ClientBaseTest.parseResponse(response).asJsonObject();
 
         //If a tag was applied, increase serial number
         if (data.containsKey("tag") && data.getString("tag") != null) {

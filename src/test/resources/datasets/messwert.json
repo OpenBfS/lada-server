@@ -1,6 +1,6 @@
 {
     "measmId": 1200,
-    "measdId": 57,
+    "measdId": "Iron",
     "measVal":1,
     "lessThanLOD": null,
     "error":1,
