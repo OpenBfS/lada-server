@@ -177,7 +177,7 @@ public class TagTest extends ServiceTest {
         delete(TAG_URL + createdId);
     }
 
-    private void checkValUntil(Tag tag) {
+    public static void checkValUntil(Tag tag) {
         if (tag.getMeasFacilId() != null) {
             Date valUntil = tag.getValUntil();
             Assert.assertNotNull(valUntil);

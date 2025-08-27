@@ -374,7 +374,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     && isAuthorized(tagLink, RequestMethod.POST)
                 ) {
                     target.addTag(finalTag);
-                    // TODO: Extend tag expiring time?
                 } else {
                     Tag reportTag = getInstanceForReport(finalTag, srcTag);
                     reportTag.addErrors(tagLink.getErrors());

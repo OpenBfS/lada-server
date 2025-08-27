@@ -134,6 +134,11 @@
         id = "2"
         name = "not associated"
     />
+    <master.tag
+        id = "3"
+        meas_facil_id = "06010"
+        name = "not associated measFacil tag"
+    />
 
     <lada.sample
         id = "1"

@@ -663,7 +663,7 @@ public class ServiceTest {
      * @param to timestamp
      * @return Difference in days as long
      */
-    protected long getDaysFromNow(Date to) {
+    protected static long getDaysFromNow(Date to) {
         return getDaysFromNow(to.toInstant());
     }
 
@@ -672,7 +672,7 @@ public class ServiceTest {
      * @param to timestamp
      * @return Difference in days as long
      */
-    protected long getDaysFromNow(Instant to) {
+    protected static long getDaysFromNow(Instant to) {
         Instant fromDate = Instant.ofEpochMilli(System.currentTimeMillis())
             .truncatedTo(ChronoUnit.DAYS);
         return ChronoUnit.DAYS.between(fromDate, to);
