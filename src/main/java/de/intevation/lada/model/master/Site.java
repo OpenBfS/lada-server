@@ -28,7 +28,6 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -224,12 +223,6 @@ public class Site extends BaseModel implements Serializable {
 
     @NotEmptyNorWhitespace
     private String route;
-
-    @Transient
-    private Double longitude;
-
-    @Transient
-    private Double latitude;
 
     @Formula("""
         (SELECT count(*) FROM lada.geolocat g WHERE {alias}.id = g.site_id)
