@@ -14,7 +14,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1134,7 +1133,6 @@ public class LafObjectMapper {
 
         // Validator: StatusAssignment
         StatusProt newStatus = new StatusProt();
-        newStatus.setDate(new Timestamp(new Date().getTime()));
         newStatus.setMeasmId(messung.getId());
         newStatus.setMeasFacilId(mstId);
         newStatus.setStatusMpId(newKombi);

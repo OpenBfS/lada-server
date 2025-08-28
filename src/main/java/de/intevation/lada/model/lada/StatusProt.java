@@ -85,10 +85,6 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
         return this.date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
     public String getMeasFacilId() {
         return this.measFacilId;
     }
