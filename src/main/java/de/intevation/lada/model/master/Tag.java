@@ -9,6 +9,7 @@ package de.intevation.lada.model.master;
 
 import java.util.Date;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -73,6 +74,7 @@ public class Tag extends BaseModel {
     @Temporal(TIMESTAMP)
     private Date createdAt;
 
+    @Column(updatable = false)
     private boolean isAutoTag;
 
     public Tag() { }
@@ -105,6 +107,7 @@ public class Tag extends BaseModel {
         return this.isAutoTag;
     }
 
+    @JsonbTransient
     public void setIsAutoTag(boolean isAutoTag) {
         this.isAutoTag = isAutoTag;
     }
