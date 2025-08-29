@@ -51,10 +51,6 @@ public class Geolocat extends BelongsToSample implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
-
     @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Site.class)
@@ -86,14 +82,6 @@ public class Geolocat extends BelongsToSample implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public Integer getSiteId() {

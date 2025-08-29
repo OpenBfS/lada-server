@@ -8,15 +8,11 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 
 @Entity
@@ -64,10 +60,6 @@ public class EnvDescripEnvMediumMp implements Serializable {
     private Integer s11;
 
     private String envMediumId;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     public EnvDescripEnvMediumMp() {
     }
@@ -182,13 +174,5 @@ public class EnvDescripEnvMediumMp implements Serializable {
 
     public void setEnvMediumId(String envMediumId) {
         this.envMediumId = envMediumId;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 }

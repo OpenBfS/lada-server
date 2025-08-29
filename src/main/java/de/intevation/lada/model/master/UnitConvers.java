@@ -8,7 +8,6 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,8 +15,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
@@ -36,10 +33,6 @@ public class UnitConvers implements Serializable {
     private Integer toUnitId;
 
     private Double factor;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     public Integer getId() {
         return this.id;
@@ -60,13 +53,4 @@ public class UnitConvers implements Serializable {
     public Double getFactor() {
         return this.factor;
     }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
-    }
-
 }

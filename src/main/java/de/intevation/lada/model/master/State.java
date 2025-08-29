@@ -8,15 +8,11 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
@@ -43,10 +39,6 @@ public class State implements Serializable {
 
     @NotEmptyNorWhitespace
     private String iso3166;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     @NotEmptyNorWhitespace
     private String intVehRegCode;
@@ -125,13 +117,4 @@ public class State implements Serializable {
     public void setIntVehRegCode(String intVehRegCode) {
         this.intVehRegCode = intVehRegCode;
     }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
-    }
-
 }

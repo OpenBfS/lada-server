@@ -8,16 +8,12 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.util.Date;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -51,10 +47,6 @@ public class GeolocatMpg extends BelongsToMpg implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
-
     @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Site.class)
@@ -82,14 +74,6 @@ public class GeolocatMpg extends BelongsToMpg implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public Integer getSiteId() {

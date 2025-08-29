@@ -8,14 +8,10 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
@@ -30,10 +26,6 @@ public class SampleMeth implements Serializable {
     private String extId;
 
     private String eudfSampleMethId;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     public SampleMeth() {
     }
@@ -69,13 +61,4 @@ public class SampleMeth implements Serializable {
     public void setEudfSampleMethId(String eudfSampleMethId) {
         this.eudfSampleMethId = eudfSampleMethId;
     }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
-    }
-
 }

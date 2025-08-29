@@ -8,15 +8,11 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Column;
 
 @Entity
 @NamedQuery(name = "Tz.findAll", query = "SELECT z FROM Tz z")
@@ -28,10 +24,6 @@ public class Tz implements Serializable {
     private Integer id;
 
     private String name;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     public Tz() {
     }
@@ -51,13 +43,4 @@ public class Tz implements Serializable {
     public void setName(String bezeichnung) {
         this.name = bezeichnung;
     }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
-    }
-
 }

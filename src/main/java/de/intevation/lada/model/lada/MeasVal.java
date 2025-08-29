@@ -64,10 +64,6 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
 
     private Boolean isThreshold;
 
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
-
     @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = MeasUnit.class)
@@ -108,14 +104,6 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
 
     public void setIsThreshold(Boolean isThreshold) {
         this.isThreshold = isThreshold;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public Integer getMeasUnitId() {

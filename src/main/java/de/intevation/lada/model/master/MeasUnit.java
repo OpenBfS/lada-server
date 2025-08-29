@@ -8,19 +8,15 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 import jakarta.json.bind.annotation.JsonbTransient;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 
 @Entity
@@ -53,10 +49,6 @@ public class MeasUnit implements Serializable {
      */
     @Transient
     private Boolean primary;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     public MeasUnit() {
     }
@@ -112,13 +104,4 @@ public class MeasUnit implements Serializable {
     public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
-    }
-
 }

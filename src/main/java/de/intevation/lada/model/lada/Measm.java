@@ -79,10 +79,6 @@ public class Measm extends BelongsToSample implements Serializable {
 
     private Integer extId;
 
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
-
     private Integer measPd;
 
     @Temporal(TIMESTAMP)
@@ -159,14 +155,6 @@ public class Measm extends BelongsToSample implements Serializable {
 
     public void setExtId(Integer extId) {
         this.extId = extId;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public Integer getMeasPd() {

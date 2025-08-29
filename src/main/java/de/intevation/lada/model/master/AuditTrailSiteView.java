@@ -8,7 +8,6 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -17,8 +16,6 @@ import jakarta.json.JsonObject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
@@ -29,9 +26,6 @@ public class AuditTrailSiteView implements Serializable {
     private Long id;
 
     private String action;
-
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonObject changedFields;
@@ -54,14 +48,6 @@ public class AuditTrailSiteView implements Serializable {
 
     public void setAction(String action) {
         this.action = action;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public JsonObject getChangedFields() {

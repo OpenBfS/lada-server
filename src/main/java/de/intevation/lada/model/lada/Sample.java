@@ -140,10 +140,6 @@ public class Sample extends BaseModel implements MeasFacilOwned, Serializable {
         groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String apprLabId;
 
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
-
     @Size(max = 100)
     @NotEmptyNorWhitespace
     private String envDescripName;
@@ -336,14 +332,6 @@ public class Sample extends BaseModel implements MeasFacilOwned, Serializable {
 
     public void setApprLabId(String apprLabId) {
         this.apprLabId = apprLabId;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public String getEnvDescripName() {
