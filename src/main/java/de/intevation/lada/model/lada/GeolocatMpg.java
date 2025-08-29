@@ -75,10 +75,6 @@ public class GeolocatMpg extends BelongsToMpg implements Serializable {
         groups = DatabaseConstraints.class, clazz = Poi.class)
     private String poiId;
 
-    @Column(insertable = false, updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date treeMod;
-
 
     public Integer getId() {
         return this.id;
@@ -126,13 +122,5 @@ public class GeolocatMpg extends BelongsToMpg implements Serializable {
 
     public void setPoiId(String poiId) {
         this.poiId = poiId;
-    }
-
-    public Date getTreeMod() {
-        return this.treeMod;
-    }
-
-    public void setTreeMod(Date treeModified) {
-        this.treeMod = treeModified;
     }
 }
