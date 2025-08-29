@@ -156,7 +156,7 @@ public class Site extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String longText;
 
-    @Column(insertable = false)
+    @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
@@ -370,10 +370,6 @@ public class Site extends BaseModel implements Serializable {
 
     public Date getLastMod() {
         return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     /**
