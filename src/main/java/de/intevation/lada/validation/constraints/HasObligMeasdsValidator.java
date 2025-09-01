@@ -24,6 +24,7 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.ObligMeasdMp;
 import de.intevation.lada.model.master.ObligMeasdMp_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -124,7 +125,9 @@ public class HasObligMeasdsValidator
             );
             hibernateCtx.disableDefaultConstraintViolation();
             hibernateCtx.addExpressionVariable("missing",
-                pflicht.stream().map(ObligMeasdMp::getMeasdId).toList())
+                pflicht.stream().map(
+                    mp -> repository.getById(
+                        Measd.class, mp.getMeasdId()).getName()).toList())
                 .buildConstraintViolationWithTemplate(this.message)
                 .enableExpressionLanguage(VARIABLES)
                 .addPropertyNode(mmtIdKey.getName())
