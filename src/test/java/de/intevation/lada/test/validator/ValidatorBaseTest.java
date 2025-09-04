@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.validation.Validator;
 
 
@@ -33,6 +34,9 @@ public abstract class ValidatorBaseTest extends BaseTest {
 
     @Inject
     protected Validator validator;
+
+    @Inject
+    protected Repository repository;
 
     /**
      * Constructor.
@@ -67,6 +71,13 @@ public abstract class ValidatorBaseTest extends BaseTest {
                 + entity.getWarnings(),
             entity.hasWarnings());
         assertNoNotifications(entity);
+    }
+
+    protected void assertNoErrors(BaseModel entity) {
+        Assert.assertFalse(
+            "Unexpected validation errors: "
+                + entity.getErrors(),
+            entity.hasErrors());
     }
 
     protected void assertNoNotifications(BaseModel entity) {

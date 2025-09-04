@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
+import de.intevation.lada.validation.groups.CreateErrors;
 
 
 /**
@@ -111,8 +112,7 @@ public class MessungTest extends ValidatorBaseTest {
         Measm messung = createMinimalValidMeasm();
         messung.setId(null);
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
-        validator.validate(messung);
-        Assert.assertFalse(messung.hasErrors());
+        assertNoErrors(validator.validate(messung));
     }
 
     /**
@@ -322,14 +322,26 @@ public class MessungTest extends ValidatorBaseTest {
                 "'" + invalidKey + "' is no valid primary key"));
     }
 
-    private Measm createMinimalValidMeasm() {
+    @Test
+    public void extIdCannotBeSet() {
+        Measm measm = new Measm();
+        measm.setExtId(1);
+        assertHasErrors(validator.validate(measm, CreateErrors.class),
+            Measm_.EXT_ID, "Field can only be set by System");
+    }
+
+    @Test
+    public void extIdImmutable() {
         Measm measm = new Measm();
         measm.setId(EXISTING_MEASM_ID);
         measm.setSampleId(EXISTING_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
-        measm.setMinSampleId(MIN_SAMPLE_ID_00G2);
-        measm.setMeasPd(1);
-        measm.setMeasmStartDate(new Date());
-        return measm;
+        measm.setExtId(1);
+        assertHasErrors(validator.validate(measm),
+            Measm_.EXT_ID, "Field is immutable");
+    }
+
+    private Measm createMinimalValidMeasm() {
+        return repository.getById(Measm.class, EXISTING_MEASM_ID);
     }
 }
