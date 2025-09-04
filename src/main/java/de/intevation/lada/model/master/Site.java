@@ -34,6 +34,7 @@ import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.processing.CheckHQL;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.Formula;
 import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
@@ -156,6 +157,7 @@ public class Site extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String longText;
 
+    @Schema(ref = "java.util.Date", readOnly = true)
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date lastMod;

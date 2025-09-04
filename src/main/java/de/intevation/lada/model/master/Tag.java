@@ -9,6 +9,8 @@ package de.intevation.lada.model.master;
 
 import java.util.Date;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -70,6 +72,7 @@ public class Tag extends BaseModel {
     @Temporal(TIMESTAMP)
     private Date valUntil;
 
+    @Schema(ref = "java.util.Date", readOnly = true)
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date createdAt;
