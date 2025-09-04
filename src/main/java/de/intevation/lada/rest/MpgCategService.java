@@ -9,12 +9,8 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 
 import de.intevation.lada.util.rest.RequestMethod;
@@ -26,7 +22,8 @@ import de.intevation.lada.model.master.MpgCateg;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "mpgcateg")
-public class MpgCategService extends LadaIntegerIdEntityService {
+public class MpgCategService
+    extends LadaIntegerIdEntityEditingService<MpgCateg> {
 
     /**
      * Get all MpgCateg objects.
@@ -47,35 +44,6 @@ public class MpgCategService extends LadaIntegerIdEntityService {
     @Path("{id}")
     public MpgCateg getById() {
         return repository.getById(MpgCateg.class, id);
-    }
-
-    /**
-     * Create a MpgCateg
-     * @param kategorie Object to create
-     * @return Created object
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public MpgCateg create(
-        @Valid MpgCateg kategorie
-    ) throws BadRequestException {
-        return repository.create(kategorie);
-    }
-
-
-    /**
-     * Update the given MpgCateg
-     *
-     * @param kategorie Updated object
-     * @return Updated object
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public MpgCateg update(
-        @Valid MpgCateg kategorie
-    ) throws BadRequestException {
-        return repository.update(kategorie);
     }
 
     @DELETE

@@ -19,13 +19,10 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 
 import org.jboss.logging.Logger;
@@ -44,7 +41,8 @@ import de.intevation.lada.model.master.QueryUser_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "queryuser")
-public class QueryUserService extends LadaIntegerIdEntityService {
+public class QueryUserService
+    extends LadaIntegerIdEntityEditingService<QueryUser> {
 
     @Inject
     Logger logger;
@@ -119,46 +117,27 @@ public class QueryUserService extends LadaIntegerIdEntityService {
         return query;
     }
 
-    /**
-     * Create a new query_user object in the database.
-     * @param Query object
-     * @return created query object
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public QueryUser create(
-        @Valid QueryUser query
-    ) throws BadRequestException {
+    @Override
+    public QueryUser create(QueryUser query) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         // TODO: Move to authorization
         if (query.getLadaUserId() != null
             && !query.getLadaUserId().equals(userInfo.getUserId())
         ) {
             throw new ForbiddenException();
-        } else {
-            query.setLadaUserId(userInfo.getUserId());
-            for (String m : query.getMessStellesIds()) {
-                QueryMeasFacilMp qms = new QueryMeasFacilMp();
-                qms.setMeasFacilId(m);
-                qms.setQueryUser(query);
-                query.addMessStelle(qms);
-            }
-            return repository.create(query);
         }
+        query.setLadaUserId(userInfo.getUserId());
+        for (String m : query.getMessStellesIds()) {
+            QueryMeasFacilMp qms = new QueryMeasFacilMp();
+            qms.setMeasFacilId(m);
+            qms.setQueryUser(query);
+            query.addMessStelle(qms);
+        }
+        return super.create(query);
     }
 
-    /**
-     * Update an existing query_user object in the database.
-     *
-     * @param query The query to be updated
-     * @return Updated query
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public QueryUser update(
-        @Valid QueryUser query
-    ) throws BadRequestException {
+    @Override
+    public QueryUser update(QueryUser query) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         // TODO: Move to authorization
         if (query.getLadaUserId() != null
@@ -221,7 +200,7 @@ public class QueryUserService extends LadaIntegerIdEntityService {
             query.addMessStelle(qm);
         }
 
-        return repository.update(query);
+        return super.update(query);
     }
 
     @DELETE

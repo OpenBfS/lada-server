@@ -9,13 +9,9 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
@@ -31,7 +27,8 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "commsample")
-public class CommSampleService extends LadaIntegerIdEntityService {
+public class CommSampleService
+    extends LadaIntegerIdEntityEditingService<CommSample> {
 
     /**
      * Get CommSample objects.
@@ -60,33 +57,6 @@ public class CommSampleService extends LadaIntegerIdEntityService {
     @Path("{id}")
     public CommSample getById() {
         return repository.getById(CommSample.class, id);
-    }
-
-    /**
-     * Create a new CommSample object.
-     *
-     * @return the new CommSample.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public CommSample create(
-        @Valid CommSample kommentar
-    ) throws BadRequestException {
-        return repository.create(kommentar);
-    }
-
-    /**
-     * Update an existing CommSample object.
-     *
-     * @return the updated CommSample object.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public CommSample update(
-        @Valid CommSample kommentar
-    ) throws BadRequestException {
-        return repository.update(kommentar);
     }
 
     /**

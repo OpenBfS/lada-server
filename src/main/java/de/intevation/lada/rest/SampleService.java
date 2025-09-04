@@ -16,14 +16,12 @@ import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.groups.ConvertGroup;
-import jakarta.validation.groups.Default;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -37,7 +35,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 
 
@@ -52,7 +49,7 @@ import de.intevation.lada.validation.constraints.BeginBeforeEnd;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "sample")
-public class SampleService extends LadaIntegerIdEntityService {
+public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
 
     /**
      * The object lock mechanism.
@@ -119,24 +116,6 @@ public class SampleService extends LadaIntegerIdEntityService {
     @Path("{id}")
     public Sample getById() {
         return repository.getById(Sample.class, id);
-    }
-
-    /**
-     * Create a new Sample object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     *
-     * @return the new probe object.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public Sample create(
-        @Valid
-        @ConvertGroup(from = Default.class, to = CreateErrors.class)
-        Sample probe
-    ) throws BadRequestException {
-        return repository.create(probe);
     }
 
     /**
@@ -222,21 +201,18 @@ public class SampleService extends LadaIntegerIdEntityService {
     }
 
     /**
-     * Update an existing Sample object.
-     * <p>
-     * The object to update should come as JSON formatted string.
+     * Update an existing {@link Sample} object.
      *
-     * @return the updated Sample object.
-     * @throws BadRequestException if any constraint violations are detected.
+     * @param sample the object to be updated
+     * @return the updated object
+     * @throws ClientErrorException if object has been altered since loaded
+     * @throws BadRequestException if any constraint violations are detected
      */
-    @PUT
-    @Path("{id}")
-    public Sample update(
-        @Valid Sample probe
-    ) throws BadRequestException {
-        lock.isLocked(probe);
+    @Override
+    public Sample update(Sample sample) throws BadRequestException {
+        lock.isLocked(sample);
 
-        return repository.update(probe);
+        return super.update(sample);
     }
 
     /**

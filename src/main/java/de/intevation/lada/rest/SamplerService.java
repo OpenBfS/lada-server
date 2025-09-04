@@ -9,12 +9,8 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 
 import de.intevation.lada.model.master.Sampler;
@@ -26,7 +22,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "sampler")
-public class SamplerService extends LadaIntegerIdEntityService {
+public class SamplerService extends LadaIntegerIdEntityEditingService<Sampler> {
 
     /**
      * Get all Sampler objects.
@@ -47,34 +43,6 @@ public class SamplerService extends LadaIntegerIdEntityService {
     @Path("{id}")
     public Sampler getById() {
         return repository.getById(Sampler.class, id);
-    }
-
-    /**
-     * Create a sampler
-     * @param probenehmer Sampler to create
-     * @return Created sampler
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public Sampler create(
-        @Valid Sampler probenehmer
-    ) throws BadRequestException {
-        return repository.create(probenehmer);
-    }
-
-    /**
-     * Update a sampler
-     *
-     * @param probenehmer Sampler to update
-     * @return Updated sampler
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public Sampler update(
-        @Valid Sampler probenehmer
-    ) throws BadRequestException {
-        return repository.update(probenehmer);
     }
 
     @DELETE

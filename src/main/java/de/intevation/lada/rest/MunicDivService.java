@@ -9,12 +9,8 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 
 import de.intevation.lada.util.rest.RequestMethod;
@@ -26,7 +22,8 @@ import de.intevation.lada.model.master.MunicDiv;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "municdiv")
-public class MunicDivService extends LadaIntegerIdEntityService {
+public class MunicDivService
+    extends LadaIntegerIdEntityEditingService<MunicDiv> {
 
     /**
      * Get all MunicDiv objects.
@@ -47,34 +44,6 @@ public class MunicDivService extends LadaIntegerIdEntityService {
     @Path("{id}")
     public MunicDiv getById() {
         return repository.getById(MunicDiv.class, id);
-    }
-
-    /**
-     * Create a MunicDiv
-     * @param gemUntergliederung Object to create
-     * @return Created object
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public MunicDiv create(
-        @Valid MunicDiv gemUntergliederung
-    ) throws BadRequestException {
-        return repository.create(gemUntergliederung);
-    }
-
-    /**
-     * Update the given MunicDiv
-     *
-     * @param gemUntergliederung Updated object
-     * @return Updated object
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public MunicDiv update(
-        @Valid MunicDiv gemUntergliederung
-    ) throws BadRequestException {
-        return repository.update(gemUntergliederung);
     }
 
     @DELETE

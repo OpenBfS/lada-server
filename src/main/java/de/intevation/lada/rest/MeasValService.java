@@ -10,14 +10,12 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
@@ -40,7 +38,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "measval")
-public class MeasValService extends LadaIntegerIdEntityService {
+public class MeasValService extends LadaIntegerIdEntityEditingService<MeasVal> {
 
     /**
      * The object lock mechanism.
@@ -89,32 +87,18 @@ public class MeasValService extends LadaIntegerIdEntityService {
     }
 
     /**
-     * Create a MeasVal object.
-     *
-     * @return A response object containing the created MeasVal.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public MeasVal create(
-        @Valid MeasVal messwert
-    ) throws BadRequestException {
-        return repository.create(messwert);
-    }
-
-    /**
      * Update an existing MeasVal object.
      *
-     * @return the updated MeasVal object.
-     * @throws BadRequestException if any constraint violations are detected.
+     * @param measVal the object to be updated
+     * @return the updated MeasVal object
+     * @throws ClientErrorException if object has been altered since loaded
+     * @throws BadRequestException if any constraint violations are detected
      */
-    @PUT
-    @Path("{id}")
-    public MeasVal update(
-        @Valid MeasVal messwert
-    ) throws BadRequestException {
-        lock.isLocked(messwert);
+    @Override
+    public MeasVal update(MeasVal measVal) throws BadRequestException {
+        lock.isLocked(measVal);
 
-        return repository.update(messwert);
+        return super.update(measVal);
     }
 
     /**

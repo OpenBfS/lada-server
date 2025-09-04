@@ -9,12 +9,8 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 
 import de.intevation.lada.util.rest.RequestMethod;
@@ -29,7 +25,8 @@ import de.intevation.lada.model.master.DatasetCreator;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "datasetcreator")
-public class DatasetCreatorService extends LadaIntegerIdEntityService {
+public class DatasetCreatorService
+    extends LadaIntegerIdEntityEditingService<DatasetCreator> {
 
     /**
      * Get all DatasetCreator objects.
@@ -50,34 +47,6 @@ public class DatasetCreatorService extends LadaIntegerIdEntityService {
     @Path("{id}")
     public DatasetCreator getById() {
         return repository.getById(DatasetCreator.class, id);
-    }
-
-    /**
-     * Create a dataset creator
-     * @param datensatzerzeuger Dataset creator to create
-     * @return Created dataset creator
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public DatasetCreator create(
-        @Valid DatasetCreator datensatzerzeuger
-    ) throws BadRequestException {
-        return repository.create(datensatzerzeuger);
-    }
-
-    /**
-     * Update a dateset creator
-     *
-     * @param datensatzerzeuger Dataset creator to update
-     * @return Created dataset creator
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public DatasetCreator update(
-        @Valid DatasetCreator datensatzerzeuger
-    ) throws BadRequestException {
-        return repository.update(datensatzerzeuger);
     }
 
     @DELETE

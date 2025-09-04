@@ -9,13 +9,9 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
@@ -30,7 +26,8 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "geolocatmpg")
-public class GeolocatMpgService extends LadaIntegerIdEntityService {
+public class GeolocatMpgService
+    extends LadaIntegerIdEntityEditingService<GeolocatMpg> {
 
     /**
      * Get GeolocatMpg objects.
@@ -59,33 +56,6 @@ public class GeolocatMpgService extends LadaIntegerIdEntityService {
     @Path("{id}")
     public GeolocatMpg getById() {
         return repository.getById(GeolocatMpg.class, id);
-    }
-
-    /**
-     * Create a new GeolocatMpg object.
-     *
-     * @return A response object containing the created Ort.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public GeolocatMpg create(
-        @Valid GeolocatMpg ort
-    ) throws BadRequestException {
-        return repository.create(ort);
-    }
-
-    /**
-     * Update an existing GeolocatMpg object.
-     *
-     * @return the updated GeolocatMpg object.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public GeolocatMpg update(
-        @Valid GeolocatMpg ort
-    ) throws BadRequestException {
-        return repository.update(ort);
     }
 
     /**
