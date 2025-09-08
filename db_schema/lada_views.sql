@@ -68,7 +68,7 @@ CREATE UNIQUE INDEX mv_tags_array_idx ON lada.mv_tags_array (pid, mid);
 CREATE OR REPLACE FUNCTION lada.refresh_mv_tags_array()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-    REFRESH MATERIALIZED VIEW CONCURRENTLY lada.mv_tags_array;
+    REFRESH MATERIALIZED VIEW lada.mv_tags_array;
     RETURN NULL;
 END;
 $$;
