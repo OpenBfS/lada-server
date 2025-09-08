@@ -275,29 +275,23 @@
     <lada.status_prot
         id = "1000"
         meas_facil_id = "06010"
-        date = "2012-05-08 11:00:00"
         text = "Initialer Status"
         measm_id = "1200"
         status_mp_id = "1"
-        tree_mod = "2012-05-09 12:00:00"
     />
     <lada.status_prot
         id = "1009"
         meas_facil_id = "06010"
-        date = "2012-05-08 11:00:00"
         text = "Initialer Status"
         measm_id = "1209"
         status_mp_id = "1"
-        tree_mod = "2012-05-09 12:00:00"
     />
     <lada.status_prot
         id = "1012"
         meas_facil_id = "06010"
-        date = "2012-05-08 11:00:00"
         text = "Initialer Status"
         measm_id = "1212"
         status_mp_id = "12"
-        tree_mod = "2012-05-09 12:00:00"
     />
     <lada.sample
         id = "1001"
@@ -425,11 +419,9 @@
     <lada.status_prot
         id = "1512"
         meas_facil_id = "06010"
-        date = "2012-05-08 11:00:00"
         text = "Initialer Status"
         measm_id = "1500"
         status_mp_id = "12"
-        tree_mod = "2012-05-09 12:00:00"
     />
 
     <!--TagLink test data-->
