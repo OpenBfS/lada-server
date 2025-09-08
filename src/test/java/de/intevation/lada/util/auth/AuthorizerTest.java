@@ -61,7 +61,7 @@ import jakarta.transaction.UserTransaction;
 @RunWith(Arquillian.class)
 public class AuthorizerTest extends BaseTest {
 
-    private Logger log = Logger.getLogger(AuthorizerTest.class);
+    private static final Logger LOG = Logger.getLogger(AuthorizerTest.class);
 
     private static Authorization authorization;
 
@@ -158,7 +158,7 @@ public class AuthorizerTest extends BaseTest {
 
     private void processResult(Result result, String testName)
         throws Exception {
-        log.info(String.format(
+        LOG.info(String.format(
             "%s: Tests run: %d, failed: %d, ignored: %d",
             testName,
             result.getRunCount(), result.getFailureCount(),
@@ -168,7 +168,7 @@ public class AuthorizerTest extends BaseTest {
             String descr = failure.getDescription().getDisplayName();
             String msg = failure.getMessage();
             String error = String.format("%s: %s", descr, msg);
-            log.error(error);
+            LOG.error(error);
             // Print stack trace to server log for debugging
             failure.getException().printStackTrace();
             errors.add(new Throwable(error, failure.getException()));
