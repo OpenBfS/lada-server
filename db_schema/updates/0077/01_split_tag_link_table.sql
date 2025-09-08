@@ -109,7 +109,7 @@ ALTER MATERIALIZED VIEW lada.mv_tags_array OWNER TO lada;
 CREATE OR REPLACE FUNCTION lada.refresh_mv_tags_array()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-    REFRESH MATERIALIZED VIEW CONCURRENTLY lada.mv_tags_array;
+    REFRESH MATERIALIZED VIEW lada.mv_tags_array;
     RETURN NULL;
 END;
 $$;
