@@ -19,6 +19,7 @@
     <master.meas_unit id = "1" unit_symbol = "Bq/kgFM"/>
 
     <master.measd id_old = "1" id = "H-3" />
+    <master.mmt id = "A1" name = "test1" />
     <master.mmt id = "A3" name = "test" />
     <master.measd_gr id = "1" name = "test" />
     <master.measd_gr_mp measd_id = "H-3" measd_gr_id = "1" />
@@ -131,5 +132,11 @@
         type_regulation = "E"
         sample_id = "1000"
         site_id = "1000"
+    />
+    <lada.measm
+        id = "1"
+        sample_id = "1000"
+        ext_id = "1"
+        mmt_id = "A1"
     />
 </dataset>

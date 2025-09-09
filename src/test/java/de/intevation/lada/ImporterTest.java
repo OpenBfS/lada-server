@@ -47,6 +47,7 @@ import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.Tag;
@@ -76,6 +77,7 @@ public class ImporterTest extends ClientBaseTest {
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
+    private final String minSampleId = "test";
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
     private final String lafTemplate = "%%PROBE%%\n"
@@ -91,6 +93,7 @@ public class ImporterTest extends ClientBaseTest {
         + "DESKRIPTOREN \"010100000000000000000000\"\n"
         + "%s"
         + "%%MESSUNG%%\n"
+        + "NEBENPROBENNUMMER \"" + minSampleId + "\"\n"
         + "MESSMETHODE_S \"A3\"\n"
         + "MESSWERT \"%s\" 0 \"%s\" 4.4\n"
         + "%s"
@@ -355,6 +358,64 @@ public class ImporterTest extends ClientBaseTest {
                 measd, measUnit, ""),
             lafSampleId,
             true);
+    }
+
+    /**
+     * Ensure measms are validated on creation.
+     */
+    @Test
+    @RunAsClient
+    public final void measmsValidatedOnCreate()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = existingMainSampleId;
+        JsonObject report = testAsyncImportProbe(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId, "",
+                // New measm with extId should not be possible
+                measd, measUnit,
+                "MESSUNGS_ID 11\n"),
+            lafSampleId,
+            false);
+        JsonObject expectedErr = Json.createObjectBuilder()
+            .add("key", "validation#messung")
+            .add("value", Measm_.EXT_ID + "#" + minSampleId)
+            .add("code", "Field can only be set by System")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("errors").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedErr));
+    }
+
+    /**
+     * Ensure measms are validated on update.
+     */
+    @Test
+    @RunAsClient
+    public final void measmsValidatedOnUpdate()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = existingMainSampleId;
+        JsonObject report = testAsyncImportProbe(
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId, "",
+                // New Measm with minSampleId
+                measd, measUnit,
+                // Give existing Measm the same minSampleId
+                "%MESSUNG%\n"
+                + "MESSUNGS_ID 1\n"
+                + "NEBENPROBENNUMMER \"" + minSampleId + "\"\n"),
+            lafSampleId,
+            false);
+        JsonObject expectedErr = Json.createObjectBuilder()
+            .add("key", "validation#messung")
+            .add("value", Measm_.MIN_SAMPLE_ID + "#" + minSampleId)
+            .add("code",
+                "Non-unique value combination for [minSampleId, sampleId]")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("errors").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedErr));
     }
 
     /**
@@ -628,7 +689,8 @@ public class ImporterTest extends ClientBaseTest {
             .get();
         final int measmId = parseResponse(
             importedMeasmResponse, new GenericType<List<Measm>>() { })
-            .get(0).getId();
+            .stream().filter(m -> minSampleId.equals(m.getMinSampleId()))
+            .findFirst().get().getId();
 
         Response importedMeasValResponse = target
             .path("rest/measval")

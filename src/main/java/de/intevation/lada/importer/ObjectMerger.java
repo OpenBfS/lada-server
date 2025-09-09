@@ -139,7 +139,6 @@ public class ObjectMerger {
         if (src.getMmtId() != null) {
             target.setMmtId(src.getMmtId());
         }
-        repository.update(target);
         return this;
     }
 
