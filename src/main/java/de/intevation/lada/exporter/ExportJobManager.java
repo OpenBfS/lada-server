@@ -105,7 +105,7 @@ public class ExportJobManager extends JobManager {
      * @return Filename as String
      */
     public String getJobDownloadFilename(String id, UserInfo userInfo) {
-        ExportJob<?> job = (ExportJob) getJobById(id, userInfo);
+        ExportJob<?> job = (ExportJob<?>) getJobById(id, userInfo);
         return job.getDownloadFileName();
     }
 
@@ -120,7 +120,7 @@ public class ExportJobManager extends JobManager {
     public ByteArrayInputStream getResultFileAsStream(
         String id, UserInfo userInfo
     ) throws IOException {
-        ExportJob<?> job = (ExportJob) getJobById(id, userInfo);
+        ExportJob<?> job = (ExportJob<?>) getJobById(id, userInfo);
         Path filePath = job.getOutputFilePath();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
