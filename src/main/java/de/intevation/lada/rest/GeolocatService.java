@@ -12,6 +12,7 @@ import java.util.List;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -77,7 +78,8 @@ public class GeolocatService
      * @throws BadRequestException if any constraint violations are detected
      */
     @Override
-    public Geolocat update(Geolocat geolocat) throws BadRequestException {
+    public Geolocat update(Geolocat geolocat)
+        throws BadRequestException, ClientErrorException {
         lock.isLocked(geolocat);
         return super.update(geolocat);
     }

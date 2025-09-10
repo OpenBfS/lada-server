@@ -30,7 +30,7 @@ import de.intevation.lada.util.data.TagUtil;
 /**
  * Asynchronous import job.
  *
- * @author Alexander Woestmann <awoestmann@intevation.de>
+ * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 public class LafImportJob extends Job {
 

@@ -71,8 +71,8 @@ public class ServiceTest {
 
     /**
      * Initialize the tests.
-     * @param c Client instance used for issueing requests.
-     * @param bUrl The server url used for the request.
+     *
+     * @param t target for the request
      */
     public void init(WebTarget t) {
         this.target = t;

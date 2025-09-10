@@ -54,14 +54,13 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 /**
  * This creator produces a LAF conform String containing all information about
- * a single {@link LProbe} object including subobjects like
- * {@link LMessung}, {@link LMesswert}, {@link LKommentarP}...
+ * a single {@link Sample} object including subobjects like
+ * {@link Measm}, {@link MeasVal}, {@link CommSample}...
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Named("lafcreator")
-public class LafCreator
-implements Creator {
+public class LafCreator implements Creator {
 
     private static final int MP6 = 6;
     private static final int BAID3 = 3;
@@ -86,11 +85,6 @@ implements Creator {
 
     private UserInfo userInfo;
 
-    /**
-     * Create the LAF conform String.
-     *
-     * @param probeId   The {@link LProbe} id.
-     */
     @Override
     public String createProbe(Integer probeId) {
         String lafProbe = "%PROBE%\n";
@@ -100,11 +94,6 @@ implements Creator {
         return lafProbe;
     }
 
-    /**
-     * Create the LAF conform String.
-     *
-     * @param probeId   The {@link LProbe} id.
-     */
     @Override
     public String createMessung(Integer probeId, List<Integer> messungen) {
         String lafProbe = "%PROBE%\n";
@@ -114,23 +103,12 @@ implements Creator {
         return lafProbe;
     }
 
-    /**
-     * Find the {@link LProbe} object and produce the LAF conform string.
-     * @param probeId The {@link LProbe} id.
-     * @return LAF conform string.
-     */
     private String probeToLAF(Integer probeId, List<Integer> messungen) {
         Sample aProbe = repository.getById(Sample.class, probeId);
         String lafProbe = writeAttributes(aProbe, messungen);
         return lafProbe;
     }
 
-    /**
-     * Write the attributes and subobjects.
-     *
-     * @param probe The {@link LProbeInfo} object.
-     * @return LAF conform string.
-     */
     private String writeAttributes(Sample probe, List<Integer> messungen) {
         QueryBuilder<CommSample> kommBuilder = repository
             .queryBuilder(CommSample.class)
@@ -265,12 +243,6 @@ implements Creator {
         return laf;
     }
 
-    /**
-     * Write {@link LZusatzWert} attributes.
-     *
-     * @param zw    The {@link LZusatzWert}.
-     * @return Single LAF line.
-     */
     private String writeZusatzwert(SampleSpecifMeasVal zw) {
         SampleSpecif zusatz = repository.getById(
             SampleSpecif.class, zw.getSampleSpecifId());
@@ -286,12 +258,6 @@ implements Creator {
         return lafLine("PZB_S", value);
     }
 
-    /**
-     * Write {@link LOrt} attributes.
-     *
-     * @param probe The {@link LProbeInfo} object.
-     * @return LAF conform string
-     */
     private String writeOrt(Sample probe) {
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
@@ -315,13 +281,6 @@ implements Creator {
         return laf;
     }
 
-    /**
-     * Write Geolocat attributes.
-     *
-     * @param o Geolocat
-     * @param typePrefix Prefix denoting typeRegulation
-     * @return LAF conform string
-     */
     private String writeOrtData(Geolocat o, String typePrefix) {
         String laf = "";
         if (o.getAddSiteText() != null
@@ -392,12 +351,6 @@ implements Creator {
         return laf;
     }
 
-    /**
-     * Write {@link LKommentarP} attributes.
-     *
-     * @param kp    The {@link LKommentarP} object.
-     * @return Single LAF line.
-     */
     private String writeKommentar(CommSample kp) {
         String value = "\"" + kp.getMeasFacilId()
             + "\" "
@@ -406,12 +359,6 @@ implements Creator {
         return lafLine("PROBENKOMMENTAR", value);
     }
 
-    /**
-     * Write {@link LMessung} attributes.
-     *
-     * @param probe The {@link LProbeInfo} object.
-     * @return LAF conform string.
-     */
     private String writeMessung(Sample probe, List<Integer> messungen) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         if (messungen.isEmpty()) {
@@ -468,16 +415,6 @@ implements Creator {
         return laf;
     }
 
-    /**
-     * Write out the status protocol as string with 4 character:
-     *  1. status level mst
-     *  2. status level land
-     *  3. status level lst
-     *  4. set to 0 (unused)
-     *
-     * @param messung the messung containing the status
-     * @return 4 character string
-     */
     private String writeStatus(Measm messung) {
         Integer[] status = {0, 0, 0};
         QueryBuilder<StatusProt> builder =
@@ -512,11 +449,6 @@ implements Creator {
         return "" + status[0] + status[1] + status[2] + "0";
     }
 
-    /**
-     * Write {@link LKommentarM} attributes.
-     * @param mk    The {@link LKommentarM} object.
-     * @return Single LAF line.
-     */
     private String writeKommentar(CommMeasm mk) {
         String value = "\"" + mk.getMeasFacilId() + "\" "
             + toUTCString(mk.getDate()) + " "
@@ -524,11 +456,6 @@ implements Creator {
         return lafLine("KOMMENTAR", value);
     }
 
-    /**
-     * Write {@link LMesswert} attributes.
-     * @param mw    The {@link LMesswert} object.
-     * @return Single LAF line.
-     */
     private String writeMesswert(MeasVal mw) {
         String tag = "MESSWERT";
         String value = "\"" + mw.getMeasdId() + "\"";
@@ -558,25 +485,10 @@ implements Creator {
         return lafLine(tag, value);
     }
 
-    /**
-     * Write a single LAF conform line from key and value.
-     *
-     * @param key   The key.
-     * @param value The value.
-     * @return LAF conform line.
-     */
     private String lafLine(String key, String value) {
         return lafLine(key, value, DEFAULT_FORMAT);
     }
 
-    /**
-     * Write a single LAF conform line from key and value.
-     *
-     * @param key    The key.
-     * @param value  The value.
-     * @param format A format string for the value
-     * @return LAF conform line.
-     */
     private String lafLine(String key, Object value, String format) {
         return String.format(KEY_FORMAT, key)
             + String.format(format, value)

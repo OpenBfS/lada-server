@@ -12,6 +12,7 @@ import java.util.List;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -74,7 +75,8 @@ public class MeasmService extends LadaIntegerIdEntityEditingService<Measm> {
      * @throws BadRequestException if any constraint violations are detected
      */
     @Override
-    public Measm update(Measm measm) throws BadRequestException {
+    public Measm update(Measm measm)
+        throws BadRequestException, ClientErrorException {
         lock.isLocked(measm);
 
         return super.update(measm);
@@ -82,8 +84,6 @@ public class MeasmService extends LadaIntegerIdEntityEditingService<Measm> {
 
     /**
      * Delete an existing Measm object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")

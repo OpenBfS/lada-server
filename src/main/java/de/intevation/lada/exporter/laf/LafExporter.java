@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 
@@ -42,7 +43,7 @@ public class LafExporter implements Exporter<LafExportParameters> {
     private Repository repository;
 
     /**
-     * Export the {@link LProbe} objects.
+     * Export the {@link Sample} objects.
      *
      * @param proben    List of probe ids.
      * @param messungen    List of messung ids.

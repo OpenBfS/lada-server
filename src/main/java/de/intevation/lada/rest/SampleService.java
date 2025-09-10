@@ -120,18 +120,6 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
 
     /**
      * Create new Sample objects from a messprogramm.
-     * <p>
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "ids": [[number]],
-     *  "dryrun": [boolean],
-     *  "start": [timestamp],
-     *  "end": [timestamp]
-     * }
-     * </code>
-     * </pre>
      *
      * @return the new probe objects.
      * @throws BadRequestException if any constraint violations are detected.

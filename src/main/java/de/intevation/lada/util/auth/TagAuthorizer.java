@@ -16,7 +16,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 /**
  * Authorizer class for tags.
  *
- * @author Alexander Woestmann <awoestmann@intevation.de>
+ * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 class TagAuthorizer extends Authorizer<Tag> {
 

@@ -141,8 +141,6 @@ public class MeasValService extends LadaIntegerIdEntityEditingService<MeasVal> {
 
     /**
      * Delete an existing MeasVal object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")

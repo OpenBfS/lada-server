@@ -108,20 +108,7 @@ public class UniversalService extends LadaService {
     /**
      * Execute query, using the given result columns.
      *
-     * @param columns The query can contain the following post data:
-     * <pre>
-     * <code>
-     * {
-     *   columns[{
-     *     gridColumnId: [number],
-     *     sort: [string],
-     *     sortIndex: [number],
-     *     filterValue: [string],
-     *     filterActive: [boolean],
-     *   }]
-     * }
-     * </code>
-     * </pre>
+     * @param gridColumnValues Query configuration
      * @param start URL parameter used as offset for paging
      * @param limit URL parameter used as limit for paging
      * @return JSON encoded query results

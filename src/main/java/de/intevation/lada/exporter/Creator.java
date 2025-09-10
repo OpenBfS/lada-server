@@ -21,6 +21,7 @@ public interface Creator {
      * @param userInfo The current userinfo
      */
     void setUserInfo(UserInfo userInfo);
+
     /**
      * Create a string representation of a probe object.
      * @param probeId the id of the requested probe object.

@@ -107,6 +107,7 @@
                     <compilerArgs>
                         <arg>-Xlint</arg>
                         <arg>-Xlint:-processing</arg>
+                        <arg>-Xdoclint:all,-missing</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <path>

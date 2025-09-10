@@ -168,7 +168,7 @@ public class QueryTools {
     /**
      * Complement SQL statement from base query with filter settings.
      *
-     * @param customColumns List<GridColumnValue> with filter and sort settings.
+     * @param customColumns Filter and sort settings.
      * @param sql The base query without WHERE and ORDER BY clause.
      * @return The query including WHERE clause.
      */
@@ -300,7 +300,7 @@ public class QueryTools {
     /**
      * Generate "ORDER BY" clause from query configuration.
      *
-     * @param customColumns List<GridColumnValue> with filter and sort settings.
+     * @param customColumns Filter and sort settings.
      * @return The "ORDER BY" clause
      */
     static String prepareSortSql(List<GridColConf> customColumns) {

@@ -60,8 +60,6 @@ public class GeolocatMpgService
 
     /**
      * Delete object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")

@@ -22,7 +22,7 @@ import jakarta.persistence.metamodel.SingularAttribute;
 /**
  * A builder for criteria queries to query objects of a specified class.
  *
- * Use Repository.queryBuilder(Class<T> c) to create new builders, e.g.
+ * Use {@code Repository.queryBuilder(Class<T> c)} to create new builders, e.g.
  * in service implementations.
  *
  * @param <T> Class for which queries will be build
@@ -41,12 +41,9 @@ public class QueryBuilder<T> {
     /**
      * Create a new QueryBuilder for the specified class.
      *
-     * @param <T> The class for which a QueryBuilder is requested.
      * @param m EntityManager used to get a CriteriaBuilder.
      * @param c The class for which a QueryBuilder is requested.
-     *
-     * @return QueryBuilder for the given class.
-    */
+     */
     QueryBuilder(EntityManager m, Class<T> c) {
         this.manager = m;
         this.clazz = c;

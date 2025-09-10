@@ -49,7 +49,7 @@ public class MesswertNormalizer {
      * given UmweltId.
      * @param messwerte Messwerte to convert
      * @param umwId UmweltId to get the standard unit from
-     * @return List<Messwert> with converted units.
+     * @return Input list with units converted.
      */
     public List<MeasVal> normalizeMesswerte(
         List<MeasVal> messwerte,
