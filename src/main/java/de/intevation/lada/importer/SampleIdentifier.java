@@ -37,7 +37,6 @@ public class SampleIdentifier implements Identifier<Sample> {
         }
         if (probe.getMainSampleId() != null
             && probe.getMeasFacilId() != null
-            && probe.getIsTest() != null
         ) {
             builder.and(Sample_.measFacilId, probe.getMeasFacilId())
                 .and(Sample_.mainSampleId, probe.getMainSampleId())

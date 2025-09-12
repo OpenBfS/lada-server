@@ -91,15 +91,6 @@ public class ObjectMerger {
         if (src.getOrigDate() != null) {
             target.setOrigDate(src.getOrigDate());
         }
-        if (src.getIsTest() != null) {
-            if (target.getIsTest() == null) {
-                target.setIsTest(src.getIsTest());
-            }
-        } else {
-            // Set explicit to false, if is null in src to not violate
-            // constraints
-            target.setIsTest(false);
-        }
         if (src.getEnvMediumId() != null) {
             target.setEnvMediumId(src.getEnvMediumId());
         }

@@ -195,8 +195,7 @@ public class Sample extends BaseModel implements MeasFacilOwned, Serializable {
     @Temporal(TIMESTAMP)
     private Date origDate;
 
-    @NotNull
-    private Boolean isTest;
+    private boolean isTest;
 
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
@@ -439,11 +438,11 @@ public class Sample extends BaseModel implements MeasFacilOwned, Serializable {
         this.origDate = origDate;
     }
 
-    public Boolean getIsTest() {
+    public boolean getIsTest() {
         return this.isTest;
     }
 
-    public void setIsTest(Boolean isTest) {
+    public void setIsTest(boolean isTest) {
         this.isTest = isTest;
     }
 
