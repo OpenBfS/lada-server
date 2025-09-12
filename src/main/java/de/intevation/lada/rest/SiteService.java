@@ -36,7 +36,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.factory.OrtFactory;
+import de.intevation.lada.model.master.AdminUnit_;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 
@@ -108,12 +110,13 @@ public class SiteService extends LadaIntegerIdEntityService {
         // Build SQL query string
         List<String> whereClauseParts = new ArrayList<>();
         if (networkId != null) {
-            whereClauseParts.add("networkId in(:networkId)");
+            whereClauseParts.add(Site_.NETWORK_ID + " in(:networkId)");
         }
         if (search != null) {
             List<String> filters = new ArrayList<>();
             for (String attr: List.of(
-                    "extId", "shortText", "longText", "adminUnit.name")) {
+                    Site_.EXT_ID, Site_.SHORT_TEXT, Site_.LONG_TEXT,
+                    AdminUnit_.NAME)) {
                 filters.add(attr + " LIKE(:pattern)");
             }
             whereClauseParts.add(String.join(" OR ", filters));
@@ -125,11 +128,14 @@ public class SiteService extends LadaIntegerIdEntityService {
         }
 
         // Build queries
+        final String fromClause =
+            "from Site s left join AdminUnit au on au = s." + Site_.ADMIN_UNIT;
         TypedQuery<Site> siteQuery = repository.entityManager().createQuery(
-            String.format("select s from Site s %s", whereClause),
+            String.format("select s %s %s", fromClause, whereClause),
             Site.class);
         TypedQuery<Long> countQuery = repository.entityManager().createQuery(
-            String.format("select count(s) from Site s %s", whereClause),
+            String.format(
+                "select count(s) %s %s", fromClause, whereClause),
             Long.class);
         List<Query> queries = List.of(siteQuery, countQuery);
         if (networkId != null) {
