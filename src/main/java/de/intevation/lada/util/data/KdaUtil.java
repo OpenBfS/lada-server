@@ -952,7 +952,9 @@ public class KdaUtil {
         }
         if (Math.abs(ddX) > MAX_LON || Math.abs(ddY) > MAX_LAT) {
             throw new IllegalArgumentException(
-                String.format("Invalid coordinates: %d - %d", ddX, ddY));
+                String.format(
+                    "Coordinates exceed range for longitude/latitude: %s, %s",
+                    ddX, ddY));
         }
         return new Result(String.valueOf(ddX), String.valueOf(ddY));
     }

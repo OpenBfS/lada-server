@@ -62,9 +62,13 @@ public abstract class ValidCoordinatesBaseValidator<T>
                 && KdaUtil.LAT.matcher(y).matches())) {
             return false;
         }
-        Result decimal = KdaUtil.arcToDegree(
-            x.replace(",", "."), y.replace(",", "."));
-        return validateGdCoordinates(decimal.getX(), decimal.getY());
+        try {
+            Result decimal = KdaUtil.arcToDegree(
+                x.replace(",", "."), y.replace(",", "."));
+            return validateGdCoordinates(decimal.getX(), decimal.getY());
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private boolean validateGdCoordinates(String x, String y) {
