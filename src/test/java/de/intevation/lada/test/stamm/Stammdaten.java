@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.test.stamm;
 
+import static de.intevation.lada.rest.LadaService.PATH_REST;
 import static org.junit.Assert.assertTrue;
 
 import jakarta.json.JsonObject;
@@ -35,11 +36,9 @@ public class Stammdaten extends ServiceTest {
      *
      * @param type the entity type.
      */
-    public final void getAll(
-        String type
-    ) {
+    public final void getAll(String type) {
         Assert.assertNotNull(type);
-        get("rest/" + type);
+        get(PATH_REST + type);
     }
 
     /**
@@ -52,7 +51,7 @@ public class Stammdaten extends ServiceTest {
         Object id
     ) {
         /* Request an object by id*/
-        Response response = target.path("rest/" + type + "/" + id).request()
+        Response response = target.path(PATH_REST + type + "/" + id).request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
