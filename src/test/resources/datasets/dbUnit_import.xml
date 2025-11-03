@@ -20,6 +20,7 @@
     <master.meas_unit id = "1" unit_symbol = "Bq/kgFM"/>
 
     <master.measd id_old = "1" id = "H-3" />
+    <master.mmt id = "A1" name = "test1" />
     <master.mmt id = "A3" name = "test" />
     <master.mmt id = "I3" name = "test1" />
     <master.measd_gr id = "1" name = "test" />
@@ -161,7 +162,7 @@
     <lada.measm
         id = "1"
         sample_id = "1"
-        ext_id = "453"
+        ext_id = "45"
         mmt_id = "A3"
         is_completed = "false"
         is_scheduled = "true"
@@ -198,7 +199,7 @@
     <lada.measm
         id = "2"
         sample_id = "2"
-        ext_id = "453"
+        ext_id = "45"
         mmt_id = "A3"
         is_completed = "false"
         is_scheduled = "true"

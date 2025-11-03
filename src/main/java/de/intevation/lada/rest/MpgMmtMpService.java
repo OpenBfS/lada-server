@@ -9,13 +9,9 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
@@ -31,7 +27,8 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "mpgmmtmp")
-public class MpgMmtMpService extends LadaIntegerIdEntityService {
+public class MpgMmtMpService
+    extends LadaIntegerIdEntityEditingService<MpgMmtMp> {
 
     /**
      * Get MpgMmtMp objects.
@@ -60,32 +57,6 @@ public class MpgMmtMpService extends LadaIntegerIdEntityService {
     @Path("{id}")
     public MpgMmtMp getById() {
         return repository.getById(MpgMmtMp.class, id);
-    }
-
-    /**
-     * Create a MpgMmtMp object.
-     * @return A response object containing the created MpgMmtMp.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public MpgMmtMp create(
-        @Valid MpgMmtMp messprogrammmmt
-    ) throws BadRequestException {
-        return repository.create(messprogrammmmt);
-    }
-
-    /**
-     * Update an existing MpgMmtMp object.
-     *
-     * @return the updated MpgMmtMp object.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public MpgMmtMp update(
-        @Valid MpgMmtMp messprogrammmmt
-    ) throws BadRequestException {
-        return repository.update(messprogrammmmt);
     }
 
     /**

@@ -9,14 +9,11 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
@@ -32,7 +29,8 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "geolocatmpg")
-public class GeolocatMpgService extends LadaIntegerIdEntityService {
+public class GeolocatMpgService
+    extends LadaIntegerIdEntityEditingService<GeolocatMpg> {
 
     /**
      * Get GeolocatMpg objects.
@@ -70,12 +68,12 @@ public class GeolocatMpgService extends LadaIntegerIdEntityService {
      * @throws BadRequestException if any constraint violations are detected.
      * @throws NotFoundException if associated Site does not exist
      */
-    @POST
+    @Override
     public GeolocatMpg create(
-        @Valid GeolocatMpg ort
-    ) throws BadRequestException {
+        GeolocatMpg ort
+    ) throws BadRequestException, NotFoundException {
         siteExists(ort);
-        return repository.create(ort);
+        return super.create(ort);
     }
 
     /**
@@ -85,19 +83,16 @@ public class GeolocatMpgService extends LadaIntegerIdEntityService {
      * @throws BadRequestException if any constraint violations are detected.
      * @throws NotFoundException if associated Site does not exist
      */
-    @PUT
-    @Path("{id}")
+    @Override
     public GeolocatMpg update(
-        @Valid GeolocatMpg ort
-    ) throws BadRequestException {
+        GeolocatMpg ort
+    ) throws BadRequestException, NotFoundException {
         siteExists(ort);
-        return repository.update(ort);
+        return super.update(ort);
     }
 
     /**
      * Delete object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")

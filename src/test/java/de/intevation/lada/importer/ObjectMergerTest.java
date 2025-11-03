@@ -7,6 +7,11 @@
  */
 package de.intevation.lada.importer;
 
+import static org.junit.Assert.assertEquals;
+
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -15,6 +20,7 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
+import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.transaction.UserTransaction;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -157,11 +163,10 @@ public class ObjectMergerTest extends BaseTest {
 
     /**
      * Merge messung objects.
-     * @throws Exception that can occur during the test
      */
     @Test
-    public final void mergeMessung() throws Exception {
-        transaction.begin();
+    public final void mergeMessung()
+        throws IntrospectionException, ReflectiveOperationException {
         Measm messung = new Measm();
         messung.setMinSampleId("06A0");
         messung.setIsScheduled(true);
@@ -169,15 +174,21 @@ public class ObjectMergerTest extends BaseTest {
         messung.setMeasPd(MDAUER1000);
         messung.setMmtId("A3");
         messung.setMeasmStartDate(Timestamp.valueOf("2012-05-06 14:00:00"));
-        Measm dbMessung =
-            repository.getById(Measm.class, MID1200);
+        Measm dbMessung = repository.entityManager().find(Measm.class, MID1200);
         merger.mergeMessung(dbMessung, messung);
-        transaction.commit();
 
-        shouldMatchDataSet(
-            "datasets/dbUnit_import_merge_match_messung.xml",
-            "lada.measm",
-            new String[]{"status", "last_mod", "tree_mod"});
+        for (SingularAttribute<? super Measm, ?> attr : repository
+                 .entityManager().getMetamodel().entity(Measm.class)
+                 .getSingularAttributes()) {
+            if (!attr.isAssociation()) {
+                Method getter = new PropertyDescriptor(
+                    attr.getName(), Measm.class).getReadMethod();
+                Object src = getter.invoke(messung);
+                if (src != null) {
+                    assertEquals(src, getter.invoke(dbMessung));
+                }
+            }
+        }
     }
 
     /**

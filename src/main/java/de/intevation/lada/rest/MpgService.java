@@ -18,7 +18,6 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 
@@ -37,7 +36,7 @@ import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "mpg")
-public class MpgService extends LadaIntegerIdEntityService {
+public class MpgService extends LadaIntegerIdEntityEditingService<Mpg> {
 
     @Inject
     private ProbeFactory factory;
@@ -79,35 +78,18 @@ public class MpgService extends LadaIntegerIdEntityService {
         return repository.getById(Mpg.class, id);
     }
 
-    /**
-     * Create a Mpg object.
-     *
-     * @return A response object containing the created Mpg.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public Mpg create(
-        @Valid Mpg messprogramm
-    ) throws BadRequestException {
-        setEnvAttrs(messprogramm);
+    @Override
+    public Mpg create(Mpg mpg) throws BadRequestException {
+        setEnvAttrs(mpg);
 
-        return repository.create(messprogramm);
+        return super.create(mpg);
     }
 
-    /**
-     * Update an existing Mpg object.
-     *
-     * @return the updated Mpg object.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public Mpg update(
-        @Valid Mpg messprogramm
-    ) throws BadRequestException {
-        setEnvAttrs(messprogramm);
+    @Override
+    public Mpg update(Mpg mpg) throws BadRequestException {
+        setEnvAttrs(mpg);
 
-        return repository.update(messprogramm);
+        return super.update(mpg);
     }
 
     /**

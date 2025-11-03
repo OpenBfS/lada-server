@@ -10,13 +10,11 @@ package de.intevation.lada.rest;
 import java.util.Collection;
 
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
@@ -33,7 +31,8 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "samplespecifmeasval")
-public class SampleSpecifMeasValService extends LadaIntegerIdEntityService {
+public class SampleSpecifMeasValService
+    extends LadaIntegerIdEntityEditingService<SampleSpecifMeasVal> {
 
     /**
      * The object lock mechanism.
@@ -69,32 +68,20 @@ public class SampleSpecifMeasValService extends LadaIntegerIdEntityService {
     }
 
     /**
-     * Create a SampleSpecifMeasVal object.
-     *
-     * @return A response object containing the created SampleSpecifMeasVal.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public SampleSpecifMeasVal create(
-        @Valid SampleSpecifMeasVal zusatzwert
-    ) throws BadRequestException {
-        return repository.create(zusatzwert);
-    }
-
-    /**
      * Update an existing SampleSpecifMeasVal object.
      *
-     * @return the updated SampleSpecifMeasVal object.
-     * @throws BadRequestException if any constraint violations are detected.
+     * @param sampleSpecifMeasVal the object to be updated
+     * @return the updated SampleSpecifMeasVal object
+     * @throws ClientErrorException if object has been altered since loaded
+     * @throws BadRequestException if any constraint violations are detected
      */
-    @PUT
-    @Path("{id}")
+    @Override
     public SampleSpecifMeasVal update(
-        @Valid SampleSpecifMeasVal zusatzwert
-    ) throws BadRequestException {
-        lock.isLocked(zusatzwert);
+        SampleSpecifMeasVal sampleSpecifMeasVal
+    ) throws BadRequestException, ClientErrorException {
+        lock.isLocked(sampleSpecifMeasVal);
 
-        return repository.update(zusatzwert);
+        return super.update(sampleSpecifMeasVal);
     }
 
     /**

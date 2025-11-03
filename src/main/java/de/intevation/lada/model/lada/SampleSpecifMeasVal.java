@@ -46,10 +46,6 @@ public class SampleSpecifMeasVal extends BelongsToSample
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
-
     private Float error;
 
     private Double measVal;
@@ -75,14 +71,6 @@ public class SampleSpecifMeasVal extends BelongsToSample
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public Float getError() {

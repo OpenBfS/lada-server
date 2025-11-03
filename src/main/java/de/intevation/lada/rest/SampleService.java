@@ -16,14 +16,12 @@ import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.groups.ConvertGroup;
-import jakarta.validation.groups.Default;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -37,7 +35,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 
 
@@ -52,7 +49,7 @@ import de.intevation.lada.validation.constraints.BeginBeforeEnd;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "sample")
-public class SampleService extends LadaIntegerIdEntityService {
+public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
 
     /**
      * The object lock mechanism.
@@ -121,38 +118,15 @@ public class SampleService extends LadaIntegerIdEntityService {
         return repository.getById(Sample.class, id);
     }
 
-    /**
-     * Create a new Sample object.
-     *
-     * @param probe the object to create
-     * @return the created object.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public Sample create(
-        @Valid
-        @ConvertGroup(from = Default.class, to = CreateErrors.class)
-        Sample probe
-    ) throws BadRequestException {
+    @Override
+    public Sample create(Sample probe) throws BadRequestException {
         clearAssociations(probe);
 
-        return repository.create(probe);
+        return super.create(probe);
     }
 
     /**
      * Create new Sample objects from a messprogramm.
-     * <p>
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "ids": [[number]],
-     *  "dryrun": [boolean],
-     *  "start": [timestamp],
-     *  "end": [timestamp]
-     * }
-     * </code>
-     * </pre>
      *
      * @return the new probe objects.
      * @throws BadRequestException if any constraint violations are detected.
@@ -222,21 +196,20 @@ public class SampleService extends LadaIntegerIdEntityService {
     }
 
     /**
-     * Update an existing Sample object.
+     * Update an existing {@link Sample} object.
      *
-     * @return the updated Sample object.
-     * @throws BadRequestException if any constraint violations are detected.
+     * @param sample the object to be updated
+     * @return the updated object
+     * @throws ClientErrorException if object has been altered since loaded
+     * @throws BadRequestException if any constraint violations are detected
      */
-    @PUT
-    @Path("{id}")
-    public Sample update(
-        @Valid Sample probe
-    ) throws BadRequestException {
-        clearAssociations(probe);
+    @Override
+    public Sample update(Sample sample) throws BadRequestException {
+        clearAssociations(sample);
 
-        lock.isLocked(probe);
+        lock.isLocked(sample);
 
-        return repository.update(probe);
+        return super.update(sample);
     }
 
     /**

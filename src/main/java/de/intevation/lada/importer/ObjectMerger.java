@@ -51,7 +51,7 @@ public class ObjectMerger {
      *
      * Attributes are set to a new value if the old value in {@code target}
      * and the deserialized value from {@code src} differ in terms of
-     * {@link Objects::equals}.
+     * {@link Objects#equals(Object, Object)}.
      *
      * @param target entity instance at which attributes are set
      * @param src JSON object from which attribute values are taken
@@ -160,15 +160,6 @@ public class ObjectMerger {
         if (src.getOrigDate() != null) {
             target.setOrigDate(src.getOrigDate());
         }
-        if (src.getIsTest() != null) {
-            if (target.getIsTest() == null) {
-                target.setIsTest(src.getIsTest());
-            }
-        } else {
-            // Set explicit to false, if is null in src to not violate
-            // constraints
-            target.setIsTest(false);
-        }
         if (src.getEnvMediumId() != null) {
             target.setEnvMediumId(src.getEnvMediumId());
         }
@@ -208,7 +199,6 @@ public class ObjectMerger {
         if (src.getMmtId() != null) {
             target.setMmtId(src.getMmtId());
         }
-        repository.update(target);
         return this;
     }
 

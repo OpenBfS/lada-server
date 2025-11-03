@@ -10,13 +10,11 @@ package de.intevation.lada.rest;
 import java.util.Collection;
 
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
@@ -33,7 +31,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "measm")
-public class MeasmService extends LadaIntegerIdEntityService {
+public class MeasmService extends LadaIntegerIdEntityEditingService<Measm> {
 
     /**
      * The object lock mechanism.
@@ -65,40 +63,31 @@ public class MeasmService extends LadaIntegerIdEntityService {
         return repository.getById(Measm.class, id);
     }
 
-    /**
-     * Create a Measm object.
-     *
-     * @return A response object containing the created Measm.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public Measm create(
-        @Valid Measm messung
-    ) throws BadRequestException {
+    @Override
+    public Measm create(Measm messung) throws BadRequestException {
         clearAssociations(messung);
-        return repository.create(messung);
+        return super.create(messung);
     }
 
     /**
      * Update an existing Measm object.
      *
-     * @return the updated Measm object.
-     * @throws BadRequestException if any constraint violations are detected.
+     * @param measm the object to be updated
+     * @return the updated Measm object
+     * @throws ClientErrorException if object has been altered since loaded
+     * @throws BadRequestException if any constraint violations are detected
      */
-    @PUT
-    @Path("{id}")
-    public Measm update(
-        @Valid Measm messung
-    ) throws BadRequestException {
-        lock.isLocked(messung);
-        clearAssociations(messung);
-        return repository.update(messung);
+    @Override
+    public Measm update(Measm measm)
+        throws BadRequestException, ClientErrorException {
+        lock.isLocked(measm);
+        clearAssociations(measm);
+
+        return super.update(measm);
     }
 
     /**
      * Delete an existing Measm object by id.
-     *
-     * @param id The id is appended to the URL as a path parameter.
      */
     @DELETE
     @Path("{id}")

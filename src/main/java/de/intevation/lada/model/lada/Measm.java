@@ -35,6 +35,7 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
@@ -51,10 +52,12 @@ import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulationNot1
 import de.intevation.lada.validation.constraints.HasMeasPdNotSampleMeth9OrRegulation1;
 import de.intevation.lada.validation.constraints.HasMeasPdSampleMeth9OrRegulation1;
 import de.intevation.lada.validation.constraints.HasObligMeasds;
+import de.intevation.lada.validation.constraints.Immutable;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.MeasuringAfterSampling;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
+import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
@@ -69,8 +72,8 @@ import de.intevation.lada.validation.groups.Warnings;
 @GroupSequence({ Measm.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = Measm.class, fields = { "minSampleId", "sample" })
-@Unique(groups = DatabaseConstraints.class,
-    clazz = Measm.class, fields = { "extId", "sample" })
+@Immutable(groups = DatabaseConstraints.class,
+    clazz = Measm.class, fields = Measm_.EXT_ID)
 @MeasuringAfterSampling(groups = Warnings.class)
 @HasMeasPdNotSampleMeth9OrRegulation1(groups = Warnings.class)
 @HasMeasPdSampleMeth9OrRegulation1(groups = Notifications.class)
@@ -93,11 +96,10 @@ public class Measm extends BelongsToSample
 
     private Boolean isScheduled;
 
+    @Null(groups = CreateErrors.class,
+        message = "{de.intevation.lada.validation.ReadOnlyField.message}")
+    @Column(insertable = false, updatable = false)
     private Integer extId;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     private Integer measPd;
 
@@ -199,14 +201,6 @@ public class Measm extends BelongsToSample
 
     public void setExtId(Integer extId) {
         this.extId = extId;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public Integer getMeasPd() {

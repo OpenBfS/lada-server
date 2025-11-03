@@ -126,8 +126,8 @@ public class ProbeFactory {
          * start date, which will be adjusted to the next possible start
          * of an intervall of the type given by the Messprogramm.
          *
-         * @param Mpg the Messprogramm to use
-         * @param Calendar initial start date
+         * @param messprogramm the Messprogramm to use
+         * @param start initial start date
          */
         Intervall(
             Mpg messprogramm,

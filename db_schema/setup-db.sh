@@ -139,10 +139,10 @@ do
         psql -q $DB_CONNECT_STRING -d $DB_NAME
 done
 
-echo create main border view
+echo create master schema views
 psql -q $DB_CONNECT_STRING -d $DB_NAME \
     -c "SET role $ROLE_NAME;" \
-    -f $DIR/master_admin_border_view.sql
+    -f $DIR/master_views.sql
 
 echo create german views
 psql -q $DB_CONNECT_STRING -d $DB_NAME \

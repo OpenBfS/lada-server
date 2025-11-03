@@ -21,6 +21,7 @@ import org.junit.Test;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.validation.groups.CreateErrors;
 
 
 /**
@@ -30,10 +31,12 @@ import de.intevation.lada.model.lada.Sample;
 public class MessungTest extends ValidatorBaseTest {
 
     //ID constants from test dataset
+    private static final int EXISTING_SAMPLE_ID = 1000;
     private static final int EXISTING_SAMPLE_ID_SAMPLE_METH_CONT = 2000;
     private static final int EXISTING_SAMPLE_ID_REGULATION_161 = 3000;
     private static final int EXISTING_MEASM_ID = 1200;
     private static final String EXISTING_MIN_SAMPLE_ID = "T100";
+    private static final String EXISTING_MMT_ID = "A3";
     private static final String MEASD_ID_OTHER = "Other";
     private static final String EXISTING_SAMPLE_START_DATE
         = "2012-05-03 13:07:00";
@@ -106,9 +109,7 @@ public class MessungTest extends ValidatorBaseTest {
         messung.setId(null);
         messung.setExtId(null);
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
-        validator.validate(messung);
-        Assert.assertFalse("Unexpected errors: " + messung.getErrors(),
-            messung.hasErrors());
+        assertNoErrors(validator.validate(messung));
     }
 
     /**
@@ -320,6 +321,25 @@ public class MessungTest extends ValidatorBaseTest {
             measm.getErrors().get(Measm_.MMT_ID),
             CoreMatchers.hasItem(
                 "'" + invalidKey + "' is no valid primary key"));
+    }
+
+    @Test
+    public void extIdCannotBeSet() {
+        Measm measm = new Measm();
+        measm.setExtId(1);
+        assertHasErrors(validator.validate(measm, CreateErrors.class),
+            Measm_.EXT_ID, "Field can only be set by System");
+    }
+
+    @Test
+    public void extIdImmutable() {
+        Measm measm = new Measm();
+        measm.setId(EXISTING_MEASM_ID);
+        measm.setSample(repository.getById(Sample.class, EXISTING_SAMPLE_ID));
+        measm.setMmtId(EXISTING_MMT_ID);
+        measm.setExtId(1);
+        assertHasErrors(validator.validate(measm),
+            Measm_.EXT_ID, "Field is immutable");
     }
 
     private Measm createMinimalValidMeasm() {

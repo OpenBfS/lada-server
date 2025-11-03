@@ -8,14 +8,10 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 /**
  * The persistent class for the auth_coord_ofc_env_medium_mp database table.
@@ -32,10 +28,6 @@ public class AuthCoordOfcEnvMediumMp implements Serializable {
     private String measFacilId;
 
     private String envMediumId;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     public AuthCoordOfcEnvMediumMp() {
     }
@@ -63,13 +55,4 @@ public class AuthCoordOfcEnvMediumMp implements Serializable {
     public void setEnvMediumId(String envMediumId) {
         this.envMediumId = envMediumId;
     }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
-    }
-
 }

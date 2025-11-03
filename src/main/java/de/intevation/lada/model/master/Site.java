@@ -31,13 +31,13 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.processing.CheckHQL;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.Formula;
 import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
@@ -162,7 +162,8 @@ public class Site extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String longText;
 
-    @Column(insertable = false)
+    @Schema(ref = "java.util.Date", readOnly = true)
+    @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
@@ -229,12 +230,6 @@ public class Site extends BaseModel implements Serializable {
 
     @NotEmptyNorWhitespace
     private String route;
-
-    @Transient
-    private Double longitude;
-
-    @Transient
-    private Double latitude;
 
     @OneToMany(mappedBy = Geolocat_.SITE, fetch = FetchType.EAGER)
     @JsonbTransient
@@ -386,10 +381,6 @@ public class Site extends BaseModel implements Serializable {
 
     public Date getLastMod() {
         return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     /**

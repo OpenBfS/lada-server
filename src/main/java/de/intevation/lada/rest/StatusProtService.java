@@ -7,9 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -124,9 +122,6 @@ public class StatusProtService extends LadaIntegerIdEntityService {
                 .executeUpdate();
         }
 
-        //Set datum to null to use database timestamp
-        status.setDate(null);
-
         //NOTE: The referenced messung status field is updated by a DB trigger
         return repository.create(status);
     }
@@ -146,7 +141,6 @@ public class StatusProtService extends LadaIntegerIdEntityService {
             .setParameter("statusLev", oldKombi.getStatusLev().getId())
             .getSingleResult();
         StatusProt statusNew = new StatusProt();
-        statusNew.setDate(new Timestamp(new Date().getTime()));
         statusNew.setMeasFacilId(newStatus.getMeasFacilId());
         statusNew.setMeasm(newStatus.getMeasm());
         statusNew.setStatusMpId(newKombi.getId());
@@ -156,7 +150,6 @@ public class StatusProtService extends LadaIntegerIdEntityService {
 
         if (oldKombi.getStatusLev().getId() == 1) {
             StatusProt nV = new StatusProt();
-            nV.setDate(new Timestamp(new Date().getTime()));
             nV.setMeasFacilId(newStatus.getMeasFacilId());
             nV.setMeasm(newStatus.getMeasm());
             nV.setStatusMpId(1);
@@ -180,7 +173,6 @@ public class StatusProtService extends LadaIntegerIdEntityService {
         }
         StatusProt copy = new StatusProt();
         StatusProt orig = proto.get(ndx);
-        copy.setDate(new Timestamp(new Date().getTime()));
         copy.setMeasFacilId(orig.getMeasFacilId());
         copy.setMeasm(orig.getMeasm());
         copy.setStatusMpId(orig.getStatusMpId());

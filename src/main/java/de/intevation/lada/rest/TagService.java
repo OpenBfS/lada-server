@@ -12,12 +12,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.TypedQuery;
-import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.model.lada.TagLinkMeasm_;
@@ -32,7 +29,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * REST-Service for tags.
  */
 @Path(LadaService.PATH_REST + "tag")
-public class TagService extends LadaIntegerIdEntityService {
+public class TagService extends LadaIntegerIdEntityEditingService<Tag> {
 
     private static final String TAGS_PER_OBJECT_QUERY = String.format(
         "select t from %s t where ", Tag_.class_.getName());
@@ -99,34 +96,10 @@ public class TagService extends LadaIntegerIdEntityService {
         return query.getResultList();
     }
 
-    /**
-     * Update an existing tag object.
-     *
-     * @param tag Tag to update using payload like
-     * @return the updated tag object
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public Tag update(
-        @Valid Tag tag
-    ) throws BadRequestException {
-        return repository.update(tag);
-    }
-
-    /**
-     * Creates a new tag.
-     *
-     * @param tag Tag to create.
-     * @return Created Tag object
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public Tag create(
-        @Valid Tag tag
-    ) throws BadRequestException {
+    @Override
+    public Tag create(Tag tag) throws BadRequestException {
         tag.setLadaUserId(authorization.getInfo().getUserId());
-        return repository.create(tag);
+        return super.create(tag);
     }
 
     /**

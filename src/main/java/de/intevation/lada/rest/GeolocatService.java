@@ -10,14 +10,12 @@ package de.intevation.lada.rest;
 import java.util.Collection;
 
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
@@ -35,7 +33,8 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "geolocat")
-public class GeolocatService extends LadaIntegerIdEntityService {
+public class GeolocatService
+    extends LadaIntegerIdEntityEditingService<Geolocat> {
 
     /**
      * The object lock mechanism.
@@ -76,29 +75,29 @@ public class GeolocatService extends LadaIntegerIdEntityService {
      * @throws BadRequestException if any constraint violations are detected.
      * @throws NotFoundException if associated Site does not exist
      */
-    @POST
+    @Override
     public Geolocat create(
-        @Valid Geolocat ort
+        Geolocat ort
     ) throws BadRequestException, NotFoundException {
         siteExists(ort);
-        return repository.create(ort);
+        return super.create(ort);
     }
 
     /**
      * Update an existing Geolocat object.
      *
-     * @return the updated Geolocat object.
-     * @throws BadRequestException if any constraint violations are detected.
+     * @param geolocat the object to be updated
+     * @return the updated object
+     * @throws ClientErrorException if object has been altered since loaded
+     * @throws BadRequestException if any constraint violations are detected
      * @throws NotFoundException if associated Site does not exist
      */
-    @PUT
-    @Path("{id}")
-    public Geolocat update(
-        @Valid Geolocat ort
-    ) throws BadRequestException, NotFoundException {
-        siteExists(ort);
-        lock.isLocked(ort);
-        return repository.update(ort);
+    @Override
+    public Geolocat update(Geolocat geolocat)
+        throws BadRequestException, ClientErrorException, NotFoundException {
+        siteExists(geolocat);
+        lock.isLocked(geolocat);
+        return super.update(geolocat);
     }
 
     /**

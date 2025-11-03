@@ -109,7 +109,7 @@ public class ImporterTest extends ClientBaseTest {
     private final String existingExtId = "T001";
     private final String foreignExtId = "foreign";
     private final String existingMainSampleId = "120510002";
-    private final int existingMeasmExtId = 453;
+    private final int existingMeasmExtId = 45;
     private final String existingSiteExtId = "D_00191";
     private final String mstId = "06010";
     private final String regulation = "test";
@@ -117,6 +117,7 @@ public class ImporterTest extends ClientBaseTest {
     private final String envDescrip = "D: 01 01 00 00 00 00 00 00 00 00 00 00";
     private final String mmtId = "A3";
     private final String invalidMmtId = "XXX";
+    private final String minSampleId = "test";
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
     private final String existingAssociatedTag = "associated";
@@ -134,7 +135,8 @@ public class ImporterTest extends ClientBaseTest {
         + "DESKRIPTOREN \"" + envDescrip.replaceAll("(D:| )", "") + "\"\n"
         + "%s"
         + "%%MESSUNG%%\n"
-        + "MESSMETHODE_S \"" + mmtId + "\"\n"
+        + "NEBENPROBENNUMMER \"" + minSampleId + "\"\n"
+        + "MESSMETHODE_S \"%s\"\n"
         + "MESSWERT \"%s\" 0 \"%s\" 4.4\n"
         + "%s"
         + "%%ENDE%%\n";
@@ -181,7 +183,7 @@ public class ImporterTest extends ClientBaseTest {
     public final void testImportProbe() {
         final String laf = String.format(
             laf8Template, randomProbeId(),
-            regulation, sampleSpecifId, "", measd, measUnit, "");
+            regulation, sampleSpecifId, "", mmtId, measd, measUnit, "");
 
         /* Request synchronous import */
         Response importResponse = target
@@ -210,7 +212,7 @@ public class ImporterTest extends ClientBaseTest {
         final String lafSampleId = randomProbeId();
         final String laf = String.format(
             laf8Template, lafSampleId,
-            regulation, sampleSpecifId, "", measd, measUnit, "");
+            regulation, sampleSpecifId, "", mmtId, measd, measUnit, "");
         Map<String, JsonValue> verify = new HashMap<>(expectedAttrs);
         verify.put(Sample_.MAIN_SAMPLE_ID, Json.createValue(lafSampleId));
         JsonObject report = testAsyncLaf8Import(laf, lafSampleId, true, verify);
@@ -244,7 +246,7 @@ public class ImporterTest extends ClientBaseTest {
         final String lafSampleId = randomProbeId();
         final String laf = String.format(
             laf8Template, lafSampleId,
-            regulation, sampleSpecifId, "", measd, measUnit, "");
+            regulation, sampleSpecifId, "", mmtId, measd, measUnit, "");
         JsonObject fileReport = testAsyncLaf8Import(laf, lafSampleId, true);
         final int sampleId = fileReport.getJsonArray(SAMPLE_IDS_KEY)
             .getJsonNumber(0).intValue();
@@ -345,7 +347,7 @@ public class ImporterTest extends ClientBaseTest {
         throws InterruptedException, CharacterCodingException {
         final String laf = String.format(
             laf8Template, existingMainSampleId,
-            "test2", sampleSpecifId, "", measd, measUnit, "");
+            "test2", sampleSpecifId, "", mmtId, measd, measUnit, "");
 
         Map<String, JsonValue> verify = new HashMap<>(expectedAttrs);
         verify.put(
@@ -706,7 +708,6 @@ public class ImporterTest extends ClientBaseTest {
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(foreignExtId);
-        final int existingMeasmExtId = 453;
         Measm measm = new Measm();
         measm.setExtId(existingMeasmExtId);
         Tag existingTag = new Tag();
@@ -734,7 +735,7 @@ public class ImporterTest extends ClientBaseTest {
         final String lafSampleId = randomProbeId();
         final String lowerCaseLAF = String.format(
             laf8Template, lafSampleId, regulation, sampleSpecifId,
-            "", measd, measUnit, "").lines().map(line -> {
+            "", mmtId, measd, measUnit, "").lines().map(line -> {
                     if (line.matches("^\\w+ .*")) {
                         String[] words = line.split(" ");
                         words[0] = words[0].toLowerCase();
@@ -807,7 +808,7 @@ public class ImporterTest extends ClientBaseTest {
         final String lafSampleId = randomProbeId();
         final String noOprModeLAF = String.format(
             laf8Template, lafSampleId, regulation, sampleSpecifId,
-            "", measd, measUnit, "").lines().filter(
+            "", mmtId, measd, measUnit, "").lines().filter(
                 line -> !line.startsWith("MESSPROGRAMM")).collect(
                     Collectors.joining("\n"));
 
@@ -842,7 +843,7 @@ public class ImporterTest extends ClientBaseTest {
         testAsyncLaf8Import(
             String.format(
                 laf8Template, lafSampleId, "conv", sampleSpecifId,
-                "", measd, measUnit, ""),
+                "", mmtId, measd, measUnit, ""),
             lafSampleId,
             true);
     }
@@ -858,7 +859,7 @@ public class ImporterTest extends ClientBaseTest {
         testAsyncLaf8Import(
             String.format(
                 laf8Template, lafSampleId, "conv", sampleSpecifId,
-                "", "H 3", measUnit, ""),
+                "", mmtId, "H 3", measUnit, ""),
             lafSampleId,
             true);
     }
@@ -875,7 +876,7 @@ public class ImporterTest extends ClientBaseTest {
         testAsyncLaf8Import(
             String.format(
                 laf8Template, lafSampleId, "conv", "XX",
-                "", measd, measUnit, ""),
+                "", mmtId, measd, measUnit, ""),
             lafSampleId,
             true);
     }
@@ -894,7 +895,7 @@ public class ImporterTest extends ClientBaseTest {
                 laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
                 "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
-                measd, measUnit, ""),
+                mmtId, measd, measUnit, ""),
             lafSampleId,
             true);
     }
@@ -925,7 +926,7 @@ public class ImporterTest extends ClientBaseTest {
         testAsyncLaf9Import(
             laf, lafSampleId, true, true, expected,
             // Ignore anything completed by server
-            Sample_.ID, Sample_.EXT_ID, Sample_.LAST_MOD, Sample_.TREE_MOD,
+            Sample_.ID, Sample_.EXT_ID, Sample_.TREE_MOD,
             Sample_.ENV_DESCRIP_NAME, Sample_.ENV_MEDIUM_ID, OWNER_KEY,
             // Ignore all associations
             Sample_.SAMPLE_SPECIF_MEAS_VALS, Sample_.GEOLOCATS,
@@ -963,9 +964,67 @@ public class ImporterTest extends ClientBaseTest {
                 laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
                 "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
-                measd, measUnit, ""),
+                mmtId, measd, measUnit, ""),
             lafSampleId,
             true);
+    }
+
+    /**
+     * Ensure measms are validated on creation.
+     */
+    @Test
+    @RunAsClient
+    public final void measmsValidatedOnCreate()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = existingMainSampleId;
+        JsonObject report = testAsyncLaf8Import(
+            String.format(
+                laf8Template, lafSampleId,
+                regulation, sampleSpecifId, "",
+                // New measm with extId should not be possible
+                mmtId, measd, measUnit,
+                "MESSUNGS_ID 11\n"),
+            lafSampleId,
+            false);
+        JsonObject expectedErr = Json.createObjectBuilder()
+            .add("key", "validation#messung")
+            .add("value", Measm_.EXT_ID + "#" + minSampleId)
+            .add("code", "Field can only be set by System")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("errors").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedErr));
+    }
+
+    /**
+     * Ensure measms are validated on update.
+     */
+    @Test
+    @RunAsClient
+    public final void measmsValidatedOnUpdate()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = existingMainSampleId;
+        JsonObject report = testAsyncLaf8Import(
+            String.format(
+                laf8Template, lafSampleId,
+                regulation, sampleSpecifId, "",
+                // New Measm with minSampleId
+                "A1", measd, measUnit,
+                // Give existing Measm the same minSampleId
+                "%MESSUNG%\n"
+                + "MESSUNGS_ID " + existingMeasmExtId + "\n"
+                + "NEBENPROBENNUMMER \"" + minSampleId + "\"\n"),
+            lafSampleId,
+            false);
+        JsonObject expectedErr = Json.createObjectBuilder()
+            .add("key", "validation#messung")
+            .add("value", Measm_.MIN_SAMPLE_ID + "#" + minSampleId)
+            .add("code",
+                "Non-unique value combination for [minSampleId, sample]")
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("errors").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedErr));
     }
 
     /**
@@ -981,7 +1040,7 @@ public class ImporterTest extends ClientBaseTest {
                 laf8Template, lafSampleId,
                 regulation, sampleSpecifId,
                 "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
-                measd, measUnit,
+                mmtId, measd, measUnit,
                 "BEARBEITUNGSSTATUS 1000\n"),
             lafSampleId,
             true);
@@ -1000,7 +1059,7 @@ public class ImporterTest extends ClientBaseTest {
                     laf8Template, lafSampleId,
                     regulation, sampleSpecifId,
                     "PROBE_ID \"" + lafSampleId + "\"\n",
-                    measd, measUnit,
+                    mmtId, measd, measUnit,
                     "BEARBEITUNGSSTATUS 1000\n"),
                 lafSampleId,
                 false);
@@ -1048,7 +1107,7 @@ public class ImporterTest extends ClientBaseTest {
                 regulation, sampleSpecifId,
                 "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
                 // Measurand does not match measuring method
-                "Mangan", measUnit,
+                mmtId, "Mangan", measUnit,
                 "BEARBEITUNGSSTATUS 1000\n"),
             lafSampleId,
             false);
@@ -1066,7 +1125,7 @@ public class ImporterTest extends ClientBaseTest {
             String.format(
                 laf8Template, lafSampleId,
                 regulation, sampleSpecifId, "",
-                measd, measUnit,
+                mmtId, measd, measUnit,
                 "MESSWERT_S 1 42.0 1 0.42\n"),
             lafSampleId,
             true);
@@ -1101,6 +1160,7 @@ public class ImporterTest extends ClientBaseTest {
             regulation,
             sampleSpecifId,
             lafKey + " " + value + "\n",
+            mmtId,
             measd,
             measUnit,
             "");

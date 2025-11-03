@@ -87,12 +87,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
      *                    represents a row,
      *                    while every map key represents a column
      * @param encoding Ignored. Result is always UTF_8.
-     * @param options Export options as JSON Object. Options are: <p>
-     *        <ul>
-     *          <li> idField: Name of the id column, mandatory </li>
-     *          <li> subData: key of the subData json object, optional </li>
-     *        </ul>
-     *
+     * @param options Export options
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
      * @return Export result as input stream or null if the export failed
@@ -272,14 +267,6 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         return in;
     }
 
-    /**
-     * Export Messungen and associated Proben context.
-     * @param probeIds ignored.
-     * @param messungsIds List of Messungs IDs to export.
-     * @param encoding Ignored. Result is always UTF_8.
-     * @param userInfo UserInfo
-     * @return Export result as InputStream or null if the export failed
-     */
     private JsonArrayBuilder generateProbenObjectBuilder(
         List<Integer> probeIds, UserInfo userInfo
     ) {

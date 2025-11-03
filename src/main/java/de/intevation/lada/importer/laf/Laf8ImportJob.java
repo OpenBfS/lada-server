@@ -23,7 +23,7 @@ import de.intevation.lada.util.data.QueryBuilder;
 /**
  * Asynchronous import job.
  *
- * @author Alexander Woestmann <awoestmann@intevation.de>
+ * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 public class Laf8ImportJob extends ImportJob<String> {
 

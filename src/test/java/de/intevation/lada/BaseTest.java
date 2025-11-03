@@ -56,6 +56,7 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -75,6 +76,8 @@ import de.intevation.lada.util.rest.JSONBConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class BaseTest {
+
+    private static Logger LOG = Logger.getLogger(BaseTest.class);
 
     public static final DateTimeFormatter TIMESTAMP_FORMATTER =
         DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT)
@@ -337,6 +340,7 @@ public class BaseTest {
      * or bean introspection of clazz fails
      */
     public static JsonArray readXmlResource(String resource, Class<?> clazz) {
+        LOG.tracef("Reading %s from XML resource", clazz);
         try {
             IDataSet xml = new FlatXmlDataSetBuilder()
                 .setColumnSensing(true)
@@ -364,13 +368,16 @@ public class BaseTest {
                     } catch (NoSuchColumnException nsce) {
                         continue;
                     }
+                    LOG.tracef("Reading attribute %s", key);
                     String rawValue = (String) table.getValue(row, columnName);
+                    LOG.tracef("Raw value: '%s'", rawValue);
                     if (rawValue == null) {
                         continue;
                     }
 
                     // Get entity attribute type
                     Class<?> type = column.getReadMethod().getReturnType();
+                    LOG.tracef("Column type: %s", type);
                     Object value;
 
                     // Apply JPA conversion, if any
@@ -409,12 +416,14 @@ public class BaseTest {
                         || type.isAssignableFrom(Float.class)
                     ) {
                         builder.add(key, (Double) value);
-                    } else if (type.isAssignableFrom(Boolean.class)) {
+                    } else if (type.isAssignableFrom(Boolean.class)
+                        || type.isAssignableFrom(boolean.class)) {
                         builder.add(key, (Boolean) value);
                     } else if (type.isAssignableFrom(Date.class)) {
                         builder.add(key, BaseTest.TIMESTAMP_FORMATTER
                             .format((Instant) value));
                     } else {
+                        LOG.tracef("Convert '%s' to String", value);
                         builder.add(key, value.toString());
                     }
                 }
@@ -431,17 +440,22 @@ public class BaseTest {
 
     private static Object parseXMLAttr(String value, Class<?> type) {
         if (type.isAssignableFrom(Integer.class)) {
+            LOG.tracef("Convert '%s' to Integer", value);
             return Integer.parseInt(value);
         }
         if (type.isAssignableFrom(Double.class)
             || type.isAssignableFrom(Float.class)
         ) {
+            LOG.tracef("Convert '%s' to Double", value);
             return Double.parseDouble(value);
         }
-        if (type.isAssignableFrom(Boolean.class)) {
+        if (type.isAssignableFrom(Boolean.class)
+            || type.isAssignableFrom(boolean.class)) {
+            LOG.tracef("Convert '%s' to Boolean", value);
             return Boolean.parseBoolean(value);
         }
         if (type.isAssignableFrom(Date.class)) {
+            LOG.tracef("Convert '%s' to timestamp", value);
             return Timestamp.valueOf(value).toInstant();
         }
         return value;

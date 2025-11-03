@@ -15,14 +15,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
@@ -43,7 +40,8 @@ import de.intevation.lada.model.master.QueryUser_;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "gridcolconf")
-public class GridColConfService extends LadaIntegerIdEntityService {
+public class GridColConfService
+    extends LadaIntegerIdEntityEditingService<GridColConf> {
 
     /**
      * Request user defined GridColConf objects.
@@ -88,14 +86,9 @@ public class GridColConfService extends LadaIntegerIdEntityService {
         return queries;
     }
 
-    /**
-     * Creates a new GridColConf in the database.
-     * @return the created record.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
+    @Override
     public GridColConf create(
-        @Valid GridColConf gridColumnValue
+        GridColConf gridColumnValue
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
 
@@ -104,29 +97,22 @@ public class GridColConfService extends LadaIntegerIdEntityService {
             && !gridColumnValue.getLadaUserId().equals(userInfo.getUserId())
         ) {
             throw new ForbiddenException();
-        } else {
-            gridColumnValue.setLadaUserId(userInfo.getUserId());
-            GridColMp gridColumn = new GridColMp();
-            gridColumn.setId(gridColumnValue.getGridColMpId());
-            gridColumnValue.setGridColMp(gridColumn);
-
-            QueryUser queryUser = repository.getById(
-                QueryUser.class, gridColumnValue.getQueryUserId());
-            gridColumnValue.setQueryUser(queryUser);
-
-            return repository.create(gridColumnValue);
         }
+        gridColumnValue.setLadaUserId(userInfo.getUserId());
+        GridColMp gridColumn = new GridColMp();
+        gridColumn.setId(gridColumnValue.getGridColMpId());
+        gridColumnValue.setGridColMp(gridColumn);
+
+        QueryUser queryUser = repository.getById(
+            QueryUser.class, gridColumnValue.getQueryUserId());
+        gridColumnValue.setQueryUser(queryUser);
+
+        return super.create(gridColumnValue);
     }
 
-    /**
-     * Update an existing GridColConf in the database.
-     * @return the updated record.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
+    @Override
     public GridColConf update(
-        @Valid GridColConf gridColumnValue
+        GridColConf gridColumnValue
     ) throws BadRequestException {
         // TODO: Really authorize with an Authorizer implementation.
         // Currently any object can be hijacked by passing it with
@@ -134,16 +120,15 @@ public class GridColConfService extends LadaIntegerIdEntityService {
         UserInfo userInfo = authorization.getInfo();
         if (!userInfo.getUserId().equals(gridColumnValue.getLadaUserId())) {
             throw new ForbiddenException();
-        } else {
-            GridColMp gridColumn = repository.getById(
-                GridColMp.class, gridColumnValue.getGridColMpId());
-            QueryUser queryUser = repository.getById(
-                QueryUser.class, gridColumnValue.getQueryUserId());
-            gridColumnValue.setGridColMp(gridColumn);
-            gridColumnValue.setQueryUser(queryUser);
-
-            return repository.update(gridColumnValue);
         }
+        GridColMp gridColumn = repository.getById(
+            GridColMp.class, gridColumnValue.getGridColMpId());
+        QueryUser queryUser = repository.getById(
+            QueryUser.class, gridColumnValue.getQueryUserId());
+        gridColumnValue.setGridColMp(gridColumn);
+        gridColumnValue.setQueryUser(queryUser);
+
+        return super.update(gridColumnValue);
     }
 
     /**

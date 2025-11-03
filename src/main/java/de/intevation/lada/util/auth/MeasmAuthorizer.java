@@ -55,10 +55,7 @@ class MeasmAuthorizer extends Authorizer<Measm> {
         Sample probe = messung.getSample();
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
-            int statusVal = repository
-                .getById(
-                    StatusMp.class, messung.getStatusProt().getStatusMpId())
-                .getStatusVal().getId();
+            int statusVal = messung.getStatusProt().getStatusValId();
             if ((statusVal == 0 || statusVal == 4)
                 && probeAuthorizer.isMethodAuthorized(probe, RequestMethod.POST)
             ) {
@@ -72,11 +69,7 @@ class MeasmAuthorizer extends Authorizer<Measm> {
             }
             throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         }
-        StatusMp kombi = repository.getById(
-            StatusMp.class,
-            messung.getStatusProt().getStatusMpId()
-        );
-        if (kombi.getStatusVal().getId() > 0
+        if (messung.getStatusProt().getStatusValId() > 0
             || probeAuthorizer.isMethodAuthorized(probe, RequestMethod.POST)
         ) {
             return;

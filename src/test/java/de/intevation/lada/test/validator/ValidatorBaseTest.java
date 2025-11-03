@@ -73,6 +73,13 @@ public abstract class ValidatorBaseTest extends BaseTest {
         assertNoNotifications(entity);
     }
 
+    protected void assertNoErrors(BaseModel entity) {
+        Assert.assertFalse(
+            "Unexpected validation errors: "
+                + entity.getErrors(),
+            entity.hasErrors());
+    }
+
     protected void assertNoNotifications(BaseModel entity) {
         Assert.assertFalse(
             "Unexpected validation notifications: "

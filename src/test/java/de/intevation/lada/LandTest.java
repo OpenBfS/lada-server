@@ -86,7 +86,6 @@ public class LandTest extends ClientBaseTest {
 
     /**
      * Tests for probe operations.
-     * @throws Exception that can occur during the test.
      */
     @Test
     @RunAsClient
@@ -97,7 +96,6 @@ public class LandTest extends ClientBaseTest {
 
     /**
      * Tests for pkommentar operations.
-     * @throws Exception that can occur during the test.
      */
     @Test
     @RunAsClient

@@ -18,7 +18,6 @@ import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.BadRequestException;
@@ -28,7 +27,6 @@ import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -37,8 +35,10 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.factory.OrtFactory;
+import de.intevation.lada.model.master.AdminUnit_;
 import de.intevation.lada.model.master.Names;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 
@@ -49,7 +49,7 @@ import de.intevation.lada.validation.Validator;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "site")
-public class SiteService extends LadaIntegerIdEntityService {
+public class SiteService extends LadaIntegerIdEntityEditingService<Site> {
 
     private static final String IMG_PATH = "img";
     private static final String MAP_PATH = "map";
@@ -116,12 +116,13 @@ public class SiteService extends LadaIntegerIdEntityService {
         // Build SQL query string
         List<String> whereClauseParts = new ArrayList<>();
         if (networkId != null) {
-            whereClauseParts.add("networkId in(:networkId)");
+            whereClauseParts.add(Site_.NETWORK_ID + " in(:networkId)");
         }
         if (search != null) {
             List<String> filters = new ArrayList<>();
             for (String attr: List.of(
-                    "extId", "shortText", "longText", "adminUnit.name")) {
+                    Site_.EXT_ID, Site_.SHORT_TEXT, Site_.LONG_TEXT,
+                    AdminUnit_.NAME)) {
                 filters.add(attr + " LIKE(:pattern)");
             }
             whereClauseParts.add(String.join(" OR ", filters));
@@ -133,11 +134,14 @@ public class SiteService extends LadaIntegerIdEntityService {
         }
 
         // Build queries
+        final String fromClause =
+            "from Site s left join AdminUnit au on au = s." + Site_.ADMIN_UNIT;
         TypedQuery<Site> siteQuery = repository.entityManager().createQuery(
-            String.format("select s from Site s %s", whereClause),
+            String.format("select s %s %s", fromClause, whereClause),
             Site.class);
         TypedQuery<Long> countQuery = repository.entityManager().createQuery(
-            String.format("select count(s) from Site s %s", whereClause),
+            String.format(
+                "select count(s) %s %s", fromClause, whereClause),
             Long.class);
         List<Query> queries = List.of(siteQuery, countQuery);
         if (networkId != null) {
@@ -175,43 +179,26 @@ public class SiteService extends LadaIntegerIdEntityService {
         return repository.getById(Site.class, id);
     }
 
-    /**
-     * Create a Site object.
-     *
-     * @return A response object containing the created Site.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public Site create(
-        @Valid Site ort
-    ) throws BadRequestException {
-        Site existing = ortFactory.findExistingSite(ort);
+    @Override
+    public Site create(Site site) throws BadRequestException {
+        Site existing = ortFactory.findExistingSite(site);
         if (existing != null) {
-            ort = existing;
+            site = existing;
         } else {
-            ortFactory.completeSite(ort);
+            ortFactory.completeSite(site);
         }
 
-        if (ort.getId() == null) {
-            repository.create(ort);
+        if (site.getId() == null) {
+            super.create(site);
         }
-        return ort;
+        return site;
     }
 
-    /**
-     * Update an existing Site object.
-     *
-     * @return The updated Site object.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public Site update(
-        @Valid Site ort
-    ) throws BadRequestException {
-        ortFactory.completeSite(ort);
+    @Override
+    public Site update(Site site) throws BadRequestException {
+        ortFactory.completeSite(site);
 
-        return repository.update(ort);
+        return super.update(site);
     }
 
     /**

@@ -8,10 +8,8 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Set;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -21,8 +19,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -47,10 +43,6 @@ public class MpgMmtMp extends BelongsToMpg implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         schema = Names.SCHEMA_NAME,
@@ -72,14 +64,6 @@ public class MpgMmtMp extends BelongsToMpg implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public Set<Measd> getMeasds() {

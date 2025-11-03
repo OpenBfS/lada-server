@@ -8,17 +8,13 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
@@ -51,10 +47,6 @@ public class SampleSpecif implements Serializable {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = MeasUnit.class)
     private Integer measUnitId;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     public SampleSpecif() {
     }
@@ -98,13 +90,4 @@ public class SampleSpecif implements Serializable {
     public void setMeasUnitId(Integer unitId) {
         this.measUnitId = unitId;
     }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
-    }
-
 }

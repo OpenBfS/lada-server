@@ -15,7 +15,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -103,6 +102,8 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.groups.CreateErrors;
+import de.intevation.lada.validation.groups.Notifications;
+import de.intevation.lada.validation.groups.Warnings;
 
 /**
  * Create database objects and map the attributes from laf raw data.
@@ -577,24 +578,25 @@ public class LafObjectMapper {
                             old.getExtId(),
                             StatusCodes.IMP_UNCHANGABLE));
                     return;
-                } else {
-                    merger.mergeMessung(old, messung);
-                    newMessung = old;
                 }
-            } else {
-                // Check if Messung has all fields that have db constraints
-                // (validation rule?)
-                if (messung.getMmtId() == null) {
-                    ReportItem err2 = new ReportItem();
-                    err2.setCode(StatusCodes.VALUE_MISSING);
-                    err2.setKey("not valid (missing Messmethode)");
-                    err2.setValue("Messung: " + messung.getMinSampleId());
-                    addError(err2);
+                merger.mergeMessung(old, messung);
+                validator.validate(old);
+                if (old.hasErrors()) {
+                    validate(old, true);
                     return;
                 }
-
-                // Create a new messung and the first status
-                newMessung = repository.create(messung);
+                repository.update(old);
+                newMessung = old;
+            } else {
+                validator.validate(messung,
+                    CreateErrors.class, Warnings.class, Notifications.class);
+                if (!messung.hasErrors()) {
+                    // Create a new messung and the first status
+                    newMessung = repository.create(messung);
+                } else {
+                    validate(messung, true);
+                    return;
+                }
             }
         } catch (IdentificationException e) {
             ReportItem err = new ReportItem();
@@ -604,6 +606,10 @@ public class LafObjectMapper {
             addError(err);
             return;
         }
+
+        /* Messages from initial validation might be obsolete
+           after importing other objects */
+        newMessung.clearMessages();
 
         // Add commMeasms
         for (Map<String, String> commRaw: object.getKommentare()) {
@@ -638,14 +644,7 @@ public class LafObjectMapper {
         merger.mergeMeasVals(newMessung, messwerte);
 
         // Check for warnings and errors for messung ...
-        validate(
-            newMessung,
-            "validation#messung",
-            false,
-            false,
-            "#" + (newMessung.getMinSampleId() != null
-                ? newMessung.getMinSampleId()
-                : String.valueOf(newMessung.getExtId())));
+        validate(newMessung, false);
         // ... and messwerte
         for (MeasVal messwert: messwerte) {
             validate(messwert, "validation#messwert");
@@ -1122,7 +1121,6 @@ public class LafObjectMapper {
 
         // Validator: StatusAssignment
         StatusProt newStatus = new StatusProt();
-        newStatus.setDate(new Timestamp(new Date().getTime()));
         newStatus.setMeasm(messung);
         newStatus.setMeasFacilId(mstId);
         newStatus.setStatusMpId(newKombi);
@@ -1872,6 +1870,17 @@ public class LafObjectMapper {
             }
         }
         return messung;
+    }
+
+    private void validate(Measm measm, boolean validated) {
+        validate(
+            measm,
+            "validation#messung",
+            false,
+            validated,
+            "#" + (measm.getMinSampleId() != null
+                ? measm.getMinSampleId()
+                : String.valueOf(measm.getExtId())));
     }
 
     private void validate(BaseModel object, String key) {

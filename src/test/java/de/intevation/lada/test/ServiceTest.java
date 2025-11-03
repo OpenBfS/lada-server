@@ -71,8 +71,8 @@ public class ServiceTest {
 
     /**
      * Initialize the tests.
-     * @param c Client instance used for issueing requests.
-     * @param bUrl The server url used for the request.
+     *
+     * @param t target for the request
      */
     public void init(WebTarget t) {
         this.target = t;
@@ -282,7 +282,7 @@ public class ServiceTest {
         /* Verify the response*/
         JsonObject object = ClientBaseTest.parseResponse(response).asJsonObject();
         List<String> defaultExcludes = List.of(
-            "parentModified", Sample_.TREE_MOD, Sample_.LAST_MOD);
+            "parentModified", Sample_.TREE_MOD);
         List<String> excludes = new ArrayList<>(Arrays.asList(exclude));
         excludes.addAll(defaultExcludes);
         BaseTest.verify(expected, object, excludes.toArray(exclude));
@@ -521,7 +521,7 @@ public class ServiceTest {
                 updatedObject.getValue(updAttrPointer));
         }
 
-        final String modTimeKey = Sample_.LAST_MOD;
+        final String modTimeKey = Sample_.TREE_MOD;
         if (oldObject.containsKey(modTimeKey)) {
             var oldLastMod = ZonedDateTime.parse(
                 oldObject.getString(modTimeKey),

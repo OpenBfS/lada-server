@@ -140,7 +140,7 @@ public class Authorization {
     /**
      * Set attributes providing hints about authorization.
      *
-     * @param Collection of data objects at which attributes should be set
+     * @param data Collection of data objects at which attributes should be set
      * @return Collection of data objects with attributes set
      */
     public <T extends Authorizable> Collection<T> filter(Collection<T> data) {

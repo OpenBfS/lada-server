@@ -76,7 +76,7 @@ ADD --chown=postgres \
 #
 # Add context as working directory
 #
-ADD . /opt/lada_sql/
+ADD --chown=postgres . /opt/lada_sql/
 WORKDIR /opt/lada_sql/
 
 #

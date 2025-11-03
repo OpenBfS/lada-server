@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -485,7 +484,6 @@ public class AssociationTest extends ServiceTest {
             Integer statusMpId,
             String text) {
         StatusProt s = new StatusProt();
-        s.setDate(new Timestamp(new Date().getTime()));
         s.setMeasFacilId(measFacilId);
         s.setStatusMpId(statusMpId);
         s.setText(text);

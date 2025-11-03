@@ -33,6 +33,7 @@ import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
@@ -47,6 +48,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.NotSupportedException;
 import jakarta.transaction.SystemException;
@@ -59,7 +61,7 @@ import jakarta.transaction.UserTransaction;
 @RunWith(Arquillian.class)
 public class AuthorizerTest extends BaseTest {
 
-    private Logger log = Logger.getLogger(AuthorizerTest.class);
+    private static final Logger LOG = Logger.getLogger(AuthorizerTest.class);
 
     private static Authorization authorization;
 
@@ -156,7 +158,7 @@ public class AuthorizerTest extends BaseTest {
 
     private void processResult(Result result, String testName)
         throws Exception {
-        log.info(String.format(
+        LOG.info(String.format(
             "%s: Tests run: %d, failed: %d, ignored: %d",
             testName,
             result.getRunCount(), result.getFailureCount(),
@@ -166,7 +168,7 @@ public class AuthorizerTest extends BaseTest {
             String descr = failure.getDescription().getDisplayName();
             String msg = failure.getMessage();
             String error = String.format("%s: %s", descr, msg);
-            log.error(error);
+            LOG.error(error);
             // Print stack trace to server log for debugging
             failure.getException().printStackTrace();
             errors.add(new Throwable(error, failure.getException()));
@@ -348,20 +350,28 @@ public class AuthorizerTest extends BaseTest {
     }
 
     private static Map<Object, TestConfig> createMeasmTestData() {
+        /* Detached entity instances are created for testing. Thus,
+           ensure necessary attributes are fetched eagerly. */
+        EntityGraph<Measm> fetchStatusProts =
+            repository.entityManager().createEntityGraph(Measm.class);
+        fetchStatusProts.addAttributeNodes(Measm_.STATUS_PROTS);
+        Map<String, Object> fetchHint =
+            Map.of("jakarta.persistence.loadgraph", fetchStatusProts);
+
         //Test editable measm without status
         Measm noStatus = em.find(
-            Measm.class, MEASM_ID_NO_STATUS);
+            Measm.class, MEASM_ID_NO_STATUS, fetchHint);
         //Test measm with editable status
         Measm editableStatus = em.find(
-            Measm.class, MEASM_ID_STATUS_EDITABLE);
+            Measm.class, MEASM_ID_STATUS_EDITABLE, fetchHint);
         //Test measm locked by status
         Measm lockedByStatus = em.find(
-            Measm.class, MEASM_ID_STATUS_LOCKED);
+            Measm.class, MEASM_ID_STATUS_LOCKED, fetchHint);
         //Test measm locked by connected sample
         Measm lockedBySample = em.find(
-            Measm.class, MEASM_ID_LOCKED_BY_SAMPLE);
+            Measm.class, MEASM_ID_LOCKED_BY_SAMPLE, fetchHint);
         Measm hijackedBySample = em.find(
-            Measm.class, MEASM_ID_LOCKED_BY_SAMPLE);
+            Measm.class, MEASM_ID_LOCKED_BY_SAMPLE, fetchHint);
         hijackedBySample.setSample(
             em.find(Sample.class, SAMPLE_ID_AUTHORIZED));
 

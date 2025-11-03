@@ -24,7 +24,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 
 /**
  * REST service for StatusVal objects.
- * </pre>
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
@@ -50,7 +49,6 @@ public class StatusValService extends LadaIntegerIdEntityService {
     /**
      * Get a single StatusVal object by id.
      *
-     * @param id The id is appended to the URL as a path parameter.
      * @return a single StatusVal.
      */
     @GET

@@ -9,13 +9,9 @@ package de.intevation.lada.rest;
 
 import java.util.Collection;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
@@ -30,7 +26,8 @@ import de.intevation.lada.util.rest.RequestMethod;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path(LadaService.PATH_REST + "commmeasm")
-public class CommMeasmService extends LadaIntegerIdEntityService {
+public class CommMeasmService
+    extends LadaIntegerIdEntityEditingService<CommMeasm> {
 
     /**
      * Get CommMeasm objects.
@@ -61,32 +58,6 @@ public class CommMeasmService extends LadaIntegerIdEntityService {
         return authorization.authorize(
             repository.getById(CommMeasm.class, id),
             RequestMethod.GET);
-    }
-
-    /**
-     * Create a CommMeasm object.
-     * @return A response containing the created CommMeasm.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @POST
-    public CommMeasm create(
-        @Valid CommMeasm kommentar
-    ) throws BadRequestException {
-        return repository.create(kommentar);
-    }
-
-    /**
-     * Update an existing CommMeasm object.
-     *
-     * @return the updated CommMeasm object.
-     * @throws BadRequestException if any constraint violations are detected.
-     */
-    @PUT
-    @Path("{id}")
-    public CommMeasm update(
-        @Valid CommMeasm kommentar
-    ) throws BadRequestException {
-        return repository.update(kommentar);
     }
 
     /**

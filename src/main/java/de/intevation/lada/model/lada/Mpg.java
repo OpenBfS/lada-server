@@ -8,10 +8,8 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Set;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,8 +21,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.Valid;
@@ -139,10 +135,6 @@ public class Mpg extends BaseModel implements Serializable {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String apprLabId;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     @Pattern(regexp = EnvMedia.ENV_DESCRIP_PATTERN)
     @EnvDescripDisplay(groups = Notifications.class)
@@ -300,14 +292,6 @@ public class Mpg extends BaseModel implements Serializable {
 
     public void setApprLabId(String apprLabId) {
         this.apprLabId = apprLabId;
-    }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date lastMod) {
-        this.lastMod = lastMod;
     }
 
     public String getEnvDescripDisplay() {

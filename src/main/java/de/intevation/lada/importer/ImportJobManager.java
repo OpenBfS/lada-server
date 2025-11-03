@@ -47,7 +47,6 @@ public class ImportJobManager extends JobManager {
      * Create a new import job.
      * @param userInfo User info
      * @param params Parameters
-     * @param files Decoded files
      * @return New job jobId
      */
     @SuppressWarnings("unchecked")

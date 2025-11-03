@@ -8,15 +8,11 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Column;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
@@ -28,10 +24,6 @@ public class AuthFunct implements Serializable {
 
     @NotEmptyNorWhitespace
     private String funct;
-
-    @Column(insertable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
 
     public AuthFunct() {
     }
@@ -51,13 +43,4 @@ public class AuthFunct implements Serializable {
     public void setFunct(String funct) {
         this.funct = funct;
     }
-
-    public Date getLastMod() {
-        return this.lastMod;
-    }
-
-    public void setLastMod(Date letzteAenderung) {
-        this.lastMod = letzteAenderung;
-    }
-
 }

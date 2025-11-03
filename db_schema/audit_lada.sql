@@ -193,7 +193,8 @@ SELECT audit_trail.id,
     coalesce(cast(row_data ->> 'mpg_id' AS integer),
         (SELECT mpg_id FROM lada.mpg_mmt_mp WHERE id = cast(
             row_data ->> 'mpg_mmt_mp_id' AS integer))) AS mpg_id
-FROM audit_trail;
+FROM audit_trail
+WHERE audit_Trail.table_Name IN ('mpg', 'geolocat_mpg', 'mpg_sample_specif', 'mpg_mmt_mp', 'mpg_mmt_mp_measd');
 
 SELECT master.audit_table('mpg', true, false, '{id, tree_mod, last_mod}'::text[]);
 SELECT master.audit_table('mpg_mmt_mp', true, false, '{id, mpg_id, tree_mod, last_mod}'::text[]);

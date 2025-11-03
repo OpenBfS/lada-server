@@ -158,7 +158,7 @@ public class Repository {
      * @param <T> The type of the objects.
      * @param filter Filter used to request objects.
      *
-     * @return List<T> with the requested objects.
+     * @return List of requested objects.
      */
     public <T> List<T> filter(CriteriaQuery<T> filter) {
         return em.createQuery(filter).getResultList();
@@ -172,7 +172,7 @@ public class Repository {
      * @param firstResult The position of the first result to retrieve.
      * @param maxResults The maximum number of results to retrieve.
      *
-     * @return List<T> with the requested objects.
+     * @return List of requested objects.
      */
     public <T> List<T> filter(
         CriteriaQuery<T> filter,
@@ -211,7 +211,7 @@ public class Repository {
      * @param <T> The type of the objects.
      * @param clazz The type of the objects.
      *
-     * @return List<T> with the objects of the requested type.
+     * @return List of objects of the requested type.
      */
     public <T> List<T> getAll(Class<T> clazz) {
         QueryBuilder<T> builder = queryBuilder(clazz);

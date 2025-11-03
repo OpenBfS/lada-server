@@ -10,6 +10,8 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,6 +54,7 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Schema(ref = "java.util.Date", readOnly = true)
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date date;
@@ -90,10 +93,6 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
 
     public Date getDate() {
         return this.date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public String getMeasFacilId() {
