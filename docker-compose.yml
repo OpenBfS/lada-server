@@ -22,8 +22,10 @@ services:
     image: "koala/lada_print_templates"
     volumes:
       - ../lada_print_templates/:/usr/local/tomcat/webapps/ROOT/print-apps
-  client:
-    image: "koala/lada_client"
+  client: # Assumes client checkout in ../client
+    build:
+      context: ../client
+      target: development
     depends_on:
       server:
         condition: service_healthy
@@ -31,7 +33,7 @@ services:
         condition: service_started
         required: false
     volumes:
-      - ../client:/usr/local/lada # Assumes client checkout in ../client
+      - ../client:/usr/local/lada
     ports:
       - 80-86
   lada-ldap:

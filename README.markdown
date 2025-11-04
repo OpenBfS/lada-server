@@ -89,15 +89,6 @@ Verzeichnis "lada_print_templates" neben diesem Verzeichnis befindet):
  $ cd ../lada_print_templates
  $ docker build -t koala/lada_print_templates .
 
-Bauen des Client-Images (es wird angenommen, dass der Client-Quellcode sich im
-Verzeichnis "client" neben diesem Verzeichnis befindet):
- $ cd ../client
- $ docker build --target development -t koala/lada_client .
-
-Oder für Shibboleth-Unterstützung:
- $ cd ../client
- $ docker build -f Dockerfile.shibboleth -t koala/lada_client .
-
 Starten der Anwendung:
  $ docker compose up -d
 
