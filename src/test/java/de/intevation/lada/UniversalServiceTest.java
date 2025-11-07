@@ -7,6 +7,7 @@
  */
 package de.intevation.lada;
 
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,6 +17,8 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
+
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -59,6 +62,7 @@ public class UniversalServiceTest extends ClientBaseTest {
     private final String totalCountKey = "totalCount";
     private final String dataKey = "data";
     private final String hpNrKey = "main_sample_id";
+    private final String timeStampKey = "timestamp";
 
     public UniversalServiceTest() {
         this.testDatasetName = "datasets/dbUnit_query.xml";
@@ -246,11 +250,31 @@ public class UniversalServiceTest extends ClientBaseTest {
 
     /**
      * Test fetching data returned by a single-column query.
-     *
      */
     @Test
     @RunAsClient
     public final void testGetSingleColumn() {
+        // single-column query should result in JSON objects with
+        // key-value pairs representing "readonly" flag and a single data column
+        JsonObject respObj = getSingleColumnResult().getJsonObject(0);
+        assertEquals(2, respObj.size());
+        assertContains(respObj, "readonly");
+        assertContains(respObj, timeStampKey);
+    }
+
+    /**
+     * Test serialization of timestamps.
+     */
+    @Test
+    @RunAsClient
+    public final void timestampSerializationSingleCol() {
+        JsonObject respObj = getSingleColumnResult().getJsonObject(0);
+        assertContains(respObj, timeStampKey);
+        assertEquals("2012-05-03T13:07:00.000Z",
+            respObj.getString(timeStampKey));
+    }
+
+    private JsonArray getSingleColumnResult() {
         GridColConf gridColConf = new GridColConf();
         gridColConf.setColIndex(0);
         gridColConf.setGridColMpId(3);
@@ -260,14 +284,32 @@ public class UniversalServiceTest extends ClientBaseTest {
                     List.of(gridColConf), MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
-        // single-column query should result in JSON objects with
-        // key-value pairs representing "readonly" flag and a single data column
         assertContains(responseJson, dataKey);
-        JsonObject respObj = (JsonObject)
-            responseJson.getJsonArray(dataKey).get(0);
-        Assert.assertEquals(2, respObj.size());
-        assertContains(respObj, "readonly");
-        assertContains(respObj, hpNrKey);
+        return responseJson.getJsonArray(dataKey);
+    }
+
+    /**
+     * Test serialization of timestamps.
+     */
+    @Test
+    @RunAsClient
+    public final void timestampSerialization() {
+        GridColConf col1 = new GridColConf();
+        col1.setColIndex(0);
+        col1.setGridColMpId(8);
+        GridColConf col2 = new GridColConf();
+        col2.setColIndex(1);
+        col2.setGridColMpId(9);
+
+        Response response = universalRequestBuilder
+            .post(Entity.entity(
+                    List.of(col1, col2), MediaType.APPLICATION_JSON));
+        JsonObject respObj = parseResponse(response).asJsonObject()
+            .getJsonArray(dataKey).getJsonObject(0);
+
+        assertContains(respObj, timeStampKey);
+        assertEquals("2012-05-03T13:07:00.000Z",
+            respObj.getString(timeStampKey));
     }
 
     /**

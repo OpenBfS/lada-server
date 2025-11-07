@@ -110,11 +110,15 @@
     />
     <master.base_query
         id = "2"
-        sql = "SELECT hauptproben_nr FROM land.probe"
+        sql = "SELECT sample_start_date FROM lada.sample"
     />
     <master.base_query
         id = "3"
         sql = "SELECT measm.id AS messungId, sample.id AS probeId FROM lada.measm JOIN lada.sample ON sample_id = sample.id"
+    />
+    <master.base_query
+        id = "4"
+        sql = "SELECT main_sample_id, sample_start_date FROM lada.sample"
     />
     <master.query_user
         id = "1"
@@ -188,10 +192,26 @@
         disp_id = "2"
     />
     <master.grid_col_mp
-        id = "3"
-        base_query_id = "2"
+        id = "8"
+        base_query_id = "4"
         grid_col = "hauptprobenNr"
         data_index = "main_sample_id"
+        position = "1"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "9"
+        base_query_id = "4"
+        grid_col = "timestamp"
+        data_index = "timestamp"
+        position = "2"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "3"
+        base_query_id = "2"
+        grid_col = "timestamp"
+        data_index = "timestamp"
         position = "1"
         filter_id = "1"
         disp_id = "1"
@@ -229,7 +249,6 @@
         id = "1000"
         opr_mode_id = "1"
         regulation_id = "9"
-        last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
         meas_facil_id = "06010"
@@ -242,7 +261,6 @@
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
         sched_end_date = "2012-05-05 16:00:00"
-        tree_mod = "2012-05-08 10:00:00"
         mpg_categ_id = "1"
         rei_ag_gr_id = "1"
     />
@@ -250,7 +268,6 @@
         id = "1001"
         opr_mode_id = "1"
         regulation_id = "9"
-        last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
         meas_facil_id = "06010"
@@ -263,7 +280,6 @@
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
         sched_end_date = "2012-05-05 16:00:00"
-        tree_mod = "2012-05-08 10:00:00"
     />
     <lada.comm_sample
         id = "1000"
@@ -294,9 +310,7 @@
         meas_pd = "3600"
         measm_start_date = "2012-05-06 14:00:00"
         is_completed = "false"
-        last_mod = "2012-05-08 12:00:00"
         is_scheduled = "true"
-        tree_mod = "2012-05-09 12:00:00"
     />
     <lada.comm_measm
         id = "1000"
