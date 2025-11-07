@@ -46,6 +46,13 @@ import de.intevation.lada.util.data.QueryBuilder;
 public abstract class QueryExportJob<T extends ExportParameters> extends ExportJob<T> {
 
     /**
+     * Map of data types and the according sub data key.
+     */
+    protected static final Map<String, String> ID_TYPE_TO_SUBDATA_KEY = Map.of(
+        "probeId", "Messungen",
+        "messungId", "messwerte");
+
+    /**
      * True if subdata shall be fetched from the database and exported.
      */
     protected boolean exportSubdata;
@@ -154,8 +161,6 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
      * @return Query result, including sub-data, if requested.
      */
     protected Collection<Map<String, Object>> getExportData() {
-        parseExportParameters();
-
         QueryTools queryTools = new QueryTools(repository, columns);
         List<Map<String, Object>> primaryData = queryTools.getResultForQuery();
         logger.debug(String.format(
@@ -380,5 +385,24 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
             Integer.valueOf(columns.get(0).getGridColMpId())
         );
         qId = gridColumn.getBaseQueryId();
+    }
+
+    protected abstract Exporter<T> getExporter();
+
+    @Override
+    public void runWithTx() {
+        parseExportParameters();
+
+        writeResultToFile(getExporter().export(
+            getExportData(),
+            this.encoding,
+            this.exportParameters,
+            this.columnsToExport,
+            this.idType == null
+                ? null
+                : ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
+            this.qId,
+            this.dateFormat,
+            this.bundle));
     }
 }

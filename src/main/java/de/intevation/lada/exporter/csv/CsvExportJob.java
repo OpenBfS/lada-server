@@ -144,22 +144,8 @@ public class CsvExportJob extends QueryExportJob<CsvExportParameters> {
         }
     }
 
-    /**
-     * Start the CSV export.
-     */
     @Override
-    public void runWithTx() {
-        //Export data to csv
-        writeResultToFile(exporter.export(
-            getExportData(),
-            this.encoding,
-            this.exportParameters,
-            this.columnsToExport,
-            "",
-            this.qId,
-            this.dateFormat,
-            this.bundle));
-
-        logger.debug(String.format("Finished CSV export"));
+    protected Exporter<CsvExportParameters> getExporter() {
+        return exporter;
     }
 }

@@ -29,13 +29,6 @@ import de.intevation.lada.exporter.Exporter;
 public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
 
     /**
-     * Map of data types and the according sub data key.
-     */
-    private static final Map<String, String> ID_TYPE_TO_SUBDATA_KEY = Map.of(
-        "probeId", "Messungen",
-        "messungId", "messwerte");
-
-    /**
      * The JSON exporter.
      */
     @Inject
@@ -62,9 +55,9 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
             if (primaryRecord.get(sDataJsonKey) == null) {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }
-            ArrayList<Map<String, Object>> messungenList =
-                (ArrayList<Map<String, Object>>) primaryRecord.get(
-                    sDataJsonKey);
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> messungenList =
+                (List<Map<String, Object>>) primaryRecord.get(sDataJsonKey);
             messungenList.add(mergedMessung);
         });
         return idMap.values();
@@ -86,28 +79,16 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
             if (primaryRecord.get(sDataJsonKey) == null) {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }
-            ArrayList<Map<String, Object>> messwertList =
-                (ArrayList<Map<String, Object>>) primaryRecord.get(
-                    sDataJsonKey);
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> messwertList =
+                (List<Map<String, Object>>) primaryRecord.get(sDataJsonKey);
             messwertList.add(mergedMesswert);
         });
         return idMap.values();
     }
 
-
     @Override
-    public void runWithTx() {
-        //Export data to json
-        writeResultToFile(exporter.export(
-            getExportData(),
-            this.encoding,
-            this.exportParameters,
-            this.columnsToExport,
-            ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
-            this.qId,
-            this.dateFormat,
-            null));
-
-        logger.debug(String.format("Finished JSON export"));
+    protected Exporter<QueryExportParameters> getExporter() {
+        return exporter;
     }
 }

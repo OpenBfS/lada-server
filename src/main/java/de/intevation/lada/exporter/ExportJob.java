@@ -37,11 +37,6 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
     protected Charset encoding;
 
     /**
-     * Exporter instance.
-     */
-    protected Exporter<T> exporter;
-
-    /**
      * Parameters used for the export.
      */
     protected T exportParameters;
