@@ -87,8 +87,11 @@ WORKDIR /opt/lada_sql/
 # 'FATAL: the database system is starting up'.
 # It's because of the -w
 #
+ARG GENERATE
 RUN /usr/lib/postgresql/16/bin/pg_ctl start -wo "--config_file=$PGCONF" && \
-    /opt/lada_sql/setup-db.sh && \
+    { if [ -z $GENERATE ]; \
+        then /opt/lada_sql/setup-db.sh; \
+        else /opt/lada_sql/setup-db.sh -g $GENERATE; fi } && \
     /opt/lada_sql/setup-db.sh -n lada_test && \
     /usr/lib/postgresql/16/bin/pg_ctl stop
 RUN rm $ADMIN_BORDERS_ZIP
