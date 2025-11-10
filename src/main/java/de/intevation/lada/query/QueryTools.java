@@ -122,31 +122,29 @@ public class QueryTools {
             query.setMaxResults(limit);
         }
 
-        List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> ret = new ArrayList<>();
         for (Object row: query.getResultList()) {
-            Map<String, Object> set = new HashMap<String, Object>();
-            /* If row contains or is a java.sql.Timestamp:
+            /* TODO: Work around
+             * https://github.com/eclipse-ee4j/yasson/issues/687:
+             * If row contains or is a java.sql.Timestamp:
              * Convert to date to allow serialization
              */
-            if (row instanceof Object[]) {
-                Object[] rowArr = (Object[]) row;
+            if (row instanceof Object[] rowArr) {
                 for (int i = 0; i < rowArr.length; i++) {
-                    Object col = rowArr[i];
-                    if (col instanceof Timestamp) {
-                        Timestamp ts = (Timestamp) col;
+                    if (rowArr[i] instanceof Timestamp ts) {
                         rowArr[i] = new Date(ts.getTime());
                     }
                 }
-            } else if (row instanceof Timestamp) {
-                Timestamp ts = (Timestamp) row;
+            } else if (row instanceof Timestamp ts) {
                 row = new Date(ts.getTime());
             }
+
+            Map<String, Object> set = new HashMap<>();
             for (GridColConf column: this.customColumns) {
                 set.put(
                     column.getGridColMp().getDataIndex(),
-                    row instanceof Object[]
-                        ? ((Object[]) row)[
-                            column.getGridColMp().getPosition() - 1]
+                    row instanceof Object[] arr
+                        ? arr[column.getGridColMp().getPosition() - 1]
                         : row);
             }
             ret.add(set);
