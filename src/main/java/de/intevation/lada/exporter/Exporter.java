@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.util.auth.UserInfo;
@@ -84,7 +85,7 @@ public interface Exporter<T extends ExportParameters> {
      * @return Export result as input stream or null if not implemented
      */
     default InputStream export(
-        Iterable<Map<String, Object>> result,
+        Stream<Map<String, Object>> result,
         Charset encoding,
         T options,
         List<String> columnsToInclude,

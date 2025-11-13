@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 import java.util.Collection;
 import java.util.Date;
 
@@ -117,7 +118,7 @@ public class CsvExporter implements Exporter<CsvExportParameters> {
      */
     @Override
     public InputStream export(
-        Iterable<Map<String, Object>> queryResult,
+        Stream<Map<String, Object>> queryResult,
         Charset encoding,
         CsvExportParameters options,
         List<String> columnsToInclude,

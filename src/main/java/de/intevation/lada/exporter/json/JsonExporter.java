@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -95,7 +96,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     @Override
     @SuppressWarnings("unchecked")
     public InputStream export(
-        Iterable<Map<String, Object>> queryResult,
+        Stream<Map<String, Object>> queryResult,
         Charset encoding,
         QueryExportParameters options,
         List<String> columnsToInclude,

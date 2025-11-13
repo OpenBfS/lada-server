@@ -7,16 +7,14 @@
  */
 package de.intevation.lada.exporter.json;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 
 import de.intevation.lada.exporter.QueryExportJob;
-import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.Exporter;
 
@@ -41,50 +39,34 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
     }
 
     @Override
-    protected Collection<Map<String, Object>> mergeMessungData(
-        Map<Integer, Map<String, Object>> idMap,
-        List<Measm> messungData
+    protected Stream<Map<String, Object>> mergeMessungData(
+        Stream<Map<String, Object>> primaryData
     ) {
         final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
 
-        messungData.forEach(messung -> {
-            Map<String, Object> mergedMessung = transformFieldValues(messung);
-            //Append messung to probe
-            Map<String, Object> primaryRecord = idMap.get(
-                messung.getSample().getId());
-            if (primaryRecord.get(sDataJsonKey) == null) {
-                primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
-            }
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> messungenList =
-                (List<Map<String, Object>>) primaryRecord.get(sDataJsonKey);
-            messungenList.add(mergedMessung);
-        });
-        return idMap.values();
+        return primaryData.map(row -> {
+                row.put(sDataJsonKey,
+                    repository.getById(Sample.class, row.get(this.idColumn))
+                    .getMeasms().stream()
+                    .map(this::transformFieldValues).toList());
+                return row;
+            });
     }
 
     @Override
-    protected Collection<Map<String, Object>> mergeMesswertData(
-        Map<Integer, Map<String, Object>> idMap,
-        List<MeasVal> messwertData
+    protected Stream<Map<String, Object>> mergeMesswertData(
+        Stream<Map<String, Object>> primaryData
     ) {
         // Create a map of id->record
         final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
 
-        messwertData.forEach(messwert -> {
-            Map<String, Object> mergedMesswert = transformFieldValues(messwert);
-            //Append messung to probe
-            Map<String, Object> primaryRecord = idMap.get(
-                messwert.getMeasm().getId());
-            if (primaryRecord.get(sDataJsonKey) == null) {
-                primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
-            }
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> messwertList =
-                (List<Map<String, Object>>) primaryRecord.get(sDataJsonKey);
-            messwertList.add(mergedMesswert);
-        });
-        return idMap.values();
+        return primaryData.map(row -> {
+                row.put(sDataJsonKey,
+                    repository.getById(Measm.class, row.get(this.idColumn))
+                    .getMeasVals().stream()
+                    .map(this::transformFieldValues).toList());
+                return row;
+            });
     }
 
     @Override

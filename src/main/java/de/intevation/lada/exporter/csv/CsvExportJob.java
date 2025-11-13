@@ -7,17 +7,15 @@
  */
 package de.intevation.lada.exporter.csv;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
-
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.exporter.Exporter;
 
@@ -41,98 +39,46 @@ public class CsvExportJob extends QueryExportJob<CsvExportParameters> {
         this.downloadFileName = "export.csv";
     }
 
-    /**
-     * Merge records without sub data.
-     * @param objects Record list
-     * @param ids list of ids to merge
-     * @param subDataColumns Subdata columns
-     * @param primaryColumns primary data columns
-     * @return All records with and without sub-data
-     */
-    private List<Map<String, Object>> mergeDataWithEmptySubdata(
-        Map<Integer, Map<String, Object>> objects, List<Integer> ids,
-        List<String> subDataColumns, List<String> primaryColumns) {
-
-        List<Map<String, Object>> merged = new ArrayList<>();
-        ids.forEach(id -> {
-            Map<String, Object> mergedRow = new HashMap<>();
-            subDataColumns.forEach(column -> {
-                mergedRow.put(column, null);
+    @Override
+    protected Stream<Map<String, Object>> mergeMessungData(
+        Stream<Map<String, Object>> primaryData
+    ) {
+        return primaryData.mapMulti((row, c) -> {
+                List<Measm> measms = repository
+                    .getById(Sample.class, row.get(this.idColumn))
+                    .getMeasms();
+                if (measms == null || measms.isEmpty()) {
+                    c.accept(row);
+                } else {
+                    for (Measm m : measms) {
+                        Map<String, Object> mergedRow
+                            = transformFieldValues(m);
+                        mergedRow.putAll(row);
+                        c.accept(mergedRow);
+                    }
+                }
             });
-            Map<String, Object> primaryRecord = objects.get(id);
-            primaryColumns.forEach(column -> {
-                mergedRow.put(column, primaryRecord.get(column));
-            });
-            merged.add(mergedRow);
-        });
-        return merged;
     }
 
     @Override
-    protected List<Map<String, Object>> mergeMessungData(
-        Map<Integer, Map<String, Object>> idMap,
-        List<Measm> messungData
+    protected Stream<Map<String, Object>> mergeMesswertData(
+        Stream<Map<String, Object>> primaryData
     ) {
-        // Ids left for merging
-        List<Integer> idsLeft = new ArrayList<>();
-        idMap.keySet().forEach(key -> idsLeft.add(key));
-
-        List<Map<String, Object>> merged = new ArrayList<>();
-        messungData.forEach(messung -> {
-            Map<String, Object> mergedRow = transformFieldValues(messung);
-            // Add primary record
-            Integer primaryId = messung.getSample().getId();
-            Map<String, Object> primaryRecord = idMap.get(primaryId);
-            primaryRecord.forEach((key, value) -> {
-                mergedRow.put(key, value);
+        return primaryData.mapMulti((row, c) -> {
+                List<MeasVal> measVals = repository
+                    .getById(Measm.class, row.get(this.idColumn))
+                    .getMeasVals();
+                if (measVals == null || measVals.isEmpty()) {
+                    c.accept(row);
+                } else {
+                    for (MeasVal v : measVals) {
+                        Map<String, Object> mergedRow
+                            = transformFieldValues(v);
+                        mergedRow.putAll(row);
+                        c.accept(mergedRow);
+                    }
+                }
             });
-            // Remove finished record from list
-            idsLeft.remove(primaryId);
-            merged.add(mergedRow);
-        });
-
-        //Merge any skipped records without sub data
-        merged.addAll(mergeDataWithEmptySubdata(
-            idMap, idsLeft, subDataColumns, columnsToExport));
-        return merged;
-    }
-
-    @Override
-    protected List<Map<String, Object>> mergeMesswertData(
-        Map<Integer, Map<String, Object>> idMap,
-        List<MeasVal> messwertData
-    ) {
-        // Ids left for merging
-        List<Integer> idsLeft = new ArrayList<>();
-        idMap.keySet().forEach(key -> idsLeft.add(key));
-
-        AtomicBoolean success = new AtomicBoolean(true);
-        List<Map<String, Object>> merged = new ArrayList<>();
-        messwertData.forEach(messwert -> {
-            Map<String, Object> mergedRow = transformFieldValues(messwert);
-            // Add primary record
-            Integer primaryId = messwert.getMeasm().getId();
-            Map<String, Object> primaryRecord = idMap.get(primaryId);
-            if (primaryRecord == null) {
-                logger.error("Can not get primary record for merging");
-                success.set(false);
-                return;
-            }
-            primaryRecord.forEach((key, value) -> {
-                mergedRow.put(key, value);
-            });
-            // Remove finished record from list
-            idsLeft.remove(primaryId);
-            merged.add(mergedRow);
-        });
-        // Merge any skipped records without sub data
-        merged.addAll(mergeDataWithEmptySubdata(
-            idMap, idsLeft, subDataColumns, columnsToExport));
-
-        if (!success.get()) {
-            return null;
-        }
-        return merged;
     }
 
     @Override

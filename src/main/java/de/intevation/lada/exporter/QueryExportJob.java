@@ -13,20 +13,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 
 import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Measm_;
-import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.Filter;
 import de.intevation.lada.model.master.FilterType;
 import de.intevation.lada.model.master.FilterType_;
@@ -160,17 +157,26 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
      * Execute query to fetch export data and merge sub-data, if requested.
      * @return Query result, including sub-data, if requested.
      */
-    protected Collection<Map<String, Object>> getExportData() {
+    protected Stream<Map<String, Object>> getExportData() {
         QueryTools queryTools = new QueryTools(repository, columns);
         List<Map<String, Object>> primaryData = queryTools.getResultForQuery();
         logger.debug(String.format(
-                "Fetched %d primary records",
-                primaryData == null ? 0 : primaryData.size()));
+                "Fetched %d primary records", primaryData.size()));
 
+        Stream<Map<String, Object>> primaryDataStream = primaryData.stream();
         if (exportSubdata) {
-            return mergeSubData(primaryData);
+            //Get subdata
+            switch (this.idType) {
+                case "probeId":
+                    return mergeMessungData(primaryDataStream);
+                case "messungId":
+                    return mergeMesswertData(primaryDataStream);
+                default:
+                    throw new IllegalArgumentException(
+                        String.format("Unknown idType: %s", this.idType));
+            }
         }
-        return primaryData;
+        return primaryDataStream;
     }
 
     /**
@@ -233,78 +239,23 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
     }
 
     /**
-     * Merge sub data into the primary query result.
-     *
-     * @param primaryData The primary query result as list
-     * @return Merged data
-     * @throws IllegalArgumentException in case of unknown sub-data type
-     */
-    protected Collection<Map<String, Object>> mergeSubData(
-        List<Map<String, Object>> primaryData
-    ) {
-        if (primaryData == null) {
-            return null;
-        }
-
-        // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
-        primaryData.forEach(record -> {
-            idMap.put((Integer) record.get(idColumn), record);
-        });
-
-        //Get subdata
-        switch (this.idType) {
-            case "probeId":
-                QueryBuilder<Sample> sampleBuilder = repository
-                    .queryBuilder(Sample.class)
-                    .andIn(Sample_.id, idMap.keySet());
-                List<Sample> samples =
-                    repository.filter(sampleBuilder.getQuery());
-                QueryBuilder<Measm> messungBuilder = repository
-                    .queryBuilder(Measm.class)
-                    .andIn(Measm_.sample, samples);
-                return mergeMessungData(
-                    idMap,
-                    repository.filter(messungBuilder.getQuery()));
-            case "messungId":
-                QueryBuilder<Measm> measmBuilder = repository
-                        .queryBuilder(Measm.class)
-                        .andIn(Measm_.id, idMap.keySet());
-                List<Measm> measms = repository.filter(measmBuilder.getQuery());
-                QueryBuilder<MeasVal> messwertBuilder = repository
-                        .queryBuilder(MeasVal.class)
-                        .andIn(MeasVal_.measm, measms);
-                return mergeMesswertData(
-                    idMap,
-                    repository.filter(messwertBuilder.getQuery()));
-            default:
-                throw new IllegalArgumentException(
-                    String.format("Unknown idType: %s", this.idType));
-        }
-    }
-
-    /**
      * Merge primary result and measm data.
      *
-     * @param primaryData The primary query result as map of IDs with records
-     * @param messungData Data to merge
+     * @param primaryData The primary query result
      * @return Merged data
      */
-    protected abstract Collection<Map<String, Object>> mergeMessungData(
-        Map<Integer, Map<String, Object>> primaryData,
-        List<Measm> messungData
+    protected abstract Stream<Map<String, Object>> mergeMessungData(
+        Stream<Map<String, Object>> primaryData
     );
 
     /**
      * Merge primary result and measVal data.
      *
-     * @param primaryData The primary query result as map of IDs with records
-     * @param messwertData Data to merge
+     * @param primaryData The primary query result
      * @return Merged data
      */
-    protected abstract Collection<Map<String, Object>> mergeMesswertData(
-        Map<Integer, Map<String, Object>> primaryData,
-        List<MeasVal> messwertData
+    protected abstract Stream<Map<String, Object>> mergeMesswertData(
+        Stream<Map<String, Object>> primaryData
     );
 
     /**
