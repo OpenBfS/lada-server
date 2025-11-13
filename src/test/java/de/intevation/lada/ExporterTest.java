@@ -32,6 +32,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.logging.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,6 +54,8 @@ import de.intevation.lada.util.data.Job.JobStatus;
  */
 @RunWith(Arquillian.class)
 public class ExporterTest extends ClientBaseTest {
+
+    private static final Logger LOG = Logger.getLogger(ExporterTest.class);
 
     private static final String ASYNC_EXPORT_URL =
         UriBuilder.fromResource(AsyncExportService.class).build() + "/";
@@ -730,8 +733,9 @@ public class ExporterTest extends ClientBaseTest {
     private JsonObject runJSONExportTest(
         JsonObject requestJson
     ) throws InterruptedException {
-        return Json.createReader(new StringReader(
-                runExportTest(formatJson, requestJson))).readObject();
+        String jsonResult = runExportTest(formatJson, requestJson);
+        LOG.trace(jsonResult);
+        return Json.createReader(new StringReader(jsonResult)).readObject();
     }
 
     private String runExportTest(

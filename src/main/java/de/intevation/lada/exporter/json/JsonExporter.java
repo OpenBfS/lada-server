@@ -8,6 +8,7 @@
 package de.intevation.lada.exporter.json;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -25,12 +27,12 @@ import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonGenerator;
 
 import org.jboss.logging.Logger;
 import de.intevation.lada.data.requests.QueryExportParameters;
@@ -105,72 +107,66 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         DateFormat dateFormat,
         ResourceBundle i18n
     ) {
-        final JsonObjectBuilder builder = Json.createObjectBuilder();
+        ByteArrayOutputStream jsonOutput = new ByteArrayOutputStream();
         String idColumn = options.getIdField();
 
-        //For each result
-        queryResult.forEach(item -> {
-            JsonObjectBuilder rowBuilder = Json.createObjectBuilder();
-            //Add value for each column
-            columnsToInclude.forEach(key -> {
-                Object value = item.get(key);
-                if (value == null) {
-                    rowBuilder.addNull(key);
-                } else if (value instanceof Integer) {
-                    rowBuilder.add(key, (Integer) value);
-                } else if (value instanceof Double) {
-                    rowBuilder.add(key, (Double) value);
-                } else if (value instanceof Date) {
-                    //Convert to target timezone
-                    Date time = (Date) value;
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(time);
-                    rowBuilder.add(
-                        key, dateFormat.format(calendar.getTime()));
-                } else {
-                    rowBuilder.add(key, value.toString());
-                }
-            });
-            //Append id
-            if (subDataKey != null
-                && item.containsKey(subDataKey)
-                && item.get(subDataKey) instanceof List<?>
-            ) {
-                List<Map<String, Object>> subData =
-                    (List<Map<String, Object>>) item.get(subDataKey);
-                rowBuilder.add(subDataKey, createSubdataArray(subData));
-            }
-            builder.add(item.get(idColumn).toString(), rowBuilder);
-        });
-        return new ByteArrayInputStream(
-            builder.build().toString().getBytes(StandardCharsets.UTF_8));
-    }
+        try (JsonGenerator generator = Json.createGenerator(jsonOutput)) {
+            generator.writeStartObject();
 
-    /**
-     * Create a json array from a list of sub data maps.
-     * @param subData Sub data as list of maps
-     * @return Json array
-     */
-    private JsonArray createSubdataArray(List<Map<String, Object>> subData) {
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        subData.forEach(map -> {
-            JsonObjectBuilder itemBuilder = Json.createObjectBuilder();
-            map.forEach((key, value) -> {
-                if (value == null) {
-                    itemBuilder.add(key, JsonValue.NULL);
-                    return;
+            Iterator<Map<String, Object>> resultIterator
+                = queryResult.iterator();
+            while (resultIterator.hasNext()) {
+                Map<String, Object> item = resultIterator.next();
+                generator.writeStartObject(item.get(idColumn).toString());
+                //Add value for each column
+                columnsToInclude.forEach(key -> {
+                        Object value = item.get(key);
+                        if (value == null) {
+                            generator.writeNull(key);
+                        } else if (value instanceof Integer) {
+                            generator.write(key, (Integer) value);
+                        } else if (value instanceof Double) {
+                            generator.write(key, (Double) value);
+                        } else if (value instanceof Date) {
+                            //Convert to target timezone
+                            Date time = (Date) value;
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(time);
+                            generator.write(
+                                key, dateFormat.format(calendar.getTime()));
+                        } else {
+                            generator.write(key, value.toString());
+                        }
+                    });
+
+                if (subDataKey != null
+                    && item.containsKey(subDataKey)
+                    && item.get(subDataKey) instanceof List<?>
+                ) {
+                    generator.writeStartArray(subDataKey);
+                    ((List<Map<String, Object>>) item.get(subDataKey)).forEach(
+                        map -> {
+                            generator.writeStartObject();
+                            map.forEach((key, value) -> {
+                                    if (value == null) {
+                                        generator.writeNull(key);
+                                    } else if (value instanceof Integer) {
+                                        generator.write(key, (Integer) value);
+                                    } else if (value instanceof Double) {
+                                        generator.write(key, (Double) value);
+                                    } else {
+                                        generator.write(key, value.toString());
+                                    }
+                                });
+                            generator.writeEnd();
+                        });
+                    generator.writeEnd();
                 }
-                if (value instanceof Integer) {
-                    itemBuilder.add(key, (Integer) value);
-                } else if (value instanceof Double) {
-                    itemBuilder.add(key, (Double) value);
-                } else {
-                    itemBuilder.add(key, value.toString());
-                }
-            });
-            arrayBuilder.add(itemBuilder.build());
-        });
-        return arrayBuilder.build();
+                generator.writeEnd();
+            };
+            generator.writeEnd();
+        }
+        return new ByteArrayInputStream(jsonOutput.toByteArray());
     }
 
     /**
