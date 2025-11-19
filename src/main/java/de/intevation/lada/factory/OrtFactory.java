@@ -211,11 +211,10 @@ public class OrtFactory {
             ort.setLongText(staat.getCtry());
             ort.setSiteClassId(Site.SiteClassId.ST);
             final String prefix = "STAAT_";
+            ort.setExtId(prefix + staat.getId());
             if (staat.getIso3166() != null) {
-                ort.setExtId(prefix + staat.getIso3166());
                 ort.setShortText(prefix + staat.getIso3166());
             } else {
-                ort.setExtId(prefix + staat.getId());
                 ort.setShortText(prefix + staat.getId());
             }
             ort.setReiReportText(staat.getCtry());
