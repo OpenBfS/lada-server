@@ -39,6 +39,7 @@ import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -120,6 +121,7 @@ public class Measm extends BelongsToSample
     /**
      * Latest StatusProt entry
      */
+    @Schema(readOnly = true)
     @Transient
     private StatusProt statusProt;
 
