@@ -132,8 +132,7 @@ public class TagZuordnungTest extends ServiceTest {
 
         final int tagId = 1002;
         testUnassigningTags(TagLinkSampleService.class, sampleId, tagId);
-        // TODO:
-        //testUnassigningTags(TagLinkMeasmService.class, measmId1, tagId);
+        testUnassigningTags(TagLinkMeasmService.class, measmId1, tagId);
     }
 
     private void testUnassigningTags(

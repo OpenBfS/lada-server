@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.rest;
 
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkMeasm_;
 import de.intevation.lada.model.lada.TagLink_;
@@ -23,11 +24,13 @@ public class TagLinkMeasmService extends TagLinkService<TagLinkMeasm> {
 
     @Override
     protected void deleteTagLink(TagLinkMeasm tagLink) {
-        repository.delete(
-            repository.getSingle(repository
-                .queryBuilder(TagLinkMeasm.class)
-                .and(TagLink_.tagId, tagLink.getTagId())
-                .and(TagLinkMeasm_.measmId, tagLink.getMeasmId())
-                .getQuery()));
+        TagLinkMeasm persistendTagLink = repository.getSingle(repository
+            .queryBuilder(TagLinkMeasm.class)
+            .and(TagLink_.tagId, tagLink.getTagId())
+            .and(TagLinkMeasm_.measmId, tagLink.getMeasmId())
+            .getQuery());
+        repository.getById(Measm.class, tagLink.getMeasmId())
+            .getTagLinks().remove(persistendTagLink);
+        repository.delete(persistendTagLink);
     }
 }
