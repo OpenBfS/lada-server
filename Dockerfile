@@ -3,15 +3,15 @@
 # BfS-Lada project
 #
 
-FROM debian:bookworm
-LABEL maintainer=raimund.renkert@intevation.de
+FROM debian:trixie
+LABEL maintainer=tom@intevation.de
 
 #
 # install packages
 #
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
-            libxml2-utils curl ca-certificates-java openjdk-17-jdk-headless \
+            libxml2-utils curl ca-certificates-java openjdk-21-jdk-headless \
             libpostgis-java libjts-java \
             git maven
 
@@ -19,7 +19,6 @@ RUN apt-get update -y && \
 #
 # Set ENV for pacakge versions
 ENV GEOLATTE_GEOM_VERSION=1.9.0
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
 
 RUN echo "Building Image using GEOLATTE_GEOM_VERSION=${GEOLATTE_GEOM_VERSION}."
 

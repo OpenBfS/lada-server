@@ -17,7 +17,7 @@
     <properties>
         <antlr.version>4.9.2</antlr.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <wildfly.version>38.0.1.Final</wildfly.version>
         <hibernate.version>6.6.31.Final</hibernate.version>
         <!-- GeoTools Version
@@ -221,7 +221,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.9.0</version>
                 <executions>
                     <execution>
                         <id>analyze</id>
@@ -533,6 +533,12 @@
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
             <version>${shrinkwrap.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-api</artifactId>
+            <version>${shrinkwrap-resolvers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
