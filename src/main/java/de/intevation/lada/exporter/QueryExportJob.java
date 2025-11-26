@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.exporter;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
@@ -344,16 +346,20 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
     public void runWithTx() {
         parseExportParameters();
 
-        writeResultToFile(getExporter().export(
-            getExportData(),
-            this.encoding,
-            this.exportParameters,
-            this.columnsToExport,
-            this.idType == null
+        try (Writer writer = createTmpFileWriter()) {
+            getExporter().export(
+                getExportData(),
+                writer,
+                this.exportParameters,
+                this.columnsToExport,
+                this.idType == null
                 ? null
                 : ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
-            this.qId,
-            this.dateFormat,
-            this.bundle));
+                this.qId,
+                this.dateFormat,
+                this.bundle);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 }

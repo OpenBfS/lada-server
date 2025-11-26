@@ -8,10 +8,8 @@
 
 package de.intevation.lada.exporter.csv;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -103,23 +101,10 @@ public class CsvExporter implements Exporter<CsvExportParameters> {
         return names;
     }
 
-    /**
-     * Export a query result.
-     * @param queryResult Result to export as list of maps.
-     *                    Every list item represents a row,
-     *                    while every map key represents a column
-     * @param encoding Encoding to use
-     * @param options CsvExportParameters
-     * @param columnsToInclude List of column names to include in the export.
-     *                         If not set, all columns will be exported
-     * @param qId query id
-     * @param i18n ResourceBundle for i18n
-     * @return Export result as input stream or null if the export failed
-     */
     @Override
-    public InputStream export(
+    public void export(
         Stream<Map<String, Object>> queryResult,
-        Charset encoding,
+        Writer sink,
         CsvExportParameters options,
         List<String> columnsToInclude,
         String subDataKey,
@@ -158,10 +143,7 @@ public class CsvExporter implements Exporter<CsvExportParameters> {
             format.setQuote(options.getQuote());
         }
 
-        StringBuffer result = new StringBuffer();
-
-        try {
-            final CSVPrinter printer = new CSVPrinter(result, format.build());
+        try (final CSVPrinter printer = new CSVPrinter(sink, format.build())) {
             //For every queryResult row
             queryResult.forEach(row -> {
                 ArrayList<String> rowItems = new ArrayList<String>();
@@ -201,13 +183,8 @@ public class CsvExporter implements Exporter<CsvExportParameters> {
                             "Error on printing records: %s", ioe.toString()));
                 }
             });
-
-            printer.close();
-            return new ByteArrayInputStream(
-                result.toString().getBytes(encoding));
         } catch (IOException ioe) {
             logger.error(ioe.toString());
-            return null;
         }
     }
 }

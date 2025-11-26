@@ -8,9 +8,8 @@
 
 package de.intevation.lada.exporter.laf;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.Writer;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -39,14 +38,13 @@ public class Laf9ExportJob extends ExportJob<LafExportParameters> {
      */
     @Override
     public void runWithTx() {
+        // TODO: stream to file
         List<Sample> samples = repository.filter(repository
             .queryBuilder(Sample.class)
             .andIn(Sample_.id, exportParameters.getProben())
             .getQuery());
 
-        createTmpFile();
-        try (FileWriter writer = new FileWriter(
-                this.outputFile, StandardCharsets.UTF_8)) {
+        try (Writer writer = createTmpFileWriter()) {
             JSONBConfig.JSONB.toJson(samples, writer);
         } catch(IOException e) {
             throw new RuntimeException("Failed writing JSON to file", e);

@@ -8,6 +8,7 @@
 package de.intevation.lada.exporter;
 
 import java.io.InputStream;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.List;
@@ -70,11 +71,11 @@ public interface Exporter<T extends ExportParameters> {
      * Export a query result.
      *
      * Note: This method may not be implemented by the implementing class.
-     * The default implementation returns null.
+     * The default implementation does nothing.
      * @param result Result to export as iterable of maps. Every item
      *               represents a row,
      *               while every map key represents a column
-     * @param encoding Encoding to use
+     * @param sink to write results to.
      * @param options Export options. Depend on the actual output format
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
@@ -82,11 +83,10 @@ public interface Exporter<T extends ExportParameters> {
      * @param qId Query id
      * @param dateFormat DateFormat for timestamp formatting
      * @param i18n ResourceBundle for i18n
-     * @return Export result as input stream or null if not implemented
      */
-    default InputStream export(
+    default void export(
         Stream<Map<String, Object>> result,
-        Charset encoding,
+        Writer sink,
         T options,
         List<String> columnsToInclude,
         String subDataKey,
@@ -94,6 +94,6 @@ public interface Exporter<T extends ExportParameters> {
         DateFormat dateFormat,
         ResourceBundle i18n
     ) {
-        return null;
+        return;
     }
 }

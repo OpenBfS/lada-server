@@ -131,7 +131,7 @@ public class ExportJobManager extends JobManager {
         ExportJob<?> job = (ExportJob<?>) getJobById(id, userInfo);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            Files.copy(job.getOutputFile().toPath(), outputStream);
+            Files.copy(job.getOutputFile(), outputStream);
             logger.debug(String.format("Returning result file for job %s", id));
             return new ByteArrayInputStream(outputStream.toByteArray());
         } finally {

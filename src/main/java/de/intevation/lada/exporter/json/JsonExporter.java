@@ -8,10 +8,10 @@
 package de.intevation.lada.exporter.json;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -84,22 +84,11 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     @Inject
     private Repository repository;
 
-    /**
-     * Export a query result.
-     * @param queryResult Result to export as list of maps. Every list item
-     *                    represents a row,
-     *                    while every map key represents a column
-     * @param encoding Ignored. Result is always UTF_8.
-     * @param options Export options
-     * @param columnsToInclude List of column names to include in the export.
-     *                         If not set, all columns will be exported
-     * @return Export result as input stream or null if the export failed
-     */
     @Override
     @SuppressWarnings("unchecked")
-    public InputStream export(
+    public void export(
         Stream<Map<String, Object>> queryResult,
-        Charset encoding,
+        Writer sink,
         QueryExportParameters options,
         List<String> columnsToInclude,
         String subDataKey,
@@ -107,10 +96,9 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
         DateFormat dateFormat,
         ResourceBundle i18n
     ) {
-        ByteArrayOutputStream jsonOutput = new ByteArrayOutputStream();
         String idColumn = options.getIdField();
 
-        try (JsonGenerator generator = Json.createGenerator(jsonOutput)) {
+        try (JsonGenerator generator = Json.createGenerator(sink)) {
             generator.writeStartObject();
 
             Iterator<Map<String, Object>> resultIterator
@@ -166,7 +154,6 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
             };
             generator.writeEnd();
         }
-        return new ByteArrayInputStream(jsonOutput.toByteArray());
     }
 
     /**

@@ -10,12 +10,12 @@ package de.intevation.lada.exporter;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import de.intevation.lada.data.requests.ExportParameters;
@@ -59,7 +59,7 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
     /**
      * Complete path to the output file.
      */
-    protected File outputFile;
+    private Path outputFile;
 
     /**
      * Clean up after the export has finished.
@@ -98,7 +98,7 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
      * Get the export file.
      * @return File
      */
-    public File getOutputFile() {
+    public Path getOutputFile() {
         return outputFile;
     }
 
@@ -132,7 +132,7 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
     protected void removeResultFile() {
         if (this.outputFile != null) {
             try {
-                Files.delete(this.outputFile.toPath());
+                Files.delete(this.outputFile);
             } catch (NoSuchFileException nsfe) {
                 logger.debug("Can not remove result file: File not found");
             } catch (IOException ioe) {
@@ -149,13 +149,9 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
      * @throws RuntimeException if temp file cannot be created
      * or writing it fails.
     */
+    // TODO: Stream to file
     protected void writeResultToFile(InputStream exported) {
         try {
-            //Create file
-            createTmpFile();
-            logger.debug(String.format(
-                    "Writing result to file %s", outputFile.toPath()));
-
             //Write to file
             ByteArrayOutputStream result = new ByteArrayOutputStream();
             byte[] buffer = new byte[LENGTH];
@@ -165,8 +161,7 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
                 result.write(buffer, 0, length);
             }
 
-            try (BufferedWriter writer =
-                Files.newBufferedWriter(outputFile.toPath(), encoding)) {
+            try (BufferedWriter writer = createTmpFileWriter()) {
                 writer.write(new String(result.toByteArray(), encoding));
             }
         } catch (IOException ioe) {
@@ -174,9 +169,13 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
         }
     }
 
-    protected void createTmpFile() {
+    protected BufferedWriter createTmpFileWriter() {
         try {
-            this.outputFile = File.createTempFile("export-", "." + this.format);
+            this.outputFile = Files.createTempFile(
+                "export-", "." + this.format);
+            logger.debug(String.format(
+                    "Writing result to file %s", outputFile));
+            return Files.newBufferedWriter(outputFile, encoding);
         } catch (IOException e) {
             throw new RuntimeException("Could not create tmp file", e);
         }
