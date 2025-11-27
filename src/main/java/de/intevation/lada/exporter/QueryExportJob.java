@@ -44,12 +44,19 @@ import de.intevation.lada.util.data.QueryBuilder;
  */
 public abstract class QueryExportJob<T extends ExportParameters> extends ExportJob<T> {
 
+    public static final String ID_TYPE_SAMPLE = "probeId";
+    public static final String ID_TYPE_MEASM = "messungId";
+
     /**
      * Map of data types and the according sub data key.
      */
-    protected static final Map<String, String> ID_TYPE_TO_SUBDATA_KEY = Map.of(
-        "probeId", "Messungen",
-        "messungId", "messwerte");
+    public static final Map<String, String> ID_TYPE_TO_SUBDATA_KEY = Map.of(
+        ID_TYPE_SAMPLE, "Messungen",
+        ID_TYPE_MEASM, "messwerte");
+
+    public static final String SUBDATA_MEASM_STATUS_MP = "statusMp";
+    public static final String SUBDATA_MEASM_MEASVAL_COUNT = "messwerteCount";
+    public static final String SUBDATA_MEASVAL_UNIT = "measUnitId";
 
     /**
      * True if subdata shall be fetched from the database and exported.
@@ -169,9 +176,9 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         if (exportSubdata) {
             //Get subdata
             switch (this.idType) {
-                case "probeId":
+                case ID_TYPE_SAMPLE:
                     return mergeMessungData(primaryDataStream);
-                case "messungId":
+                case ID_TYPE_MEASM:
                     return mergeMesswertData(primaryDataStream);
                 default:
                     throw new IllegalArgumentException(
@@ -191,7 +198,7 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         subDataColumns.forEach(subDataColumn -> {
                 Object fieldValue = null;
                 switch (subDataColumn) {
-                case "statusMp":
+                case SUBDATA_MEASM_STATUS_MP:
                     StatusMp mp =
                         repository.getById(
                             StatusMp.class,
@@ -201,7 +208,7 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
                     fieldValue = String.format(
                         "%s - %s", lev.getLev(), val.getVal());
                     break;
-                case "messwerteCount":
+                case SUBDATA_MEASM_MEASVAL_COUNT:
                     QueryBuilder<MeasVal> builder = repository
                         .queryBuilder(MeasVal.class)
                         .and(MeasVal_.measm, measm);
@@ -227,7 +234,7 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         subDataColumns.forEach(subDataColumn -> {
                 Object fieldValue = null;
                 switch (subDataColumn) {
-                case "measUnitId":
+                case SUBDATA_MEASVAL_UNIT:
                     fieldValue = repository.getById(
                         MeasUnit.class, measVal.getMeasUnitId())
                         .getUnitSymbol();

@@ -7,6 +7,8 @@
  */
 package de.intevation.lada;
 
+import static de.intevation.lada.util.rest.JSONBConfig.JSONB;
+
 import java.io.StringReader;
 import java.nio.charset.CharacterCodingException;
 import java.time.Duration;
@@ -41,6 +43,9 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.data.AsyncExportService;
 import de.intevation.lada.data.JsonExportService;
 import de.intevation.lada.data.LafExportService;
+import de.intevation.lada.data.requests.ExportParameters;
+import de.intevation.lada.data.requests.QueryExportParameters;
+import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
@@ -678,8 +683,27 @@ public class ExporterTest extends ClientBaseTest {
             Response.Status.BAD_REQUEST);
     }
 
-    private Response exportRequest(
-            String format, JsonObject requestJson) {
+    /**
+     * Test failing asynchronous export with invalid sub-data column.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncExportInvalidSubDataColumn() {
+        QueryExportParameters params = new QueryExportParameters();
+        params.setIdField(QueryExportJob.ID_TYPE_SAMPLE);
+        String[] invalid = { "xxx" };
+        params.setSubDataColumns(invalid);
+        parseResponse(
+            exportRequest(formatJson, params),
+            Response.Status.BAD_REQUEST);
+    }
+
+    private Response exportRequest(String format, ExportParameters params) {
+        return exportRequest(
+            format, JSONB.fromJson(JSONB.toJson(params), JsonObject.class));
+    }
+
+    private Response exportRequest(String format, JsonObject requestJson) {
         Response response = target
             .path(ASYNC_EXPORT_URL + format)
             .request()

@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.TimeZone;
 
 import de.intevation.lada.model.master.GridColConf;
-
+import de.intevation.lada.validation.constraints.ValidSubDataColumns;
 import jakarta.validation.Valid;
 
+@ValidSubDataColumns
 public class QueryExportParameters extends ExportParameters {
     private String[] subDataColumns;
     private String idField;

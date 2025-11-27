@@ -118,29 +118,31 @@ public class BaseTest {
     public void setup()
         throws DatabaseUnitException, SQLException, IOException {
 
-        // Set up database connection
-        PGSimpleDataSource ds = new PGSimpleDataSource();
-        final String testDbUserPw = "lada_test";
-        ds.setServerNames(new String[]{"db"});
-        ds.setDatabaseName(testDbUserPw);
-        ds.setUser(testDbUserPw);
-        ds.setPassword(testDbUserPw);
-        this.con = new DatabaseConnection(ds.getConnection());
-        DatabaseConfig config = con.getConfig();
-        config.setProperty(
-            DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES,
-            true);
-        config.setProperty(
-            DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-            new PostgresqlDataTypeFactory());
+        if (this.testDatasetName != null) {
+            // Set up database connection
+            PGSimpleDataSource ds = new PGSimpleDataSource();
+            final String testDbUserPw = "lada_test";
+            ds.setServerNames(new String[]{"db"});
+            ds.setDatabaseName(testDbUserPw);
+            ds.setUser(testDbUserPw);
+            ds.setPassword(testDbUserPw);
+            this.con = new DatabaseConnection(ds.getConnection());
+            DatabaseConfig config = con.getConfig();
+            config.setProperty(
+                DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES,
+                true);
+            config.setProperty(
+                DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
+                new PostgresqlDataTypeFactory());
 
-        // Insert test data
-        IDataSet dataset = new FlatXmlDataSetBuilder()
-            .setColumnSensing(true)
-            .build(getClass().getClassLoader()
-                .getResourceAsStream(testDatasetName));
-        DatabaseOperation.CLEAN_INSERT.execute(con, dataset);
-        executeSql(INIT_SEQ_SCRIPT);
+            // Insert test data
+            IDataSet dataset = new FlatXmlDataSetBuilder()
+                .setColumnSensing(true)
+                .build(getClass().getClassLoader()
+                    .getResourceAsStream(testDatasetName));
+            DatabaseOperation.CLEAN_INSERT.execute(con, dataset);
+            executeSql(INIT_SEQ_SCRIPT);
+        }
     }
 
     /**
@@ -202,9 +204,11 @@ public class BaseTest {
     @After
     public void tearDown()
             throws DatabaseUnitException, SQLException, IOException {
-        // Ensure clean database after test
-        executeSql(CLEANUP_SCRIPT);
-        con.close();
+        if (this.testDatasetName != null) {
+            // Ensure clean database after test
+            executeSql(CLEANUP_SCRIPT);
+            con.close();
+        }
     }
 
     /**
