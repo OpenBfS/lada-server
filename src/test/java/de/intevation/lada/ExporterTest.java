@@ -46,8 +46,8 @@ import de.intevation.lada.data.LafExportService;
 import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.QueryExportJob;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
@@ -475,10 +475,10 @@ public class ExporterTest extends ClientBaseTest {
         assertHasLinesInAnyOrder(
             runExportTest(formatCsv, sampleSubDataRequest().build()),
             "\r\n",
-            "hauptprobenNr,umwId,isTest,probeId,extId,statusMp,messwerteCount",
-            "120510002,L6,No,1000,453,MST - nicht vergeben,2",
-            "120510002,L6,No,1000,454,MST - plausibel,0",
-            "\"12051,0001\",L6,Yes,1001,,,");
+            "hauptprobenNr,umwId,isTest,probeId,id,extId,statusMp,messwerteCount",
+            "120510002,L6,No,1000,1200,453,MST - nicht vergeben,2",
+            "120510002,L6,No,1000,1201,454,MST - plausibel,0",
+            "\"12051,0001\",L6,Yes,1001,,,,");
     }
 
     /**
@@ -530,8 +530,7 @@ public class ExporterTest extends ClientBaseTest {
             .add("idFilter", Json.createArrayBuilder().add("1000"))
             .build();
 
-        Assert.assertEquals(
-            "Unexpected JSON content",
+        BaseTest.verify(
             Json.createReader(new StringReader(
                     "{\"1000\":"
                     + "{\"main_sample_id\":\"120510002\","
@@ -553,7 +552,8 @@ public class ExporterTest extends ClientBaseTest {
             .add("idField", "probeId")
             .add("exportSubData", true)
             .add("subDataColumns", Json.createArrayBuilder()
-                .add(Sample_.EXT_ID)
+                .add(Measm_.ID)
+                .add(Measm_.EXT_ID)
                 .add(QueryExportJob.SUBDATA_MEASM_STATUS_MP)
                 .add(QueryExportJob.SUBDATA_MEASM_MEASVAL_COUNT));
     }
@@ -565,8 +565,7 @@ public class ExporterTest extends ClientBaseTest {
     @RunAsClient
     public final void testJsonExportMeasmSubData()
         throws InterruptedException, CharacterCodingException {
-        Assert.assertEquals(
-            "Unexpected JSON content",
+        BaseTest.verify(
             Json.createReader(new StringReader("{\"1200\":"
                     + "{\"messungId\":1200,"
                     + "\"messwerte\":[{"
