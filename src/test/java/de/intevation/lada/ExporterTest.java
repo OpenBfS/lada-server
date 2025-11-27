@@ -47,6 +47,7 @@ import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
@@ -471,16 +472,8 @@ public class ExporterTest extends ClientBaseTest {
     @RunAsClient
     public final void testCsvExportProbeSubData()
         throws InterruptedException, CharacterCodingException {
-        JsonObject requestJson = requestJsonBuilder
-            .add("idField", "probeId")
-            .add("exportSubData", true)
-            .add("subDataColumns", Json.createArrayBuilder()
-                .add("extId")
-                .add("messwerteCount"))
-            .build();
-
         assertHasLinesInAnyOrder(
-            runExportTest(formatCsv, requestJson),
+            runExportTest(formatCsv, sampleSubDataRequest().build()),
             "\r\n",
             "hauptprobenNr,umwId,isTest,probeId,extId,messwerteCount",
             "120510002,L6,No,1000,453,2",
@@ -533,14 +526,8 @@ public class ExporterTest extends ClientBaseTest {
     @RunAsClient
     public final void testJsonExportProbeSubData()
         throws InterruptedException, CharacterCodingException {
-        /* Request asynchronous export */
-        JsonObject requestJson = requestJsonBuilder
-            .add("idField", "probeId")
+        JsonObject requestJson = sampleSubDataRequest()
             .add("idFilter", Json.createArrayBuilder().add("1000"))
-            .add("exportSubData", true)
-            .add("subDataColumns", Json.createArrayBuilder()
-                .add("extId")
-                .add("messwerteCount"))
             .build();
 
         Assert.assertEquals(
@@ -554,6 +541,15 @@ public class ExporterTest extends ClientBaseTest {
                     + "\"Messungen\":[{\"messwerteCount\":2,\"extId\":453},"
                     + "{\"messwerteCount\":0,\"extId\":454}]}}")).readObject(),
             runJSONExportTest(requestJson));
+    }
+
+    private JsonObjectBuilder sampleSubDataRequest() {
+        return requestJsonBuilder
+            .add("idField", "probeId")
+            .add("exportSubData", true)
+            .add("subDataColumns", Json.createArrayBuilder()
+                .add(Sample_.EXT_ID)
+                .add(QueryExportJob.SUBDATA_MEASM_MEASVAL_COUNT));
     }
 
     /**
