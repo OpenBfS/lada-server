@@ -20,9 +20,7 @@
         <java.version>21</java.version>
         <wildfly.version>38.0.1.Final</wildfly.version>
         <hibernate.version>6.6.31.Final</hibernate.version>
-        <!-- GeoTools Version
-             Note: GeoTools >= 20 is no longer compatible with JTS < 1.15 -->
-        <geotools.version>20.0</geotools.version>
+        <geotools.version>21.0</geotools.version>
         <hamcrest.version>3.0</hamcrest.version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
         <shrinkwrap-resolvers.version>2.2.7</shrinkwrap-resolvers.version>
@@ -415,7 +413,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
-            <artifactId>gt-api</artifactId>
+            <artifactId>gt-main</artifactId>
             <version>${geotools.version}</version>
         </dependency>
         <dependency>
