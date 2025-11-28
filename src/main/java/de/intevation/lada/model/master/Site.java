@@ -233,6 +233,7 @@ public class Site extends BaseModel implements Serializable {
 
     @OneToMany(mappedBy = Geolocat_.SITE, fetch = FetchType.EAGER)
     @JsonbTransient
+    @SuppressWarnings("serial")
     private Set<Geolocat> geolocats;
 
     @Formula("""

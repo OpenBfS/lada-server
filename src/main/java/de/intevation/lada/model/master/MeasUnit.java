@@ -37,6 +37,7 @@ public class MeasUnit implements Serializable {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "to_unit_id")
     @JsonbTransient
+    @SuppressWarnings("serial")
     private List<UnitConvers> unitConversTo;
 
     private String eudfUnitId;

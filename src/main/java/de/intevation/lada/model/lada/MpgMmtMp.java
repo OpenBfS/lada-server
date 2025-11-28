@@ -49,6 +49,7 @@ public class MpgMmtMp extends BelongsToMpg implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "measd_id")
     )
     @Valid
+    @SuppressWarnings("serial")
     private Set<Measd> measds;
 
     @NotBlank

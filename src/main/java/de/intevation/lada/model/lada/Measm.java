@@ -129,18 +129,21 @@ public class Measm extends BelongsToSample
         cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @SuppressWarnings("serial")
     private List<StatusProt> statusProts;
 
     @OneToMany(mappedBy = CommMeasm_.MEASM,
         cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @SuppressWarnings("serial")
     private List<CommMeasm> commMeasms;
 
     @OneToMany(mappedBy = MeasVal_.MEASM,
         cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @SuppressWarnings("serial")
     private List<MeasVal> measVals;
 
     /* Work around the fact that hibernate does not provide means to have
@@ -152,8 +155,10 @@ public class Measm extends BelongsToSample
         fetch = FetchType.EAGER)
     @JoinColumn(name = "measm_id", insertable = false, updatable = false)
     @JsonbTransient
+    @SuppressWarnings("serial")
     private Set<TagLinkMeasm> tagLinks = new HashSet<>();
     @Transient
+    @SuppressWarnings("serial")
     private List<Tag> tags;
 
     @Column(insertable = false, updatable = false)

@@ -206,6 +206,7 @@ public class Mpg extends BaseModel implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "mpg_id", insertable = false, updatable = false)
+    @SuppressWarnings("serial")
     private Set<Sample> samples;
 
     @ManyToMany (fetch = FetchType.EAGER)
@@ -214,6 +215,7 @@ public class Mpg extends BaseModel implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "sample_specif_id")
     )
     @Valid
+    @SuppressWarnings("serial")
     private Set<SampleSpecif> sampleSpecifs;
 
     @Transient

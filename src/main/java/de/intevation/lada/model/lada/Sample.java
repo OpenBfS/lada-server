@@ -233,6 +233,7 @@ public class Sample extends BaseModel
         cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @SuppressWarnings("serial")
     private List<Measm> measms;
 
     /* Work around the fact that hibernate does not provide means to have
@@ -244,26 +245,31 @@ public class Sample extends BaseModel
         fetch = FetchType.EAGER)
     @JoinColumn(name = "sample_id", insertable = false, updatable = false)
     @JsonbTransient
+    @SuppressWarnings("serial")
     private Set<TagLinkSample> tagLinks = new HashSet<>();
     @Transient
+    @SuppressWarnings("serial")
     private List<Tag> tags;
 
     @OneToMany(mappedBy = CommSample_.SAMPLE,
         cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @SuppressWarnings("serial")
     private List<CommSample> commSamples;
 
     @OneToMany(mappedBy = SampleSpecifMeasVal_.SAMPLE,
         cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @SuppressWarnings("serial")
     private List<SampleSpecifMeasVal> sampleSpecifMeasVals;
 
     @OneToMany(mappedBy = Geolocat_.SAMPLE,
         cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @SuppressWarnings("serial")
     private List<Geolocat> geolocats;
 
     @Transient
@@ -274,6 +280,7 @@ public class Sample extends BaseModel
     private boolean found;
 
     @Transient
+    @SuppressWarnings("serial")
     private List<String> mmt;
 
     @Transient

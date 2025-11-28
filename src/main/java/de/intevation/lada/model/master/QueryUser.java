@@ -59,6 +59,7 @@ public class QueryUser implements Serializable {
         fetch = FetchType.EAGER,
         cascade = CascadeType.ALL,
         orphanRemoval = true)
+    @SuppressWarnings("serial")
     private List<QueryMeasFacilMp> messStelles;
 
     @Transient

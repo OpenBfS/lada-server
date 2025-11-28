@@ -28,6 +28,7 @@ public class AuditTrailSiteView implements Serializable {
     private String action;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @SuppressWarnings("serial")
     private JsonObject changedFields;
 
     private String siteId;
@@ -35,6 +36,7 @@ public class AuditTrailSiteView implements Serializable {
     private Integer objectId;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @SuppressWarnings("serial")
     private JsonObject rowData;
 
     private String tableName;
