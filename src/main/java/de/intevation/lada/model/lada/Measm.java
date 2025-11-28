@@ -68,7 +68,7 @@ import de.intevation.lada.validation.groups.Warnings;
 // has all the "null"-values. There is no reloading after the persistence
 // process!
 @Entity
-@DynamicInsert(true)
+@DynamicInsert()
 @Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ Measm.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
