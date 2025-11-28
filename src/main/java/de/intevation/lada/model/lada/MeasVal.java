@@ -10,11 +10,14 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -68,6 +71,11 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = MeasUnit.class)
     private Integer measUnitId;
+
+    @JsonbTransient
+    @ManyToOne
+    @JoinColumn(insertable = false, updatable = false)
+    private MeasUnit measUnit;
 
     private Float error;
 

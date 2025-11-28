@@ -7,14 +7,15 @@
  */
 package de.intevation.lada.exporter.json;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
-
+import jakarta.persistence.TypedQuery;
 import de.intevation.lada.exporter.QueryExportJob;
-import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.Exporter;
 
@@ -39,32 +40,28 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
     }
 
     @Override
-    protected Stream<Map<String, Object>> mergeMessungData(
-        Stream<Map<String, Object>> primaryData
+    protected Stream<Map<String, Object>> mergeSubData(
+        Stream<Map<String, Object>> primaryData,
+        TypedQuery<Object[]> subDataQuery
     ) {
         final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
 
         return primaryData.map(row -> {
-                row.put(sDataJsonKey,
-                    repository.getById(Sample.class, row.get(this.idColumn))
-                    .getMeasms().stream()
-                    .map(this::transformFieldValues).toList());
-                return row;
-            });
-    }
-
-    @Override
-    protected Stream<Map<String, Object>> mergeMesswertData(
-        Stream<Map<String, Object>> primaryData
-    ) {
-        // Create a map of id->record
-        final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
-
-        return primaryData.map(row -> {
-                row.put(sDataJsonKey,
-                    repository.getById(Measm.class, row.get(this.idColumn))
-                    .getMeasVals().stream()
-                    .map(this::transformFieldValues).toList());
+                List<Object[]> subData = subDataQuery
+                    .setParameter(
+                        PRIMARY_DATA_ID_PARAM, row.get(this.idColumn))
+                    .getResultList();
+                List<Map<String, Object>> subList =
+                    new ArrayList<>(subData.size());
+                for (Object[] v : subData) {
+                    Map<String, Object> subDataMap
+                        = HashMap.newHashMap(this.subDataColumns.size());
+                    for (int i = 0; i < this.subDataColumns.size(); i++) {
+                        subDataMap.put(this.subDataColumns.get(i), v[i]);
+                    }
+                    subList.add(subDataMap);
+                }
+                row.put(sDataJsonKey, subList);
                 return row;
             });
     }

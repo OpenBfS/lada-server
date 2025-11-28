@@ -9,13 +9,10 @@ package de.intevation.lada.exporter;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -23,20 +20,21 @@ import java.util.stream.Stream;
 
 import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
-import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
-import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
+import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.Filter;
 import de.intevation.lada.model.master.FilterType;
 import de.intevation.lada.model.master.FilterType_;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.GridColMp;
-import de.intevation.lada.model.master.MeasUnit;
-import de.intevation.lada.model.master.StatusLev;
-import de.intevation.lada.model.master.StatusMp;
-import de.intevation.lada.model.master.StatusVal;
+import de.intevation.lada.model.master.MeasUnit_;
+import de.intevation.lada.model.master.StatusLev_;
+import de.intevation.lada.model.master.StatusMp_;
+import de.intevation.lada.model.master.StatusVal_;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.data.QueryBuilder;
+import jakarta.persistence.TypedQuery;
 
 
 /**
@@ -57,6 +55,23 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
     public static final String SUBDATA_MEASM_STATUS_MP = "statusMp";
     public static final String SUBDATA_MEASM_MEASVAL_COUNT = "messwerteCount";
     public static final String SUBDATA_MEASVAL_UNIT = "measUnitId";
+
+    protected static final String PRIMARY_DATA_ID_PARAM = "primaryId";
+    private static final String MEASMS_QUERY_TPL =
+        "select %s from Measm m where m.sample.id = :" + PRIMARY_DATA_ID_PARAM;
+    private static final String MEASVALS_QUERY_TPL =
+        "select %s from MeasVal v where v.measm.id = :" + PRIMARY_DATA_ID_PARAM;
+
+    private static final String STATUSMP_SUBQUERY = String.format("""
+        (select s.%s.%s.%s || ' - ' || s.%1$s.%s.%s from m.%s s
+         order by s.%s desc, s.%1$s.%4$s.%s desc fetch first 1 rows only
+        )""",
+        StatusProt_.STATUS_MP,
+        StatusMp_.STATUS_LEV, StatusLev_.LEV,
+        StatusMp_.STATUS_VAL, StatusVal_.VAL,
+        Measm_.STATUS_PROTS, StatusProt_.DATE, StatusVal_.ID);
+    private static final CharSequence MEASVALS_SIZE_EXPR =
+        "size(m." + Measm_.MEAS_VALS + ")";
 
     /**
      * True if subdata shall be fetched from the database and exported.
@@ -132,37 +147,6 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
     }
 
     /**
-     * Get the value of an object's field by calling its getter.
-     * @param fieldName field name
-     * @param object object
-     * @return Field value
-     */
-    protected Object getFieldByName(String fieldName, Object object) {
-
-        String capitalizedName;
-        String methodName = "";
-        Method method;
-        try {
-            capitalizedName =
-                fieldName.substring(0, 1).toUpperCase()
-                + fieldName.substring(1);
-            methodName = "get" + capitalizedName;
-            method = object.getClass().getMethod(methodName);
-            return method.invoke(object);
-        } catch (NoSuchMethodException nsme) {
-            logger.error(String.format(
-                "Can not get field %s(%s) for class %s",
-                fieldName, methodName, object.getClass().toString()));
-            return null;
-        } catch (IllegalAccessException | InvocationTargetException exc) {
-            logger.error(String.format(
-                "Can not call %s for class %s",
-                methodName, object.getClass().toString()));
-            return null;
-        }
-    }
-
-    /**
      * Execute query to fetch export data and merge sub-data, if requested.
      * @return Query result, including sub-data, if requested.
      */
@@ -173,98 +157,43 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
                 "Fetched %d primary records", primaryData.size()));
 
         Stream<Map<String, Object>> primaryDataStream = primaryData.stream();
-        if (exportSubdata) {
-            //Get subdata
-            switch (this.idType) {
-                case ID_TYPE_SAMPLE:
-                    return mergeMessungData(primaryDataStream);
-                case ID_TYPE_MEASM:
-                    return mergeMesswertData(primaryDataStream);
-                default:
-                    throw new IllegalArgumentException(
-                        String.format("Unknown idType: %s", this.idType));
-            }
+        if (!exportSubdata) {
+            return primaryDataStream;
         }
-        return primaryDataStream;
+
+        final String subDataQuery;
+        switch (this.idType) {
+        case ID_TYPE_SAMPLE:
+            subDataQuery = String.format(MEASMS_QUERY_TPL,
+                String.join(", ", this.subDataColumns)
+                .replace(SUBDATA_MEASM_STATUS_MP, STATUSMP_SUBQUERY)
+                .replace(SUBDATA_MEASM_MEASVAL_COUNT, MEASVALS_SIZE_EXPR)
+            );
+            break;
+        case ID_TYPE_MEASM:
+            subDataQuery = String.format(MEASVALS_QUERY_TPL,
+                String.join(", ", this.subDataColumns)
+                .replace(SUBDATA_MEASVAL_UNIT,
+                    MeasVal_.MEAS_UNIT + "." + MeasUnit_.UNIT_SYMBOL));
+            break;
+        default:
+            throw new IllegalArgumentException(
+                String.format("Unknown idType: %s", this.idType));
+        }
+        return mergeSubData(primaryDataStream, repository.entityManager()
+            .createQuery(subDataQuery, Object[].class));
     }
 
     /**
-     * Transform Measm object into map with keys according to subDataColumns.
-     * @param measm Measm for which field values should be transformed
-     * @return Map with field names and transformed values of original measm
-     */
-    protected Map<String, Object> transformFieldValues(Measm measm) {
-        Map<String, Object> transformed = new HashMap<>();
-        subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                switch (subDataColumn) {
-                case SUBDATA_MEASM_STATUS_MP:
-                    StatusMp mp =
-                        repository.getById(
-                            StatusMp.class,
-                            measm.getStatusProt().getStatusMpId());
-                    StatusLev lev = mp.getStatusLev();
-                    StatusVal val = mp.getStatusVal();
-                    fieldValue = String.format(
-                        "%s - %s", lev.getLev(), val.getVal());
-                    break;
-                case SUBDATA_MEASM_MEASVAL_COUNT:
-                    QueryBuilder<MeasVal> builder = repository
-                        .queryBuilder(MeasVal.class)
-                        .and(MeasVal_.measm, measm);
-                    // TODO: A nice example of ORM-induced database misuse:
-                    fieldValue = repository.filter(builder.getQuery())
-                        .size();
-                    break;
-                default:
-                    fieldValue = getFieldByName(subDataColumn, measm);
-                }
-                transformed.put(subDataColumn, fieldValue);
-            });
-        return transformed;
-    }
-
-    /**
-     * Transform MeasVal object into map with keys according to subDataColumns.
-     * @param measVal MeasVal for which field values should be transformed
-     * @return Map with field names and transformed values of original measVal
-     */
-    protected Map<String, Object> transformFieldValues(MeasVal measVal) {
-        Map<String, Object> transformed = new HashMap<>();
-        subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                switch (subDataColumn) {
-                case SUBDATA_MEASVAL_UNIT:
-                    fieldValue = repository.getById(
-                        MeasUnit.class, measVal.getMeasUnitId())
-                        .getUnitSymbol();
-                    break;
-                default:
-                    fieldValue = getFieldByName(subDataColumn, measVal);
-                }
-                transformed.put(subDataColumn, fieldValue);
-            });
-        return transformed;
-    }
-
-    /**
-     * Merge primary result and measm data.
+     * Merge primary result and sub-data.
      *
      * @param primaryData The primary query result
+     * @param subDataQuery Query to load sub-data for a set of primary data
      * @return Merged data
      */
-    protected abstract Stream<Map<String, Object>> mergeMessungData(
-        Stream<Map<String, Object>> primaryData
-    );
-
-    /**
-     * Merge primary result and measVal data.
-     *
-     * @param primaryData The primary query result
-     * @return Merged data
-     */
-    protected abstract Stream<Map<String, Object>> mergeMesswertData(
-        Stream<Map<String, Object>> primaryData
+    protected abstract Stream<Map<String, Object>> mergeSubData(
+        Stream<Map<String, Object>> primaryData,
+        TypedQuery<Object[]> subDataQuery
     );
 
     /**

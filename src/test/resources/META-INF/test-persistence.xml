@@ -9,6 +9,7 @@
             <property
                 name="hibernate.implicit_naming_strategy"
                 value="de.intevation.lada.model.NamingStrategy"/>
+            <property name="hibernate.jpa.compliance.query" value="false"/>
         </properties>
         <validation-mode>NONE</validation-mode>
     </persistence-unit>
