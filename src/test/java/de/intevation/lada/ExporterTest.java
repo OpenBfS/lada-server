@@ -48,6 +48,7 @@ import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.util.data.Job;
@@ -447,6 +448,29 @@ public class ExporterTest extends ClientBaseTest {
     }
 
     /**
+     * Test timestamp formatting in CSV export.
+     */
+    @Test
+    @RunAsClient
+    public final void testCsvExportTimestamp()
+        throws InterruptedException, CharacterCodingException {
+        final int gridColMpId = 3;
+        final GridColConf col = new GridColConf();
+        col.setGridColMpId(gridColMpId);
+        col.setQueryUserId(1);
+        col.setExport(true);
+        final QueryExportParameters request = new QueryExportParameters();
+        request.setColumns(List.of(col));
+
+        assertHasLinesInAnyOrder(
+            runExportTest(formatCsv, request),
+            "\r\n",
+            "timestamp",
+            "2012-05-03 13:07:00",
+            "2012-05-03 13:07:00");
+    }
+
+    /**
      * Test asynchronous CSV export of a Sample identified by ID.
      */
     @Test
@@ -761,6 +785,13 @@ public class ExporterTest extends ClientBaseTest {
         String jsonResult = runExportTest(formatJson, requestJson);
         LOG.trace(jsonResult);
         return Json.createReader(new StringReader(jsonResult)).readObject();
+    }
+
+    private String runExportTest(
+        String format, ExportParameters params
+    ) throws InterruptedException {
+        return runExportTest(format,
+            JSONB.fromJson(JSONB.toJson(params), JsonObject.class));
     }
 
     private String runExportTest(
