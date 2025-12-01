@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,6 +157,17 @@ public class UniversalService extends LadaService {
                 repository, gridColumnValues);
             List<Map<String, Object>> result = queryTools.getResultForQuery(
                 start, limit);
+
+            /* TODO: Work around
+             * https://github.com/eclipse-ee4j/yasson/issues/687:
+             * If row contains or is a java.sql.Timestamp:
+             * Convert to date to allow serialization
+             */
+            for (Map<String, Object> row: result) {
+                row.replaceAll((k, v) -> v instanceof Timestamp ts
+                    ? new Date(ts.getTime())
+                    : v);
+            }
 
             // TODO: This issues a potentially costly 'SELECT count(*)'
             // for every request. Better not to rely on total count at client side?

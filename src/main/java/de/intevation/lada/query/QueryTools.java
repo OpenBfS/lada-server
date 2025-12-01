@@ -7,9 +7,7 @@
  */
 package de.intevation.lada.query;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,21 +122,6 @@ public class QueryTools {
 
         List<Map<String, Object>> ret = new ArrayList<>();
         for (Object row: query.getResultList()) {
-            /* TODO: Work around
-             * https://github.com/eclipse-ee4j/yasson/issues/687:
-             * If row contains or is a java.sql.Timestamp:
-             * Convert to date to allow serialization
-             */
-            if (row instanceof Object[] rowArr) {
-                for (int i = 0; i < rowArr.length; i++) {
-                    if (rowArr[i] instanceof Timestamp ts) {
-                        rowArr[i] = new Date(ts.getTime());
-                    }
-                }
-            } else if (row instanceof Timestamp ts) {
-                row = new Date(ts.getTime());
-            }
-
             Map<String, Object> set = new HashMap<>();
             for (GridColConf column: this.customColumns) {
                 set.put(
