@@ -92,14 +92,6 @@ Verzeichnis "lada_print_templates" neben diesem Verzeichnis befindet):
 Starten der Anwendung:
  $ docker compose up -d
 
-Innerhalb des Client-Containers muss dann noch folgendes ausgeführt werden,
-wenn zum ersten mal your/repo/of/lada-client als Volume in einen Container
-eingebunden wurde:
-
- $ ./install-sencha2opt.sh
- $ ./install-dependencies.sh
- $ ./docker-build-app.sh
-
 Die LADA-Anwendung kann dann unter den angegebenen Ports mit verschiedenen
 Rollen im Browser ausgeführt werden. Die Ports 8180 - 8184 verwenden dabei
 festgelegte Benutzer/Rollen, während der Client unter Port 8185 eine
