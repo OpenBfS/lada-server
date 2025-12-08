@@ -254,7 +254,7 @@ public class AuditTrailService extends LadaService {
             node.setIdentifier(value);
             break;
         case "measm":
-            Measm m = repository.getById(
+            Measm m = repository.entityManager().find(
                 Measm.class, audit.getObjectId());
             node.setIdentifier(getIdentifier(m));
             break;
@@ -263,7 +263,7 @@ public class AuditTrailService extends LadaService {
         }
 
         if (audit.getMeasmId() != null) {
-            Measm m = repository.getById(
+            Measm m = repository.entityManager().find(
                 Measm.class, audit.getMeasmId());
             AuditEntryIdentifier identifier = new AuditEntryIdentifier();
             identifier.setMeasm(getIdentifier(m));
