@@ -37,7 +37,6 @@ import de.intevation.lada.model.lada.AuditTrailMpgView_;
 import de.intevation.lada.model.lada.AuditTrailSampleView;
 import de.intevation.lada.model.lada.AuditTrailSampleView_;
 import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
@@ -177,14 +176,9 @@ public class AuditTrailService extends LadaService {
 
         UserInfo userInfo = authorization.getInfo();
 
-        //Get ort ids connected to this probe
-        QueryBuilder<Geolocat> refBuilder = repository
-            .queryBuilder(Geolocat.class)
-            .and(Geolocat_.sample, probe);
+        // Get site IDs connected to this sample
         List<Integer> ortIds = new LinkedList<Integer>();
-        for (Geolocat zuordnung
-            : repository.filter(refBuilder.getQuery())
-        ) {
+        for (Geolocat zuordnung : probe.getGeolocats()) {
             ortIds.add(zuordnung.getSite().getId());
         }
 
