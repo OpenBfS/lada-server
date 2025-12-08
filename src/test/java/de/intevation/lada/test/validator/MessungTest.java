@@ -249,12 +249,27 @@ public class MessungTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test measm missing obligatory measds.
+     * Existing measm with missing obligatory measds.
      */
     @Test
     public void measmWithoutMeasVals() {
-        Measm measm = createMinimalValidMeasm();
-        measm.setMeasVals(null);
+        final int measmWOMeasValsId = 1201;
+        Measm measm = repository.getById(Measm.class, measmWOMeasValsId);
+
+        assertHasNotifications(
+            validator.validate(measm),
+            Measm_.MMT_ID,
+            String.format(MSG_VAL_OBL_MEASURE_TPL, MEASD_ID_OTHER));
+    }
+
+    /**
+     * New measm with missing obligatory measds.
+     */
+    @Test
+    public void newMeasmWithoutMeasVals() {
+        Measm measm = new Measm();
+        measm.setSample(repository.getById(Sample.class, EXISTING_SAMPLE_ID));
+        measm.setMmtId(EXISTING_MMT_ID);
 
         assertHasNotifications(
             validator.validate(measm),

@@ -21,6 +21,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.ObligMeasdMp;
@@ -98,18 +99,23 @@ public class HasObligMeasdsValidator
             pflicht = repository.filter(builderGrp.getQuery());
         }
 
-        List<MeasVal> messwerte = messung.getMeasVals();
-        List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();
-        if (messwerte != null) {
-            for (MeasVal wert : messwerte) {
-                for (ObligMeasdMp p : pflicht) {
-                    if (p.getMeasdId().equals(wert.getMeasdId())) {
-                        tmp.add(p);
+        if (messung.getId() != null) { // Skip if Measm is new
+            List<MeasVal> messwerte = repository.filter(repository
+                .queryBuilder(MeasVal.class)
+                .and(MeasVal_.measm, messung)
+                .getQuery());
+            List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();
+            if (messwerte != null) {
+                for (MeasVal wert : messwerte) {
+                    for (ObligMeasdMp p : pflicht) {
+                        if (p.getMeasdId().equals(wert.getMeasdId())) {
+                            tmp.add(p);
+                        }
                     }
                 }
             }
+            pflicht.removeAll(tmp);
         }
-        pflicht.removeAll(tmp);
 
         if (!pflicht.isEmpty()) {
             HibernateConstraintValidatorContext hibernateCtx = ctx.unwrap(
