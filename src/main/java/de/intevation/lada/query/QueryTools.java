@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import jakarta.persistence.Query;
 import jakarta.ws.rs.core.MultivaluedHashMap;
@@ -38,6 +39,8 @@ public class QueryTools {
     static final String GENERICTEXT_FILTER_TYPE = "generictext";
     static final String TAG_FILTER_TYPE = "tag";
     static final String TEXT_FILTER_TYPE = "text";
+
+    private static final int FETCH_SIZE = 10000;
 
     private Repository repository;
 
@@ -95,9 +98,9 @@ public class QueryTools {
     /**
      * Execute query and return the filtered and sorted results.
      *
-     * @return List of result maps.
+     * @return The result maps.
      */
-    public List<Map<String, Object>> getResultForQuery() {
+    public Stream<Map<String, Object>> getResultForQuery() {
         return getResultForQuery(0, null);
     }
 
@@ -109,30 +112,34 @@ public class QueryTools {
      * numbered from 0.
      * @param limit The maximum number of results to retrieve,
      * or null for no limit.
-     * @return List of result maps.
+     * @return The result maps.
      */
-    public List<Map<String, Object>> getResultForQuery(
+    @SuppressWarnings("unchecked")
+    public Stream<Map<String, Object>> getResultForQuery(
         int offset,
         Integer limit
     ) {
         Query query = prepareQuery(getSql()).setFirstResult(offset);
         if (limit != null) {
             query.setMaxResults(limit);
+        } else {
+            // Load result in batches
+            query.setHint("org.hibernate.fetchSize", FETCH_SIZE);
         }
 
-        List<Map<String, Object>> ret = new ArrayList<>();
-        for (Object row: query.getResultList()) {
-            Map<String, Object> set = new HashMap<>();
-            for (GridColConf column: this.customColumns) {
-                set.put(
-                    column.getGridColMp().getDataIndex(),
-                    row instanceof Object[] arr
+        return query.getResultStream().map(row -> {
+                Map<String, Object> set = HashMap
+                    .newHashMap(this.customColumns.size());
+                for (GridColConf column: this.customColumns) {
+                    set.put(
+                        column.getGridColMp().getDataIndex(),
+                        row instanceof Object[] arr
                         ? arr[column.getGridColMp().getPosition() - 1]
                         : row);
-            }
-            ret.add(set);
-        }
-        return ret;
+
+                }
+                return set;
+            });
     }
 
     /**

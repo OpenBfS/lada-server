@@ -152,11 +152,9 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
      */
     protected Stream<Map<String, Object>> getExportData() {
         QueryTools queryTools = new QueryTools(repository, columns);
-        List<Map<String, Object>> primaryData = queryTools.getResultForQuery();
-        logger.debug(String.format(
-                "Fetched %d primary records", primaryData.size()));
 
-        Stream<Map<String, Object>> primaryDataStream = primaryData.stream();
+        Stream<Map<String, Object>> primaryDataStream =
+            queryTools.getResultForQuery();
         if (!exportSubdata) {
             return primaryDataStream;
         }

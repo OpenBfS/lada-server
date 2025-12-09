@@ -151,41 +151,46 @@ public class UniversalService extends LadaService {
             }
             columnValue.setGridColMp(gridColumn);
         }
+        final String finalAuthColIdx = authorizationColumnIndex;
+        final Class<? extends BaseModel> finalAuthColType =
+            authorizationColumnType;
 
         try {
             QueryTools queryTools = new QueryTools(
                 repository, gridColumnValues);
-            List<Map<String, Object>> result = queryTools.getResultForQuery(
-                start, limit);
-
-            /* TODO: Work around
-             * https://github.com/eclipse-ee4j/yasson/issues/687:
-             * If row contains or is a java.sql.Timestamp:
-             * Convert to date to allow serialization
-             */
-            for (Map<String, Object> row: result) {
-                row.replaceAll((k, v) -> v instanceof Timestamp ts
-                    ? new Date(ts.getTime())
-                    : v);
-            }
+            List<Map<String, Object>> result = queryTools
+                .getResultForQuery(start, limit)
+                .map(row -> {
+                        /* TODO: Work around
+                         * https://github.com/eclipse-ee4j/yasson/issues/687:
+                         * If row contains or is a java.sql.Timestamp:
+                         * Convert to date to allow serialization
+                         */
+                        row.replaceAll((k, v) -> v instanceof Timestamp ts
+                            ? new Date(ts.getTime())
+                            : v);
+                        return row;
+                    })
+                .map(row -> {
+                        /* Skip authorization of explicitly requested
+                           large pages to improve performance */
+                        boolean doAuthorize = limit == null || limit <= 500;
+                        Object idToAuthorize = row.get(finalAuthColIdx);
+                        boolean readonly = true;
+                        if (doAuthorize && idToAuthorize != null) {
+                            readonly = !authorization.isAuthorized(
+                                repository.getById(
+                                    finalAuthColType, idToAuthorize),
+                                RequestMethod.PUT);
+                        }
+                        row.put("readonly", readonly);
+                        return row;
+                    })
+                .toList();
 
             // TODO: This issues a potentially costly 'SELECT count(*)'
             // for every request. Better not to rely on total count at client side?
             int size = queryTools.getTotalCountForQuery();
-
-            // Skip authorization of large pages to improve performance
-            boolean doAuthorize = result.size() <= 500;
-            for (Map<String, Object> row: result) {
-                Object idToAuthorize = row.get(authorizationColumnIndex);
-                boolean readonly = true;
-                if (doAuthorize && idToAuthorize != null) {
-                    readonly = !authorization.isAuthorized(
-                        repository.getById(
-                            authorizationColumnType, idToAuthorize),
-                        RequestMethod.PUT);
-                }
-                row.put("readonly", readonly);
-            }
 
             return new UniversalResponse(result, size);
         } catch (IllegalArgumentException iae) {
