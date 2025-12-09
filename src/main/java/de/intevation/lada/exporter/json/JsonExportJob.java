@@ -61,8 +61,11 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
                     }
                     subList.add(subDataMap);
                 }
-                row.put(sDataJsonKey, subList);
-                return row;
+                Map<String, Object> rowWithSubData
+                    = HashMap.newHashMap(row.size() + 1);
+                rowWithSubData.putAll(row);
+                rowWithSubData.put(sDataJsonKey, subList);
+                return rowWithSubData;
             });
     }
 
