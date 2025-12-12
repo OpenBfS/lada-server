@@ -9,7 +9,6 @@ package de.intevation.lada.validation.constraints;
 
 import static de.intevation.lada.exporter.QueryExportJob.ID_TYPE_MEASM;
 import static de.intevation.lada.exporter.QueryExportJob.ID_TYPE_SAMPLE;
-import static de.intevation.lada.exporter.QueryExportJob.SUBDATA_MEASM_MEASVAL_COUNT;
 import static de.intevation.lada.exporter.QueryExportJob.SUBDATA_MEASM_STATUS_MP;
 import static de.intevation.lada.exporter.QueryExportJob.SUBDATA_MEASVAL_UNIT;
 import static org.junit.Assert.assertFalse;
@@ -57,8 +56,7 @@ public class ValidSubDataColumnsValidatorTest extends BaseTest {
     public void validSampleNonColumnNames() {
         QueryExportParameters params = new QueryExportParameters();
         params.setIdField(ID_TYPE_SAMPLE);
-        String[] validNames = {
-            SUBDATA_MEASM_STATUS_MP, SUBDATA_MEASM_MEASVAL_COUNT };
+        String[] validNames = { SUBDATA_MEASM_STATUS_MP };
         params.setSubDataColumns(validNames);
         assertTrue("Given subDataColumnNames should be considered valid",
             validator.isValid(params, ctx));

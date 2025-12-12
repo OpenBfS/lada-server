@@ -41,6 +41,7 @@ import jakarta.validation.constraints.Size;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.processing.CheckHQL;
@@ -164,6 +165,12 @@ public class Measm extends BelongsToSample
     @Column(insertable = false, updatable = false)
     @Temporal(TIMESTAMP)
     private Date treeMod;
+
+    @Schema(readOnly = true)
+    @Formula("""
+        (SELECT count(*) FROM lada.meas_val v WHERE {alias}.id = v.measm_id)
+        """)
+    private int measValsCount;
 
     @Transient
     private Boolean statusEdit;
@@ -358,6 +365,10 @@ public class Measm extends BelongsToSample
     @Override
     public TagLinkMeasm createTagLink(Tag tag) {
         return new TagLinkMeasm(tag, this.id);
+    }
+
+    public int getMeasValsCount() {
+        return measValsCount;
     }
 
     @Override

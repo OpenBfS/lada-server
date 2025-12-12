@@ -14,7 +14,6 @@ import jakarta.validation.ConstraintValidatorContext;
 import static de.intevation.lada.exporter.QueryExportJob.ID_TYPE_MEASM;
 import static de.intevation.lada.exporter.QueryExportJob.ID_TYPE_SAMPLE;
 import static de.intevation.lada.exporter.QueryExportJob.ID_TYPE_TO_SUBDATA_KEY;
-import static de.intevation.lada.exporter.QueryExportJob.SUBDATA_MEASM_MEASVAL_COUNT;
 import static de.intevation.lada.exporter.QueryExportJob.SUBDATA_MEASM_STATUS_MP;
 import static de.intevation.lada.exporter.QueryExportJob.SUBDATA_MEASVAL_UNIT;
 
@@ -46,8 +45,7 @@ public class ValidSubDataColumnsValidator
         EntityType<?> subDataType;
         switch (params.getIdField()) {
         case ID_TYPE_SAMPLE:
-            nonColumnNames = List.of(
-                SUBDATA_MEASM_STATUS_MP, SUBDATA_MEASM_MEASVAL_COUNT);
+            nonColumnNames = List.of(SUBDATA_MEASM_STATUS_MP);
             subDataType = Measm_.class_;
             break;
         case ID_TYPE_MEASM:

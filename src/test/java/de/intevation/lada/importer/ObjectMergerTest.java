@@ -180,7 +180,9 @@ public class ObjectMergerTest extends BaseTest {
         for (SingularAttribute<? super Measm, ?> attr : repository
                  .entityManager().getMetamodel().entity(Measm.class)
                  .getSingularAttributes()) {
-            if (!attr.isAssociation()) {
+            if (!attr.isAssociation()
+                && !Measm_.MEAS_VALS_COUNT.equals(attr.getName())
+            ) {
                 Method getter = new PropertyDescriptor(
                     attr.getName(), Measm.class).getReadMethod();
                 Object src = getter.invoke(messung);

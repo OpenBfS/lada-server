@@ -53,7 +53,6 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         ID_TYPE_MEASM, "messwerte");
 
     public static final String SUBDATA_MEASM_STATUS_MP = "statusMp";
-    public static final String SUBDATA_MEASM_MEASVAL_COUNT = "messwerteCount";
     public static final String SUBDATA_MEASVAL_UNIT = "measUnitId";
 
     protected static final String PRIMARY_DATA_ID_PARAM = "primaryId";
@@ -70,8 +69,6 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         StatusMp_.STATUS_LEV, StatusLev_.LEV,
         StatusMp_.STATUS_VAL, StatusVal_.VAL,
         Measm_.STATUS_PROTS, StatusProt_.DATE, StatusVal_.ID);
-    private static final CharSequence MEASVALS_SIZE_EXPR =
-        "size(m." + Measm_.MEAS_VALS + ")";
 
     /**
      * True if subdata shall be fetched from the database and exported.
@@ -165,7 +162,6 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
             subDataQuery = String.format(MEASMS_QUERY_TPL,
                 String.join(", ", this.subDataColumns)
                 .replace(SUBDATA_MEASM_STATUS_MP, STATUSMP_SUBQUERY)
-                .replace(SUBDATA_MEASM_MEASVAL_COUNT, MEASVALS_SIZE_EXPR)
             );
             break;
         case ID_TYPE_MEASM:

@@ -499,7 +499,8 @@ public class ExporterTest extends ClientBaseTest {
         assertHasLinesInAnyOrder(
             runExportTest(formatCsv, sampleSubDataRequest().build()),
             "\r\n",
-            "hauptprobenNr,umwId,isTest,probeId,id,extId,statusMp,messwerteCount",
+            "hauptprobenNr,umwId,isTest,probeId,id,extId,statusMp,"
+            + Measm_.MEAS_VALS_COUNT,
             "120510002,L6,No,1000,1200,453,MST - nicht vergeben,2",
             "120510002,L6,No,1000,1201,454,MST - plausibel,0",
             "\"12051,0001\",L6,Yes,1001,,,,");
@@ -562,9 +563,9 @@ public class ExporterTest extends ClientBaseTest {
                     + "\"is_test\":\"false\","
                     + "\"probeId\":1000,"
                     + "\"Messungen\":["
-                    + "{\"messwerteCount\":2,\"extId\":453,"
+                    + "{\"" + Measm_.MEAS_VALS_COUNT + "\":2,\"extId\":453,"
                     + "\"statusMp\":\"MST - nicht vergeben\"},"
-                    + "{\"messwerteCount\":0,\"extId\":454,"
+                    + "{\"" + Measm_.MEAS_VALS_COUNT + "\":0,\"extId\":454,"
                     + "\"statusMp\":\"MST - plausibel\"}"
                     + "]}}"
                 )).readObject(),
@@ -579,7 +580,7 @@ public class ExporterTest extends ClientBaseTest {
                 .add(Measm_.ID)
                 .add(Measm_.EXT_ID)
                 .add(QueryExportJob.SUBDATA_MEASM_STATUS_MP)
-                .add(QueryExportJob.SUBDATA_MEASM_MEASVAL_COUNT));
+                .add(Measm_.MEAS_VALS_COUNT));
     }
 
     /**

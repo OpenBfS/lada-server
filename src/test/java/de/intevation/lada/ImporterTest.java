@@ -310,7 +310,7 @@ public class ImporterTest extends ClientBaseTest {
 
         JsonObject report = testAsyncLaf9Import(
             laf, lafSampleId, true, false, expected,
-            OWNER_KEY, Site_.REFERENCE_COUNT);
+            OWNER_KEY, Site_.REFERENCE_COUNT, Measm_.MEAS_VALS_COUNT);
 
         // Check tag validities
         getImportedSample(report, Sample.class).getTags().stream()
@@ -402,8 +402,8 @@ public class ImporterTest extends ClientBaseTest {
 
         testAsyncLaf9Import(
             laf, existingMainSampleId, true, true, laf,
-            "readonly", OWNER_KEY, Measm_.STATUS_PROTS, TAGS_KEY,
-            Site_.REFERENCE_COUNT);
+            "readonly", OWNER_KEY, Measm_.STATUS_PROTS, Measm_.MEAS_VALS_COUNT,
+            TAGS_KEY, Site_.REFERENCE_COUNT);
     }
 
     /**
@@ -427,7 +427,8 @@ public class ImporterTest extends ClientBaseTest {
         laf.setMeasms(List.of(measmUpdate, measmNew));
 
         testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, laf, OWNER_KEY, TAGS_KEY);
+            laf, existingMainSampleId, true, true, laf,
+            OWNER_KEY, TAGS_KEY, Measm_.MEAS_VALS_COUNT);
     }
 
     /**
@@ -452,7 +453,8 @@ public class ImporterTest extends ClientBaseTest {
         laf.setMeasms(List.of(measm));
 
         JsonObject report = testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, laf, OWNER_KEY, TAGS_KEY);
+            laf, existingMainSampleId, true, true, laf,
+            OWNER_KEY, TAGS_KEY, Measm_.MEAS_VALS_COUNT);
         assertMeasValIsReplaced(report);
     }
 
