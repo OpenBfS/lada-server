@@ -8,7 +8,7 @@
 package de.intevation.lada.validation.constraints;
 
 import jakarta.enterprise.inject.spi.CDI;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.metamodel.EntityType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -21,25 +21,32 @@ import de.intevation.lada.util.data.Repository;
 public class IsValidPrimaryKeyValidator
     implements ConstraintValidator<IsValidPrimaryKey, Object> {
 
-    private Class<?> clazz;
+    private static final String KEY_PARAM = "key";
+
+    private static final String QUERY_TPL =
+        "select exists (select 1 from %s where %s = :" + KEY_PARAM + ")";
+
+    private String existsQuery;
 
     @Override
     public void initialize(IsValidPrimaryKey constraintAnnotation) {
-        this.clazz = constraintAnnotation.clazz();
+        EntityType<?> type = CDI.current().getBeanContainer().createInstance()
+            .select(Repository.class).get().entityManager().getMetamodel()
+            .entity(constraintAnnotation.clazz());
+        this.existsQuery = String.format(QUERY_TPL,
+            type.getName(),
+            type.getId(type.getIdType().getJavaType()).getName());
     }
 
     @Override
-    @Transactional
     public boolean isValid(Object value, ConstraintValidatorContext ctx) {
-        if (value == null
-            // Get instance programmatically because dependency injection is not
-            // guaranteed to work in ConstraintValidator implementations
+        return value == null
+            /* Get instance programmatically because dependency injection is
+               not guaranteed to work in ConstraintValidator implementations */
             || CDI.current().getBeanContainer().createInstance()
                 .select(Repository.class).get().entityManager()
-                .find(clazz, value) != null
-        ) {
-            return true;
-        }
-        return false;
+                .createQuery(existsQuery, Boolean.class)
+                .setParameter(KEY_PARAM, value)
+                .getSingleResult();
     }
 }
