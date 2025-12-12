@@ -11,6 +11,8 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.List;
 
+import org.hibernate.jpa.AvailableHints;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -51,7 +53,7 @@ import jakarta.ws.rs.NotFoundException;
 public class Repository {
 
     @PersistenceContext(properties = @PersistenceProperty(
-            name = "org.hibernate.flushMode", value = "MANUAL"))
+            name = AvailableHints.HINT_FLUSH_MODE, value = "MANUAL"))
     private EntityManager em;
 
     /**

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.jpa.AvailableHints;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.junit.Before;
@@ -356,7 +357,7 @@ public class AuthorizerTest extends BaseTest {
             repository.entityManager().createEntityGraph(Measm.class);
         fetchStatusProts.addAttributeNodes(Measm_.STATUS_PROTS);
         Map<String, Object> fetchHint =
-            Map.of("jakarta.persistence.loadgraph", fetchStatusProts);
+            Map.of(AvailableHints.HINT_SPEC_LOAD_GRAPH, fetchStatusProts);
 
         //Test editable measm without status
         Measm noStatus = em.find(

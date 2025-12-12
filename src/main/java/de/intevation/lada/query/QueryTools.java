@@ -18,6 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.hibernate.jpa.AvailableHints;
+
 import jakarta.persistence.Query;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
@@ -124,7 +126,7 @@ public class QueryTools {
             query.setMaxResults(limit);
         } else {
             // Load result in batches
-            query.setHint("org.hibernate.fetchSize", FETCH_SIZE);
+            query.setHint(AvailableHints.HINT_FETCH_SIZE, FETCH_SIZE);
         }
 
         return query.getResultStream().map(row -> {
