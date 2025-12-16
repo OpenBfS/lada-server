@@ -33,9 +33,6 @@ import de.intevation.lada.validation.groups.CreateErrors;
  */
 public class ProbeTest extends ValidatorBaseTest {
 
-    //Validation keys
-    private static final String GEOLOCATS = "geolocats";
-
     //Test data ids
     private static final String ENV_MEDIUM_L42 = "L42";
     private static final String ENV_MEDIUM_L54 = "L54";
@@ -156,7 +153,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            GEOLOCATS,
+            Sample_.GEOLOCATS,
             MSG_NO_SAMPLING_LOC);
     }
 
@@ -212,7 +209,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            GEOLOCATS,
+            Sample_.GEOLOCATS,
             MSG_NO_SAMPLING_LOC);
     }
 
@@ -226,7 +223,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            GEOLOCATS,
+            Sample_.GEOLOCATS,
             MSG_MULTIPLE_U_SITE);
     }
 
@@ -240,7 +237,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            GEOLOCATS,
+            Sample_.GEOLOCATS,
             MSG_MULTIPLE_U_SITE);
     }
 
@@ -635,7 +632,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            GEOLOCATS,
+            Sample_.GEOLOCATS,
             MSG_NO_SAMPLING_LOC);
     }
 

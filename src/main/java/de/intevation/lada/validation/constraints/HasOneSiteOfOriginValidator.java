@@ -17,6 +17,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -54,7 +55,7 @@ public class HasOneSiteOfOriginValidator
         if (repository.filter(builder.getQuery()).size() > 1) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("geolocats")
+                .addPropertyNode(Sample_.GEOLOCATS)
                 .addConstraintViolation();
             return false;
         }
