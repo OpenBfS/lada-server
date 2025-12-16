@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.AttributeConverter;
@@ -19,14 +18,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -43,8 +40,6 @@ import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.validation.constraints.CanChangeCoordinates;
 import de.intevation.lada.validation.constraints.CoordinatesInAdminBorder;
 import de.intevation.lada.validation.constraints.HasCoordsOrAdminUnitOrState;
@@ -230,11 +225,6 @@ public class Site extends BaseModel implements Serializable {
 
     @NotEmptyNorWhitespace
     private String route;
-
-    @OneToMany(mappedBy = Geolocat_.SITE, fetch = FetchType.EAGER)
-    @JsonbTransient
-    @SuppressWarnings("serial")
-    private Set<Geolocat> geolocats;
 
     @Formula("""
         (SELECT count(*) FROM lada.geolocat g WHERE {alias}.id = g.site_id)
