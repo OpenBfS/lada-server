@@ -48,6 +48,7 @@ import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.JSONBConfig;
@@ -81,6 +82,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
     @Inject
     private OrtFactory ortFactory;
+
+    @Inject
+    private MesswertNormalizer normalizer;
 
     private Authorization authorization;
 
@@ -443,7 +447,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         mergeTags(srcMeasm, rawMeasm, targetMeasm);
 
         // measVals
-        List<MeasVal> newMeasVals = srcMeasm.getMeasVals();
+        Collection<MeasVal> newMeasVals = normalizer.normalizeMesswerte(
+            srcMeasm.getMeasVals(), targetMeasm.getSample().getEnvMediumId());
         if (newMeasVals != null) {
             // Existing measVals are completely replaced
             List<MeasVal> targetMeasVals = targetMeasm.getMeasVals();
@@ -467,7 +472,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             }
             // Just for reporting
             if (targetMeasVals == null) {
-                targetMeasm.setMeasVals(newMeasVals);
+                targetMeasm.setMeasVals(new ArrayList<>(newMeasVals));
             } else {
                 targetMeasVals.addAll(newMeasVals);
             }

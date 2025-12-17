@@ -493,6 +493,43 @@ public class ImporterTest extends ClientBaseTest {
     }
 
     /**
+     * LAF9 import normalizes measVals.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncLaf9NormalizeMeasVals()
+        throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        Sample laf = prepareLaf9Sample();
+        laf.setMainSampleId(lafSampleId);
+        laf.setEnvDescripDisplay(null);
+        laf.setEnvMediumId("N");
+
+        Measm measm = new Measm();
+        measm.setMmtId(mmtId);
+        laf.setMeasms(List.of(measm));
+
+        final int fromUnitId = 2, toUnitId = 1, factor = 10;
+        final double v = 0.1;
+        MeasVal measVal = new MeasVal();
+        measVal.setMeasdId(measd);
+        measVal.setMeasUnitId(fromUnitId);
+        measVal.setMeasVal(v);
+        measm.setMeasVals(List.of(measVal));
+
+        Sample expected = new Sample();
+        Measm expectedMeasm = new Measm();
+        expected.setMeasms(List.of(expectedMeasm));
+        MeasVal expectedMeasVal = new MeasVal();
+        expectedMeasVal.setMeasUnitId(toUnitId);
+        expectedMeasVal.setMeasVal(v * factor);
+        expectedMeasm.setMeasVals(List.of(expectedMeasVal));
+
+        testAsyncLaf9Import(laf, lafSampleId, true, false, expected,
+            Measm_.MEAS_VALS_COUNT, TAGS_KEY, OWNER_KEY);
+    }
+
+    /**
      * Test successful asynchronous LAF9 update import of sample tags.
      */
     @Test

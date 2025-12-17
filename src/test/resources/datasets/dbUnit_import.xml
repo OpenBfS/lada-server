@@ -18,6 +18,10 @@
 
     <!--master data-->
     <master.meas_unit id = "1" unit_symbol = "Bq/kgFM"/>
+    <master.meas_unit id = "2" unit_symbol = "dBq/kgFM"/>
+
+    <master.unit_convers
+        id = "1" from_unit_id = "2" to_unit_id = "1" factor = "10" />
 
     <master.measd id_old = "1" id = "H-3" />
     <master.mmt id = "A1" name = "test1" />
@@ -37,6 +41,7 @@
         name = "test"
     />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
+    <master.env_medium id = "N" name = "test normalize" unit_1 = "1" />
 
     <master.env_descrip id = "1" lev = "0" lev_val = "1" name = "s00"/>
     <master.env_descrip
