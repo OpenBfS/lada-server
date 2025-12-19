@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.rest;
 
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -131,8 +134,10 @@ public class StatusProtService extends LadaIntegerIdEntityService {
         Measm messung
     ) {
         // Create a new Status with value = 8.
-        StatusMp oldKombi = repository.getById(
-            StatusMp.class, messung.getStatusProt().getStatusMpId());
+        StatusMp oldKombi = repository.entityManager()
+            .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+            .setParameter(QUERY_MEASM_PARAM, messung)
+            .getSingleResult();
 
         StatusMp newKombi = (StatusMp) repository.entityManager()
             .createNativeQuery("SELECT * FROM master.status_mp "

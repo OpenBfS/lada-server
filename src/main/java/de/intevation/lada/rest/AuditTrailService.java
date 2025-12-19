@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.rest;
 
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,6 +65,7 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Sampler_;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Site_;
+import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -211,7 +215,11 @@ public class AuditTrailService extends LadaService {
                 Measm messung = repository.entityManager().find(
                     Measm.class, a.getMeasmId());
                 if (messung != null) {
-                    if (messung.getStatusProt().getStatusMpId() == 1
+                    StatusMp status = repository.entityManager()
+                        .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+                        .setParameter(QUERY_MEASM_PARAM, messung)
+                        .getSingleResult();
+                    if (status.getId() == 1
                         && !userInfo.getMessstellen().contains(
                             probe.getMeasFacilId())
                     ) {
@@ -324,7 +332,10 @@ public class AuditTrailService extends LadaService {
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
             if (a.getTableName().equals("meas_val")
-                && messung.getStatusProt().getStatusMpId() == 1
+                && repository.entityManager()
+                .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+                .setParameter(QUERY_MEASM_PARAM, messung)
+                .getSingleResult().getId() == 1
                 && !userInfo.getMessstellen().contains(
                     probe.getMeasFacilId())) {
                 continue;

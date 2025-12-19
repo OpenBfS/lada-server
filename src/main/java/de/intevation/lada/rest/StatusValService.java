@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.rest;
 
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
+
 import java.util.List;
 
 import jakarta.ws.rs.GET;
@@ -67,8 +70,10 @@ public class StatusValService extends LadaIntegerIdEntityService {
     private List<StatusVal> getReachable(Integer messungsId) {
         Measm messung = repository.getById(Measm.class, messungsId);
 
-        StatusMp kombi = repository.getById(
-            StatusMp.class, messung.getStatusProt().getStatusMpId());
+        StatusMp kombi = repository.entityManager()
+            .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+            .setParameter(QUERY_MEASM_PARAM, messung)
+            .getSingleResult();
 
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)

@@ -63,12 +63,12 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
 
     private static final String STATUSMP_SUBQUERY = String.format("""
         (select s.%s.%s.%s || ' - ' || s.%1$s.%s.%s from m.%s s
-         order by s.%s desc, s.%1$s.%4$s.%s desc fetch first 1 rows only
+         order by s.%s desc fetch first 1 rows only
         )""",
         StatusProt_.STATUS_MP,
         StatusMp_.STATUS_LEV, StatusLev_.LEV,
         StatusMp_.STATUS_VAL, StatusVal_.VAL,
-        Measm_.STATUS_PROTS, StatusProt_.DATE, StatusVal_.ID);
+        Measm_.STATUS_PROTS, StatusProt_.SEQ_NO);
 
     /**
      * True if subdata shall be fetched from the database and exported.

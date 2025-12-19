@@ -32,6 +32,18 @@ CREATE FUNCTION set_measm_ext_id() RETURNS trigger
     END;
 $$;
 
+CREATE FUNCTION set_status_prot_seq_no() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        NEW.seq_no = (
+            SELECT coalesce(max(seq_no), 0)
+               FROM lada.status_prot
+               WHERE measm_id = NEW.measm_id) + 1;
+        RETURN NEW;
+    END;
+$$;
+
 CREATE FUNCTION set_measm_status() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
@@ -449,10 +461,14 @@ CREATE TABLE status_prot (
     date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024) CHECK (trim(both ' ' from text) <> ''),
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
+    seq_no smallint NOT NULL,
     status_mp_id integer NOT NULL REFERENCES master.status_mp,
-    tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(measm_id, seq_no)
 );
 CREATE TRIGGER tree_mod_status_prot BEFORE UPDATE ON status_prot FOR EACH ROW EXECUTE PROCEDURE update_tree_mod();
+CREATE TRIGGER seq_no BEFORE INSERT ON status_prot
+    FOR EACH ROW EXECUTE PROCEDURE set_status_prot_seq_no();
 CREATE TRIGGER update_measm_after_status_prot_created AFTER INSERT ON status_prot FOR EACH ROW EXECUTE PROCEDURE update_status_measm();
 
 ALTER TABLE ONLY measm

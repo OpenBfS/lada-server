@@ -12,7 +12,6 @@ import java.util.Date;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -53,6 +52,9 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(insertable = false, updatable = false)
+    private int seqNo;
 
     @Schema(ref = "java.util.Date", readOnly = true)
     @Column(insertable = false, updatable = false)
@@ -125,15 +127,5 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    /**
-     * @return the status value ID
-     */
-    @JsonbTransient
-    public Integer getStatusValId() {
-        return this.statusMp != null // null during client-side deserialization
-            ? this.statusMp.getStatusVal().getId()
-            : null;
     }
 }

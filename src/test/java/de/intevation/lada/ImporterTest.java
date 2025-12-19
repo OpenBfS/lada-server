@@ -97,6 +97,7 @@ public class ImporterTest extends ClientBaseTest {
     private static final String ERRORS_KEY = "errors";
     private static final String WARNINGS_KEY = "warnings";
     private static final String OWNER_KEY = "owner";
+    private static final String READONLY_KEY = "readonly";
     private static final String REPORT_ITEM_KEY_KEY = "key";
     private static final String REPORT_ITEM_VALUE_KEY = "value";
     private static final String REPORT_ITEM_CODE_KEY = "code";
@@ -310,7 +311,8 @@ public class ImporterTest extends ClientBaseTest {
 
         JsonObject report = testAsyncLaf9Import(
             laf, lafSampleId, true, false, expected,
-            OWNER_KEY, Site_.REFERENCE_COUNT, Measm_.MEAS_VALS_COUNT);
+            OWNER_KEY, Site_.REFERENCE_COUNT, Measm_.MEAS_VALS_COUNT,
+            READONLY_KEY);
 
         // Check tag validities
         getImportedSample(report, Sample.class).getTags().stream()
@@ -967,6 +969,7 @@ public class ImporterTest extends ClientBaseTest {
             // Ignore anything completed by server
             Sample_.ID, Sample_.EXT_ID, Sample_.TREE_MOD,
             Sample_.ENV_DESCRIP_NAME, Sample_.ENV_MEDIUM_ID, OWNER_KEY,
+            READONLY_KEY,
             // Ignore all associations
             Sample_.SAMPLE_SPECIF_MEAS_VALS, Sample_.GEOLOCATS,
             Sample_.COMM_SAMPLES, TAGS_KEY, Sample_.MEASMS);

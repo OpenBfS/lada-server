@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.importer.laf;
 
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -1061,8 +1064,10 @@ public class LafObjectMapper {
             return false;
         }
         // get current status kombi
-        StatusMp currentKombi = repository.getById(
-            StatusMp.class, messung.getStatusProt().getStatusMpId());
+        StatusMp currentKombi = repository.entityManager()
+            .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+            .setParameter(QUERY_MEASM_PARAM, messung)
+            .getSingleResult();
         // check if erreichbar
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)

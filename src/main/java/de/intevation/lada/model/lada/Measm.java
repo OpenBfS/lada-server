@@ -10,7 +10,6 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +28,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -85,6 +85,9 @@ import de.intevation.lada.validation.groups.Warnings;
 @CheckHQL
 @NamedQuery(name = Names.QUERY_DELETE_MEAS_VALS,
     query = "delete from MeasVal where measm = :m")
+@NamedQuery(name = Names.QUERY_MEASM_STATUS, query = """
+    select statusMp from StatusProt where measm = :m
+    order by seqNo desc fetch first 1 rows only""")
 public class Measm extends BelongsToSample
     implements Taggable<TagLinkMeasm>, Serializable {
 
@@ -119,17 +122,11 @@ public class Measm extends BelongsToSample
     @NotBlank(groups = Notifications.class)
     private String minSampleId;
 
-    /**
-     * Latest StatusProt entry
-     */
-    @Schema(readOnly = true)
-    @Transient
-    private StatusProt statusProt;
-
     @OneToMany(mappedBy = StatusProt_.MEASM,
         cascade = CascadeType.REMOVE,
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @OrderBy(StatusProt_.SEQ_NO)
     @SuppressWarnings("serial")
     private List<StatusProt> statusProts;
 
@@ -287,36 +284,6 @@ public class Measm extends BelongsToSample
     }
     public void setStatusEditLst(Boolean statusEditLst) {
         this.statusEditLst = statusEditLst;
-    }
-
-    public StatusProt getStatusProt() {
-        if (this.statusProt == null && this.statusProts != null) {
-            this.statusProt = this.statusProts.stream().sorted(
-                new Comparator<StatusProt>() {
-                    @Override
-                    public int compare(StatusProt arg0, StatusProt arg1) {
-                        Date date0 = arg0.getDate();
-                        Date date1 = arg1.getDate();
-                        if (date0 == null || date1 == null) {
-                            return 0;
-                        }
-
-                        int isAfter = - date0.compareTo(date1);
-                        if (isAfter != 0) {
-                            return isAfter;
-                        }
-
-                        // Try breaking ties using statusVal
-                        Integer statusValId0 = arg0.getStatusValId();
-                        Integer statusValId1 = arg1.getStatusValId();
-                        if (statusValId0 == null || statusValId1 == null) {
-                            return 0;
-                        }
-                        return statusValId0.compareTo(statusValId1);
-                    }
-                }).findFirst().orElse(null);
-        }
-        return this.statusProt;
     }
 
     public List<StatusProt> getStatusProts() {

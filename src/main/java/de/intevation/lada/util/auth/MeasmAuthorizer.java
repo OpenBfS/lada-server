@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.util.auth;
 
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
+import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
+
 import java.util.List;
 
 import de.intevation.lada.model.lada.Measm;
@@ -53,9 +56,19 @@ class MeasmAuthorizer extends Authorizer<Measm> {
         RequestMethod method
     ) throws AuthorizationException {
         Sample probe = messung.getSample();
+        if (method == RequestMethod.POST) {
+            if (probeAuthorizer.isMethodAuthorized(probe, RequestMethod.POST)) {
+                return;
+            }
+            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+        }
+
+        int statusVal = repository.entityManager()
+            .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+            .setParameter(QUERY_MEASM_PARAM, messung)
+            .getSingleResult().getStatusVal().getId();
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
-            int statusVal = messung.getStatusProt().getStatusValId();
             if ((statusVal == 0 || statusVal == 4)
                 && probeAuthorizer.isMethodAuthorized(probe, RequestMethod.POST)
             ) {
@@ -63,13 +76,8 @@ class MeasmAuthorizer extends Authorizer<Measm> {
             }
             throw new AuthorizationException(I18N_KEY_FORBIDDEN);
         }
-        if (method == RequestMethod.POST) {
-            if (probeAuthorizer.isMethodAuthorized(probe, RequestMethod.POST)) {
-                return;
-            }
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
-        }
-        if (messung.getStatusProt().getStatusValId() > 0
+
+        if (statusVal > 0
             || probeAuthorizer.isMethodAuthorized(probe, RequestMethod.POST)
         ) {
             return;
@@ -101,8 +109,10 @@ class MeasmAuthorizer extends Authorizer<Measm> {
             return;
         }
 
-        StatusMp kombi = repository.getById(
-            StatusMp.class, messung.getStatusProt().getStatusMpId());
+        StatusMp kombi = repository.entityManager()
+            .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+            .setParameter(QUERY_MEASM_PARAM, messung)
+            .getSingleResult();
         int stufe = kombi.getStatusLev().getId();
         int wert  = kombi.getStatusVal().getId();
 

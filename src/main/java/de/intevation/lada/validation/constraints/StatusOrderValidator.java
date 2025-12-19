@@ -55,7 +55,7 @@ public class StatusOrderValidator
             .queryBuilder(StatusProt.class)
             .and(StatusProt_.id, status.getId()).not()
             .and(StatusProt_.measm, status.getMeasm())
-            .orderBy(StatusProt_.id, false);
+            .orderBy(StatusProt_.seqNo, false);
         List<StatusProt> protos =
             repository.filter(lastFilter.getQuery(), 0, 1);
         if (protos.isEmpty()) {
