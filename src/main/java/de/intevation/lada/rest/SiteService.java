@@ -164,7 +164,7 @@ public class SiteService extends LadaIntegerIdEntityEditingService<Site> {
         Collection<Site> orte =
             new Validator().validate(siteQuery.getResultList());
 
-        return new Response(authorization.filter(orte),
+        return new Response(authorization.setAuthAttrs(orte),
             countQuery.getSingleResult());
     }
 

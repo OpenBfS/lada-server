@@ -281,7 +281,7 @@ public class AuthorizerTest extends BaseTest {
             try {
                 transaction.begin();
                 assertEquals(expectedReadonly,
-                    authorization.filter(testObject).isReadonly());
+                    authorization.setAuthAttrs(testObject).isReadonly());
             } finally {
                 transaction.rollback();
             }

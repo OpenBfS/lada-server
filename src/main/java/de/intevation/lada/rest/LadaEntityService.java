@@ -113,7 +113,7 @@ abstract class LadaEntityService<I> extends LadaService {
                 ) {
                     Collection<BaseModel> bmList =
                         (Collection<BaseModel>) listResult;
-                    authorization.filter(bmList);
+                    authorization.setAuthAttrs(bmList);
 
                     validator.validate(
                         bmList,
@@ -121,7 +121,7 @@ abstract class LadaEntityService<I> extends LadaService {
                         Notifications.class);
                 }
             } else if (result instanceof BaseModel r) {
-                authorization.filter(r);
+                authorization.setAuthAttrs(r);
 
                 validator.validate(
                     r, Warnings.class, Notifications.class);
