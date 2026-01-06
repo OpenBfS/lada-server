@@ -458,7 +458,7 @@ CREATE TRIGGER tree_mod_meas_val BEFORE UPDATE ON meas_val FOR EACH ROW EXECUTE 
 CREATE TABLE status_prot (
     id serial PRIMARY KEY,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
-    date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    date timestamp without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024) CHECK (trim(both ' ' from text) <> ''),
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
     seq_no smallint NOT NULL,
