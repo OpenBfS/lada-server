@@ -10,10 +10,14 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.Unique;
+import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,10 +27,12 @@ import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 
 @Entity
+@DynamicInsert
 @Table(schema = Names.SCHEMA_NAME)
 @Unique(fields = {"text", "sample"},
     groups = DatabaseConstraints.class, clazz = CommSample.class)
@@ -40,6 +46,8 @@ public class CommSample extends BelongsToSample
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @PastOrPresent(groups = CreateErrors.class)
+    @Column(updatable = false)
     @Temporal(TIMESTAMP)
     private Date date;
 

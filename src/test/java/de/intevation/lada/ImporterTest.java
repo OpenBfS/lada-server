@@ -315,8 +315,16 @@ public class ImporterTest extends ClientBaseTest {
             READONLY_KEY);
 
         // Check tag validities
-        getImportedSample(report, Sample.class).getTags().stream()
-            .forEach(TagTest::checkValUntil);
+        Sample importedSample = getImportedSample(report, Sample.class);
+        importedSample.getTags().forEach(TagTest::checkValUntil);
+
+        // Assert that comments have timestamps added
+        importedSample.getCommSamples().stream()
+            .map(CommSample::getDate).forEach(Assert::assertNotNull);
+        importedSample.getMeasms().stream()
+            .flatMap(m -> m.getCommMeasms().stream())
+            .map(CommMeasm::getDate)
+            .forEach(Assert::assertNotNull);
     }
 
     /**

@@ -11,7 +11,6 @@ import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
 import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -709,11 +708,8 @@ public class LafObjectMapper {
         if (attributes.containsKey("DATE")) {
             String date = attributes.get("DATE") + " " + attributes.get("TIME");
             kommentar.setDate(getDate(date));
-        } else {
-            kommentar.setDate(
-                Timestamp.from(
-                    Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
+
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             addWarning(
                 new ReportItem(
@@ -943,10 +939,6 @@ public class LafObjectMapper {
         if (attributes.containsKey("DATE")) {
             String date = attributes.get("DATE") + " " + attributes.get("TIME");
             kommentar.setDate(getDate(date));
-        } else {
-            kommentar.setDate(
-                Timestamp.from(
-                    Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
 
         // Duplicates validation rule because the rule generates an error

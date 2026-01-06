@@ -328,7 +328,7 @@ CREATE TRIGGER tree_mod_sample BEFORE UPDATE ON sample FOR EACH ROW EXECUTE PROC
 CREATE TABLE comm_sample (
     id serial PRIMARY KEY,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
-    date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    date timestamp without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024) NOT NULL CHECK (trim(both ' ' from text) <> ''),
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
     UNIQUE (sample_id, text)
@@ -423,7 +423,7 @@ CREATE TRIGGER status_measm AFTER INSERT ON lada.measm FOR EACH ROW EXECUTE PROC
 CREATE TABLE comm_measm (
     id serial PRIMARY KEY,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
-    date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    date timestamp without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024) NOT NULL CHECK (trim(both ' ' from text) <> ''),
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
     UNIQUE (measm_id, text)
