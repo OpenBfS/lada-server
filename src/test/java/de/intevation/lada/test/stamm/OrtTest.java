@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.test.stamm;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -76,8 +79,8 @@ public class OrtTest extends ServiceTest {
     private void testUploadImage(String imageDataUrl, String parameter) {
         WebTarget reqTarget = target.path(parameter);
         Builder reqBuilder = reqTarget.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles);
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles);
 
         // Get empty image
         Response emptyResponse = reqBuilder.get();
@@ -92,8 +95,8 @@ public class OrtTest extends ServiceTest {
 
         // Get image
         reqBuilder = reqTarget.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles);
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles);
         Response response = reqBuilder.get();
         Assert.assertEquals(
             Status.OK.getStatusCode(), response.getStatus());

@@ -9,6 +9,9 @@ package de.intevation.lada.test.land;
 
 import static org.junit.Assert.assertEquals;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
@@ -55,8 +58,8 @@ public class QueryTest extends ServiceTest {
         //GetById interface
         final int idToUpdate = updatePayload.getInt(KEY_ID);
         Response updated = target.path(URL + idToUpdate).request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .put(Entity.entity(
                 updatePayload.toString(), MediaType.APPLICATION_JSON));

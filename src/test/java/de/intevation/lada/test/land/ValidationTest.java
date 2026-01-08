@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.test.land;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
@@ -49,8 +52,8 @@ public class ValidationTest extends ServiceTest {
         Invocation.Builder builderNonExistant = target
             .path(SAMPLE_SERVICE_URL + nonExistantID)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON);
 
         // IDs in path and payload do not match
@@ -73,8 +76,8 @@ public class ValidationTest extends ServiceTest {
         Invocation.Builder builder = target
             .path(SAMPLE_SERVICE_URL + SAMPLE_ID)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON);
 
         // existing sample in payload should remain unaltered

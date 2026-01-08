@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.test.stamm;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -65,8 +68,8 @@ public class KoordinatenartTest extends ServiceTest {
             .build();
 
         Response response = target.path(url).request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(
                     requestJson.toString(), MediaType.APPLICATION_JSON));
 

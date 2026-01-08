@@ -8,6 +8,8 @@
 package de.intevation.lada.test.stamm;
 
 import static de.intevation.lada.rest.LadaService.PATH_REST;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 import static org.junit.Assert.assertTrue;
 
 import jakarta.json.JsonObject;
@@ -52,8 +54,8 @@ public class Stammdaten extends ServiceTest {
     ) {
         /* Request an object by id*/
         Response response = target.path(PATH_REST + type + "/" + id).request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get();
         assertTrue("Response should contain an object",
             ClientBaseTest.parseResponse(response) instanceof JsonObject);

@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.test.land;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import java.util.List;
 
 import jakarta.json.Json;
@@ -147,8 +150,8 @@ public class OrtszuordnungTest extends ServiceTest {
         create(urlPath, loc, Status.NOT_FOUND);
         ClientBaseTest.parseResponse(target.path(urlPath + expectedId)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .put(Entity.entity(loc, MediaType.APPLICATION_JSON)),
             Status.NOT_FOUND);

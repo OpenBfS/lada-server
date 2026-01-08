@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.test.land;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -524,8 +527,8 @@ public class PepGenerationTest extends ServiceTest {
             Response response = target.path("rest/samplespecifmeasval")
                 .queryParam("sampleId", probeId)
                 .request()
-                .header("X-SHIB-user", BaseTest.testUser)
-                .header("X-SHIB-roles", BaseTest.testRoles)
+                .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+                .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
                 .get();
             JsonArray zwData = ClientBaseTest.parseResponse(response).asJsonArray();
             Assert.assertFalse(zwData.isEmpty());
@@ -590,8 +593,8 @@ public class PepGenerationTest extends ServiceTest {
 
         Response response = target.path("rest/sample/messprogramm")
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.json(payload.toString()));
 
         JsonObject data = ClientBaseTest.parseResponse(response).asJsonObject();

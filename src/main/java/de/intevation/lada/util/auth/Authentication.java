@@ -31,8 +31,8 @@ import de.intevation.lada.i18n.I18n;
  */
 public class Authentication implements HttpAuthenticationMechanism {
 
-    private static final String HEADER_X_SHIB_USER = "X-SHIB-user";
-    private static final String HEADER_X_SHIB_ROLES = "X-SHIB-roles";
+    public static final String HEADER_X_SHIB_USER = "X-SHIB-user";
+    public static final String HEADER_X_SHIB_ROLES = "X-SHIB-roles";
 
     static final String ROLES = "lada.user.roles";
     static final String USER = "lada.user.name";

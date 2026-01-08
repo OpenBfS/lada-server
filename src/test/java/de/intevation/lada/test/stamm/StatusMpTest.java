@@ -16,6 +16,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -78,8 +80,8 @@ public class StatusMpTest extends ServiceTest {
         final int measmId = 1801;
         Response response = target.path(STATUS_MP_URL + "getbyids")
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .post(Entity.entity(
                     Json.createArrayBuilder().add(measmId).build().toString(),

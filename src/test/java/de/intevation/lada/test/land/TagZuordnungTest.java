@@ -9,6 +9,9 @@ package de.intevation.lada.test.land;
 
 import static org.junit.Assert.assertTrue;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -176,8 +179,8 @@ public class TagZuordnungTest extends ServiceTest {
     ) {
         Response response = target.path(path.build().toString())
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .post(Entity.entity(
                     payload.toString(), MediaType.APPLICATION_JSON));
