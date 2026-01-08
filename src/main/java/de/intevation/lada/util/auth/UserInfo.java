@@ -8,7 +8,6 @@
 package de.intevation.lada.util.auth;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,10 +55,11 @@ public class UserInfo {
         this.name = request.getAttribute(Authentication.USER).toString();
 
         // The user's roles
-        String[] mst = request.getAttribute(Authentication.ROLES).toString()
-            .replace("[", "").replace("]", "").replace(" ", "").split(",");
+        @SuppressWarnings("unchecked")
+        Set<String> roles =
+            (Set<String>) request.getAttribute(Authentication.ROLES);
         QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class)
-            .andIn(Auth_.ldapGr, Arrays.asList(mst));
+            .andIn(Auth_.ldapGr, roles);
         this.auth = repository.filter(authBuilder.getQuery());
 
         // The user's ID
