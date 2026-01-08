@@ -53,10 +53,10 @@ public class UserInfo {
         @Context HttpServletRequest request,
         Repository repository
     ) {
-        this.name = request.getAttribute("lada.user.name").toString();
+        this.name = request.getAttribute(Authentication.USER).toString();
 
         // The user's roles
-        String[] mst = request.getAttribute("lada.user.roles").toString()
+        String[] mst = request.getAttribute(Authentication.ROLES).toString()
             .replace("[", "").replace("]", "").replace(" ", "").split(",");
         QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class)
             .andIn(Auth_.ldapGr, Arrays.asList(mst));

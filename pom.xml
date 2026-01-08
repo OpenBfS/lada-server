@@ -373,6 +373,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>jakarta.security.enterprise</groupId>
+            <artifactId>jakarta.security.enterprise-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.microprofile.openapi</groupId>
             <artifactId>microprofile-openapi-api</artifactId>
             <scope>provided</scope>

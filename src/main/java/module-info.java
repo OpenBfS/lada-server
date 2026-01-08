@@ -15,6 +15,7 @@ module lada.server {
     requires jakarta.json;
     requires jakarta.json.bind;
     requires jakarta.persistence;
+    requires jakarta.security;
     requires jakarta.servlet;
     requires jakarta.transaction;
     requires jakarta.validation;
