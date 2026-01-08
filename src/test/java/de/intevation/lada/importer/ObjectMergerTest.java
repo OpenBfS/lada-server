@@ -28,7 +28,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.BaseTest;
+import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
@@ -43,7 +43,7 @@ import de.intevation.lada.util.data.Repository;
  * Unit tests for ObjectMerger.
  */
 @RunWith(Arquillian.class)
-public class ObjectMergerTest extends BaseTest {
+public class ObjectMergerTest extends ContainerBaseTest {
 
     private static final double MESS15D = 1.5d;
     private static final int MEHID207 = 207;

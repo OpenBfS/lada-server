@@ -19,7 +19,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.BaseTest;
+import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.validation.Validator;
@@ -30,7 +30,7 @@ import de.intevation.lada.validation.Validator;
  */
 @RunWith(Arquillian.class)
 @Transactional
-public abstract class ValidatorBaseTest extends BaseTest {
+public abstract class ValidatorBaseTest extends ContainerBaseTest {
 
     @Inject
     protected Validator validator;

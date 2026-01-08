@@ -55,7 +55,6 @@ import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -146,13 +145,12 @@ public class BaseTest {
     }
 
     /**
-     * Create a deployable WAR archive.
+     * Create a deployable WAR archive with complete LADA server
+     * including runtime and test dependencies.
      *
-     * @throws Exception that happens during build process.
      * @return WebArchive to deploy in wildfly application server.
      */
-    @Deployment(testable = true)
-    public static WebArchive createDeployment() throws Exception {
+    public static WebArchive createFullDeployment() {
         //Get compile and runtime dependencies from pom.xml
         // Note: Test dependencies can not be added this way as they seem to
         //       break the deployment

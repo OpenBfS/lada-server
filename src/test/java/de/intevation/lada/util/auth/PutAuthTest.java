@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Auth;
@@ -35,7 +36,7 @@ import jakarta.transaction.UserTransaction;
  * regardless of state of given entity in relation to persistence context.
  */
 @RunWith(Arquillian.class)
-public class PutAuthTest extends BaseTest {
+public class PutAuthTest extends ContainerBaseTest {
 
     private static final int SAMPLE_ID_UNAUTHORIZED = 1;
     private static final String MEAS_FACIL_AUTHORIZED = "06010";

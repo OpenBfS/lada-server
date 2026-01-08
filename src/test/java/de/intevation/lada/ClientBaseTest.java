@@ -25,7 +25,9 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,8 +37,8 @@ import de.intevation.lada.util.rest.JSONBConfig;
 
 
 /**
- * Base class for Lada server tests using
- * {@link org.jboss.arquillian.container.test.api.RunAsClient}.
+ * Base class for Lada server tests with test methods executed
+ * at client side.
  */
 public class ClientBaseTest extends BaseTest {
 
@@ -55,6 +57,14 @@ public class ClientBaseTest extends BaseTest {
      * Basis for building requests for interface tests.
      */
     protected WebTarget target;
+
+    /**
+     * Create deployment for client side tests.
+     */
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return createFullDeployment();
+    }
 
     /**
      * Set up shared infrastructure for test methods.

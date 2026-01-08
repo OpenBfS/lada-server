@@ -18,7 +18,7 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.BaseTest;
+import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.model.master.Tag;
 
 
@@ -26,7 +26,7 @@ import de.intevation.lada.model.master.Tag;
  * Unit tests for tag identifier implementation.
  */
 @RunWith(Arquillian.class)
-public class TagIdentifierTest extends BaseTest {
+public class TagIdentifierTest extends ContainerBaseTest {
 
     private final String globalName = "global";
     private final String networkName = "network";

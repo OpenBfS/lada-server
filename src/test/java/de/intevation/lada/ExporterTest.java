@@ -32,7 +32,6 @@ import jakarta.ws.rs.core.UriBuilder;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
-import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.junit.After;
@@ -163,7 +162,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test JSON export of a Sample identified by ID.
      */
     @Test
-    @RunAsClient
     public final void testJsonExportProbeById()
         throws InterruptedException, CharacterCodingException {
         final int probeId = 1000;
@@ -184,7 +182,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test JSON export of a Sample identified by ID.
      */
     @Test
-    @RunAsClient
     public final void testJsonExportMeasmById()
         throws InterruptedException, CharacterCodingException {
         final int measmId = 1200;
@@ -327,7 +324,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test LAF export of a Sample identified by ID.
      */
     @Test
-    @RunAsClient
     public final void testLafExportProbeById()
         throws InterruptedException, CharacterCodingException {
         final int probeId = 1000;
@@ -352,7 +348,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous CSV export of a Sample object.
      */
     @Test
-    @RunAsClient
     public final void testCsvExportProbe()
         throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
@@ -372,7 +367,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous CSV export using CSV options.
      */
     @Test
-    @RunAsClient
     public final void testCsvExportFieldSeparator()
         throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
@@ -393,7 +387,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous CSV export using CSV options.
      */
     @Test
-    @RunAsClient
     public final void testCsvExportRowDelimiter()
         throws InterruptedException, CharacterCodingException {
         final String rowDelimiter = "\n";
@@ -414,7 +407,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous CSV export using CSV options.
      */
     @Test
-    @RunAsClient
     public final void testCsvExportQuote()
         throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
@@ -435,7 +427,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous CSV export using CSV options.
      */
     @Test
-    @RunAsClient
     public final void testCsvExportDecimalSeparator()
         throws InterruptedException, CharacterCodingException {
         assertHasLinesInAnyOrder(
@@ -451,7 +442,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test timestamp formatting in CSV export.
      */
     @Test
-    @RunAsClient
     public final void testCsvExportTimestamp()
         throws InterruptedException, CharacterCodingException {
         final int gridColMpId = 3;
@@ -474,7 +464,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous CSV export of a Sample identified by ID.
      */
     @Test
-    @RunAsClient
     public final void testCsvExportProbeById()
         throws InterruptedException, CharacterCodingException {
         JsonObject requestJson = requestJsonBuilder
@@ -493,7 +482,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous CSV export of Sample objects including measms.
      */
     @Test
-    @RunAsClient
     public final void testCsvExportProbeSubData()
         throws InterruptedException, CharacterCodingException {
         assertHasLinesInAnyOrder(
@@ -510,7 +498,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous CSV export of Measm objects including measVals.
      */
     @Test
-    @RunAsClient
     public final void testCsvExportMeasmSubData()
         throws InterruptedException, CharacterCodingException {
         assertHasLinesInAnyOrder(
@@ -526,7 +513,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous JSON export of a Sample identified by ID.
      */
     @Test
-    @RunAsClient
     public final void testAsyncJsonExportProbeById()
         throws InterruptedException, CharacterCodingException {
         JsonObject requestJson = requestJsonBuilder
@@ -548,7 +534,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous JSON export of a Sample object with measms.
      */
     @Test
-    @RunAsClient
     public final void testJsonExportProbeSubData()
         throws InterruptedException, CharacterCodingException {
         JsonObject requestJson = sampleSubDataRequest()
@@ -587,7 +572,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous JSON export of a Measm object with measVals.
      */
     @Test
-    @RunAsClient
     public final void testJsonExportMeasmSubData()
         throws InterruptedException, CharacterCodingException {
         BaseTest.verify(
@@ -609,7 +593,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous LAF 8.4 export of a Sample identified by ID.
      */
     @Test
-    @RunAsClient
     public final void testAsyncLaf8ExportProbeById()
         throws InterruptedException, CharacterCodingException {
         final int probeId = 1000;
@@ -627,7 +610,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous LAF 9 export of a Sample identified by ID.
      */
     @Test
-    @RunAsClient
     public final void testLaf9ExportProbeById()
         throws InterruptedException, CharacterCodingException {
         final int probeId = 1000;
@@ -647,7 +629,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test asynchronous export of an empty query result.
      */
     @Test
-    @RunAsClient
     public final void testQueryExportEmpty()
         throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
@@ -673,7 +654,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test failing asynchronous export with invalid request payload.
      */
     @Test
-    @RunAsClient
     public final void testAsyncExportFailure()
         throws InterruptedException, CharacterCodingException {
         /* Test values */
@@ -699,7 +679,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test failing asynchronous export with invalid encoding.
      */
     @Test
-    @RunAsClient
     public final void testAsyncExportInvalidCharset() {
         JsonObject jsonExportJson = Json.createObjectBuilder()
             .add("encoding", "invalidEncoding")
@@ -713,7 +692,6 @@ public class ExporterTest extends ClientBaseTest {
      * Test failing asynchronous export with invalid sub-data column.
      */
     @Test
-    @RunAsClient
     public final void testAsyncExportInvalidSubDataColumn() {
         QueryExportParameters params = new QueryExportParameters();
         params.setIdField(QueryExportJob.ID_TYPE_SAMPLE);

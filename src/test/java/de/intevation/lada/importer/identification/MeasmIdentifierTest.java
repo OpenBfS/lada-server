@@ -17,7 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.BaseTest;
+import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 
@@ -26,7 +26,7 @@ import de.intevation.lada.model.lada.Sample;
  * Unit tests for Identifier implementations.
  */
 @RunWith(Arquillian.class)
-public class MeasmIdentifierTest extends BaseTest {
+public class MeasmIdentifierTest extends ContainerBaseTest {
 
     private static final int PID1000 = 1000;
 

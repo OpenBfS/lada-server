@@ -18,7 +18,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.BaseTest;
+import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm_;
@@ -26,7 +26,7 @@ import jakarta.persistence.metamodel.Attribute;
 import jakarta.validation.ConstraintValidatorContext;
 
 @RunWith(Arquillian.class)
-public class ValidSubDataColumnsValidatorTest extends BaseTest {
+public class ValidSubDataColumnsValidatorTest extends ContainerBaseTest {
 
     private ValidSubDataColumnsValidator validator =
         new ValidSubDataColumnsValidator();

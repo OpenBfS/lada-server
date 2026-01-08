@@ -17,7 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.BaseTest;
+import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.model.lada.Sample;
 
 
@@ -25,7 +25,7 @@ import de.intevation.lada.model.lada.Sample;
  * Unit tests for Identifier implementations.
  */
 @RunWith(Arquillian.class)
-public class SampleIdentifierTest extends BaseTest {
+public class SampleIdentifierTest extends ContainerBaseTest {
 
     @Resource
     private UserTransaction transaction;

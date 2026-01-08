@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Before;
@@ -109,7 +108,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      *
      */
     @Test
-    @RunAsClient
     public final void testGetAll() {
         Response response = universalRequestBuilder
             .post(Entity.entity(this.requestJson, MediaType.APPLICATION_JSON));
@@ -129,7 +127,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      *
      */
     @Test
-    @RunAsClient
     public final void testGetPaged() {
         final int limit = 1;
         Response response = target.path(universalServiceUrl)
@@ -155,7 +152,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      *
      */
     @Test
-    @RunAsClient
     public final void testGetSql() {
         Response response = target.path(sqlServiceUrl)
             .request()
@@ -174,7 +170,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      *
      */
     @Test
-    @RunAsClient
     public final void testGetFiltered() {
         Response response = universalRequestBuilder
             .post(Entity.entity(this.filteredRequestJson,
@@ -199,7 +194,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      *
      */
     @Test
-    @RunAsClient
     public final void testGetSqlWithParameter() {
         Response response = target.path(sqlServiceUrl)
             .request()
@@ -223,7 +217,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      *
      */
     @Test
-    @RunAsClient
     public final void testGetEmpty() {
         GridColConf col1 = new GridColConf();
         col1.setColIndex(0);
@@ -252,7 +245,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      * Test fetching data returned by a single-column query.
      */
     @Test
-    @RunAsClient
     public final void testGetSingleColumn() {
         // single-column query should result in JSON objects with
         // key-value pairs representing "readonly" flag and a single data column
@@ -266,7 +258,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      * Test serialization of timestamps.
      */
     @Test
-    @RunAsClient
     public final void timestampSerializationSingleCol() {
         JsonObject respObj = getSingleColumnResult().getJsonObject(0);
         assertContains(respObj, timeStampKey);
@@ -292,7 +283,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      * Test serialization of timestamps.
      */
     @Test
-    @RunAsClient
     public final void timestampSerialization() {
         GridColConf col1 = new GridColConf();
         col1.setColIndex(0);
@@ -316,7 +306,6 @@ public class UniversalServiceTest extends ClientBaseTest {
      * Test authorization of result rows with multiple ID columns.
      */
     @Test
-    @RunAsClient
     public void testAuth() {
         // Retrieve expected values from MeasmService
         final int notSetMeasmId = 1200, plausibleMeasmId = 1201;

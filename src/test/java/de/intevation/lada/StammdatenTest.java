@@ -10,7 +10,6 @@ package de.intevation.lada;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,7 +76,6 @@ public class StammdatenTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testDatensatzerzeuger()
     throws Exception {
         datensatzerzeugerTest.init(this.target);
@@ -89,7 +87,6 @@ public class StammdatenTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testProbenehmer()
     throws Exception {
         probenehmerTest.init(this.target);
@@ -101,7 +98,6 @@ public class StammdatenTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testMessprogrammKategorie()
     throws Exception {
         messprogrammkategorieTest.init(this.target);
@@ -113,7 +109,6 @@ public class StammdatenTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testOrt()
     throws Exception {
         ortTest.init(this.target);
@@ -124,7 +119,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for datenbasis operations.
      */
     @Test
-    @RunAsClient
     public final void testRegulationAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("regulation");
@@ -134,7 +128,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for datenbasis by id operations.
      */
     @Test
-    @RunAsClient
     public final void testRegulationById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("regulation", ID9);
@@ -144,7 +137,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for messeinheit operations.
      */
     @Test
-    @RunAsClient
     public final void testMesseinheitAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("measunit");
@@ -154,7 +146,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for messeinheit by id operations.
      */
     @Test
-    @RunAsClient
     public final void testMesseinheitById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("measunit", ID207);
@@ -164,7 +155,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for messgroesse operations.
      */
     @Test
-    @RunAsClient
     public final void testMessgroesseAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("measd");
@@ -174,14 +164,12 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for messgroesse by id operations.
      */
     @Test
-    @RunAsClient
     public final void testMessgroesseById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("measd", "Mangan");
     }
 
     @Test
-    @RunAsClient
     public final void measdForMmt() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("measd?mmtId=A3");
@@ -191,7 +179,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for messmethode operations.
      */
     @Test
-    @RunAsClient
     public final void testMessmethodeAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("mmt");
@@ -201,7 +188,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for messmethode by id operations.
      */
     @Test
-    @RunAsClient
     public final void testMessmethodeById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("mmt", "A3");
@@ -211,7 +197,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for messstelle operations.
      */
     @Test
-    @RunAsClient
     public final void testMessstelleAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("measfacil");
@@ -221,7 +206,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for messstelle by id operations.
      */
     @Test
-    @RunAsClient
     public final void testMessstelleById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("measfacil", "06010");
@@ -231,7 +215,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for netzbetreiber operations.
      */
     @Test
-    @RunAsClient
     public final void testNetzbetreiberAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("network");
@@ -241,7 +224,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for netzbetreiber by id operations.
      */
     @Test
-    @RunAsClient
     public final void testNetzbetreiberById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("network", "06");
@@ -251,7 +233,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for probeart operations.
      */
     @Test
-    @RunAsClient
     public final void testProbenartAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("samplemeth");
@@ -261,7 +242,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for probeart by id operations.
      */
     @Test
-    @RunAsClient
     public final void testProbenartById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("samplemeth", 1);
@@ -271,7 +251,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for probenzusatz operations.
      */
     @Test
-    @RunAsClient
     public final void testProbenzusatzAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("samplespecif");
@@ -281,14 +260,12 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for probenzusatz by id operations.
      */
     @Test
-    @RunAsClient
     public final void testProbenzusatzById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("samplespecif", "A74");
     }
 
     @Test
-    @RunAsClient
     public final void sampleSpecifForEnvMedium() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("samplespecif?envMediumId=L6");
@@ -298,7 +275,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for koordinatenart operations.
      */
     @Test
-    @RunAsClient
     public final void testKoordinatenartAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("spatrefsys");
@@ -308,7 +284,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for koordinatenart by id operations.
      */
     @Test
-    @RunAsClient
     public final void testKoordinatenartById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("spatrefsys", ID5);
@@ -318,7 +293,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for staat operations.
      */
     @Test
-    @RunAsClient
     public final void testStaatAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("state");
@@ -328,7 +302,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for staat by id operations.
      */
     @Test
-    @RunAsClient
     public final void testStaatById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("state", 0);
@@ -338,7 +311,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for umwelt  operations.
      */
     @Test
-    @RunAsClient
     public final void testUmweltAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("envmedium");
@@ -348,7 +320,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for umwelt by id operations.
      */
     @Test
-    @RunAsClient
     public final void testUmweltById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("envmedium", "L6");
@@ -358,7 +329,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for verwaltungseinheit operations.
      */
     @Test
-    @RunAsClient
     public final void testVerwaltungseinheitAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("adminunit");
@@ -368,7 +338,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for verwaltungseinheit by id operations.
      */
     @Test
-    @RunAsClient
     public final void testVerwaltungseinheitById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("adminunit", "11000000");
@@ -379,7 +348,6 @@ public class StammdatenTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testDeskriptoren()
     throws Exception {
         deskriptorenTest.init(this.target);
@@ -391,7 +359,6 @@ public class StammdatenTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testKoordinatenart()
     throws Exception {
         kdaTest.init(this.target);
@@ -403,7 +370,6 @@ public class StammdatenTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testTag()
     throws Exception {
         tagTest.init(this.target);
@@ -415,7 +381,6 @@ public class StammdatenTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testTagZuordnung()
     throws Exception {
         tagZuordnungTest.init(this.target);
@@ -426,7 +391,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests type regulation get all operation.
      */
     @Test
-    @RunAsClient
     public final void testTypeRegulationAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("typeregulation");
@@ -436,7 +400,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests type regulation get by id operation.
      */
     @Test
-    @RunAsClient
     public final void testTypeRegulationById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("typeregulation", IDA);
@@ -446,7 +409,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests poi get all operation.
      */
     @Test
-    @RunAsClient
     public final void testPoiAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("poi");
@@ -456,7 +418,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests poi get by id operation.
      */
     @Test
-    @RunAsClient
     public final void testPoiById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("poi", IDA);
@@ -466,7 +427,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for TargActMmtGr operations.
      */
     @Test
-    @RunAsClient
     public final void testTargActMmtGrAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("targactmmtgr");
@@ -476,7 +436,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests for TargEnvGr operations.
      */
     @Test
-    @RunAsClient
     public final void testTargEnvGrAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("targenvgr");
@@ -486,7 +445,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests EnvSpecifMp get all operation.
      */
     @Test
-    @RunAsClient
     public final void testEnvSpecifMpAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("envspecifmp");
@@ -496,7 +454,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests EnvSpecifMp get all operation.
      */
     @Test
-    @RunAsClient
     public final void testEnvSpecifMpGetById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("envspecifmp", ID101);
@@ -506,7 +463,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Test MunicDiv serivce operations.
      */
     @Test
-    @RunAsClient
     public final void testMunicDiv() {
         municDivTest.init(this.target);
         municDivTest.execute();
@@ -516,7 +472,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests ReiAgGr get all operation.
      */
     @Test
-    @RunAsClient
     public final void testReiAgGrAll() {
         stammdatenTest.init(this.target);
         stammdatenTest.getAll("reiaggr");
@@ -526,7 +481,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests ReiAgGR get all operation.
      */
     @Test
-    @RunAsClient
     public final void testReiAgGrById() {
         stammdatenTest.init(this.target);
         stammdatenTest.getById("reiaggr", ID101);
@@ -536,7 +490,6 @@ public class StammdatenTest extends ClientBaseTest {
      * Tests StatusMpService.
      */
     @Test
-    @RunAsClient
     public final void testStatusMp() {
         statusMpTest.init(this.target);
         statusMpTest.execute();

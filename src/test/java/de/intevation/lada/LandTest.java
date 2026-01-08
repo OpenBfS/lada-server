@@ -10,7 +10,6 @@ package de.intevation.lada;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,7 +87,6 @@ public class LandTest extends ClientBaseTest {
      * Tests for probe operations.
      */
     @Test
-    @RunAsClient
     public final void testProbe() {
         probeTest.init(this.target);
         probeTest.execute();
@@ -98,7 +96,6 @@ public class LandTest extends ClientBaseTest {
      * Tests for pkommentar operations.
      */
     @Test
-    @RunAsClient
     public final void testKommentarP() {
         pkommentarTest.init(this.target);
         pkommentarTest.execute();
@@ -109,7 +106,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testOrtszuordnung()
     throws Exception {
         ortszuordnungTest.init(this.target);
@@ -121,7 +117,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testZusatzwert()
     throws Exception {
         zusatzwertTest.init(this.target);
@@ -133,7 +128,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testMessung()
     throws Exception {
         messungTest.init(this.target);
@@ -145,7 +139,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testKommentarM()
     throws Exception {
         mkommentarTest.init(this.target);
@@ -157,7 +150,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testMesswert()
     throws Exception {
         messwertTest.init(this.target);
@@ -169,7 +161,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testStatus()
     throws Exception {
         statusTest.init(this.target);
@@ -181,7 +172,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testMessprogramm()
     throws Exception {
         messprogrammTest.init(this.target);
@@ -193,7 +183,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testMessprogrammMmt()
     throws Exception {
         messprogrammMmtTest.init(this.target);
@@ -205,7 +194,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testQuery()
     throws Exception {
         queryTest.init(this.target);
@@ -217,7 +205,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testPepGeneration()
             throws Exception {
         pepGenerationTest.init(this.target);
@@ -229,7 +216,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testGeolocatMpg()
             throws Exception {
         geolocatMpgTest.init(this.target);
@@ -241,7 +227,6 @@ public class LandTest extends ClientBaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @RunAsClient
     public final void testTimestamps()
             throws Exception {
         timestampTest.init(this.target);
@@ -249,14 +234,12 @@ public class LandTest extends ClientBaseTest {
     }
 
     @Test
-    @RunAsClient
     public final void testAssociations() {
         associationTest.init(this.target);
         associationTest.execute();
     }
 
     @Test
-    @RunAsClient
     public final void testValidation() {
         validationTest.init(this.target);
         validationTest.execute();

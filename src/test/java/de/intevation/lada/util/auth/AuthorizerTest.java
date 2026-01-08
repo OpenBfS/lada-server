@@ -28,7 +28,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.MultipleFailureException;
 
-import de.intevation.lada.BaseTest;
+import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
@@ -60,7 +60,7 @@ import jakarta.transaction.UserTransaction;
  * Class testing authorizers.
  */
 @RunWith(Arquillian.class)
-public class AuthorizerTest extends BaseTest {
+public class AuthorizerTest extends ContainerBaseTest {
 
     private static final Logger LOG = Logger.getLogger(AuthorizerTest.class);
 
