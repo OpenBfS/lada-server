@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.test.land;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -90,8 +93,8 @@ public class MessprogrammTest extends ServiceTest {
             .build();
         ClientBaseTest.parseResponse(target.path("rest/mpg/active")
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .put(Entity.entity(setActive.toString(),
                     MediaType.APPLICATION_JSON)));

@@ -7,6 +7,8 @@
  */
 package de.intevation.lada;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 import static de.intevation.lada.util.rest.JSONBConfig.JSONB;
 
 import java.io.StringReader;
@@ -153,8 +155,8 @@ public class ExporterTest extends ClientBaseTest {
     public void cancelJobs() {
         target.path(ASYNC_EXPORT_URL + "cancel")
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get();
     }
 
@@ -170,8 +172,8 @@ public class ExporterTest extends ClientBaseTest {
                 .path(JsonExportService.class, "downloadSamples")
                 .build().toString())
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(List.of(probeId), MediaType.APPLICATION_JSON),
                 JsonArray.class);
         Assert.assertEquals("Unexpected JSON content", 1, result.size());
@@ -190,8 +192,8 @@ public class ExporterTest extends ClientBaseTest {
                 .path(JsonExportService.class, "downloadMeasms")
                 .build().toString())
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(List.of(measmId), MediaType.APPLICATION_JSON),
                 JsonArray.class);
         Assert.assertEquals("Unexpected JSON content", 1, result.size());
@@ -335,8 +337,8 @@ public class ExporterTest extends ClientBaseTest {
             .path(UriBuilder.fromResource(LafExportService.class)
                 .path(LafExportService.class, "download").build().toString())
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON),
                 String.class);
         Assert.assertTrue(
@@ -711,8 +713,8 @@ public class ExporterTest extends ClientBaseTest {
         Response response = target
             .path(ASYNC_EXPORT_URL + format)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .header("Accept", MediaType.APPLICATION_JSON)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
@@ -734,8 +736,8 @@ public class ExporterTest extends ClientBaseTest {
         SyncInvoker statusRequest = target
             .path(ASYNC_EXPORT_URL + "status/" + jobId)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles);
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles);
         boolean done = false;
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
@@ -783,8 +785,8 @@ public class ExporterTest extends ClientBaseTest {
         Response download = target
             .path(ASYNC_EXPORT_URL + "download/" + jobId)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get();
         Assert.assertEquals(
             "Unexpected response status code",

@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.test;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
@@ -254,8 +257,8 @@ public class ServiceTest {
             }
         }
         Response response = t.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .get();
         return ClientBaseTest.parseResponse(response, entityType, expectedStatus);
@@ -275,8 +278,8 @@ public class ServiceTest {
     ) {
         /* Request a object by id*/
         Response response = target.path(parameter).request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .get();
         /* Verify the response*/
@@ -393,8 +396,8 @@ public class ServiceTest {
     ) {
         /* Send a post request containing a new object*/
         Response response = target.path(parameter).request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .acceptLanguage(acceptLanguage)
             .post(Entity.entity(create, MediaType.APPLICATION_JSON));
@@ -468,8 +471,8 @@ public class ServiceTest {
         /* Request object corresponding to id in URL */
         Builder requestBuilder = target.path(parameter)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON);
         JsonObject oldObject = ClientBaseTest.parseResponse(
             requestBuilder.get(), JsonObject.class);
@@ -554,8 +557,8 @@ public class ServiceTest {
     public void delete(String parameter, Response.Status expectedStatus) {
         /* Delete object with ID given in URL */
         Response response = target.path(parameter).request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .delete();
         ClientBaseTest.parseResponse(response, expectedStatus);
         if (Response.Status.Family.SUCCESSFUL.equals(
@@ -609,8 +612,8 @@ public class ServiceTest {
         String newValue
     ) {
         Response response = target.path(parameter).request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get();
         JsonObject data = ClientBaseTest.parseResponse(response).asJsonObject();
 

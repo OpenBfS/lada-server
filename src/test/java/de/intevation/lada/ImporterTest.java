@@ -7,6 +7,9 @@
  */
 package de.intevation.lada;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -170,8 +173,8 @@ public class ImporterTest extends ClientBaseTest {
     public void cancelJobs() {
         target.path(ASYNC_IMPORT_URL + "cancel")
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get();
     }
 
@@ -188,8 +191,8 @@ public class ImporterTest extends ClientBaseTest {
         Response importResponse = target
             .path("data/import/laf")
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .header("X-LADA-MST", mstId)
             .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
         JsonObject importResponseObject =
@@ -253,8 +256,8 @@ public class ImporterTest extends ClientBaseTest {
             .path(UriBuilder.fromResource(TagService.class).build().getPath())
             .queryParam("sampleId", sampleId)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get(new GenericType<List<Tag>>() { });
         final String tagName = fileReport.getString("tag");
         MatcherAssert.assertThat(tags.stream().map(Tag::getName).toList(),
@@ -816,8 +819,8 @@ public class ImporterTest extends ClientBaseTest {
                 .path(ASYNC_IMPORT_URL)
                 .path("laf9")
                 .request()
-                .header("X-SHIB-user", BaseTest.testUser)
-                .header("X-SHIB-roles", BaseTest.testRoles)
+                .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+                .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
                 .post(Entity.entity(payload, MediaType.APPLICATION_JSON)),
                 Response.Status.BAD_REQUEST);
         }
@@ -1344,8 +1347,8 @@ public class ImporterTest extends ClientBaseTest {
         Response importedSampleResponse = target
             .path("rest/sample/" + sampleId)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get();
         return parseResponse(importedSampleResponse, type);
     }
@@ -1367,8 +1370,8 @@ public class ImporterTest extends ClientBaseTest {
         Response importCreated = target.path(ASYNC_IMPORT_URL)
             .path(path)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .acceptLanguage(locale)
             .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON));
         String jobId = parseResponse(importCreated, AsyncJobResponse.class)
@@ -1378,8 +1381,8 @@ public class ImporterTest extends ClientBaseTest {
         SyncInvoker statusRequest = target
             .path(ASYNC_IMPORT_URL + "status/" + jobId)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles);
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles);
         JobStatus importStatusObject;
         boolean done = false;
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
@@ -1403,8 +1406,8 @@ public class ImporterTest extends ClientBaseTest {
         Response reportResponse = target
             .path(ASYNC_IMPORT_URL + "result/" + jobId)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get();
         JsonObject report = parseResponse(reportResponse).asJsonObject();
 

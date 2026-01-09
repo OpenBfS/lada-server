@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.test.land;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -392,8 +395,8 @@ public class AssociationTest extends ServiceTest {
         updated = target.path(samplePath)
             .path(String.valueOf(updated.getId()))
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .put(Entity.entity(updated, MediaType.APPLICATION_JSON),
                 Sample.class);
         Assert.assertTrue(updated.getMeasms().isEmpty());
@@ -828,8 +831,8 @@ public class AssociationTest extends ServiceTest {
         Sample updated = target.path(samplePath)
             .path(String.valueOf(payload.getId()))
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .put(Entity.entity(payload, MediaType.APPLICATION_JSON),
                 Sample.class);
         assertAssociatedUnchanged(expectedMeasms, updated.getMeasms());

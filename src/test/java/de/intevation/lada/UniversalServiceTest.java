@@ -7,6 +7,10 @@
  */
 package de.intevation.lada;
 
+import static org.junit.Assert.assertEquals;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.persistence.EntityManager;
@@ -17,8 +21,6 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
-
-import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -99,8 +101,8 @@ public class UniversalServiceTest extends ClientBaseTest {
     public void prepareBuilder() {
         this.universalRequestBuilder = this.target.path(universalServiceUrl)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles);
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles);
     }
 
     /**
@@ -133,8 +135,8 @@ public class UniversalServiceTest extends ClientBaseTest {
             .queryParam("start", 1)
             .queryParam("limit", limit)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(this.requestJson, MediaType.APPLICATION_JSON));
         JsonObject responseJson = parseResponse(response).asJsonObject();
 
@@ -155,8 +157,8 @@ public class UniversalServiceTest extends ClientBaseTest {
     public final void testGetSql() {
         Response response = target.path(sqlServiceUrl)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(this.requestJson, MediaType.APPLICATION_JSON));
         String responseBody = assertResponseOK(response);
 
@@ -197,8 +199,8 @@ public class UniversalServiceTest extends ClientBaseTest {
     public final void testGetSqlWithParameter() {
         Response response = target.path(sqlServiceUrl)
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(this.filteredRequestJson,
                     MediaType.APPLICATION_JSON));
         String responseBody = assertResponseOK(response);
@@ -314,14 +316,14 @@ public class UniversalServiceTest extends ClientBaseTest {
         boolean expectedNotSet = measmTarget
             .path(String.valueOf(notSetMeasmId))
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get(Measm.class).isReadonly();
         boolean expectedPlausible = measmTarget
             .path(String.valueOf(plausibleMeasmId))
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get(Measm.class).isReadonly();
         Assert.assertNotEquals(expectedNotSet, expectedPlausible);
 

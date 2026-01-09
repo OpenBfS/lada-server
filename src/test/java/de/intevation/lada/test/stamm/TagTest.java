@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.test.stamm;
 
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
+import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -101,8 +103,8 @@ public class TagTest extends ServiceTest {
         Invocation.Builder builder = target
             .path(TAG_URL + created.getId())
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON);
 
         // Requires unsetting valUntil
@@ -133,8 +135,8 @@ public class TagTest extends ServiceTest {
         Tag updated = target
             .path(TAG_URL + created.getId())
             .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header(HEADER_X_SHIB_USER, BaseTest.testUser)
+            .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .put(Entity.entity(created, MediaType.APPLICATION_JSON), Tag.class);
         assertEquals(MEAS_FACIL_ID, updated.getMeasFacilId());
