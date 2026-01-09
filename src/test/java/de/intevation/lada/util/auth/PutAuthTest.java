@@ -9,6 +9,7 @@
 package de.intevation.lada.util.auth;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.After;
@@ -39,6 +40,7 @@ import jakarta.transaction.UserTransaction;
 public class PutAuthTest extends ContainerBaseTest {
 
     private static final int SAMPLE_ID_UNAUTHORIZED = 1;
+    private static final int SAMPLE_ID_AUTHORIZED = 2;
     private static final String MEAS_FACIL_AUTHORIZED = "06010";
 
     @Inject
@@ -111,6 +113,15 @@ public class PutAuthTest extends ContainerBaseTest {
     private void assertPutNotAuthorized(Sample sample) {
         assertFalse(
             "PUT should not have been authorized",
+            authorization.isAuthorized(sample, RequestMethod.PUT));
+    }
+
+    @Test
+    public void putAllowed() {
+        Sample sample = repository.getById(
+            Sample.class, SAMPLE_ID_AUTHORIZED);
+        assertTrue(
+            "PUT should have been authorized",
             authorization.isAuthorized(sample, RequestMethod.PUT));
     }
 }

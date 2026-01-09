@@ -37,4 +37,15 @@
         is_test = "false"
         sample_meth_id = "1"
     />
+
+    <!-- Authorized sample with no measms -->
+    <lada.sample
+        id = "2"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        is_test = "false"
+        sample_meth_id = "1"
+    />
 </dataset>
