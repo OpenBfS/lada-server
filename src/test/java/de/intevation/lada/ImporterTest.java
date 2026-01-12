@@ -402,8 +402,13 @@ public class ImporterTest extends ClientBaseTest {
         sampleSpecifMeasVal.setError(0f);
         sampleSpecifMeasVal.setSmallerThan("<");
 
-        // Update site
-        laf.getGeolocats().get(0).getSite().setExtId(existingSiteExtId);
+        // Update geolocat and site
+        Site site = new Site();
+        site.setExtId(existingSiteExtId);
+        site.setLongText("Long running test");
+        Geolocat loc = laf.getGeolocats().get(0);
+        loc.setSite(site);
+        loc.setAddSiteText("Test");
 
         testAsyncLaf9Import(
             laf, existingMainSampleId, true, true, laf,
