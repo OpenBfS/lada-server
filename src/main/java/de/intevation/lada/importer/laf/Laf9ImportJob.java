@@ -390,8 +390,15 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         }
     }
 
-    private <T extends BaseModel> T create(T inputObject) {
-        validator.validate(inputObject, CreateErrors.class);
+    private <T extends BaseModel> T create(
+        T inputObject,
+        Class<?>... validationGroups
+    ) {
+        Class<?>[] createErrors = { CreateErrors.class };
+        Class<?>[] effectiveValidationGroups = validationGroups.length == 0
+            ? createErrors
+            : validationGroups;
+        validator.validate(inputObject, effectiveValidationGroups);
         if (!inputObject.hasErrors()
             && isAuthorized(inputObject, RequestMethod.POST)
         ) {
@@ -465,10 +472,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 m.setId(null);
 
                 m.setMeasm(targetMeasm);
-                validator.validate(m);
-                if (!m.hasErrors() && isAuthorized(m, RequestMethod.POST)) {
-                    repository.create(m);
-                }
+                create(m,
+                    CreateErrors.class, Warnings.class, Notifications.class);
             }
             // Just for reporting
             if (targetMeasVals == null) {
@@ -520,12 +525,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             }
 
             newEntry.setMeasm(target);
-            validator.validate(newEntry);
-            if (!newEntry.hasErrors()
-                && isAuthorized(newEntry, RequestMethod.POST)
-            ) {
-                repository.create(newEntry);
-            }
+            create(newEntry,
+                CreateErrors.class, Warnings.class, Notifications.class);
         }
     }
 
