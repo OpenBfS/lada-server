@@ -105,8 +105,7 @@ public class BaseTest {
     protected String testDatasetName;
 
     private static final String DATASETS_DIR = "datasets";
-    private static final String INIT_SEQ_SCRIPT =
-        DATASETS_DIR + "/init_sequences.sql";
+    private static final String INIT_SCRIPT = DATASETS_DIR + "/init.sql";
     private static final String CLEANUP_SCRIPT = DATASETS_DIR + "/cleanup.sql";
     private static final String NULL_PLACEHOLDER = "[null]";
 
@@ -140,7 +139,7 @@ public class BaseTest {
                 .build(getClass().getClassLoader()
                     .getResourceAsStream(testDatasetName));
             DatabaseOperation.CLEAN_INSERT.execute(con, dataset);
-            executeSql(INIT_SEQ_SCRIPT);
+            executeSql(INIT_SCRIPT);
         }
     }
 

@@ -56,6 +56,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.groups.Notifications;
+import de.intevation.lada.validation.groups.PostAuthorization;
 import de.intevation.lada.validation.groups.Warnings;
 
 
@@ -255,6 +256,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                         validator.validate(srcSite, CreateErrors.class);
                         if (!srcSite.hasErrors()
                             && isAuthorized(srcSite, RequestMethod.POST)
+                            && !validator.validate(
+                                srcSite, PostAuthorization.class).hasErrors()
                         ) {
                             /* Ignore IDs in input to prevent Hibernate from
                                considering new objects as transient */
@@ -401,6 +404,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         validator.validate(inputObject, effectiveValidationGroups);
         if (!inputObject.hasErrors()
             && isAuthorized(inputObject, RequestMethod.POST)
+            && !validator.validate(
+                inputObject, PostAuthorization.class).hasErrors()
         ) {
             return repository.create(inputObject);
         }
@@ -413,6 +418,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             validator.validate(persistent, Default.class);
             if (!persistent.hasErrors()
                 && isAuthorized(persistent, RequestMethod.PUT)
+                && !validator.validate(
+                    persistent, PostAuthorization.class).hasErrors()
             ) {
                 persistent = repository.update(persistent);
             } else {

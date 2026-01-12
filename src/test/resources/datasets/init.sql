@@ -21,3 +21,5 @@ BEGIN
             '(SELECT max(id) FROM %1$I))', tab);
     END LOOP;
 END $$;
+
+REFRESH MATERIALIZED VIEW master.admin_border_view;
