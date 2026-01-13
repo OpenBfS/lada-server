@@ -57,7 +57,7 @@ public class SiteTest extends ValidatorBaseTest {
 
     //Expected validation messages
     private static final String GEO_POINT_OUTSIDE =
-        "Coordintes outside of border of administrative unit";
+        "Coordinates outside of border of administrative unit";
     private static final String VALUE_MISSING = "A value must be provided";
     private static final String EXT_ID_NOT_MATCHING_NUCL_FACIL =
         "First four characters must match nuclear facility in given group";
