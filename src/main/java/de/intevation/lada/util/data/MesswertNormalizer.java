@@ -55,7 +55,7 @@ public class MesswertNormalizer {
         Collection<MeasVal> messwerte,
         String umwId
     ) {
-        if (umwId == null || umwId.equals("")) {
+        if (messwerte == null || umwId == null || umwId.equals("")) {
             return messwerte;
         }
         EnvMedium umwelt =
