@@ -12,10 +12,7 @@
         meas_facil_id = "06010"
         auth_funct_id = "1"
     />
-    <master.lada_user
-        id = "1"
-        name = "testeins"
-    />
+    <master.lada_user id = "1" name = "testeins" />
 
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />

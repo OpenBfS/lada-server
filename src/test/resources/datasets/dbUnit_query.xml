@@ -100,10 +100,7 @@
     />
 
     <!--Query data-->
-    <master.lada_user
-        id = "1"
-        name = "test"
-    />
+    <master.lada_user id = "1" name = "test" />
     <master.base_query
         id = "1"
         sql = "SELECT main_sample_id, env_medium_id, is_test, id AS probeId FROM lada.sample"

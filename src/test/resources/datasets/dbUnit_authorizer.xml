@@ -19,10 +19,7 @@
         meas_facil_id = "06010"
         auth_funct_id = "1"
     />
-    <master.lada_user
-        id = "2"
-        name = "testeins"
-    />
+    <master.lada_user id = "1" name = "testeins" />
 
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
@@ -430,31 +427,26 @@
         name = "mstTag"
         meas_facil_id = "06010"
         val_until = "2000-01-01 00:00:00.0"
-        lada_user_id = "2"
     />
     <master.tag
         id = "111"
         name = "mstTagUnAuth"
         meas_facil_id = "01010"
         val_until = "2000-01-01 00:00:00.0"
-        lada_user_id = "2"
     />
     <master.tag
         id = "102"
         name = "network"
         network_id = "06"
-        lada_user_id = "2"
     />
     <master.tag
         id = "112"
         name = "networkUnAuth"
         network_id = "01"
-        lada_user_id = "2"
     />
     <master.tag
         id = "103"
         name = "global"
-        lada_user_id = "2"
     />
     <lada.tag_link_sample
         id = "1"

@@ -123,13 +123,9 @@ public class AuthorizerTest extends ContainerBaseTest {
     public void initAuthorization() throws
         NotSupportedException, SystemException {
         try {
-            final int userId = 2;
             transaction.begin();
             authorization = new Authorization(
-                new UserInfo(
-                    testUser,
-                    userId,
-                    repository.getAll(Auth.class)),
+                new UserInfo(testUser, 1, repository.getAll(Auth.class)),
                 i18n,
                 repository);
         } finally {

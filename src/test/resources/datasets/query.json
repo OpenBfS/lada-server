@@ -1,7 +1,7 @@
 {
     "baseQueryId": 1999,
     "descr": "TestQueryDescr",
-    "ladaUserId": 2,
+    "ladaUserId": 1,
     "messStellesIds": [],
     "name": "NewTestQuery"
 }

@@ -16,10 +16,8 @@
         meas_facil_id = "06010"
         auth_funct_id = "4"
     />
-    <master.lada_user
-        id = "2"
-        name = "testeins"
-    />
+    <master.lada_user id = "1" name = "testeins" />
+
     <!-- Initial data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "9" name = "test" />
@@ -679,21 +677,18 @@
         name = "probeTag"
         meas_facil_id = "06010"
         val_until = "2000-01-01 00:00:00.0"
-        lada_user_id = "2"
     />
     <master.tag
         id = "1002"
         name = "messungTag"
         meas_facil_id = "06010"
         val_until = "2000-01-01 00:00:00.0"
-        lada_user_id = "2"
     />
     <master.tag
         id = "1003"
         name = "assignedTag"
         meas_facil_id = "06010"
         val_until = "2000-01-01 00:00:00.0"
-        lada_user_id = "2"
     />
     <lada.tag_link_sample
         sample_id = "1901"
