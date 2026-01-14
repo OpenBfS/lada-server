@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.exporter;
 
-import de.intevation.lada.util.auth.UserInfo;
 import java.util.List;
 
 /**
@@ -16,12 +15,6 @@ import java.util.List;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public interface Creator {
-    /**
-     * Setter for the current user info.
-     * @param userInfo The current userinfo
-     */
-    void setUserInfo(UserInfo userInfo);
-
     /**
      * Create a string representation of a probe object.
      * @param probeId the id of the requested probe object.

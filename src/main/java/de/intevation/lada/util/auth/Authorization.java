@@ -7,9 +7,9 @@
  */
 package de.intevation.lada.util.auth;
 
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
+import jakarta.security.enterprise.SecurityContext;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.core.Response;
 
@@ -36,11 +36,10 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 
 /**
- * Authorize a user via HttpServletRequest attributes.
+ * Authorize actions based on information about requesting user.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@RequestScoped
 public class Authorization {
 
     private UserInfo userInfo;
@@ -69,9 +68,24 @@ public class Authorization {
     public Authorization() { };
 
     /**
-     * Sets information about requesting user and initializes authorizers.
+     * Injectable constructor retrieving information about requesting user
+     * from {@link SecurityContext}.
      */
     @Inject
+    public Authorization(
+        SecurityContext ctx,
+        I18n i18n,
+        Repository repository
+    ) {
+        this(ctx.getPrincipalsByType(UserInfo.class)
+            .toArray(new UserInfo[1])[0],
+            i18n,
+            repository);
+    }
+
+    /**
+     * Initializes authorizers with information about requesting user.
+     */
     public Authorization(
         UserInfo userInfo,
         I18n i18n,

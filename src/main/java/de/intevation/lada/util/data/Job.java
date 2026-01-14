@@ -39,7 +39,7 @@ public abstract class Job implements Runnable {
     protected Logger logger = Logger.getLogger(this.getClass());
 
     /**
-     * UserInfo.
+     * Information about the user who started the job.
      */
     protected UserInfo userInfo;
 

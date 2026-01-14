@@ -7,22 +7,13 @@
  */
 package de.intevation.lada.util.auth;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.inject.Inject;
-import jakarta.persistence.NoResultException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.core.Context;
-
 import de.intevation.lada.model.master.Auth;
-import de.intevation.lada.model.master.Auth_;
-import de.intevation.lada.model.master.LadaUser;
-import de.intevation.lada.model.master.LadaUser_;
-import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 
 
 /**
@@ -30,51 +21,15 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-public class UserInfo {
+public class UserInfo implements Principal {
     private String name;
     private Integer userId;
     private List<Auth> auth;
 
-    /**
-     * Constructor to be used outside request context.
-     */
     UserInfo(String name, Integer userId, List<Auth> auth) {
         this.name = name;
         this.userId = userId;
         this.auth = auth;
-    }
-
-    /**
-     * Constructor to be used in request context.
-     */
-    @Inject
-    UserInfo(
-        @Context HttpServletRequest request,
-        Repository repository
-    ) {
-        this.name = request.getAttribute(Authentication.USER).toString();
-
-        // The user's roles
-        @SuppressWarnings("unchecked")
-        Set<String> roles =
-            (Set<String>) request.getAttribute(Authentication.ROLES);
-        QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class)
-            .andIn(Auth_.ldapGr, roles);
-        this.auth = repository.filter(authBuilder.getQuery());
-
-        // The user's ID
-        QueryBuilder<LadaUser> uIdBuilder = repository
-            .queryBuilder(LadaUser.class)
-            .and(LadaUser_.name, name);
-        LadaUser user;
-        try {
-            user = repository.getSingle(uIdBuilder.getQuery());
-        } catch (NoResultException e) {
-            LadaUser newUser = new LadaUser();
-            newUser.setName(name);
-            user = repository.create(newUser);
-        }
-        this.userId = user.getId();
     }
 
     public class MessLaborId {
@@ -110,9 +65,7 @@ public class UserInfo {
         }
     }
 
-    /**
-     * @return the name
-     */
+    @Override
     public String getName() {
         return name;
     }

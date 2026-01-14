@@ -25,7 +25,6 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.master.ImportConf;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.StatusCodes;
 
 /**
@@ -44,13 +43,11 @@ public class LafImporter {
     /**
      * Start the import of the LAF data.
      * @param lafString The laf formated data as string
-     * @param userInfo The current user info
      * @param measFacilId Default measFacilId
      * @param config The import config to use
      */
     public void doImport(
         String lafString,
-        UserInfo userInfo,
         String measFacilId,
         List<ImportConf> config
     ) {
@@ -96,7 +93,6 @@ public class LafImporter {
             if (!parserWarnings.isEmpty()) {
                 report.addWarnings("Parser", parserWarnings);
             }
-            mapper.setUserInfo(userInfo);
             mapper.setConfig(config);
             mapper.setMeasFacilId(measFacilId);
             mapper.mapObjects(listener.getData(), report);

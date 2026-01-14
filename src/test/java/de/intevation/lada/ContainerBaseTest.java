@@ -11,6 +11,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import de.intevation.lada.util.auth.Authentication;
+import de.intevation.lada.util.auth.TestAuthentication;
 
 /**
  * Base class for Lada server tests with test methods executed
@@ -21,14 +22,15 @@ public class ContainerBaseTest extends BaseTest {
     /**
      * Create deployment for tests run in container.
      *
-     * Drop {@link jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism}
-     * implementation from deployment to enable HTTP requests
-     * actually running the tests. Authentication is not needed, because
-     * no actual client requests are tested.
+     * Replace {@link jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism}
+     * implementation to enable HTTP requests actually running the tests.
+     * Request authentication is not needed, because no actual client requests
+     * are tested.
      */
     @Deployment
     public static WebArchive createDeployment() {
         return createFullDeployment()
-            .deleteClass(Authentication.class);
+            .deleteClass(Authentication.class)
+            .addClass(TestAuthentication.class);
     }
 }

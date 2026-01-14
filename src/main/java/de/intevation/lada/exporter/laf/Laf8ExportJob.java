@@ -44,7 +44,7 @@ public class Laf8ExportJob extends ExportJob<Laf8ExportParameters> {
 
         //Export and write to file
         writeResultToFile(
-            exporter.exportProben(pIds, mIds, encoding, userInfo));
+            exporter.exportProben(pIds, mIds, encoding));
 
         logger.debug(String.format("Finished LAF export"));
     }

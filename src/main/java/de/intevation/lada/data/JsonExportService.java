@@ -63,8 +63,7 @@ public class JsonExportService extends LadaService {
         return exporter.exportProben(
             ids,
             new ArrayList<Integer>(),
-            StandardCharsets.UTF_8,
-            authorization.getInfo());
+            StandardCharsets.UTF_8);
     }
 
     /**
@@ -84,7 +83,6 @@ public class JsonExportService extends LadaService {
         return exporter.exportMessungen(
             new ArrayList<Integer>(),
             ids,
-            StandardCharsets.UTF_8,
-            authorization.getInfo());
+            StandardCharsets.UTF_8);
     }
 }

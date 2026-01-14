@@ -17,7 +17,6 @@ import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 import de.intevation.lada.data.requests.ExportParameters;
-import de.intevation.lada.util.auth.UserInfo;
 
 /**
  * Interface for Lada data exporter.
@@ -36,15 +35,14 @@ public interface Exporter<T extends ExportParameters> {
      * @param proben Proben to export
      * @param messungen Messungen to export
      * @param encoding Encoding to use
-     * @param userInfo Requesting user info
      * @return Exported data as InputStream or null if not implemented
      */
     default InputStream exportProben(
         List<Integer> proben,
         List<Integer> messungen,
-        Charset encoding,
-        UserInfo userInfo) {
-            return null;
+        Charset encoding
+    ) {
+        return null;
     }
 
     /**
@@ -56,15 +54,14 @@ public interface Exporter<T extends ExportParameters> {
      * @param proben Proben to export
      * @param messungen Messungen to export
      * @param encoding Encoding to use
-     * @param userInfo Requesting user info
      * @return Exported data as InputStream or null if not implemented
      */
     default InputStream exportMessungen(
         List<Integer> proben,
         List<Integer> messungen,
-        Charset encoding,
-        UserInfo userInfo) {
-            return null;
+        Charset encoding
+    ) {
+        return null;
     }
 
     /**

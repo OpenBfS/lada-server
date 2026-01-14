@@ -32,7 +32,6 @@ import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.TagUtil;
@@ -72,7 +71,6 @@ public class LafImportService extends LadaService {
         String content,
         @Context HttpServletRequest request
     ) {
-        UserInfo userInfo = authorization.getInfo();
         String mstId = request.getHeader("X-LADA-MST");
         MeasFacil mst = repository.getById(MeasFacil.class, mstId);
 
@@ -97,7 +95,7 @@ public class LafImportService extends LadaService {
             builder.and(ImportConf_.measFacilId, mstId);
             config = repository.filter(builder.getQuery());
         }
-        importer.doImport(content, userInfo, mstId, config);
+        importer.doImport(content, mstId, config);
         Laf8Report respData = importer.getReport();
         Boolean success = true;
         if (respData.getErrors().values().stream().anyMatch(

@@ -33,6 +33,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import de.intevation.lada.util.auth.TestAuthentication;
 import de.intevation.lada.util.rest.JSONBConfig;
 
 
@@ -63,7 +64,9 @@ public class ClientBaseTest extends BaseTest {
      */
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        return createFullDeployment();
+        return createFullDeployment()
+            // Real request processing should happen:
+            .deleteClass(TestAuthentication.class);
     }
 
     /**

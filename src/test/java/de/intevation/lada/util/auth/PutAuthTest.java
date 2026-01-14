@@ -30,9 +30,8 @@ import jakarta.transaction.NotSupportedException;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.UserTransaction;
 
-
 /**
- * Ensure {@link RequestMethod} {@code PUT} is not authorized
+ * Ensure {@link RequestMethod#PUT} is not authorized
  * if persistent state of given entity does not allow it,
  * regardless of state of given entity in relation to persistence context.
  */

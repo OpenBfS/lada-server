@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import de.intevation.lada.factory.OrtFactory;
-import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
@@ -47,7 +46,6 @@ import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -79,14 +77,12 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     private Validator validator;
 
     @Inject
-    private I18n i18n;
-
-    @Inject
     private OrtFactory ortFactory;
 
     @Inject
     private MesswertNormalizer normalizer;
 
+    @Inject
     private Authorization authorization;
 
     private Map<String, Method> belongsToSampleGetters;
@@ -127,14 +123,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         this.belongsToSampleGetters = Map.copyOf(collectGetters);
         this.idSetters = Map.copyOf(collectSetters);
     }
-
-     @Override
-     public void setUserInfo(UserInfo userInfo) {
-        super.setUserInfo(userInfo);
-
-        this.authorization = new Authorization(
-            this.userInfo, this.i18n, this.repository);
-     }
 
     /**
      * Run the import job.

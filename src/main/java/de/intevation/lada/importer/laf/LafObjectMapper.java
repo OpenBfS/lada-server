@@ -28,7 +28,6 @@ import jakarta.persistence.metamodel.SingularAttribute;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
-import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.importer.identification.Identification;
@@ -112,6 +111,7 @@ import de.intevation.lada.validation.groups.Warnings;
  */
 public class LafObjectMapper {
 
+    @Inject
     private Authorization authorizer;
 
     private Validator validator;
@@ -124,9 +124,6 @@ public class LafObjectMapper {
 
     @Inject
     private Repository repository;
-
-    @Inject
-    private I18n i18n;
 
     @Inject
     private ProbeFactory factory;
@@ -273,7 +270,7 @@ public class LafObjectMapper {
                 } else {
                     ReportItem err = new ReportItem();
                     err.setCode(StatusCodes.NOT_ALLOWED);
-                    err.setKey(userInfo.getName());
+                    err.setKey(authorizer.getInfo().getName());
                     err.setValue("Messstelle " + old.getMeasFacilId());
                     addError(err);
                     return;
@@ -562,7 +559,7 @@ public class LafObjectMapper {
         if (!authorizer.isAuthorized(messung, RequestMethod.POST)) {
             ReportItem warn = new ReportItem();
             warn.setCode(StatusCodes.NOT_ALLOWED);
-            warn.setKey(userInfo.getName());
+            warn.setKey(authorizer.getInfo().getName());
             warn.setValue("Messung: " + messung.getMinSampleId());
             addError(warn);
             return;
@@ -710,10 +707,12 @@ public class LafObjectMapper {
             kommentar.setDate(getDate(date));
         }
 
-        if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
+        if (!authorizer.getInfo().getMessstellen().contains(
+                kommentar.getMeasFacilId())
+        ) {
             addWarning(
                 new ReportItem(
-                    userInfo.getName(),
+                    authorizer.getInfo().getName(),
                     "Kommentar: " + kommentar.getMeasFacilId(),
                     StatusCodes.NOT_ALLOWED));
             return;
@@ -963,10 +962,12 @@ public class LafObjectMapper {
         }
 
         kommentar.setText(attributes.get("TEXT"));
-        if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
+        if (!authorizer.getInfo().getMessstellen().contains(
+                kommentar.getMeasFacilId())
+        ) {
             addWarning(
                 new ReportItem(
-                    userInfo.getName(),
+                    authorizer.getInfo().getName(),
                     "Messungs Kommentar: " + kommentar.getMeasFacilId(),
                     StatusCodes.NOT_ALLOWED));
             return;
@@ -1924,15 +1925,6 @@ public class LafObjectMapper {
     private void addNotification(ReportItem notification) {
         this.report.addNotification(
             this.currentSample.getIdentifier(), notification);
-    }
-
-    /**
-     * @param userInfo the userInfo to set
-     */
-    public void setUserInfo(UserInfo userInfo) {
-        this.userInfo = userInfo;
-        this.authorizer = new Authorization(
-            userInfo, this.i18n, this.repository);
     }
 
     /**

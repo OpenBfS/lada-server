@@ -17,7 +17,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import de.intevation.lada.exporter.Creator;
-import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.CommSample;
@@ -45,7 +44,6 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -71,6 +69,7 @@ public class LafCreator implements Creator {
     private static final String DEFAULT_FORMAT = "%s";
     private static final String CN = "\"%s\""; // cn, mcn, scn
 
+    @Inject
     private Authorization authorization;
 
     /**
@@ -78,11 +77,6 @@ public class LafCreator implements Creator {
      */
     @Inject
     private Repository repository;
-
-    @Inject
-    private I18n i18n;
-
-    private UserInfo userInfo;
 
     @Override
     public String createProbe(Integer probeId) {
@@ -397,9 +391,7 @@ public class LafCreator implements Creator {
                 "ERFASSUNG_ABGESCHLOSSEN",
                 (m.getIsCompleted() ? "1" : "0"));
             laf += lafLine("BEARBEITUNGSSTATUS", writeStatus(m));
-            if (this.userInfo != null
-                && authorization.isAuthorized(m, RequestMethod.GET)
-            ) {
+            if (authorization.isAuthorized(m, RequestMethod.GET)) {
                 for (MeasVal mw : werte) {
                     laf += writeMesswert(mw);
                 }
@@ -495,12 +487,5 @@ public class LafCreator implements Creator {
         DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         return formatter.format(timestamp.toInstant().atZone(ZoneOffset.UTC));
-    }
-
-    @Override
-    public void setUserInfo(UserInfo userInfo) {
-        this.userInfo = userInfo;
-        this.authorization = new Authorization(
-            userInfo, this.i18n, this.repository);
     }
 }

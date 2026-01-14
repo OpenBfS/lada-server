@@ -9,21 +9,28 @@
 package de.intevation.lada.util.auth;
 
 import static jakarta.security.enterprise.AuthenticationStatus.SEND_FAILURE;
-import static jakarta.security.enterprise.AuthenticationStatus.SUCCESS;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
 import jakarta.security.enterprise.AuthenticationException;
 import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import jakarta.transaction.Transactional;
 import de.intevation.lada.i18n.I18n;
+import de.intevation.lada.model.master.Auth;
+import de.intevation.lada.model.master.Auth_;
+import de.intevation.lada.model.master.LadaUser;
+import de.intevation.lada.model.master.LadaUser_;
+import de.intevation.lada.util.data.QueryBuilder;
+import de.intevation.lada.util.data.Repository;
 
 /**
  * Authenticate HTTP requests based on username and roles provided
@@ -34,12 +41,13 @@ public class Authentication implements HttpAuthenticationMechanism {
     public static final String HEADER_X_SHIB_USER = "X-SHIB-user";
     public static final String HEADER_X_SHIB_ROLES = "X-SHIB-roles";
 
-    static final String ROLES = "lada.user.roles";
-    static final String USER = "lada.user.name";
-
     @Inject
     private I18n i18n;
 
+    @Inject
+    private Repository repository;
+
+    @Transactional
     @Override
     public AuthenticationStatus validateRequest(
         HttpServletRequest httpRequest,
@@ -67,10 +75,26 @@ public class Authentication implements HttpAuthenticationMechanism {
             throw new AuthenticationException(e);
         }
 
-        httpRequest.setAttribute(ROLES, rolesValue);
-        httpRequest.setAttribute(USER, user);
+        // Query the user's roles
+        QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class)
+            .andIn(Auth_.ldapGr, rolesValue);
+        List<Auth> auth = repository.filter(authBuilder.getQuery());
 
-        return SUCCESS;
+        // Query the user's ID or create a new one
+        QueryBuilder<LadaUser> uIdBuilder = repository
+            .queryBuilder(LadaUser.class)
+            .and(LadaUser_.name, user);
+        LadaUser ladaUser;
+        try {
+            ladaUser = repository.getSingle(uIdBuilder.getQuery());
+        } catch (NoResultException e) {
+            LadaUser newUser = new LadaUser();
+            newUser.setName(user);
+            ladaUser = repository.create(newUser);
+        }
+
+        return ctx.notifyContainerAboutLogin(
+            new UserInfo(user, ladaUser.getId(), auth), rolesValue);
     }
 
     private Set<String> extractRoles(String roles) {

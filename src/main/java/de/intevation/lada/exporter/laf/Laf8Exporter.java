@@ -19,7 +19,6 @@ import de.intevation.lada.data.requests.Laf8ExportParameters;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 
 
@@ -48,18 +47,15 @@ public class Laf8Exporter implements Exporter<Laf8ExportParameters> {
      * @param proben    List of probe ids.
      * @param messungen    List of messung ids.
      * @param encoding The encoding of the resulting input stream
-     * @param userInfo The information about the current user
      * @return InputStream with the LAF data.
      */
     @Override
     public InputStream exportProben(
         List<Integer> proben,
         List<Integer> messungen,
-        Charset encoding,
-        UserInfo userInfo
+        Charset encoding
     ) {
         String laf = "";
-        creator.setUserInfo(userInfo);
         for (Integer probeId: proben) {
             laf += creator.createProbe(probeId);
         }

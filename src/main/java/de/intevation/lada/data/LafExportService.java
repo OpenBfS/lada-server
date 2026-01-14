@@ -21,7 +21,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import de.intevation.lada.data.requests.Laf8ExportParameters;
 import de.intevation.lada.exporter.Exporter;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.rest.LadaService;
 
 
@@ -67,9 +66,7 @@ public class LafExportService extends LadaService {
 
         Charset charset = objects.getEncoding();
 
-        UserInfo userInfo = authorization.getInfo();
-        InputStream exported =
-            exporter.exportProben(pIds, mIds, charset, userInfo);
+        InputStream exported = exporter.exportProben(pIds, mIds, charset);
 
         ResponseBuilder response = Response.ok((Object) exported);
         response.header(

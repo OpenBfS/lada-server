@@ -53,7 +53,7 @@ public class Laf8ImportJob extends ImportJob<String> {
                 builder.and(ImportConf_.measFacilId, mstId);
                 config = repository.filter(builder.getQuery());
             }
-            importer.doImport(content, userInfo, mstId, config);
+            importer.doImport(content, mstId, config);
 
             Laf8Report fileResponseData = importer.getReport();
             if (!fileResponseData.getErrors().isEmpty()) {

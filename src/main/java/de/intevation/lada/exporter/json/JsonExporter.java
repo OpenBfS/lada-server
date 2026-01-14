@@ -65,7 +65,6 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.State;
 import de.intevation.lada.model.master.StatusMp;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.JSONBConfig;
@@ -161,17 +160,15 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
      * @param probeIds List of Sample IDs to export.
      * @param messungsIds Ignored. All associated Messung objects are exported.
      * @param encoding Ignored. Result is always UTF_8.
-     * @param userInfo UserInfo
      * @return Export result as InputStream or null if the export failed
      */
     @Override
     public InputStream exportProben(
         List<Integer> probeIds,
         List<Integer> messungsIds,
-        Charset encoding,
-        UserInfo userInfo
+        Charset encoding
     ) {
-        JsonArrayBuilder json = generateProbenObjectBuilder(probeIds, userInfo);
+        JsonArrayBuilder json = generateProbenObjectBuilder(probeIds);
         if (json == null) {
             return null;
         }
@@ -192,15 +189,13 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
      * @param probeIds ignored.
      * @param messungsIds List of Messungs IDs to export.
      * @param encoding Ignored. Result is always UTF_8.
-     * @param userInfo UserInfo
      * @return Export result as InputStream or null if the export failed
      */
     @Override
     public InputStream exportMessungen(
         List<Integer> probeIds,
         List<Integer> messungsIds,
-        Charset encoding,
-        UserInfo userInfo
+        Charset encoding
     ) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
             .andIn(Measm_.id, messungsIds);
@@ -252,7 +247,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     }
 
     private JsonArrayBuilder generateProbenObjectBuilder(
-        List<Integer> probeIds, UserInfo userInfo
+        List<Integer> probeIds
     ) {
         JsonArrayBuilder jsonBuilder = Json.createArrayBuilder();
         List<Sample> proben = repository.filter(repository
