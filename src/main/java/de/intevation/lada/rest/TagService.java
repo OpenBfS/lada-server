@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.TypedQuery;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -94,12 +93,6 @@ public class TagService extends LadaIntegerIdEntityEditingService<Tag> {
         ids.forEach(
             id -> query.setParameter(String.format(ID_PARAM, id), id));
         return query.getResultList();
-    }
-
-    @Override
-    public Tag create(Tag tag) throws BadRequestException {
-        tag.setLadaUserId(authorization.getInfo().getUserId());
-        return super.create(tag);
     }
 
     /**

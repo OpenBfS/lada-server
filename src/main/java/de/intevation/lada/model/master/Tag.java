@@ -11,6 +11,8 @@ import java.util.Date;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.json.bind.annotation.JsonbCreator;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,11 +21,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
+import jakarta.security.enterprise.SecurityContext;
+
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
-
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.validation.constraints.CanHaveValUntil;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NetworkOrMeasFacil;
@@ -65,8 +69,11 @@ public class Tag extends BaseModel {
         groups = DatabaseConstraints.class, clazz = Network.class)
     private String networkId;
 
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = LadaUser.class)
+    /**
+     * ID of user who created the tag.
+     */
+    @Schema(readOnly = true)
+    @Column(updatable = false)
     private Integer ladaUserId;
 
     @Temporal(TIMESTAMP)
@@ -142,7 +149,18 @@ public class Tag extends BaseModel {
         return ladaUserId;
     }
 
-    public void setLadaUserId(Integer ladaUserId) {
-        this.ladaUserId = ladaUserId;
+    @JsonbCreator
+    public static Tag createTag() {
+        Tag newTag = new Tag();
+        try {
+            UserInfo userInfo = CDI.current().getBeanContainer()
+                .createInstance().select(SecurityContext.class).get()
+                .getPrincipalsByType(UserInfo.class)
+                .toArray(new UserInfo[1])[0];
+            newTag.ladaUserId = userInfo.getUserId();
+        } catch (IllegalStateException e) {
+            // CDI not available at client side
+        }
+        return newTag;
     }
 }

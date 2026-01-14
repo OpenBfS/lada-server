@@ -70,6 +70,7 @@ import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.TestTag;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.Job;
@@ -1470,9 +1471,10 @@ public class ImporterTest extends ClientBaseTest {
         Tag existingTag = new Tag();
         existingTag.setName(existingNotAssociatedTag);
         // New measFacil tag can be created
-        Tag tag = new Tag();
+        TestTag tag = new TestTag();
         tag.setName("test");
         tag.setMeasFacilId(mstId);
+        tag.setLadaUserId(1); // For verification
         laf9Template.setTags(new ArrayList<>(List.of(existingTag, tag)));
 
         Measm measm = new Measm();

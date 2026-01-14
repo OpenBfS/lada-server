@@ -32,6 +32,7 @@ import de.intevation.lada.BaseTest;
 import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
+import de.intevation.lada.model.master.TestTag;
 import de.intevation.lada.rest.TagService;
 import de.intevation.lada.test.ServiceTest;
 
@@ -72,7 +73,7 @@ public class TagTest extends ServiceTest {
      * Test mst tags.
      */
     public void testMstTag() {
-        Tag tagToTest = new Tag();
+        TestTag tagToTest = new TestTag();
         tagToTest.setMeasFacilId(MEAS_FACIL_ID);
         tagToTest.setName("mstTag");
         testTagCRUD(tagToTest);
@@ -82,7 +83,7 @@ public class TagTest extends ServiceTest {
      * Test netzbetreiber tags.
      */
     public void testNetzbetreiberTag() {
-        Tag tagToTest = new Tag();
+        TestTag tagToTest = new TestTag();
         tagToTest.setNetworkId(NETWORK_ID);
         tagToTest.setName("nbTag");
         testTagCRUD(tagToTest);
@@ -164,8 +165,13 @@ public class TagTest extends ServiceTest {
      * Test CRUD operations for the given tag.
      * @param tagToTest Tag to test
      */
-    private void testTagCRUD(Tag tagToTest) {
-        Tag createResponse = create(TAG_URL, tagToTest, Tag.class);
+    private void testTagCRUD(TestTag tagToTest) {
+        tagToTest.setLadaUserId(2);
+        TestTag createResponse = create(TAG_URL, tagToTest, TestTag.class);
+
+        // Assert that input is ignored and value correctly set by server
+        assertEquals(Integer.valueOf(1), createResponse.getLadaUserId());
+
         checkValUntil(createResponse);
         String tagUpdated = tagToTest.getName() + "-mod";
         int createdId = createResponse.getId();
