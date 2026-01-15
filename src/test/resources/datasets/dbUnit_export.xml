@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <!-- authentication data -->
+    <master.network id = "06" name = "test" />
+    <master.meas_facil id = "06010" network_id = "06" name = "test"/>
+
+    <!--master data-->
+    <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
+    <master.regulation id = "9" name = "nine" />
+    <master.measd
+        id_old = "1"
+        id = "test"
+    />
+    <master.measd
+        id_old = "2"
+        id = "test1"
+    />
+    <master.meas_unit
+        id = "1"
+        unit_symbol = "Sv"
+    />
+    <master.sample_meth
+        id = "1"
+        ext_id = "E"
+        eudf_sample_meth_id = "A"
+        name = "test"
+    />
+    <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "1" />
+    <master.env_descrip
+        id = "1"
+        lev = "0"
+        lev_val = "59"
+        name = "test"
+    />
+    <master.sampler
+        id = "726"
+        network_id = "06"
+        ext_id = "prn"
+        descr = "test"
+        short_text = "test"
+    />
+    <master.mmt id = "A3" name = "mmt A3" />
+    <master.mpg_categ
+        id = "1"
+        network_id = "06"
+        ext_id = "MC1"
+        name = "mpgCateg1"
+    />
+    <master.rei_ag_gr
+        id = "1"
+        name = "reiAgGr"
+        descr = "REI Ag Gr"
+    />
+    <master.sample_specif
+        id = "A75"
+        name = "Volumenstrom"
+        ext_id = "VOLSTR"
+        meas_unit_id = "1"
+    />
+    <master.type_regulation id = "U" name = "TestU"/>
+    <master.spat_ref_sys id = "4" name = "test" />
+    <master.state
+        id = "0"
+        ctry = "Deutschland"
+        ctry_orig_id = "0"
+        coord_x_ext = "123123"
+        coord_y_ext = "312321"
+        spat_ref_sys_id = "4"
+    />
+    <master.admin_unit
+        id = "1000"
+        state_id = "Berlin"
+        name = "Berlin"
+        is_state = "true"
+        is_munic = "true"
+        is_rural_dist = "true"
+        is_gov_dist = "false"
+        geom_center = "SRID=4326;POINT(52.5 13.5)"
+    />
+    <master.site
+        id = "1000"
+        network_id = "06"
+        ext_id = "D_00191"
+        long_text = "Langer Text"
+        state_id = "0"
+        admin_unit_id = "1000"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "4"
+        coord_x_ext = "49.83021"
+        coord_y_ext = "8.81948"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        site_class_id = "1"
+        short_text = "kurz"
+    />
+
+    <!--Query data-->
+    <master.lada_user id = "1" name = "test" />
+    <master.base_query
+        id = "1"
+        sql = "SELECT main_sample_id, env_medium_id, is_test, id AS probeId FROM lada.sample"
+    />
+    <master.base_query
+        id = "2"
+        sql = "SELECT sample_start_date FROM lada.sample"
+    />
+    <master.base_query
+        id = "3"
+        sql = "SELECT measm.id AS messungId, sample.id AS probeId FROM lada.measm JOIN lada.sample ON sample_id = sample.id"
+    />
+    <master.base_query
+        id = "4"
+        sql = "SELECT main_sample_id, sample_start_date FROM lada.sample"
+    />
+    <master.query_user
+        id = "1"
+        name = "Proben"
+        lada_user_id = "1"
+        base_query_id = "1"
+        descr = "test"
+    />
+    <master.query_user
+        id = "2"
+        name = "Measms"
+        lada_user_id = "1"
+        base_query_id = "3"
+        descr = "test"
+    />
+    <master.filter
+        id = "1"
+        sql = "main_sample_id ~ :hauptprobenNr"
+        param = "hauptprobenNr"
+        filter_type_id = "0"
+    />
+    <master.filter
+        id = "2"
+        sql = "measm.id IN(:messungId)"
+        param = "messungId"
+        filter_type_id = "5"
+    />
+    <master.disp
+        id = "1"
+        name = "test"
+    />
+    <master.disp
+        id = "2"
+        name = "probeId"
+    />
+    <master.disp
+        id = "3"
+        name = "messungId"
+    />
+    <master.grid_col_mp
+        id = "1"
+        base_query_id = "1"
+        grid_col = "hauptprobenNr"
+        data_index = "main_sample_id"
+        position = "1"
+        filter_id = "1"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "2"
+        base_query_id = "1"
+        grid_col = "umwId"
+        data_index = "env_medium_id"
+        position = "2"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "4"
+        base_query_id = "1"
+        grid_col = "isTest"
+        data_index = "is_test"
+        position = "3"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "5"
+        base_query_id = "1"
+        grid_col = "probeId"
+        data_index = "probeId"
+        position = "4"
+        disp_id = "2"
+    />
+    <master.grid_col_mp
+        id = "8"
+        base_query_id = "4"
+        grid_col = "hauptprobenNr"
+        data_index = "main_sample_id"
+        position = "1"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "9"
+        base_query_id = "4"
+        grid_col = "timestamp"
+        data_index = "timestamp"
+        position = "2"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "3"
+        base_query_id = "2"
+        grid_col = "timestamp"
+        data_index = "timestamp"
+        position = "1"
+        filter_id = "1"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "6"
+        base_query_id = "3"
+        grid_col = "messungId"
+        data_index = "messungId"
+        position = "1"
+        filter_id = "2"
+        disp_id = "3"
+    />
+    <master.grid_col_mp
+        id = "7"
+        base_query_id = "3"
+        grid_col = "probeId"
+        data_index = "probeId"
+        position = "2"
+        disp_id = "2"
+    />
+    <master.grid_col_conf
+        id = "1"
+        lada_user_id = "1"
+        query_user_id = "1"
+        grid_col_mp_id = "1"
+    />
+    <master.grid_col_conf
+        id = "2"
+        lada_user_id = "1"
+        query_user_id = "1"
+        grid_col_mp_id = "2"
+    />
+    <lada.sample
+        id = "1000"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "120510002"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        mpg_categ_id = "1"
+        rei_ag_gr_id = "1"
+    />
+    <lada.sample
+        id = "1001"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "true"
+        env_medium_id = "L6"
+        main_sample_id = "12051,0001"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+    />
+    <lada.comm_sample
+        id = "1000"
+        meas_facil_id = "06010"
+        date = "2012-05-11 12:01:00"
+        text = "Testkommentar"
+        sample_id = "1000"
+    />
+    <lada.sample_specif_meas_val
+        id = "1000"
+        sample_id = "1000"
+        sample_specif_id = "A75"
+        meas_val = "12.0"
+        error = "8.0"
+    />
+    <lada.geolocat
+        id = "1000"
+        type_regulation = "U"
+        sample_id = "1000"
+        site_id = "1000"
+    />
+    <lada.measm
+        id = "1200"
+        sample_id = "1000"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.comm_measm
+        id = "1000"
+        meas_facil_id = "06010"
+        date = "2012-05-08 11:00:00"
+        text = "Testkommentar"
+        measm_id = "1200"
+    />
+    <lada.measm
+        id = "1201"
+        sample_id = "1000"
+        ext_id = "454"
+        mmt_id = "A3"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.status_prot
+        meas_facil_id = "06010"
+        measm_id = "1201"
+        status_mp_id = "2"
+    />
+    <lada.meas_val
+        id = "1000"
+        measm_id = "1200"
+        measd_id = "test"
+        meas_val = "1.1"
+        meas_unit_id = "1"
+    />
+    <lada.meas_val
+        id = "1001"
+        measm_id = "1200"
+        measd_id = "test1"
+        meas_unit_id = "1"
+    />
+</dataset>

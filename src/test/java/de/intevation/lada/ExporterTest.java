@@ -77,7 +77,7 @@ public class ExporterTest extends ClientBaseTest {
         .toString();
 
     public ExporterTest() {
-        this.testDatasetName = "datasets/dbUnit_query.xml";
+        this.testDatasetName = "datasets/dbUnit_export.xml";
     }
 
     private JsonObjectBuilder requestJsonBuilder = Json.createObjectBuilder()
