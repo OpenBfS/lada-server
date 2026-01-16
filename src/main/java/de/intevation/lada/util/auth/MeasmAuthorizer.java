@@ -38,7 +38,7 @@ class MeasmAuthorizer extends Authorizer<Measm> {
     }
 
     /**
-     * Constructor to be used in ProbeAuthorizer.
+     * Constructor to be used in {@link SampleAuthorizer}.
      */
     MeasmAuthorizer(
         UserInfo userInfo,

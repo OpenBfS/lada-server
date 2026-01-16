@@ -37,7 +37,7 @@ class SampleAuthorizer extends Authorizer<Sample> {
     }
 
     /**
-     * Constructor to be used in MessungAuthorizer.
+     * Constructor to be used in {@link MeasmAuthorizer}.
      */
     SampleAuthorizer(
         UserInfo userInfo,
