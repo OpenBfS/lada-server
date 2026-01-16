@@ -40,7 +40,6 @@ import org.hamcrest.MatcherAssert;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -180,7 +179,7 @@ public class ExporterTest extends ClientBaseTest {
             .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(List.of(probeId), MediaType.APPLICATION_JSON),
                 JsonArray.class);
-        Assert.assertEquals("Unexpected JSON content", 1, result.size());
+        assertEquals("Unexpected JSON content", 1, result.size());
         assertJsonExportAsExpected(probeId, result, null);
     }
 
@@ -200,7 +199,7 @@ public class ExporterTest extends ClientBaseTest {
             .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(List.of(measmId), MediaType.APPLICATION_JSON),
                 JsonArray.class);
-        Assert.assertEquals("Unexpected JSON content", 1, result.size());
+        assertEquals("Unexpected JSON content", 1, result.size());
         final int sampleId = 1000;
         assertJsonExportAsExpected(measmId, result, sampleId);
     }
@@ -234,7 +233,7 @@ public class ExporterTest extends ClientBaseTest {
         );
         for (String key : extraAttrs.keySet()) {
             assertContains(jsonSample, key);
-            Assert.assertEquals(extraAttrs.get(key), jsonSample.getString(key));
+            assertEquals(extraAttrs.get(key), jsonSample.getString(key));
         }
 
         final String[] measFacilAttrs = { "measFacil", "apprLab" };
@@ -277,7 +276,7 @@ public class ExporterTest extends ClientBaseTest {
         JsonObject envDescrip = jsonSample.getJsonObject(envDescripKey);
         final String s0Key = "S0";
         assertContains(envDescrip, s0Key);
-        Assert.assertEquals("test", envDescrip.getString(s0Key));
+        assertEquals("test", envDescrip.getString(s0Key));
 
         final String geolocatsKey = "geolocat";
         assertHasAssociated(jsonSample, geolocatsKey, 1, Map.of());
@@ -292,7 +291,7 @@ public class ExporterTest extends ClientBaseTest {
         );
         for (String key : siteAttrs.keySet()) {
             assertContains(site, key);
-            Assert.assertEquals(siteAttrs.get(key), site.getString(key));
+            assertEquals(siteAttrs.get(key), site.getString(key));
         }
     }
 
@@ -315,13 +314,13 @@ public class ExporterTest extends ClientBaseTest {
     ) {
         assertContains(jsonObject, associationKey);
         JsonArray associations = jsonObject.getJsonArray(associationKey);
-        Assert.assertEquals(size, associations.size());
+        assertEquals(size, associations.size());
         JsonObject associated = id == null
             ? associations.getJsonObject(0)
             : BaseTest.filterJsonArrayById(associations, id);
         for (String key : expectedAttrs.keySet()) {
             assertContains(associated, key);
-            Assert.assertEquals(
+            assertEquals(
                 expectedAttrs.get(key), associated.getString(key));
         }
     }
@@ -345,7 +344,7 @@ public class ExporterTest extends ClientBaseTest {
             .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .post(Entity.entity(requestJson, MediaType.APPLICATION_JSON),
                 String.class);
-        Assert.assertTrue(
+        assertTrue(
             "Unexpected LAF content",
             result.startsWith("%PROBE%") && result.endsWith("%ENDE%"));
     }
@@ -531,7 +530,7 @@ public class ExporterTest extends ClientBaseTest {
             .add("idFilter", Json.createArrayBuilder().add("120510002"))
             .build();
 
-        Assert.assertEquals(
+        assertEquals(
             "Unexpected JSON content",
             Json.createReader(new StringReader("{\"120510002\":"
                     + "{\"main_sample_id\":\"120510002\","
@@ -634,7 +633,7 @@ public class ExporterTest extends ClientBaseTest {
         String result = runExportTest(formatLaf9, requestJson);
         List<Sample> jsonResult = JsonbBuilder.create().fromJson(
             result, (new GenericType<List<Sample>>() { }).getType());
-        Assert.assertTrue(
+        assertTrue(
             "Unexpected LAF content: " + result,
             jsonResult.size() == 1);
         assertFalse(
@@ -695,12 +694,12 @@ public class ExporterTest extends ClientBaseTest {
 
         String csvResult = runExportTest(
             formatCsv, requestJson);
-        Assert.assertEquals(
+        assertEquals(
             "Unexpected CSV content",
             "hauptprobenNr,umwId,isTest,probeId\r\n",
             csvResult);
 
-        Assert.assertEquals(
+        assertEquals(
             "Unexpected JSON content",
             JsonValue.EMPTY_JSON_OBJECT,
             runJSONExportTest(requestJson));
@@ -801,13 +800,13 @@ public class ExporterTest extends ClientBaseTest {
             exportStatusObject = parseResponse(response, JobStatus.class);
             done = exportStatusObject.isDone();
 
-            Assert.assertTrue(
+            assertTrue(
                 "Export not done within one minute",
                 waitUntil.isAfter(Instant.now()));
             Thread.sleep(waitASecond);
         } while (!done);
 
-        Assert.assertEquals(
+        assertEquals(
             expectedStatus.name(),
             exportStatusObject.getStatus().name());
 
@@ -842,7 +841,7 @@ public class ExporterTest extends ClientBaseTest {
             .header(HEADER_X_SHIB_USER, BaseTest.testUser)
             .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get();
-        Assert.assertEquals(
+        assertEquals(
             "Unexpected response status code",
             Response.Status.OK.getStatusCode(),
             download.getStatus());
@@ -856,14 +855,14 @@ public class ExporterTest extends ClientBaseTest {
         List<String> resultLines = Arrays.asList(csv.split(recordSep));
 
         // Assert that header matches
-        Assert.assertEquals(
+        assertEquals(
             "Unexpected CSV header", header, resultLines.get(0));
 
         // Assert that expected lines exist
         MatcherAssert.assertThat(resultLines, CoreMatchers.hasItems(line));
 
         // Assert that result does not have extraneous lines
-        Assert.assertEquals(
+        assertEquals(
             "Contains extraneous lines", line.length + 1, resultLines.size());
     }
 }
