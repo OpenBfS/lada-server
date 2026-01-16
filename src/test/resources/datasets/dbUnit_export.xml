@@ -2,7 +2,15 @@
 <dataset>
     <!-- authentication data -->
     <master.network id = "06" name = "test" />
+    <master.network id = "11" name = "test1" />
     <master.meas_facil id = "06010" network_id = "06" name = "test"/>
+    <master.meas_facil id = "01110" network_id = "11" name = "test1"/>
+    <master.auth
+        ldap_gr = "mst_06_status"
+        network_id = "06"
+        meas_facil_id = "06010"
+        auth_funct_id = "1"
+    />
 
     <!--master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
@@ -333,6 +341,30 @@
     <lada.meas_val
         id = "1001"
         measm_id = "1200"
+        measd_id = "test1"
+        meas_unit_id = "1"
+    />
+
+    <!-- Sample with unauthorized measVal -->
+    <lada.sample
+        id = "1002"
+        is_test = "true"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        meas_facil_id = "01110"
+        appr_lab_id = "01110"
+        sample_meth_id = "1"
+    />
+    <lada.measm
+        id = "1202"
+        sample_id = "1002"
+        mmt_id = "A3"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.meas_val
+        id = "1002"
+        measm_id = "1202"
         measd_id = "test1"
         meas_unit_id = "1"
     />

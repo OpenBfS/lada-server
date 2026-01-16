@@ -10,6 +10,9 @@ package de.intevation.lada;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 import static de.intevation.lada.util.rest.JSONBConfig.JSONB;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.nio.charset.CharacterCodingException;
@@ -49,6 +52,7 @@ import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
@@ -362,7 +366,8 @@ public class ExporterTest extends ClientBaseTest {
             "\r\n",
             "hauptprobenNr,umwId,isTest,probeId",
             "120510002,L6,No,1000",
-            "\"12051,0001\",L6,Yes,1001");
+            "\"12051,0001\",L6,Yes,1001",
+            ",,Yes,1002");
     }
 
     /**
@@ -382,7 +387,8 @@ public class ExporterTest extends ClientBaseTest {
             "\r\n",
             "hauptprobenNr;umwId;isTest;probeId",
             "120510002;L6;No;1000",
-            "12051,0001;L6;Yes;1001");
+            "12051,0001;L6;Yes;1001",
+            ";;Yes;1002");
     }
 
     /**
@@ -402,7 +408,8 @@ public class ExporterTest extends ClientBaseTest {
             rowDelimiter,
             "hauptprobenNr,umwId,isTest,probeId",
             "120510002,L6,No,1000",
-            "\"12051,0001\",L6,Yes,1001");
+            "\"12051,0001\",L6,Yes,1001",
+            ",,Yes,1002");
     }
 
     /**
@@ -422,7 +429,8 @@ public class ExporterTest extends ClientBaseTest {
             "\r\n",
             "hauptprobenNr,umwId,isTest,probeId",
             "120510002,L6,No,1000",
-            "'12051,0001',L6,Yes,1001");
+            "'12051,0001',L6,Yes,1001",
+            ",,Yes,1002");
     }
 
     /**
@@ -493,7 +501,8 @@ public class ExporterTest extends ClientBaseTest {
             + Measm_.MEAS_VALS_COUNT,
             "120510002,L6,No,1000,1200,453,MST - nicht vergeben,2",
             "120510002,L6,No,1000,1201,454,MST - plausibel,0",
-            "\"12051,0001\",L6,Yes,1001,,,,");
+            "\"12051,0001\",L6,Yes,1001,,,,",
+            ",,Yes,1002,1202,1,MST - nicht vergeben,1");
     }
 
     /**
@@ -603,9 +612,12 @@ public class ExporterTest extends ClientBaseTest {
             .build();
 
         String result = runExportTest(formatLaf, requestJson);
-        Assert.assertTrue(
+        assertTrue(
             "Unexpected LAF content: " + result,
             result.startsWith("%PROBE%") && result.endsWith("%ENDE%"));
+        assertTrue(
+            "Result unexpectedly does not contain a measVal:\n" + result,
+            result.contains("MESSWERT"));
     }
 
     /**
@@ -625,6 +637,48 @@ public class ExporterTest extends ClientBaseTest {
         Assert.assertTrue(
             "Unexpected LAF content: " + result,
             jsonResult.size() == 1);
+        assertFalse(
+            "Result unexpectedly does not contain a measVal:\n" + result,
+            jsonResult.get(0).getMeasms().stream()
+            .flatMap(m -> m.getMeasVals().stream())
+            .toList().isEmpty());
+    }
+
+    /**
+     * Test asynchronous LAF 8.4 export of Sample with unauthorized measVals.
+     */
+    @Test
+    public final void testAsyncLaf8UnauthMeasVals()
+        throws InterruptedException, CharacterCodingException {
+        final int probeId = 1002;
+        JsonObject requestJson = requestJsonBuilder
+            .add("proben", Json.createArrayBuilder().add(probeId))
+            .build();
+
+        String result = runExportTest(formatLaf, requestJson);
+        assertFalse("Result unexpectedly contains measVals:\n" + result,
+            result.contains("MESSWERT"));
+    }
+
+    /**
+     * Test asynchronous LAF 9 export of Sample with unauthorized measVals.
+     */
+    @Test
+    public final void testLaf9UnauthMeasVals()
+        throws InterruptedException, CharacterCodingException {
+        final int probeId = 1002;
+        JsonObject requestJson = requestJsonBuilder
+            .add("proben", Json.createArrayBuilder().add(probeId))
+            .build();
+
+        String result = runExportTest(formatLaf9, requestJson);
+        JsonObject resultSample = JsonbBuilder.create()
+            .fromJson(result, JsonArray.class).getJsonObject(0);
+        assertContains(resultSample, Sample_.MEASMS);
+        JsonArray resultMeasms = resultSample.getJsonArray(Sample_.MEASMS);
+        assertEquals("Expected measms in result:", 1, resultMeasms.size());
+        assertFalse("Result unexpectedly contains measVals:\n" + result,
+            resultMeasms.getJsonObject(0).containsKey(Measm_.MEAS_VALS));
     }
 
     /**
