@@ -9,24 +9,22 @@ package de.intevation.lada.i18n;
 
 import java.util.ResourceBundle;
 
-import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
+import de.intevation.lada.context.ThreadLocale;
 
 
 /**
- * Injectable class providing i18n utilities within request context.
+ * Provides i18n utilities with context locale.
  */
 public class I18n {
 
     private ResourceBundle bundle;
 
-    @Inject
-    I18n(HttpServletRequest request) {
-        this.bundle = ResourceBundle.getBundle("lada", request.getLocale());
+    I18n() {
+        this.bundle = ResourceBundle.getBundle("lada", ThreadLocale.get());
     }
 
     /**
-     * Get ResourceBundle for localization in language accepted by request.
+     * Get ResourceBundle for localization in language given by context locale.
      * @return ResourceBundle
      */
     public ResourceBundle getResourceBundle() {
@@ -35,7 +33,7 @@ public class I18n {
 
     /**
      * @param key Key to lookup in resource bundle
-     * @return localized string for language accepted by request
+     * @return localized string for language given by context locale
      */
     public String getString(String key) {
         return this.bundle.getString(key);
