@@ -48,7 +48,7 @@ public class MeasdMatchesMmtValidator
             .createInstance().select(Repository.class).get();
         Measm messung = messwert.getMeasm();
 
-        final SingularAttribute<MmtMeasdView, String> measdIdKey
+        final SingularAttribute<MmtMeasdView, Integer> measdIdKey
             = MmtMeasdView_.measdId;
         QueryBuilder<MmtMeasdView> mmtBuilder = repository
             .queryBuilder(MmtMeasdView.class)

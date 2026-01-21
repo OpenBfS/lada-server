@@ -29,6 +29,7 @@ import de.intevation.lada.model.master.FilterType_;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.GridColMp;
 import de.intevation.lada.model.master.MeasUnit_;
+import de.intevation.lada.model.master.Measd_;
 import de.intevation.lada.model.master.StatusLev_;
 import de.intevation.lada.model.master.StatusMp_;
 import de.intevation.lada.model.master.StatusVal_;
@@ -167,6 +168,8 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         case ID_TYPE_MEASM:
             subDataQuery = String.format(MEASVALS_QUERY_TPL,
                 String.join(", ", this.subDataColumns)
+                .replace(MeasVal_.MEASD_ID,
+                    MeasVal_.MEASD + "." + Measd_.NAME)
                 .replace(SUBDATA_MEASVAL_UNIT,
                     MeasVal_.MEAS_UNIT + "." + MeasUnit_.UNIT_SYMBOL));
             break;

@@ -2,7 +2,8 @@
     "mpgId": 1000,
     "mmtId": "A3",
     "measds": [{
-        "id": "Mangan",
-        "isRefNucl": false
+        "id": 56,
+        "isRefNucl": false,
+        "name": "Mangan"
     }]
 }

@@ -86,8 +86,8 @@ public class AssociationTest extends ServiceTest {
 
     private final String measFacilId = "06011";
 
-    private final String measdId1 = "Mangan";
-    private final String measdId2 = "Iron";
+    private final int measdId1 = 56;
+    private final int measdId2 = 57;
 
     @Override
     public void init(WebTarget t) {
@@ -789,7 +789,7 @@ public class AssociationTest extends ServiceTest {
         return site;
     }
 
-    private MeasVal getMeasVal(String measdId, int measUnitId) {
+    private MeasVal getMeasVal(int measdId, int measUnitId) {
         MeasVal m = new MeasVal();
         m.setMeasdId(measdId);
         m.setMeasUnitId(measUnitId);

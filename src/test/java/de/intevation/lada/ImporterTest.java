@@ -123,6 +123,7 @@ public class ImporterTest extends ClientBaseTest {
     private final String invalidMmtId = "XXX";
     private final String minSampleId = "test";
     private final String measd = "H-3";
+    private final int measdId = 1;
     private final String measUnit = "Bq/kgFM";
     private final String existingAssociatedTag = "associated";
     private final String existingNotAssociatedTag = "not associated";
@@ -158,7 +159,7 @@ public class ImporterTest extends ClientBaseTest {
             .add(Measm_.MMT_ID, mmtId)
             .add(Measm_.MEAS_VALS, Json.createArrayBuilder()
                 .add(Json.createObjectBuilder()
-                    .add(MeasVal_.MEASD_ID, measd)
+                    .add(MeasVal_.MEASD_ID, measdId)
                     .add(MeasVal_.MEAS_UNIT_ID, 1))))
         .build()
     );
@@ -455,7 +456,7 @@ public class ImporterTest extends ClientBaseTest {
         measm.setExtId(existingMeasmExtId);
 
         MeasVal measVal = new MeasVal();
-        measVal.setMeasdId(measd);
+        measVal.setMeasdId(measdId);
         measVal.setMeasUnitId(1);
         measm.setMeasVals(List.of(measVal));
 
@@ -481,10 +482,10 @@ public class ImporterTest extends ClientBaseTest {
         measm.setExtId(existingMeasmExtId);
 
         MeasVal measVal1 = new MeasVal();
-        measVal1.setMeasdId(measd);
+        measVal1.setMeasdId(measdId);
         measVal1.setMeasUnitId(1);
         MeasVal measVal2 = new MeasVal();
-        measVal2.setMeasdId(measd);
+        measVal2.setMeasdId(measdId);
         measVal2.setMeasUnitId(1);
         measm.setMeasVals(List.of(measVal1, measVal2));
 
@@ -519,7 +520,7 @@ public class ImporterTest extends ClientBaseTest {
         final int fromUnitId = 2, toUnitId = 1, factor = 10;
         final double v = 0.1;
         MeasVal measVal = new MeasVal();
-        measVal.setMeasdId(measd);
+        measVal.setMeasdId(measdId);
         measVal.setMeasUnitId(fromUnitId);
         measVal.setMeasVal(v);
         measm.setMeasVals(List.of(measVal));
@@ -632,7 +633,7 @@ public class ImporterTest extends ClientBaseTest {
         measm.setMmtId(invalidMmtId);
         laf.setMeasms(List.of(measm));
         MeasVal measVal = new MeasVal();
-        measVal.setMeasdId(""); // XXX
+        measVal.setMeasdId(9999); // XXX
         measVal.setMeasUnitId(2);
         measm.setMeasVals(List.of(measVal));
 
@@ -1483,7 +1484,7 @@ public class ImporterTest extends ClientBaseTest {
         laf9Template.setMeasms(new ArrayList<>(List.of(measm)));
 
         MeasVal measVal = new MeasVal();
-        measVal.setMeasdId(measd);
+        measVal.setMeasdId(measdId);
         measVal.setMeasUnitId(1);
         measVal.setMeasVal(1d);
         measVal.setError(1f);

@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.validation.constraints;
 
+import static de.intevation.lada.model.master.Names.QUERY_MEASD_NAMES;
+import static de.intevation.lada.model.master.Names.QUERY_PARAM_MEASD_NAMES;
 import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.VARIABLES;
 
 import java.util.ArrayList;
@@ -118,12 +120,18 @@ public class HasObligMeasdsValidator
         }
 
         if (!pflicht.isEmpty()) {
+            List<Integer> measdIds = pflicht.stream()
+                .map(ObligMeasdMp::getMeasdId).toList();
+            List<String> measdNames = repository.entityManager()
+                .createNamedQuery(QUERY_MEASD_NAMES, String.class)
+                .setParameter(QUERY_PARAM_MEASD_NAMES, measdIds)
+                .getResultList();
+
             HibernateConstraintValidatorContext hibernateCtx = ctx.unwrap(
                 HibernateConstraintValidatorContext.class
             );
             hibernateCtx.disableDefaultConstraintViolation();
-            hibernateCtx.addExpressionVariable("missing",
-                pflicht.stream().map(ObligMeasdMp::getMeasdId).toList())
+            hibernateCtx.addExpressionVariable("missing", measdNames)
                 .buildConstraintViolationWithTemplate(this.message)
                 .enableExpressionLanguage(VARIABLES)
                 .addPropertyNode(mmtIdKey.getName())

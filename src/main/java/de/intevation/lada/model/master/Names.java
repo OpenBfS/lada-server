@@ -27,5 +27,8 @@ public class Names {
     public static final String QUERY_GET_SAMPLE_SPECIF_FOR_ENV_MEDIUM =
         "getSampleSpecifForEnvMedium";
 
+    public static final String QUERY_MEASD_NAMES = "getMeasdNames";
+    public static final String QUERY_PARAM_MEASD_NAMES = "ids";
+
     private Names() { };
 }

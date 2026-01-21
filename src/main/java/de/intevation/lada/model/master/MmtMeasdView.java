@@ -30,7 +30,7 @@ public class MmtMeasdView implements Serializable {
     private MmtMeasdViewPK id;
 
     @Column(insertable = false, updatable = false)
-    private String measdId;
+    private Integer measdId;
 
     @Column(insertable = false, updatable = false)
     private String mmtId;
@@ -46,11 +46,11 @@ public class MmtMeasdView implements Serializable {
         this.id = i;
     }
 
-    public String getMeasdId() {
+    public Integer getMeasdId() {
         return this.measdId;
     }
 
-    public void setMeasdId(String measdId) {
+    public void setMeasdId(Integer measdId) {
         this.measdId = measdId;
     }
 

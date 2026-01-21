@@ -37,6 +37,7 @@ public class StammdatenTest extends ClientBaseTest {
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
+    private static final int ID56 = 56;
     private static final int ID101 = 101;
     private static final int ID207 = 207;
     private static final String IDA = "A";
@@ -166,7 +167,7 @@ public class StammdatenTest extends ClientBaseTest {
     @Test
     public final void testMessgroesseById() {
         stammdatenTest.init(this.target);
-        stammdatenTest.getById("measd", "Mangan");
+        stammdatenTest.getById("measd", ID56);
     }
 
     @Test

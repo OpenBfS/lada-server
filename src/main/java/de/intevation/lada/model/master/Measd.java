@@ -7,13 +7,19 @@
  */
 package de.intevation.lada.model.master;
 
+import static de.intevation.lada.model.master.Names.QUERY_MEASD_NAMES;
+import static de.intevation.lada.model.master.Names.QUERY_PARAM_MEASD_NAMES;
+
 import java.io.Serializable;
+
+import org.hibernate.annotations.processing.CheckHQL;
 
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
 import jakarta.validation.GroupSequence;
@@ -25,17 +31,16 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ Measd.class, DatabaseConstraints.class })
+@CheckHQL
+@NamedQuery(name = QUERY_MEASD_NAMES, query =
+    "select name from Measd where id in(:" + QUERY_PARAM_MEASD_NAMES + ")")
 public class Measd implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @NotBlank
-    @Size(max = 50)
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Measd.class)
-    private String id;
-
-    private Integer idOld;
+    private Integer id;
 
     @Size(max = 300)
     @NotEmptyNorWhitespace
@@ -58,23 +63,19 @@ public class Measd implements Serializable {
     @NotEmptyNorWhitespace
     private String bvlFormatId;
 
+    @NotBlank
+    @Size(max = 50)
+    private String name;
+
     public Measd() {
     }
 
-    public String getId() {
+    public Integer getId() {
         return this.id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getIdOld() {
-        return idOld;
-    }
-
-    public void setIdOld(Integer idOld) {
-        this.idOld = idOld;
     }
 
     public String getDescr() {
@@ -123,5 +124,13 @@ public class Measd implements Serializable {
 
     public void setBvlFormatId(String bvlFormatId) {
         this.bvlFormatId = bvlFormatId;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

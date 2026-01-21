@@ -82,7 +82,12 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
     @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Measd.class)
-    private String measdId;
+    private Integer measdId;
+
+    @JsonbTransient
+    @ManyToOne
+    @JoinColumn(insertable = false, updatable = false)
+    private Measd measd;
 
     @Positive(groups = Notifications.class)
     private Double measVal;
@@ -130,11 +135,11 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
         this.error = error;
     }
 
-    public String getMeasdId() {
+    public Integer getMeasdId() {
         return this.measdId;
     }
 
-    public void setMeasdId(String measdId) {
+    public void setMeasdId(Integer measdId) {
         this.measdId = measdId;
     }
 

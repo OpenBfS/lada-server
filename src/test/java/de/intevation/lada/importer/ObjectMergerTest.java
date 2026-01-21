@@ -46,6 +46,7 @@ import de.intevation.lada.util.data.Repository;
 public class ObjectMergerTest extends ContainerBaseTest {
 
     private static final double MESS15D = 1.5d;
+    private static final int MGID56 = 56;
     private static final int MEHID207 = 207;
     private static final int MDAUER1000 = 1000;
     private static final int MID1200 = 1200;
@@ -211,7 +212,7 @@ public class ObjectMergerTest extends ContainerBaseTest {
         MeasVal wert1 = new MeasVal();
         wert1.setMeasm(messung);
         wert1.setMeasUnitId(MEHID207);
-        wert1.setMeasdId("Mangan");
+        wert1.setMeasdId(MGID56);
         wert1.setMeasVal(MESS15D);
         merger.mergeMeasVals(messung, List.of(wert1));
         List<MeasVal> dbWerte = repository.filter(builder.getQuery());

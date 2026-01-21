@@ -8,7 +8,7 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
-COPY master.measd (id_old, descr, id, def_color, idf_ext_id, is_ref_nucl, eudf_nucl_id, bvl_format_id) FROM stdin;
+COPY master.measd (id, descr, name, def_color, idf_ext_id, is_ref_nucl, eudf_nucl_id, bvl_format_id) FROM stdin;
 555	Tantal	Ta-178	\N	\N	f	\N	\N
 554	Tantal	Ta-178m	\N	Ta178	f	\N	\N
 578	Rhenium	Re-182m	\N	Re182	f	\N	\N

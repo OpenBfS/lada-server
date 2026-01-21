@@ -555,9 +555,9 @@ CREATE TABLE mmt (
 CREATE TRIGGER last_mod_mmt BEFORE UPDATE ON master.mmt FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE measd (
-    id character varying(50) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),
-    id_old serial UNIQUE NOT NULL, -- Kept for backwards compatibility in LAF8 imprt
+    id serial PRIMARY KEY,
     descr character varying(300) CHECK (trim(both ' ' from descr) <> ''),
+    name character varying(50) UNIQUE NOT NULL CHECK (trim(both ' ' from name) <> ''),
     def_color character varying(9) CHECK (trim(both ' ' from def_color) <> ''),
     idf_ext_id character varying(6) CHECK (trim(both ' ' from idf_ext_id) <> ''),
     is_ref_nucl boolean NOT NULL DEFAULT false,
@@ -588,7 +588,7 @@ CREATE TRIGGER last_mod_mpg_categ BEFORE UPDATE ON mpg_categ FOR EACH ROW EXECUT
 
 CREATE TABLE measd_gr_mp (
     measd_gr_id integer REFERENCES measd_gr,
-    measd_id character varying(50) REFERENCES measd,
+    measd_id integer REFERENCES measd,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     PRIMARY KEY (measd_gr_id, measd_id)
 );
@@ -762,7 +762,7 @@ CREATE TRIGGER last_mod_type_regulation BEFORE UPDATE ON master.type_regulation 
 
 CREATE TABLE oblig_measd_mp (
     id serial PRIMARY KEY,
-    measd_id character varying(50) NOT NULL REFERENCES measd,
+    measd_id integer NOT NULL REFERENCES measd,
     mmt_id character varying(2) NOT NULL REFERENCES mmt,
     env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
     regulation_id smallint NOT NULL REFERENCES regulation,

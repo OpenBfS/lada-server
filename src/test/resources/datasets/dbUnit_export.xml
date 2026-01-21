@@ -16,12 +16,12 @@
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "9" name = "nine" />
     <master.measd
-        id_old = "1"
-        id = "test"
+        id = "1"
+        name = "test"
     />
     <master.measd
-        id_old = "2"
-        id = "test1"
+        id = "2"
+        name = "test1"
     />
     <master.meas_unit
         id = "1"
@@ -334,14 +334,14 @@
     <lada.meas_val
         id = "1000"
         measm_id = "1200"
-        measd_id = "test"
+        measd_id = "1"
         meas_val = "1.1"
         meas_unit_id = "1"
     />
     <lada.meas_val
         id = "1001"
         measm_id = "1200"
-        measd_id = "test1"
+        measd_id = "2"
         meas_unit_id = "1"
     />
 
@@ -365,7 +365,7 @@
     <lada.meas_val
         id = "1002"
         measm_id = "1202"
-        measd_id = "test1"
+        measd_id = "2"
         meas_unit_id = "1"
     />
 </dataset>
