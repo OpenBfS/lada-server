@@ -12,7 +12,6 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import de.intevation.lada.data.requests.Laf8ExportParameters;
-import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.exporter.ExportJob;
 
 /**
@@ -26,7 +25,7 @@ public class Laf8ExportJob extends ExportJob<Laf8ExportParameters> {
      * The laf exporter.
      */
     @Inject
-    private Exporter<Laf8ExportParameters> exporter;
+    private Laf8Exporter exporter;
 
     public Laf8ExportJob() {
         this.format = "laf";

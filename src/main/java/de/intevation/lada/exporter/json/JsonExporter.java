@@ -7,13 +7,8 @@
  */
 package de.intevation.lada.exporter.json;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,6 +22,7 @@ import java.util.stream.Stream;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -34,9 +30,8 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import jakarta.json.stream.JsonGenerator;
 
-import org.jboss.logging.Logger;
 import de.intevation.lada.data.requests.QueryExportParameters;
-import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.exporter.QueryExporter;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
@@ -75,11 +70,9 @@ import de.intevation.lada.util.rest.JSONBConfig;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-public class JsonExporter implements Exporter<QueryExportParameters> {
+public class JsonExporter implements QueryExporter<QueryExportParameters> {
 
     private static final int ZEBS_COUNTER = 3;
-
-    @Inject private Logger logger;
 
     @Inject
     private Repository repository;
@@ -159,53 +152,23 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
     /**
      * Export Sample objects as JSON.
      * @param probeIds List of Sample IDs to export.
-     * @param messungsIds Ignored. All associated Messung objects are exported.
-     * @param encoding Ignored. Result is always UTF_8.
-     * @return Export result as InputStream or null if the export failed
+     * @return Export result as JSON
      */
-    @Override
-    public InputStream exportProben(
-        List<Integer> probeIds,
-        List<Integer> messungsIds,
-        Charset encoding
-    ) {
-        JsonArrayBuilder json = generateProbenObjectBuilder(probeIds);
-        if (json == null) {
-            return null;
-        }
-        String jsonString = json.build().toString();
-        InputStream in = new ByteArrayInputStream(
-            jsonString.getBytes(StandardCharsets.UTF_8));
-        try {
-            in.close();
-        } catch (IOException e) {
-            logger.debug("Error while closing Stream.", e);
-            return null;
-        }
-        return in;
+    public JsonArray exportProben(List<Integer> probeIds) {
+        return generateProbenObjectBuilder(probeIds).build();
     }
 
     /**
      * Export Messungen and associated Proben context.
-     * @param probeIds ignored.
      * @param messungsIds List of Messungs IDs to export.
-     * @param encoding Ignored. Result is always UTF_8.
-     * @return Export result as InputStream or null if the export failed
+     * @return Export result as JSON
      */
-    @Override
-    public InputStream exportMessungen(
-        List<Integer> probeIds,
-        List<Integer> messungsIds,
-        Charset encoding
-    ) {
+    public JsonArray exportMessungen(List<Integer> messungsIds) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
             .andIn(Measm_.id, messungsIds);
         List<Measm> messungen = repository.filter(builder.getQuery());
-        if (messungen.isEmpty()) {
-            return null;
-        }
-
-        List<JsonObjectBuilder> messungenObjectBuilders = new ArrayList<>();
+        List<JsonObjectBuilder> messungenObjectBuilders =
+            new ArrayList<>(messungen.size());
         for (Measm m : messungen) {
             Sample p = m.getSample();
             JsonObject sampleJsonObject = convertToJsonObject(p);
@@ -234,17 +197,7 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
             addMessstelle(sampleJsonObjectBuilder, p);
             messungenObjectBuilders.add(sampleJsonObjectBuilder);
         }
-        JsonArrayBuilder json = Json.createArrayBuilder(messungenObjectBuilders);
-        String jsonString = json.build().toString();
-        InputStream in = new ByteArrayInputStream(
-            jsonString.toString().getBytes(StandardCharsets.UTF_8));
-        try {
-            in.close();
-        } catch (IOException e) {
-            logger.debug("Error while closing Stream.", e);
-            return null;
-        }
-        return in;
+        return Json.createArrayBuilder(messungenObjectBuilders).build();
     }
 
     private JsonArrayBuilder generateProbenObjectBuilder(
@@ -255,7 +208,6 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
             .queryBuilder(Sample.class)
             .andIn(Sample_.id, probeIds)
             .getQuery());
-        List<JsonObjectBuilder> probenbuilder = new ArrayList<>();
         for (Sample s : proben) {
             JsonObject probeJson = convertToJsonObject(s);
             JsonObjectBuilder builder = Json.createObjectBuilder(probeJson);
@@ -266,9 +218,8 @@ public class JsonExporter implements Exporter<QueryExportParameters> {
             addDeskriptoren(builder, s);
             addOrtszuordung(builder, s);
             addMessstelle(builder, s);
-            probenbuilder.add(builder);
+            jsonBuilder.add(builder);
         }
-        probenbuilder.stream().forEach(jsonBuilder::add);
         return jsonBuilder;
     }
 

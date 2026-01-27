@@ -17,7 +17,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.TypedQuery;
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.data.requests.QueryExportParameters;
-import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.exporter.QueryExporter;
 
 
 /**
@@ -31,7 +31,7 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
      * The JSON exporter.
      */
     @Inject
-    private Exporter<QueryExportParameters> exporter;
+    private QueryExporter<QueryExportParameters> exporter;
 
     public JsonExportJob() {
         super();
@@ -70,7 +70,7 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
     }
 
     @Override
-    protected Exporter<QueryExportParameters> getExporter() {
+    protected QueryExporter<QueryExportParameters> getExporter() {
         return exporter;
     }
 }

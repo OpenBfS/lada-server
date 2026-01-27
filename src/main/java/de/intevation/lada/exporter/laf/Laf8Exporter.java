@@ -15,19 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import de.intevation.lada.data.requests.Laf8ExportParameters;
-import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 
 
 /**
-* The LAF exporter implements {@link Exporter} to produce a LAF file.
-*
-* @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
-*/
-public class Laf8Exporter implements Exporter<Laf8ExportParameters> {
+ * The LAF exporter produces a LAF file.
+ *
+ * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
+ */
+public class Laf8Exporter {
 
     /**
      * The creator used to generate content.
@@ -49,7 +47,6 @@ public class Laf8Exporter implements Exporter<Laf8ExportParameters> {
      * @param encoding The encoding of the resulting input stream
      * @return InputStream with the LAF data.
      */
-    @Override
     public InputStream exportProben(
         List<Integer> proben,
         List<Integer> messungen,

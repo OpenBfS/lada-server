@@ -20,7 +20,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import de.intevation.lada.data.requests.Laf8ExportParameters;
-import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.exporter.laf.Laf8Exporter;
 import de.intevation.lada.rest.LadaService;
 
 
@@ -46,7 +46,7 @@ public class LafExportService extends LadaService {
      * The exporter.
      */
     @Inject
-    private Exporter<Laf8ExportParameters> exporter;
+    private Laf8Exporter exporter;
 
     /**
      * Export objects as LAF 8.

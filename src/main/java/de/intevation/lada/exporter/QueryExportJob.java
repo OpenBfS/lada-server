@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
-import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm_;
@@ -41,7 +40,8 @@ import jakarta.persistence.TypedQuery;
 /**
  * Abstract class for an export of query results.
  */
-public abstract class QueryExportJob<T extends ExportParameters> extends ExportJob<T> {
+public abstract class QueryExportJob<T extends QueryExportParameters>
+    extends ExportJob<T> {
 
     public static final String ID_TYPE_SAMPLE = "probeId";
     public static final String ID_TYPE_MEASM = "messungId";
@@ -273,7 +273,7 @@ public abstract class QueryExportJob<T extends ExportParameters> extends ExportJ
         qId = gridColumn.getBaseQueryId();
     }
 
-    protected abstract Exporter<T> getExporter();
+    protected abstract QueryExporter<T> getExporter();
 
     @Override
     public void runWithTx() {

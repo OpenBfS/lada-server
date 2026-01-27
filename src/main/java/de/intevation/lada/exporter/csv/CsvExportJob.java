@@ -16,7 +16,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.TypedQuery;
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.data.requests.CsvExportParameters;
-import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.exporter.QueryExporter;
 
 
 /**
@@ -30,7 +30,7 @@ public class CsvExportJob extends QueryExportJob<CsvExportParameters> {
      * The csv exporter.
      */
     @Inject
-    private Exporter<CsvExportParameters> exporter;
+    private QueryExporter<CsvExportParameters> exporter;
 
     public CsvExportJob() {
         super();
@@ -78,7 +78,7 @@ public class CsvExportJob extends QueryExportJob<CsvExportParameters> {
     }
 
     @Override
-    protected Exporter<CsvExportParameters> getExporter() {
+    protected QueryExporter<CsvExportParameters> getExporter() {
         return exporter;
     }
 }

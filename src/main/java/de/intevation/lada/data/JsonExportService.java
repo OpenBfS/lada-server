@@ -7,18 +7,15 @@
  */
 package de.intevation.lada.data;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
+import jakarta.json.JsonArray;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
-import de.intevation.lada.data.requests.QueryExportParameters;
-import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.exporter.json.JsonExporter;
 import de.intevation.lada.rest.LadaService;
 
 
@@ -44,7 +41,7 @@ public class JsonExportService extends LadaService {
      * The exporter.
      */
     @Inject
-    private Exporter<QueryExportParameters> exporter;
+    private JsonExporter exporter;
 
     /**
      * Export Sample objects.
@@ -57,13 +54,10 @@ public class JsonExportService extends LadaService {
      */
     @POST
     @Path("samples")
-    public InputStream downloadSamples(
+    public JsonArray downloadSamples(
         @NotEmpty List<Integer> ids
     ) {
-        return exporter.exportProben(
-            ids,
-            new ArrayList<Integer>(),
-            StandardCharsets.UTF_8);
+        return exporter.exportProben(ids);
     }
 
     /**
@@ -77,12 +71,9 @@ public class JsonExportService extends LadaService {
      */
     @POST
     @Path("measms")
-    public InputStream downloadMeasms(
+    public JsonArray downloadMeasms(
         @NotEmpty List<Integer> ids
     ) {
-        return exporter.exportMessungen(
-            new ArrayList<Integer>(),
-            ids,
-            StandardCharsets.UTF_8);
+        return exporter.exportMessungen(ids);
     }
 }
