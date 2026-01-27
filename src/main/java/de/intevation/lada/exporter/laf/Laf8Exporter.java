@@ -7,10 +7,8 @@
  */
 package de.intevation.lada.exporter.laf;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,35 +42,22 @@ public class Laf8Exporter {
      *
      * @param proben    List of probe ids.
      * @param messungen    List of messung ids.
-     * @param encoding The encoding of the resulting input stream
-     * @return InputStream with the LAF data.
+     * @param laf sink to write out result
      */
-    public InputStream exportProben(
+    public void exportProben(
         List<Integer> proben,
         List<Integer> messungen,
-        Charset encoding
-    ) {
-        String laf = "";
+        Writer laf
+    ) throws IOException {
         for (Integer probeId: proben) {
-            laf += creator.createProbe(probeId);
+            laf.write(creator.createProbe(probeId));
         }
         for (Integer messungId: messungen) {
-            Measm m = repository.getById(
-                Measm.class, messungId);
+            Measm m = repository.getById(Measm.class, messungId);
             List<Integer> mList = new ArrayList<>();
             mList.add(messungId);
-            laf += creator.createMessung(m.getSample().getId(), mList);
+            laf.write(creator.createMessung(m.getSample().getId(), mList));
         }
-        laf += "%ENDE%";
-        InputStream in = new ByteArrayInputStream(laf.getBytes(encoding));
-        try {
-            in.close();
-            return in;
-        } catch (IOException e) {
-            String resp = "Error - Problem while creating the response";
-            InputStream is = new ByteArrayInputStream(
-                resp.getBytes(encoding));
-            return is;
-        }
+        laf.write("%ENDE%");
     }
 }

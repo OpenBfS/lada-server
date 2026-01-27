@@ -9,8 +9,6 @@
 package de.intevation.lada.exporter;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -28,8 +26,6 @@ import de.intevation.lada.util.data.Job;
  * @param <T> Type of parameters supporting an implemented export format
  */
 public abstract class ExportJob<T extends ExportParameters> extends Job {
-
-    private static final int LENGTH = 1024;
 
     /**
      * Result encoding.
@@ -140,32 +136,6 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
                         "Cannot delete result file. IOException: %s",
                         ioe.getMessage()));
             }
-        }
-    }
-
-    /**
-     * Write the export result to a file.
-     * @param exported Result InputStream to export
-     * @throws RuntimeException if temp file cannot be created
-     * or writing it fails.
-    */
-    // TODO: Stream to file
-    protected void writeResultToFile(InputStream exported) {
-        try {
-            //Write to file
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            byte[] buffer = new byte[LENGTH];
-            int length;
-
-            while ((length = exported.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-
-            try (BufferedWriter writer = createTmpFileWriter()) {
-                writer.write(new String(result.toByteArray(), encoding));
-            }
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
         }
     }
 

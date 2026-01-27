@@ -7,13 +7,15 @@
  */
 package de.intevation.lada.data;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -64,11 +66,17 @@ public class LafExportService extends LadaService {
         List<Integer> pIds = objects.getProben();
         List<Integer> mIds = objects.getMessungen();
 
+        StringWriter resultWriter = new StringWriter();
+        try {
+            exporter.exportProben(pIds, mIds, resultWriter);
+        } catch (IOException e) {
+            throw new InternalServerErrorException();
+        }
+
         Charset charset = objects.getEncoding();
 
-        InputStream exported = exporter.exportProben(pIds, mIds, charset);
-
-        ResponseBuilder response = Response.ok((Object) exported);
+        ResponseBuilder response = Response.ok(
+            resultWriter.toString().getBytes(charset));
         response.header(
             "Content-Disposition",
             "attachment; filename = \"export.laf\"");

@@ -8,6 +8,8 @@
 
 package de.intevation.lada.exporter.laf;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -41,9 +43,11 @@ public class Laf8ExportJob extends ExportJob<Laf8ExportParameters> {
         List<Integer> pIds = exportParameters.getProben();
         List<Integer> mIds = exportParameters.getMessungen();
 
-        //Export and write to file
-        writeResultToFile(
-            exporter.exportProben(pIds, mIds, encoding));
+        try (Writer writer = createTmpFileWriter()) {
+            exporter.exportProben(pIds, mIds, writer);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
 
         logger.debug(String.format("Finished LAF export"));
     }
