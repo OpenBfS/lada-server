@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.importer.laf;
 
+import static de.intevation.lada.model.lada.Names.QUERY_DELETE_MEAS_VALS;
 import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
 import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
 
@@ -40,7 +41,6 @@ import de.intevation.lada.model.lada.CommSample_;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
@@ -650,13 +650,13 @@ public class LafObjectMapper {
         }
 
         // Validate / Create Status
-        if (!object.hasErrors()) {
-            if (object.getAttributes().containsKey("BEARBEITUNGSSTATUS")) {
-                createStatusProtokoll(
-                    object.getAttributes().get("BEARBEITUNGSSTATUS"),
-                    newMessung,
-                    probe.getMeasFacilId());
-            }
+        if (!object.hasErrors()
+            && object.getAttributes().containsKey("BEARBEITUNGSSTATUS")
+        ) {
+            createStatusProtokoll(
+                object.getAttributes().get("BEARBEITUNGSSTATUS"),
+                newMessung,
+                probe.getMeasFacilId());
         }
     }
 
@@ -986,38 +986,29 @@ public class LafObjectMapper {
         Measm messung,
         String mstId
     ) {
-        //check for warnings in Probeobject - if true prevent status 7
-        Boolean probeWarnings = true;
         Set<ReportItem> currentErrors = this.report.getErrors()
             .getOrDefault(currentSample.getIdentifier(), Set.of());
         Set<ReportItem> currentWarnings = this.report.getWarnings()
             .getOrDefault(currentSample.getIdentifier(), Set.of());
-        probeWarnings = currentWarnings.stream().anyMatch(
+        //check for warnings in sample - if true prevent status 7
+        boolean probeWarnings = currentWarnings.stream().anyMatch(
             elem -> (elem.getKey().equals("validation#probe")));
 
-        for (int i = 1; i <= 3; i++) {
-            if (status.substring(i - 1, i).equals("0")) {
+        for (int statusLev = 1; statusLev <= 3; statusLev++) {
+            int statusVal = Integer.parseInt(
+                status.substring(statusLev - 1, statusLev));
+            if (statusVal == 0) {
                 // no further status settings
                 return;
-            } else if (currentErrors.isEmpty() && currentWarnings.isEmpty()) {
-                if (!addStatusProtokollEntry(
-                        i,
-                        Integer.valueOf(status.substring(i - 1, i)),
-                        messung,
-                        mstId)
-                ) {
-                    return;
-                }
-            } else if (status.substring(i - 1, i).equals("7")
-                && !probeWarnings
+            }
+
+            if (currentErrors.isEmpty() && currentWarnings.isEmpty()
+                || statusVal == 7 && !probeWarnings
             ) {
                 if (!addStatusProtokollEntry(
-                        i,
-                        Integer.valueOf(status.substring(i - 1, i)),
-                        messung,
-                        mstId)
+                        statusLev, statusVal, messung, mstId)
                 ) {
-                    return;
+                    return; // Do not proceed to next statusLev
                 }
             } else {
                 addError(
@@ -1027,7 +1018,7 @@ public class LafObjectMapper {
                             ? messung.getMinSampleId()
                             : messung.getExtId()),
                         StatusCodes.VALUE_MISSING));
-                return;
+                return; // Do not proceed to next statusLev
             }
         }
     }
@@ -1083,39 +1074,24 @@ public class LafObjectMapper {
         }
 
         //Cleanup Messwerte for Status 7
-        QueryBuilder<MeasVal> builderMW = repository
-            .queryBuilder(MeasVal.class)
-            .and(MeasVal_.measm, messung);
-        List<MeasVal> messwerte =
-            repository.filter(builderMW.getQuery());
-        boolean hasValidMesswerte = false;
+        List<MeasVal> messwerte = messung.getMeasVals();
         if (!messwerte.isEmpty() && statusWert == 7) {
             for (MeasVal messwert: messwerte) {
-
-                boolean hasNoMesswert = false;
-
-                if (messwert.getMeasVal() == null
-                    && messwert.getLessThanLOD() == null) {
-                    hasNoMesswert = true;
-                }
-                if (!hasNoMesswert) {
-                    hasValidMesswerte = true;
+                if (!(messwert.getMeasVal() == null
+                        && messwert.getLessThanLOD() == null)
+                ) {
                     addWarning(
                         new ReportItem(
                             "status#" + statusStufe,
                             statusWert,
                             StatusCodes.STATUS_RO));
-                }
-                if (hasValidMesswerte) {
                     return false;
                 }
             }
-
-            if (statusWert == 7 && !hasValidMesswerte) {
-                for (MeasVal mv: messwerte) {
-                    repository.delete(mv);
-                }
-            }
+            messwerte.clear();
+            repository.entityManager().createNamedQuery(QUERY_DELETE_MEAS_VALS)
+                .setParameter(QUERY_MEASM_PARAM, messung)
+                .executeUpdate();
         }
 
         // Validator: StatusAssignment
@@ -1133,21 +1109,17 @@ public class LafObjectMapper {
         if (authorizer.isAuthorized(newStatus, RequestMethod.POST)) {
             //persist newStatus if authorized to do so
             repository.create(newStatus);
-            if (newKombi == 0 || newKombi == 9 || newKombi == 13) {
-                messung.setIsCompleted(false);
-            } else {
-                messung.setIsCompleted(true);
-            }
+
+            messung.setIsCompleted(
+                !(newKombi == 0 || newKombi == 9 || newKombi == 13));
             repository.update(messung);
             return true;
-        } else {
-            addWarning(
-                new ReportItem(
-                    "status#" + statusStufe,
-                    statusWert,
-                    StatusCodes.NOT_ALLOWED));
-            return false;
         }
+        addWarning(new ReportItem(
+                "status#" + statusStufe,
+                statusWert,
+                StatusCodes.NOT_ALLOWED));
+        return false;
     }
 
     private void createReiMesspunkt(LafRawData.Sample object, Sample probe) {
