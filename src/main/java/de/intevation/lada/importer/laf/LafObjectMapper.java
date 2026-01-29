@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
@@ -101,6 +100,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.groups.CreateErrors;
 import de.intevation.lada.validation.groups.Notifications;
+import de.intevation.lada.validation.groups.PostAuthorization;
 import de.intevation.lada.validation.groups.Warnings;
 
 /**
@@ -983,39 +983,15 @@ public class LafObjectMapper {
         Measm messung,
         String mstId
     ) {
-        Set<ReportItem> currentErrors = this.report.getErrors()
-            .getOrDefault(currentSample.getIdentifier(), Set.of());
-        Set<ReportItem> currentWarnings = this.report.getWarnings()
-            .getOrDefault(currentSample.getIdentifier(), Set.of());
-        //check for warnings in sample - if true prevent status 7
-        boolean probeWarnings = currentWarnings.stream().anyMatch(
-            elem -> (elem.getKey().equals("validation#probe")));
-
         for (int statusLev = 1; statusLev <= 3; statusLev++) {
             int statusVal = Integer.parseInt(
                 status.substring(statusLev - 1, statusLev));
-            if (statusVal == 0) {
+            if (statusVal == 0
+                || !addStatusProtokollEntry(
+                    statusLev, statusVal, messung, mstId)
+            ) {
                 // no further status settings
                 return;
-            }
-
-            if (currentErrors.isEmpty() && currentWarnings.isEmpty()
-                || statusVal == 7 && !probeWarnings
-            ) {
-                if (!addStatusProtokollEntry(
-                        statusLev, statusVal, messung, mstId)
-                ) {
-                    return; // Do not proceed to next statusLev
-                }
-            } else {
-                addError(
-                    new ReportItem(
-                        "Statusvergabe",
-                        "Status#" + (messung.getMinSampleId() != null
-                            ? messung.getMinSampleId()
-                            : messung.getExtId()),
-                        StatusCodes.VALUE_MISSING));
-                return; // Do not proceed to next statusLev
             }
         }
     }
@@ -1080,6 +1056,13 @@ public class LafObjectMapper {
 
         // check auth
         if (authorizer.isAuthorized(newStatus, RequestMethod.POST)) {
+            if (validator
+                .validate(newStatus, PostAuthorization.class).hasErrors()
+            ) {
+                validate(newStatus, "validation#status", false, true);
+                return false;
+            }
+
             //persist newStatus if authorized to do so
             repository.create(newStatus);
 
