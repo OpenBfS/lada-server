@@ -9,7 +9,6 @@ package de.intevation.lada.importer.laf;
 
 import static de.intevation.lada.model.lada.Names.QUERY_DELETE_MEAS_VALS;
 import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
-import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -87,8 +86,6 @@ import de.intevation.lada.model.master.SpatRefSys;
 import de.intevation.lada.model.master.SpatRefSys_;
 import de.intevation.lada.model.master.State;
 import de.intevation.lada.model.master.State_;
-import de.intevation.lada.model.master.StatusAccessMpView;
-import de.intevation.lada.model.master.StatusAccessMpView_;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.Tag_;
@@ -1048,30 +1045,6 @@ public class LafObjectMapper {
                     StatusCodes.IMP_INVALID_VALUE));
             return false;
         }
-        // get current status kombi
-        StatusMp currentKombi = repository.entityManager()
-            .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
-            .setParameter(QUERY_MEASM_PARAM, messung)
-            .getSingleResult();
-        // check if erreichbar
-        QueryBuilder<StatusAccessMpView> errFilter = repository
-            .queryBuilder(StatusAccessMpView.class)
-            .and(StatusAccessMpView_.statusLevId, statusStufe)
-            .and(StatusAccessMpView_.statusValId, statusWert)
-            .and(StatusAccessMpView_.curLevId,
-                currentKombi.getStatusLev().getId())
-            .and(StatusAccessMpView_.curValId,
-                currentKombi.getStatusVal().getId());
-        List<StatusAccessMpView> erreichbar =
-            repository.filter(errFilter.getQuery());
-        if (erreichbar.isEmpty()) {
-            addWarning(
-                new ReportItem(
-                    "status#" + statusStufe,
-                    statusWert,
-                    StatusCodes.IMP_INVALID_VALUE));
-            return false;
-        }
 
         //Cleanup Messwerte for Status 7
         List<MeasVal> messwerte = messung.getMeasVals();
@@ -1100,7 +1073,7 @@ public class LafObjectMapper {
         newStatus.setMeasFacilId(mstId);
         newStatus.setStatusMpId(newKombi);
 
-        validate(newStatus, "Status ");
+        validate(newStatus, "validation#status");
         if (newStatus.hasErrors() || newStatus.hasWarnings()) {
             return false;
         }
