@@ -30,5 +30,9 @@ public class Names {
     public static final String QUERY_MEASD_NAMES = "getMeasdNames";
     public static final String QUERY_PARAM_MEASD_NAMES = "ids";
 
+    public static final String QUERY_INSERT_USER_NAME = "insertUserName";
+    public static final String QUERY_LADA_USER_ID = "getLadaUserId";
+    public static final String QUERY_PARAM_USER_NAME = "name";
+
     private Names() { };
 }

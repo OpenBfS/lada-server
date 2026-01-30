@@ -8,6 +8,9 @@
 
 package de.intevation.lada.util.auth;
 
+import static de.intevation.lada.model.master.Names.QUERY_INSERT_USER_NAME;
+import static de.intevation.lada.model.master.Names.QUERY_LADA_USER_ID;
+import static de.intevation.lada.model.master.Names.QUERY_PARAM_USER_NAME;
 import static jakarta.security.enterprise.AuthenticationStatus.SEND_FAILURE;
 
 import java.io.IOException;
@@ -16,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 
 import jakarta.inject.Inject;
-import jakarta.persistence.NoResultException;
 import jakarta.security.enterprise.AuthenticationException;
 import jakarta.security.enterprise.AuthenticationStatus;
 import jakarta.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
@@ -27,8 +29,6 @@ import jakarta.transaction.Transactional;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.master.Auth;
 import de.intevation.lada.model.master.Auth_;
-import de.intevation.lada.model.master.LadaUser;
-import de.intevation.lada.model.master.LadaUser_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -81,20 +81,17 @@ public class Authentication implements HttpAuthenticationMechanism {
         List<Auth> auth = repository.filter(authBuilder.getQuery());
 
         // Query the user's ID or create a new one
-        QueryBuilder<LadaUser> uIdBuilder = repository
-            .queryBuilder(LadaUser.class)
-            .and(LadaUser_.name, user);
-        LadaUser ladaUser;
-        try {
-            ladaUser = repository.getSingle(uIdBuilder.getQuery());
-        } catch (NoResultException e) {
-            LadaUser newUser = new LadaUser();
-            newUser.setName(user);
-            ladaUser = repository.create(newUser);
-        }
+        repository.entityManager()
+            .createNamedQuery(QUERY_INSERT_USER_NAME)
+            .setParameter(QUERY_PARAM_USER_NAME, user)
+            .executeUpdate();
+        Integer userId = repository.entityManager()
+            .createNamedQuery(QUERY_LADA_USER_ID, Integer.class)
+            .setParameter(QUERY_PARAM_USER_NAME, user)
+            .getSingleResult();
 
         return ctx.notifyContainerAboutLogin(
-            new UserInfo(user, ladaUser.getId(), auth), rolesValue);
+            new UserInfo(user, userId, auth), rolesValue);
     }
 
     private Set<String> extractRoles(String roles) {

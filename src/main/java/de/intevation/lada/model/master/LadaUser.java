@@ -7,16 +7,29 @@
  */
 package de.intevation.lada.model.master;
 
+import static de.intevation.lada.model.master.Names.QUERY_INSERT_USER_NAME;
+import static de.intevation.lada.model.master.Names.QUERY_LADA_USER_ID;
+import static de.intevation.lada.model.master.Names.QUERY_PARAM_USER_NAME;
+
 import java.io.Serializable;
+
+import org.hibernate.annotations.processing.CheckHQL;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
+@CheckHQL
+@NamedQuery(name = QUERY_INSERT_USER_NAME, query =
+    "insert into LadaUser (name) VALUES (:"
+    + QUERY_PARAM_USER_NAME + ") on conflict do nothing")
+@NamedQuery(name = QUERY_LADA_USER_ID, query =
+    "select id from LadaUser where name = :" + QUERY_PARAM_USER_NAME)
 public class LadaUser implements Serializable {
     private static final long serialVersionUID = 1L;
 
