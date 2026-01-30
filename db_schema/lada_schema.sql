@@ -194,7 +194,7 @@ CREATE TABLE mpg (
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     appr_lab_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     regulation_id integer NOT NULL REFERENCES master.regulation,
-    opr_mode_id integer DEFAULT 1 REFERENCES master.opr_mode,
+    opr_mode_id integer NOT NULL DEFAULT 1 REFERENCES master.opr_mode,
     admin_unit_id character varying(8) REFERENCES master.admin_unit,
     env_descrip_display character varying(100) CHECK
         (env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),

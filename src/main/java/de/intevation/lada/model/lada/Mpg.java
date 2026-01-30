@@ -54,7 +54,6 @@ import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.ValidSamplePd;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import de.intevation.lada.validation.groups.Notifications;
-import de.intevation.lada.validation.groups.Warnings;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
@@ -100,7 +99,7 @@ public class Mpg extends BaseModel implements Serializable {
 
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = OprMode.class)
-    @NotNull(groups = Warnings.class)
+    @NotNull
     private Integer oprModeId;
 
     @NotNull
