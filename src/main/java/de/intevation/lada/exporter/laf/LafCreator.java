@@ -18,20 +18,14 @@ import jakarta.inject.Named;
 
 import de.intevation.lada.exporter.Creator;
 import de.intevation.lada.model.lada.CommMeasm;
-import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.CommSample;
-import de.intevation.lada.model.lada.CommSample_;
 import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.MeasUnit;
@@ -45,7 +39,6 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -104,27 +97,14 @@ public class LafCreator implements Creator {
     }
 
     private String writeAttributes(Sample probe, List<Integer> messungen) {
-        QueryBuilder<CommSample> kommBuilder = repository
-            .queryBuilder(CommSample.class)
-            .and(CommSample_.sample, probe);
-        List<CommSample> kommentare = repository.filter(
-            kommBuilder.getQuery());
-
         String probenart = null;
         if (probe.getSampleMethId() != null) {
             probenart = repository.getById(
                 SampleMeth.class, probe.getSampleMethId()).getExtId();
         }
 
-        MeasFacil messstelle =
-            repository.getById(
-                MeasFacil.class, probe.getMeasFacilId());
-
-        QueryBuilder<SampleSpecifMeasVal> zusatzBuilder = repository
-            .queryBuilder(SampleSpecifMeasVal.class)
-            .and(SampleSpecifMeasVal_.sample, probe);
-        List<SampleSpecifMeasVal> zusatzwerte =
-            repository.filter(zusatzBuilder.getQuery());
+        MeasFacil messstelle = repository.getById(
+            MeasFacil.class, probe.getMeasFacilId());
 
         String laf = "";
         laf += lafLine("PROBE_ID", probe.getExtId(), CN);
@@ -226,10 +206,10 @@ public class LafCreator implements Creator {
                 "REI_PROGRAMMPUNKTGRUPPE",
                 rpg.getName(), CN);
         }
-        for (SampleSpecifMeasVal zw : zusatzwerte) {
+        for (SampleSpecifMeasVal zw : probe.getSampleSpecifMeasVals()) {
             laf += writeZusatzwert(zw);
         }
-        for (CommSample kp : kommentare) {
+        for (CommSample kp : probe.getCommSamples()) {
             laf += writeKommentar(kp);
         }
         laf += writeOrt(probe);
@@ -253,10 +233,7 @@ public class LafCreator implements Creator {
     }
 
     private String writeOrt(Sample probe) {
-        QueryBuilder<Geolocat> builder = repository
-            .queryBuilder(Geolocat.class)
-            .and(Geolocat_.sample, probe);
-        List<Geolocat> orte = repository.filter(builder.getQuery());
+        List<Geolocat> orte = probe.getGeolocats();
 
         String laf = "";
         for (Geolocat o : orte) {
@@ -351,29 +328,17 @@ public class LafCreator implements Creator {
     }
 
     private String writeMessung(Sample probe, List<Integer> messungen) {
-        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
+        List<Measm> mess;
         if (messungen.isEmpty()) {
-            // Get all messungen
-            builder.and(Measm_.sample, probe);
+            mess = probe.getMeasms();
         } else {
-            builder.andIn(Measm_.id, messungen);
+            mess = repository.filter(repository.queryBuilder(Measm.class)
+                .andIn(Measm_.id, messungen).getQuery());
         }
-        List<Measm> mess = repository.filter(
-            builder.getQuery());
 
         String laf = "";
         for (Measm m : mess) {
             laf += "%MESSUNG%\n";
-            QueryBuilder<MeasVal> wertBuilder = repository
-                .queryBuilder(MeasVal.class)
-                .and(MeasVal_.measm, m);
-            List<MeasVal> werte = repository.filter(
-                wertBuilder.getQuery());
-            QueryBuilder<CommMeasm> kommBuilder = repository
-                .queryBuilder(CommMeasm.class)
-                .and(CommMeasm_.measm, m);
-            List<CommMeasm> kommentare = repository.filter(
-                kommBuilder.getQuery());
             laf += lafLine("MESSUNGS_ID", m.getExtId().toString());
             laf += m.getMinSampleId() == null
                 ? ""
@@ -393,11 +358,11 @@ public class LafCreator implements Creator {
                 (m.getIsCompleted() ? "1" : "0"));
             laf += lafLine("BEARBEITUNGSSTATUS", writeStatus(m));
             if (authorization.isAuthorized(m, RequestMethod.GET)) {
-                for (MeasVal mw : werte) {
+                for (MeasVal mw : m.getMeasVals()) {
                     laf += writeMesswert(mw);
                 }
             }
-            for (CommMeasm mk: kommentare) {
+            for (CommMeasm mk: m.getCommMeasms()) {
                 laf += writeKommentar(mk);
             }
         }
@@ -406,12 +371,9 @@ public class LafCreator implements Creator {
 
     private String writeStatus(Measm messung) {
         Integer[] status = {0, 0, 0};
-        QueryBuilder<StatusProt> builder =
-        repository.queryBuilder(StatusProt.class)
-        .and(StatusProt_.measm, messung)
-        .orderBy(StatusProt_.id, false);
-        List<StatusProt> statusHistory = repository.filter(
-                builder.getQuery());
+        // Status protocoll in descending order (newest first)
+        List<StatusProt> statusHistory =
+            messung.getStatusProts().reversed();
         Integer stufe = 4;
         Integer st, w;
         for (StatusProt statusEntry : statusHistory) {
