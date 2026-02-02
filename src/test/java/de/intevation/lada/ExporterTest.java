@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -499,7 +500,7 @@ public class ExporterTest extends ClientBaseTest {
             "hauptprobenNr,umwId,isTest,probeId,id,extId,statusMp,"
             + Measm_.MEAS_VALS_COUNT,
             "120510002,L6,No,1000,1200,453,MST - nicht vergeben,2",
-            "120510002,L6,No,1000,1201,454,MST - plausibel,0",
+            "120510002,L6,No,1000,1201,454,LST - Rückfrage,0",
             "\"12051,0001\",L6,Yes,1001,,,,",
             ",,Yes,1002,1202,1,MST - nicht vergeben,1");
     }
@@ -561,7 +562,7 @@ public class ExporterTest extends ClientBaseTest {
                     + "{\"" + Measm_.MEAS_VALS_COUNT + "\":2,\"extId\":453,"
                     + "\"statusMp\":\"MST - nicht vergeben\"},"
                     + "{\"" + Measm_.MEAS_VALS_COUNT + "\":0,\"extId\":454,"
-                    + "\"statusMp\":\"MST - plausibel\"}"
+                    + "\"statusMp\":\"LST - Rückfrage\"}"
                     + "]}}"
                 )).readObject(),
             runJSONExportTest(requestJson));
@@ -569,6 +570,7 @@ public class ExporterTest extends ClientBaseTest {
 
     private JsonObjectBuilder sampleSubDataRequest() {
         return requestJsonBuilder
+            .add("encoding", StandardCharsets.UTF_8.name())
             .add("idField", "probeId")
             .add("exportSubData", true)
             .add("subDataColumns", Json.createArrayBuilder()
@@ -617,6 +619,17 @@ public class ExporterTest extends ClientBaseTest {
         assertTrue(
             "Result unexpectedly does not contain a measVal:\n" + result,
             result.contains("MESSWERT"));
+
+        // Validate status protocol
+        String[] parts = result.split("%MESSUNG%");
+        hasExpectedLaf8Status(parts[1], "0000");
+        hasExpectedLaf8Status(parts[2], "1240");
+    }
+
+    private void hasExpectedLaf8Status(String measm, String expected) {
+        assertTrue("Measm does not have expected status: " + measm,
+            measm.lines().anyMatch(
+                l -> l.matches("BEARBEITUNGSSTATUS +" + expected)));
     }
 
     /**

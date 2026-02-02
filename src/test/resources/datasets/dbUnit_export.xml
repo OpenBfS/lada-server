@@ -331,6 +331,16 @@
         measm_id = "1201"
         status_mp_id = "2"
     />
+    <lada.status_prot
+        meas_facil_id = "06010"
+        measm_id = "1201"
+        status_mp_id = "7"
+    />
+    <lada.status_prot
+        meas_facil_id = "06010"
+        measm_id = "1201"
+        status_mp_id = "13"
+    />
     <lada.meas_val
         id = "1000"
         measm_id = "1200"
