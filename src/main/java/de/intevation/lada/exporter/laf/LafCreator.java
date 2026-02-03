@@ -75,11 +75,7 @@ public class LafCreator {
      * @return the string representation
      */
     public String createProbe(Integer probeId) {
-        String lafProbe = "%PROBE%\n";
-        lafProbe += lafLine("UEBERTRAGUNGSFORMAT", "7", CN);
-        lafProbe += lafLine("VERSION", "0084", CN);
-        lafProbe += probeToLAF(probeId, new ArrayList<Integer>());
-        return lafProbe;
+        return probeToLAF(probeId, new ArrayList<Integer>());
     }
 
     /**
@@ -90,16 +86,15 @@ public class LafCreator {
      * @return String representation
      */
     public String createMessung(Integer probeId, List<Integer> messungen) {
-        String lafProbe = "%PROBE%\n";
-        lafProbe += lafLine("UEBERTRAGUNGSFORMAT", "7", CN);
-        lafProbe += lafLine("VERSION", "0084", CN);
-        lafProbe += probeToLAF(probeId, messungen);
-        return lafProbe;
+        return probeToLAF(probeId, messungen);
     }
 
     private String probeToLAF(Integer probeId, List<Integer> messungen) {
         Sample aProbe = repository.getById(Sample.class, probeId);
-        String lafProbe = writeAttributes(aProbe, messungen);
+        String lafProbe = "%PROBE%\n";
+        lafProbe += lafLine("UEBERTRAGUNGSFORMAT", "7", CN);
+        lafProbe += lafLine("VERSION", "0084", CN);
+        lafProbe += writeAttributes(aProbe, messungen);
         return lafProbe;
     }
 
