@@ -14,9 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 
-import de.intevation.lada.exporter.Creator;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
@@ -50,8 +48,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Named("lafcreator")
-public class LafCreator implements Creator {
+public class LafCreator {
 
     private static final int MP6 = 6;
     private static final int BAID3 = 3;
@@ -72,7 +69,11 @@ public class LafCreator implements Creator {
     @Inject
     private Repository repository;
 
-    @Override
+    /**
+     * Create LAF8 string representation of a {@link Sample} object.
+     * @param probeId the id of the requested {@link Sample} object
+     * @return the string representation
+     */
     public String createProbe(Integer probeId) {
         String lafProbe = "%PROBE%\n";
         lafProbe += lafLine("UEBERTRAGUNGSFORMAT", "7", CN);
@@ -81,7 +82,13 @@ public class LafCreator implements Creator {
         return lafProbe;
     }
 
-    @Override
+    /**
+     * Create LAF8 string representation of a {@link Sample} object containing
+     * the {@link Measm} objects with given IDs.
+     * @param probeId The id of the {@link Sample} object
+     * @param messungen the list of {@link Measm} IDs
+     * @return String representation
+     */
     public String createMessung(Integer probeId, List<Integer> messungen) {
         String lafProbe = "%PROBE%\n";
         lafProbe += lafLine("UEBERTRAGUNGSFORMAT", "7", CN);
