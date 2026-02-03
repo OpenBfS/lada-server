@@ -15,6 +15,7 @@ import java.util.List;
 import jakarta.inject.Inject;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.data.Repository;
 
 
@@ -25,11 +26,8 @@ import de.intevation.lada.util.data.Repository;
  */
 public class Laf8Exporter {
 
-    /**
-     * The creator used to generate content.
-     */
     @Inject
-    private LafCreator creator;
+    private Authorization authorization;
 
     /**
      * The repository used to read data.
@@ -49,15 +47,18 @@ public class Laf8Exporter {
         List<Integer> messungen,
         Writer laf
     ) throws IOException {
-        for (Integer probeId: proben) {
-            laf.write(creator.createProbe(probeId));
+        try (LafCreator creator = new LafCreator(
+                authorization, repository, laf)
+        ) {
+            for (Integer probeId: proben) {
+                creator.createProbe(probeId);
+            }
+            for (Integer messungId: messungen) {
+                Measm m = repository.getById(Measm.class, messungId);
+                List<Integer> mList = new ArrayList<>();
+                mList.add(messungId);
+                creator.createMessung(m.getSample().getId(), mList);
+            }
         }
-        for (Integer messungId: messungen) {
-            Measm m = repository.getById(Measm.class, messungId);
-            List<Integer> mList = new ArrayList<>();
-            mList.add(messungId);
-            laf.write(creator.createMessung(m.getSample().getId(), mList));
-        }
-        laf.write("%ENDE%");
     }
 }
