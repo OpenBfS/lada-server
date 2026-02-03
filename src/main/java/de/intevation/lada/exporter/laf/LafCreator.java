@@ -64,6 +64,8 @@ public class LafCreator implements Closeable {
     private static final DateTimeFormatter DATE_FORMATTER =
         DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
 
+    private static final int MEAS_VAL_BUILDER_CAPACITY = 30;
+
     private Authorization authorization;
 
     private Repository repository;
@@ -231,14 +233,21 @@ public class LafCreator implements Closeable {
         SampleSpecif zusatz = repository.getById(
             SampleSpecif.class, zw.getSampleSpecifId());
 
-        String value = "\"" + zusatz.getId() + "\"";
-        value += ((zw.getSmallerThan() == null)
-            ? " "
-            : " " + zw.getSmallerThan());
-        value += zw.getMeasVal();
-        value += " " + ((zusatz.getMeasUnitId() == null)
-            ? "\"\"" : zusatz.getMeasUnitId());
-        value += " " + ((zw.getError() == null) ? "" : zw.getError());
+        StringBuilder value = new StringBuilder("\"")
+            .append(zusatz.getId())
+            .append("\" ");
+        if (zw.getSmallerThan() != null) {
+            value.append(zw.getSmallerThan());
+        }
+        value.append(zw.getMeasVal())
+            .append(" ")
+            .append(zusatz.getMeasUnitId() == null
+                ? "\"\""
+                : zusatz.getMeasUnitId());
+        if (zw.getError() != null) {
+            value.append(" ")
+                .append(zw.getError());
+        }
         lafLine("PZB_S", value);
     }
 
@@ -287,10 +296,9 @@ public class LafCreator implements Closeable {
                 gu.getSiteId(), CN);
         }
 
-        String koord = String.format("%02d", sOrt.getSpatRefSysId());
-        koord += " \"";
-        koord += sOrt.getCoordXExt() + "\" \"";
-        koord += sOrt.getCoordYExt() + "\"";
+        String koord = String.format("%02d", sOrt.getSpatRefSysId())
+            + " \"" + sOrt.getCoordXExt() + "\" \""
+            + sOrt.getCoordYExt() + "\"";
         lafLine(typePrefix + "KOORDINATEN_S", koord);
 
         if ("P_".equals(typePrefix) && o.getPoiId() != null) {
@@ -409,33 +417,38 @@ public class LafCreator implements Closeable {
     }
 
     private void writeMesswert(MeasVal mw) throws IOException {
-        String tag = "MESSWERT";
-        String value = "\"" + repository.getById(
-            Measd.class, mw.getMeasdId()).getName() + "\"";
-        value += " ";
-        value += mw.getLessThanLOD() == null ? " " : mw.getLessThanLOD();
-        value += mw.getLessThanLOD() == null
-            ? mw.getMeasVal() : mw.getDetectLim();
-
-        value += " \"" + repository.getById(
-            MeasUnit.class, mw.getMeasUnitId()).getUnitSymbol() + "\"";
-        value += mw.getError() == null ? " 0.0" : " " + mw.getError();
+        StringBuilder tag = new StringBuilder("MESSWERT");
+        StringBuilder value = new StringBuilder(MEAS_VAL_BUILDER_CAPACITY)
+            .append("\"")
+            .append(repository.getById(
+                    Measd.class, mw.getMeasdId()).getName())
+            .append("\" ")
+            .append(mw.getLessThanLOD() == null ? " " : mw.getLessThanLOD())
+            .append(mw.getLessThanLOD() == null
+                ? mw.getMeasVal() : mw.getDetectLim())
+            .append(" \"")
+            .append(repository.getById(
+                    MeasUnit.class, mw.getMeasUnitId()).getUnitSymbol())
+            .append("\" ")
+            .append(mw.getError() == null ? "0.0" : mw.getError());
         if (mw.getIsThreshold() == null
             || !mw.getIsThreshold()
         ) {
             if (mw.getDetectLim() != null) {
-                tag += "_NWG";
-                value += " " + mw.getDetectLim();
+                tag.append("_NWG");
+                value.append(" ")
+                    .append(mw.getDetectLim());
             }
         } else {
-            tag += "_NWG_G";
-            value += " "
-                + (mw.getDetectLim() == null
-                    ? "0.0" : mw.getDetectLim());
-            value += " " + (mw.getIsThreshold() == null
-                ? " N" : mw.getIsThreshold() ? " J" : " N");
+            tag.append("_NWG_G");
+            value.append(" ")
+                .append(mw.getDetectLim() == null
+                    ? "0.0" : mw.getDetectLim())
+                .append(" ")
+                .append(mw.getIsThreshold() == null || !mw.getIsThreshold()
+                    ? " N" : " J");
         }
-        lafLine(tag, value);
+        lafLine(tag.toString(), value);
     }
 
     private void lafLine(String key, Object value) throws IOException {
