@@ -61,6 +61,9 @@ public class LafCreator implements Closeable {
     private static final String DEFAULT_FORMAT = "%s";
     private static final String CN = "\"%s\""; // cn, mcn, scn
 
+    private static final DateTimeFormatter DATE_FORMATTER =
+        DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+
     private Authorization authorization;
 
     private Repository repository;
@@ -447,8 +450,7 @@ public class LafCreator implements Closeable {
     }
 
     private String toUTCString(Date timestamp) {
-        DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-        return formatter.format(timestamp.toInstant().atZone(ZoneOffset.UTC));
+        return DATE_FORMATTER.format(
+            timestamp.toInstant().atZone(ZoneOffset.UTC));
     }
 }
