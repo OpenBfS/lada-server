@@ -1,0 +1,44 @@
+%PROBE%
+UEBERTRAGUNGSFORMAT           "7"
+VERSION                       "0084"
+PROBE_ID                      "test1"
+DATENBASIS_S                  09
+NETZKENNUNG                   "06"
+MESSSTELLE                    "06010"
+MESSLABOR                     "06010"
+HAUPTPROBENNUMMER             "120510002"
+MESSPROGRAMM_S                "1"
+PROBENART                     "E"
+ZEITBASIS_S                   2
+SOLL_DATUM_UHRZEIT_A          20120501 1600
+SOLL_DATUM_UHRZEIT_E          20120505 1600
+PROBENAHME_DATUM_UHRZEIT_A    20120503 1307
+UMWELTBEREICH_S               "L6"
+DESKRIPTOREN                  "590401000505010200000000"
+TESTDATEN                     0
+MESSPROGRAMM_LAND             "MC1"
+PROBENAHMEINSTITUTION         "prn"
+REI_PROGRAMMPUNKTGRUPPE       "reiAgGr"
+PZB_S                         "A75" 12.0 1 8.0
+PROBENKOMMENTAR               "06010" 20120511 1201 "Testkommentar"
+%URSPRUNGSORT%
+U_HERKUNFTSLAND_S             00000000
+U_GEMEINDESCHLUESSEL          1000
+U_KOORDINATEN_S               04 "49.83021" "8.81948"
+%MESSUNG%
+MESSUNGS_ID                   453
+NEBENPROBENNUMMER             "T100"
+MESS_DATUM_UHRZEIT            20120506 1400
+MESSZEIT_SEKUNDEN             3600
+MESSMETHODE_S                 "A3"
+ERFASSUNG_ABGESCHLOSSEN       0
+BEARBEITUNGSSTATUS            0000
+MESSWERT                      "test1"  null "Sv" 0.0
+MESSWERT                      "test"  1.1 "Sv" 0.0
+KOMMENTAR                     "06010" 20120508 1100 "Testkommentar"
+%MESSUNG%
+MESSUNGS_ID                   454
+MESSMETHODE_S                 "A3"
+ERFASSUNG_ABGESCHLOSSEN       0
+BEARBEITUNGSSTATUS            1240
+%ENDE%

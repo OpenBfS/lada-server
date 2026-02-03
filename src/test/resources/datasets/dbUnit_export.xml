@@ -246,6 +246,7 @@
     />
     <lada.sample
         id = "1000"
+        ext_id = "test1"
         opr_mode_id = "1"
         regulation_id = "9"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
@@ -265,6 +266,7 @@
     />
     <lada.sample
         id = "1001"
+        ext_id = "test2"
         opr_mode_id = "1"
         regulation_id = "9"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
@@ -358,6 +360,7 @@
     <!-- Sample with unauthorized measVal -->
     <lada.sample
         id = "1002"
+        ext_id = "test3"
         is_test = "true"
         opr_mode_id = "1"
         regulation_id = "9"

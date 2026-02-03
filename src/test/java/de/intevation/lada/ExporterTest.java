@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
@@ -606,30 +607,31 @@ public class ExporterTest extends ClientBaseTest {
      */
     @Test
     public final void testAsyncLaf8ExportProbeById()
-        throws InterruptedException, CharacterCodingException {
+        throws IOException, InterruptedException, CharacterCodingException {
         final int probeId = 1000;
         JsonObject requestJson = requestJsonBuilder
             .add("proben", Json.createArrayBuilder().add(probeId))
             .build();
 
-        String result = runExportTest(formatLaf, requestJson);
-        assertTrue(
-            "Unexpected LAF content: " + result,
-            result.startsWith("%PROBE%") && result.endsWith("%ENDE%"));
-        assertTrue(
-            "Result unexpectedly does not contain a measVal:\n" + result,
-            result.contains("MESSWERT"));
+        List<String> resultLines = runExportTest(formatLaf, requestJson)
+            .lines().toList();
+        assertEquals("Missing sample start tag",
+            "%PROBE%", resultLines.get(0));
 
-        // Validate status protocol
-        String[] parts = result.split("%MESSUNG%");
-        hasExpectedLaf8Status(parts[1], "0000");
-        hasExpectedLaf8Status(parts[2], "1240");
-    }
+        List<String> expectedLines = new String(
+            this.getClass().getClassLoader().getResourceAsStream(
+                "datasets/expected.laf").readAllBytes(),
+            StandardCharsets.UTF_8).lines().toList();
 
-    private void hasExpectedLaf8Status(String measm, String expected) {
-        assertTrue("Measm does not have expected status: " + measm,
-            measm.lines().anyMatch(
-                l -> l.matches("BEARBEITUNGSSTATUS +" + expected)));
+        // Verify end tag is at expected line/result has expected line count
+        int nLines = expectedLines.size();
+        assertEquals("End tag expected at line " + nLines,
+            "%ENDE%", resultLines.get(nLines - 1));
+
+        // Verify result has all expected lines (order may differ)
+        MatcherAssert.assertThat(
+            resultLines,
+            CoreMatchers.hasItems(expectedLines.toArray(String[]::new)));
     }
 
     /**
