@@ -628,10 +628,10 @@ public class ExporterTest extends ClientBaseTest {
         assertEquals("End tag expected at line " + nLines,
             "%ENDE%", resultLines.get(nLines - 1));
 
-        // Verify result has all expected lines (order may differ)
-        MatcherAssert.assertThat(
-            resultLines,
-            CoreMatchers.hasItems(expectedLines.toArray(String[]::new)));
+        // Verify result has all other expected lines (order may differ)
+        for (String line : expectedLines.subList(1, nLines - 2)) {
+            MatcherAssert.assertThat(resultLines, CoreMatchers.hasItem(line));
+        }
     }
 
     /**
