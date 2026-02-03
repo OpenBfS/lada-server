@@ -134,8 +134,7 @@ public class LafCreator implements Closeable {
     private void writeAttributes(Sample probe, List<Integer> messungen)
         throws IOException {
         lafLine("PROBE_ID", probe.getExtId(), CN);
-        lafLine("DATENBASIS_S",
-            String.format("%02d", probe.getRegulationId()));
+        lafLine("DATENBASIS_S", probe.getRegulationId(), "%02d");
         lafLine("NETZKENNUNG", repository.getById(
                 MeasFacil.class, probe.getMeasFacilId()).getNetworkId(), CN);
         lafLine("MESSSTELLE", probe.getMeasFacilId(), CN);
@@ -151,13 +150,11 @@ public class LafCreator implements Closeable {
             } else if (probe.getOprModeId() == BAID3) {
                 lafLine("MESSPROGRAMM_S", MP6, CN);
             } else {
-                lafLine("MESSPROGRAMM_S",
-                    "\"" + (char) probe.getOprModeId().intValue() + "\"");
+                lafLine("MESSPROGRAMM_S", probe.getOprModeId(), CN);
             }
         } else {
             if (probe.getOprModeId() > BAID3) {
-                lafLine("MESSPROGRAMM_S", "\""
-                    + (char) probe.getOprModeId().intValue() + "\"");
+                lafLine("MESSPROGRAMM_S", probe.getOprModeId(), CN);
             } else if (probe.getOprModeId() == BAID3) {
                 lafLine("MESSPROGRAMM_S", 2, CN);
             } else {
@@ -270,8 +267,7 @@ public class LafCreator implements Closeable {
         Site sOrt = o.getSite();
 
         if (sOrt.getStateId() != null) {
-            lafLine(typePrefix + "HERKUNFTSLAND_S",
-                String.format("%08d", sOrt.getStateId()));
+            lafLine(typePrefix + "HERKUNFTSLAND_S", sOrt.getStateId(), "%08d");
         }
 
         if (sOrt.getAdminUnitId() != null
@@ -344,7 +340,7 @@ public class LafCreator implements Closeable {
 
         for (Measm m : mess) {
             sink.write("%MESSUNG%\n");
-            lafLine("MESSUNGS_ID", m.getExtId().toString());
+            lafLine("MESSUNGS_ID", m.getExtId());
             if (m.getMinSampleId() != null) {
                 lafLine("NEBENPROBENNUMMER", m.getMinSampleId(), CN);
             }
@@ -353,7 +349,7 @@ public class LafCreator implements Closeable {
                     "MESS_DATUM_UHRZEIT", toUTCString(m.getMeasmStartDate()));
             }
             if (m.getMeasPd() != null) {
-                lafLine("MESSZEIT_SEKUNDEN", m.getMeasPd().toString());
+                lafLine("MESSZEIT_SEKUNDEN", m.getMeasPd());
             }
             lafLine("MESSMETHODE_S", m.getMmtId(), CN);
             lafLine(
@@ -439,7 +435,7 @@ public class LafCreator implements Closeable {
         lafLine(tag, value);
     }
 
-    private void lafLine(String key, String value) throws IOException {
+    private void lafLine(String key, Object value) throws IOException {
         lafLine(key, value, DEFAULT_FORMAT);
     }
 
