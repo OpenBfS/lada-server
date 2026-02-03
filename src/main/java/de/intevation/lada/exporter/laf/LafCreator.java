@@ -97,60 +97,41 @@ public class LafCreator implements Creator {
     }
 
     private String writeAttributes(Sample probe, List<Integer> messungen) {
-        String probenart = null;
-        if (probe.getSampleMethId() != null) {
-            probenart = repository.getById(
-                SampleMeth.class, probe.getSampleMethId()).getExtId();
-        }
-
-        MeasFacil messstelle = repository.getById(
-            MeasFacil.class, probe.getMeasFacilId());
-
         String laf = "";
         laf += lafLine("PROBE_ID", probe.getExtId(), CN);
-        laf += probe.getRegulationId() == null
-            ? ""
-            : lafLine("DATENBASIS_S",
-                String.format("%02d", probe.getRegulationId()));
-        laf += messstelle == null
-            ? ""
-            : lafLine("NETZKENNUNG", messstelle.getNetworkId(), CN);
-        laf += probe.getMeasFacilId() == null
-            ? ""
-            : lafLine("MESSSTELLE", probe.getMeasFacilId(), CN);
-        laf += probe.getApprLabId() == null
-            ? ""
-            : lafLine("MESSLABOR", probe.getApprLabId(), CN);
+        laf += lafLine("DATENBASIS_S",
+            String.format("%02d", probe.getRegulationId()));
+        laf += lafLine("NETZKENNUNG", repository.getById(
+                MeasFacil.class, probe.getMeasFacilId()).getNetworkId(), CN);
+        laf += lafLine("MESSSTELLE", probe.getMeasFacilId(), CN);
+        laf += lafLine("MESSLABOR", probe.getApprLabId(), CN);
         laf += probe.getMainSampleId() == null
             ? ""
             : lafLine("HAUPTPROBENNUMMER", probe.getMainSampleId(), CN);
-        if (probe.getOprModeId() != null && probe.getRegulationId() != null) {
-            if (probe.getRegulationId() == DATENBASIS4) {
-                if (probe.getOprModeId() == 1) {
-                    laf += lafLine("MESSPROGRAMM_S", MP4, CN);
-                } else if (probe.getOprModeId() == 2) {
-                    laf += lafLine("MESSPROGRAMM_S", MP5, CN);
-                } else if (probe.getOprModeId() == BAID3) {
-                    laf += lafLine("MESSPROGRAMM_S", MP6, CN);
-                } else {
-                    laf += lafLine("MESSPROGRAMM_S",
-                        "\"" + (char) probe.getOprModeId().intValue() + "\"");
-                }
+        if (probe.getRegulationId() == DATENBASIS4) {
+            if (probe.getOprModeId() == 1) {
+                laf += lafLine("MESSPROGRAMM_S", MP4, CN);
+            } else if (probe.getOprModeId() == 2) {
+                laf += lafLine("MESSPROGRAMM_S", MP5, CN);
+            } else if (probe.getOprModeId() == BAID3) {
+                laf += lafLine("MESSPROGRAMM_S", MP6, CN);
             } else {
-                if (probe.getOprModeId() > BAID3) {
-                    laf +=
-                        lafLine("MESSPROGRAMM_S", "\""
-                            + (char) probe.getOprModeId().intValue() + "\"");
-                } else if (probe.getOprModeId() == BAID3) {
-                    laf += lafLine("MESSPROGRAMM_S", 2, CN);
-                } else {
-                    laf += lafLine("MESSPROGRAMM_S", probe.getOprModeId(), CN);
-                }
+                laf += lafLine("MESSPROGRAMM_S",
+                    "\"" + (char) probe.getOprModeId().intValue() + "\"");
+            }
+        } else {
+            if (probe.getOprModeId() > BAID3) {
+                laf +=
+                    lafLine("MESSPROGRAMM_S", "\""
+                        + (char) probe.getOprModeId().intValue() + "\"");
+            } else if (probe.getOprModeId() == BAID3) {
+                laf += lafLine("MESSPROGRAMM_S", 2, CN);
+            } else {
+                laf += lafLine("MESSPROGRAMM_S", probe.getOprModeId(), CN);
             }
         }
-        laf += probe.getSampleMethId() == null
-            ? ""
-            : lafLine("PROBENART", probenart, CN);
+        laf += lafLine("PROBENART", repository.getById(
+                SampleMeth.class, probe.getSampleMethId()).getExtId(), CN);
         laf += lafLine("ZEITBASIS_S", "2");
         laf += probe.getSchedStartDate() == null
             ? ""
@@ -254,9 +235,7 @@ public class LafCreator implements Creator {
 
     private String writeOrtData(Geolocat o, String typePrefix) {
         String laf = "";
-        if (o.getAddSiteText() != null
-            && o.getAddSiteText().length() > 0
-        ) {
+        if (o.getAddSiteText() != null) {
             laf += lafLine(typePrefix + "ORTS_ZUSATZTEXT",
                 o.getAddSiteText(), CN);
         }
@@ -350,9 +329,7 @@ public class LafCreator implements Creator {
             laf += m.getMeasPd() == null
                 ? ""
                 : lafLine("MESSZEIT_SEKUNDEN", m.getMeasPd().toString());
-            laf += m.getMmtId() == null
-                ? ""
-                : lafLine("MESSMETHODE_S", m.getMmtId(), CN);
+            laf += lafLine("MESSMETHODE_S", m.getMmtId(), CN);
             laf += lafLine(
                 "ERFASSUNG_ABGESCHLOSSEN",
                 (m.getIsCompleted() ? "1" : "0"));
