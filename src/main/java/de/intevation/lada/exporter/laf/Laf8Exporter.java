@@ -9,7 +9,6 @@ package de.intevation.lada.exporter.laf;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -51,13 +50,12 @@ public class Laf8Exporter {
                 authorization, repository, laf)
         ) {
             for (Integer probeId: proben) {
-                creator.createProbe(probeId);
+                Sample sample = repository.getById(Sample.class, probeId);
+                creator.sampleToLAF(sample, sample.getMeasms());
             }
             for (Integer messungId: messungen) {
                 Measm m = repository.getById(Measm.class, messungId);
-                List<Integer> mList = new ArrayList<>();
-                mList.add(messungId);
-                creator.createMessung(m.getSample().getId(), mList);
+                creator.sampleToLAF(m.getSample(), List.of(m));
             }
         }
     }

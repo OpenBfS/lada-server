@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.StatusProt;
@@ -86,30 +84,6 @@ public class LafCreator implements Closeable {
         this.closed = false;
     }
 
-    /**
-     * Write LAF8 string representation of a {@link Sample} object
-     * to {@code sink}.
-     * @param probeId the id of the requested {@link Sample} object
-     * @throws IOException if underlying {@link Writer} throws
-     * {@link IOException}
-     */
-    public void createProbe(Integer probeId) throws IOException {
-        probeToLAF(probeId, new ArrayList<Integer>());
-    }
-
-    /**
-     * Write LAF8 string representation of a {@link Sample} object containing
-     * the {@link Measm} objects with given IDs to {@code sink}.
-     * @param probeId The id of the {@link Sample} object
-     * @param messungen the list of {@link Measm} IDs
-     * @throws IOException if underlying {@link Writer} throws
-     * {@link IOException}
-     */
-    public void createMessung(Integer probeId, List<Integer> messungen)
-        throws IOException {
-        probeToLAF(probeId, messungen);
-    }
-
     @Override
     public void close() throws IOException {
         this.closed = true;
@@ -117,27 +91,37 @@ public class LafCreator implements Closeable {
         sink.close();
     }
 
-    private void probeToLAF(Integer probeId, List<Integer> messungen)
-        throws IOException {
+    /**
+     * Write LAF8 string representation of a {@link Sample} object
+     * with given {@link Measm} objects to {@code sink}.
+     * @param aProbe the requested {@link Sample} object
+     * @param measms the {@link Measm} objects to be included in the LAF8
+     * representation of the {@link Sample}
+     * @throws IOException if underlying {@link Writer} throws
+     * {@link IOException}
+     */
+    public void sampleToLAF(
+        Sample aProbe, List<Measm> measms
+    ) throws IOException {
         if (this.closed) {
             throw new IllegalStateException(
                 this.getClass().getName() + " closed");
         }
 
-        Sample aProbe = repository.getById(Sample.class, probeId);
         try {
             sink.write("%PROBE%\n");
             lafLine("UEBERTRAGUNGSFORMAT", "7", CN);
             lafLine("VERSION", "0084", CN);
-            writeAttributes(aProbe, messungen);
+            writeAttributes(aProbe, measms);
         } catch (IOException e) {
             this.close();
             throw e;
         }
     }
 
-    private void writeAttributes(Sample probe, List<Integer> messungen)
-        throws IOException {
+    private void writeAttributes(
+        Sample probe, List<Measm> measms
+    ) throws IOException {
         lafLine("PROBE_ID", probe.getExtId(), CN);
         lafLine("DATENBASIS_S", probe.getRegulationId(), "%02d");
         lafLine("NETZKENNUNG", repository.getById(
@@ -226,7 +210,7 @@ public class LafCreator implements Closeable {
             writeKommentar(kp);
         }
         writeOrt(probe);
-        writeMessung(probe, messungen);
+        writeMessung(probe, measms);
     }
 
     private void writeZusatzwert(SampleSpecifMeasVal zw) throws IOException {
@@ -339,16 +323,8 @@ public class LafCreator implements Closeable {
         lafLine("PROBENKOMMENTAR", value);
     }
 
-    private void writeMessung(Sample probe, List<Integer> messungen)
+    private void writeMessung(Sample probe, List<Measm> mess)
         throws IOException {
-        List<Measm> mess;
-        if (messungen.isEmpty()) {
-            mess = probe.getMeasms();
-        } else {
-            mess = repository.filter(repository.queryBuilder(Measm.class)
-                .andIn(Measm_.id, messungen).getQuery());
-        }
-
         for (Measm m : mess) {
             sink.write("%MESSUNG%\n");
             lafLine("MESSUNGS_ID", m.getExtId());
