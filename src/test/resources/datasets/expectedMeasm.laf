@@ -1,0 +1,18 @@
+%PROBE%
+UEBERTRAGUNGSFORMAT           "7"
+VERSION                       "0084"
+PROBE_ID                      "test3"
+DATENBASIS_S                  09
+NETZKENNUNG                   "11"
+MESSSTELLE                    "01110"
+MESSLABOR                     "01110"
+MESSPROGRAMM_S                "1"
+PROBENART                     "E"
+ZEITBASIS_S                   2
+TESTDATEN                     1
+%MESSUNG%
+MESSUNGS_ID                   1
+MESSMETHODE_S                 "A3"
+ERFASSUNG_ABGESCHLOSSEN       0
+BEARBEITUNGSSTATUS            0000
+%ENDE%

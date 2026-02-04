@@ -612,7 +612,26 @@ public class ExporterTest extends ClientBaseTest {
         JsonObject requestJson = requestJsonBuilder
             .add("proben", Json.createArrayBuilder().add(probeId))
             .build();
+        assertLaf8Equals(requestJson, "datasets/expected.laf");
+    }
 
+    /**
+     * Test asynchronous LAF 8.4 export of a
+     * {@link de.intevation.lada.model.lada.Measm} identified by ID.
+     */
+    @Test
+    public final void testAsyncLaf8ExportMeasmById()
+        throws IOException, InterruptedException {
+        final int measmId = 1202;
+        JsonObject requestJson = requestJsonBuilder
+            .add("messungen", Json.createArrayBuilder().add(measmId))
+            .build();
+        assertLaf8Equals(requestJson, "datasets/expectedMeasm.laf");
+    }
+
+    private void assertLaf8Equals(
+        JsonObject requestJson, String expectedResultPath
+    ) throws InterruptedException, IOException {
         List<String> resultLines = runExportTest(formatLaf, requestJson)
             .lines().toList();
         assertEquals("Missing sample start tag",
@@ -620,7 +639,7 @@ public class ExporterTest extends ClientBaseTest {
 
         List<String> expectedLines = new String(
             this.getClass().getClassLoader().getResourceAsStream(
-                "datasets/expected.laf").readAllBytes(),
+                expectedResultPath).readAllBytes(),
             StandardCharsets.UTF_8).lines().toList();
 
         // Verify end tag is at expected line/result has expected line count
