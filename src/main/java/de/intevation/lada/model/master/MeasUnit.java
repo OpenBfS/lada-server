@@ -12,7 +12,6 @@ import java.util.List;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -34,7 +33,7 @@ public class MeasUnit implements Serializable {
     /**
      * Unit conversions for units that can be converted into this one.
      */
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
     @JoinColumn(name = "to_unit_id")
     @JsonbTransient
     @SuppressWarnings("serial")

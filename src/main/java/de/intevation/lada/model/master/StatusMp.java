@@ -10,7 +10,6 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -23,12 +22,10 @@ public class StatusMp implements Serializable {
     @Id
     private Integer id;
 
-    //bi-directional many-to-one association to StatusStufe
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private StatusLev statusLev;
 
-    //bi-directional many-to-one association to StatusWert
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private StatusVal statusVal;
 
     public StatusMp() {

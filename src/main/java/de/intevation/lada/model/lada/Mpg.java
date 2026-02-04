@@ -10,6 +10,8 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.hibernate.annotations.Formula;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -18,10 +20,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -203,12 +203,7 @@ public class Mpg extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String sampleQuant;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "mpg_id", insertable = false, updatable = false)
-    @SuppressWarnings("serial")
-    private Set<Sample> samples;
-
-    @ManyToMany (fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         schema = Names.SCHEMA_NAME,
         inverseJoinColumns = @JoinColumn(name = "sample_specif_id")
@@ -217,7 +212,9 @@ public class Mpg extends BaseModel implements Serializable {
     @SuppressWarnings("serial")
     private Set<SampleSpecif> sampleSpecifs;
 
-    @Transient
+    @Formula("""
+        (SELECT count(*) FROM lada.sample s WHERE {alias}.id = s.mpg_id)
+        """)
     private int referenceCount;
 
     public Mpg() {
@@ -431,13 +428,7 @@ public class Mpg extends BaseModel implements Serializable {
         this.sampleSpecifs = sampleSpecifs;
     }
 
-    /**
-     * @return The number of Sample objects referencing this Messprogramm.
-     */
     public int getReferenceCount() {
-        if (this.samples != null) {
-            return this.samples.size();
-        }
-        return 0;
+        return this.referenceCount;
     }
 }

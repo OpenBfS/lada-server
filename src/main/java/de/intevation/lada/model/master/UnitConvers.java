@@ -11,7 +11,6 @@ import java.io.Serializable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -27,7 +26,7 @@ public class UnitConvers implements Serializable {
     @Column(insertable = false, updatable = false)
     private Integer fromUnitId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private MeasUnit fromUnit;
 
     private Integer toUnitId;
