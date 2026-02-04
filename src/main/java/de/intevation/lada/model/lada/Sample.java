@@ -21,7 +21,6 @@ import jakarta.enterprise.inject.spi.CDI;
 import jakarta.json.bind.annotation.JsonbCreator;
 import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.json.bind.annotation.JsonbTransient;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -33,6 +32,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
+
+import static jakarta.persistence.CascadeType.DETACH;
+import static jakarta.persistence.CascadeType.MERGE;
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REFRESH;
+import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
@@ -230,7 +235,7 @@ public class Sample extends BaseModel
 
     @OneToMany(
         mappedBy = Measm_.SAMPLE,
-        cascade = CascadeType.REMOVE,
+        cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @SuppressWarnings("serial")
@@ -238,10 +243,7 @@ public class Sample extends BaseModel
 
     /* Work around the fact that hibernate does not provide means to have
        a ManyToMany association without cascading to the link table */
-    @OneToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.REFRESH},
+    @OneToMany(cascade = { PERSIST, MERGE, REFRESH, DETACH },
         fetch = FetchType.EAGER)
     @JoinColumn(name = "sample_id", insertable = false, updatable = false)
     @JsonbTransient
@@ -252,21 +254,21 @@ public class Sample extends BaseModel
     private List<Tag> tags;
 
     @OneToMany(mappedBy = CommSample_.SAMPLE,
-        cascade = CascadeType.REMOVE,
+        cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @SuppressWarnings("serial")
     private List<CommSample> commSamples;
 
     @OneToMany(mappedBy = SampleSpecifMeasVal_.SAMPLE,
-        cascade = CascadeType.REMOVE,
+        cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @SuppressWarnings("serial")
     private List<SampleSpecifMeasVal> sampleSpecifMeasVals;
 
     @OneToMany(mappedBy = Geolocat_.SAMPLE,
-        cascade = CascadeType.REMOVE,
+        cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @SuppressWarnings("serial")

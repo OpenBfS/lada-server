@@ -18,7 +18,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import jakarta.json.bind.annotation.JsonbTransient;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,6 +30,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
+
+import static jakarta.persistence.CascadeType.DETACH;
+import static jakarta.persistence.CascadeType.MERGE;
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REFRESH;
+import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
@@ -123,7 +128,7 @@ public class Measm extends BelongsToSample
     private String minSampleId;
 
     @OneToMany(mappedBy = StatusProt_.MEASM,
-        cascade = CascadeType.REMOVE,
+        cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OrderBy(StatusProt_.SEQ_NO)
@@ -131,14 +136,14 @@ public class Measm extends BelongsToSample
     private List<StatusProt> statusProts;
 
     @OneToMany(mappedBy = CommMeasm_.MEASM,
-        cascade = CascadeType.REMOVE,
+        cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @SuppressWarnings("serial")
     private List<CommMeasm> commMeasms;
 
     @OneToMany(mappedBy = MeasVal_.MEASM,
-        cascade = CascadeType.REMOVE,
+        cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @SuppressWarnings("serial")
@@ -146,10 +151,7 @@ public class Measm extends BelongsToSample
 
     /* Work around the fact that hibernate does not provide means to have
     a ManyToMany association without cascading to the link table */
-    @OneToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.REFRESH},
+    @OneToMany(cascade = { PERSIST, MERGE, REFRESH, DETACH },
         fetch = FetchType.EAGER)
     @JoinColumn(name = "measm_id", insertable = false, updatable = false)
     @JsonbTransient

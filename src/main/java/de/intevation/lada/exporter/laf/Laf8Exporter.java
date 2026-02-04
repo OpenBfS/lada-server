@@ -52,10 +52,20 @@ public class Laf8Exporter {
             for (Integer probeId: proben) {
                 Sample sample = repository.getById(Sample.class, probeId);
                 creator.sampleToLAF(sample, sample.getMeasms());
+                // Free persistence context memory
+                repository.entityManager().detach(sample);
             }
+            Sample previousSample = null;
             for (Integer messungId: messungen) {
                 Measm m = repository.getById(Measm.class, messungId);
-                creator.sampleToLAF(m.getSample(), List.of(m));
+                Sample sample = m.getSample();
+                if (previousSample != null && !sample.equals(previousSample)) {
+                    /* Free persistence context memory, assuming IDs in
+                       messungen are grouped by sample */
+                    repository.entityManager().detach(previousSample);
+                }
+                creator.sampleToLAF(sample, List.of(m));
+                previousSample = sample;
             }
         }
     }
