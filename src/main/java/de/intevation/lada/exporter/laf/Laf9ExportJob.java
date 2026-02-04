@@ -11,7 +11,9 @@ package de.intevation.lada.exporter.laf;
 import static de.intevation.lada.util.rest.JSONBConfig.JSONB;
 import static de.intevation.lada.util.rest.RequestMethod.GET;
 
-import java.util.List;
+import java.util.Iterator;
+
+import org.hibernate.jpa.AvailableHints;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -33,6 +35,8 @@ import de.intevation.lada.exporter.ExportJob;
  */
 public class Laf9ExportJob extends ExportJob<LafExportParameters> {
 
+    private static final int FETCH_SIZE = 10;
+
     @Inject
     private Repository repository;
 
@@ -49,16 +53,22 @@ public class Laf9ExportJob extends ExportJob<LafExportParameters> {
      */
     @Override
     public void runWithTx() {
-        // TODO: stream to file
-        List<Sample> samples = repository.filter(repository
-            .queryBuilder(Sample.class)
-            .andIn(Sample_.id, exportParameters.getProben())
-            .getQuery());
+        // Load requested samples in batches
+        Iterator<Sample> samples = repository.entityManager()
+            .createQuery(repository
+                .queryBuilder(Sample.class)
+                .andIn(Sample_.id, exportParameters.getProben())
+                .getQuery())
+            .setHint(AvailableHints.HINT_FETCH_SIZE, FETCH_SIZE)
+            .getResultStream()
+            .iterator();
 
         try (JsonGenerator generator = Json.createGenerator(
                 createTmpFileWriter())) {
             generator.writeStartArray();
-            for (Sample sample : samples) {
+            while (samples.hasNext()) {
+                Sample sample = samples.next();
+
                 // Remove unauthorized measVals from result
                 JsonArrayBuilder measmArrayBuilder = Json.createArrayBuilder();
                 for (Measm measm : sample.getMeasms()) {
@@ -72,6 +82,9 @@ public class Laf9ExportJob extends ExportJob<LafExportParameters> {
                     .add(Sample_.MEASMS, measmArrayBuilder);
 
                 generator.write(sampleBuilder.build());
+
+                // Free persistence context memory
+                repository.entityManager().detach(sample);
             }
             generator.writeEnd();
         }
