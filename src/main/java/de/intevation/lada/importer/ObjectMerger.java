@@ -220,6 +220,7 @@ public class ObjectMerger {
         for (MeasVal m: measVals) {
             m.setMeasm(target);
             repository.create(m);
+            target.getMeasVals().add(m);
         }
         return this;
     }

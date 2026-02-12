@@ -106,8 +106,6 @@ public abstract class ValidDependenciesValidator {
                         warnings,
                         notifications);
                 }
-            } else if (newStatusWert != 7) {
-                addError("measVal", StatusCodes.VALUE_MISSING, errors);
             }
 
             // Validate sites

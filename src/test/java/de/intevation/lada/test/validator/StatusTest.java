@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.validation.groups.PostAuthorization;
@@ -121,14 +122,16 @@ public class StatusTest extends ValidatorBaseTest {
         assertHasErrors(
             validator.validate(status, PostAuthorization.class),
             MSG_KEY,
-            "Operation not possible due to constraint violations\n"
-            + "Errors:\n"
-            + "- measVal: [631]\n"
-            + "Warnings:\n"
-            + "- measmStartDate: [A value must be provided]\n"
-            + "Notifications:\n"
-            + "- minSampleId: [No value provided]"
-        );
+            String.format(
+                "Operation not possible due to constraint violations\n"
+                + "Warnings:\n"
+                + "- %s: [must not be empty]\n"
+                + "- %s: [A value must be provided]\n"
+                + "Notifications:\n"
+                + "- %s: [No value provided]",
+                Measm_.MEAS_VALS,
+                Measm_.MEASM_START_DATE,
+                Measm_.MIN_SAMPLE_ID));
     }
 
     /**

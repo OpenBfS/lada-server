@@ -40,6 +40,7 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
@@ -146,6 +147,7 @@ public class Measm extends BelongsToSample
         cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotEmpty(groups = Warnings.class)
     @SuppressWarnings("serial")
     private List<MeasVal> measVals;
 
