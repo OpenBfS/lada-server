@@ -10,10 +10,13 @@ package de.intevation.lada.test.land;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.junit.Assert;
 
 import de.intevation.lada.model.lada.StatusProt_;
+import de.intevation.lada.rest.MeasValService;
+import de.intevation.lada.rest.StatusProtService;
 import de.intevation.lada.test.ServiceTest;
 
 
@@ -22,6 +25,11 @@ import de.intevation.lada.test.ServiceTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class StatusTest extends ServiceTest {
+
+    private static final UriBuilder URL = UriBuilder.fromResource(
+        StatusProtService.class);
+    private static final UriBuilder MEAS_VAL_URL = UriBuilder.fromResource(
+        MeasValService.class);
 
     private JsonObject create;
     private JsonObject reset;
@@ -47,17 +55,17 @@ public class StatusTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        final String url = "rest/statusprot/";
         final int expectedMeasmId = 1200;
-        int id = get(url + "?measmId=" + expectedMeasmId).asJsonArray()
-            .getJsonObject(0).getInt("id");
+        int id = get(URL.clone().queryParam("measmId", expectedMeasmId))
+            .asJsonArray().getJsonObject(0).getInt("id");
 
-        getById(url + id,
+        getById(URL.clone().path(String.valueOf(id)).build().toString(),
             Json.createObjectBuilder()
             .add("measmId", expectedMeasmId)
             .add(StatusProt_.STATUS_MP_ID, 1)
             .build());
 
+        final String url = URL.build().toString();
         create(url, create);
         create(url, reset);
 
@@ -81,7 +89,7 @@ public class StatusTest extends ServiceTest {
     }
 
     private boolean hasMeasVals(int measmId) {
-        return !get("rest/measval?measmId=" + measmId)
+        return !get(MEAS_VAL_URL.clone().queryParam("measmId", measmId))
             .asJsonArray().isEmpty();
     }
 }

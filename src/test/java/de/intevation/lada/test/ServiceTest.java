@@ -37,6 +37,7 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.junit.Assert;
 
@@ -183,6 +184,18 @@ public class ServiceTest {
     }
 
     /**
+     * Base for all GET requests expecting success.
+     * @param uriBuilder the URL used in the request.
+     * @return the JSON returned by the service
+     */
+    public JsonValue get(UriBuilder uriBuilder) {
+        return get(
+            uriBuilder.build(),
+            new GenericType<JsonValue>(JsonValue.class),
+            Response.Status.OK);
+    }
+
+    /**
      * Base for all GET requests.
      * @param parameter the url parameter used in the request.
      * @param expectedStatus Expected HTTP status code
@@ -247,7 +260,22 @@ public class ServiceTest {
         GenericType<T> entityType,
         Response.Status expectedStatus
     ) {
-        URI uri = URI.create(parameter);
+        return get(URI.create(parameter), entityType, expectedStatus);
+    }
+
+    /**
+     * Base for all GET requests.
+     * @param <T> Expected response entity type
+     * @param uri the URL used in the request.
+     * @param expectedStatus Expected HTTP status code
+     * @param entityType Expected response entity type
+     * @return the JSON returned by the service.
+     */
+    public <T> T get(
+        URI uri,
+        GenericType<T> entityType,
+        Response.Status expectedStatus
+    ) {
         WebTarget t = target.path(uri.getPath());
         String query = uri.getQuery();
         if (query != null) {
