@@ -8,6 +8,8 @@
 
 package de.intevation.lada.model.lada;
 
+import java.util.Objects;
+
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
@@ -58,5 +60,17 @@ public class TagLinkMeasm extends TagLink {
 
     public void setMeasmId(Integer measmId) {
         this.measmId = measmId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof TagLinkMeasm o
+            && Objects.equals(this.tagId, o.getTagId())
+            && Objects.equals(this.measmId, o.getMeasmId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.tagId, this.measmId);
     }
 }

@@ -538,7 +538,7 @@ public class ImporterTest extends ClientBaseTest {
     }
 
     /**
-     * Test successful asynchronous LAF9 update import of sample tags.
+     * Test successful asynchronous LAF9 update import of tags.
      */
     @Test
     public final void testAsyncLaf9UpdateTagsImport()
@@ -555,17 +555,31 @@ public class ImporterTest extends ClientBaseTest {
         Tag tag = new Tag();
         tag.setName("test");
         tag.setMeasFacilId(mstId);
-        laf.setTags(List.of(associatedTag, existingTag, tag));
+
+        List<Tag> tags = List.of(associatedTag, existingTag, tag);
+        laf.setTags(tags);
+
+        Measm measm = new Measm();
+        measm.setExtId(existingMeasmExtId);
+        measm.setTags(tags);
+        laf.setMeasms(List.of(measm));
 
         Sample expected = new Sample();
         expected.setExtId(existingExtId);
         // Import creates an additional tag
         Tag importTag = new Tag();
         importTag.setIsAutoTag(true);
-        expected.setTags(List.of(associatedTag, existingTag, tag, importTag));
+        List<Tag> expectedTags =
+            List.of(associatedTag, existingTag, tag, importTag);
+        expected.setTags(expectedTags);
+        Measm expectedMeasm = new Measm();
+        expectedMeasm.setExtId(existingMeasmExtId);
+        expectedMeasm.setTags(expectedTags);
+        expected.setMeasms(List.of(expectedMeasm));
 
         testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, expected, OWNER_KEY);
+            laf, existingMainSampleId, true, true, expected,
+            OWNER_KEY, Measm_.MEAS_VALS_COUNT);
     }
 
     /**

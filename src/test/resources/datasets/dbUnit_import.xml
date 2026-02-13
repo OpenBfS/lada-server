@@ -198,6 +198,11 @@
         tag_id = "1"
         sample_id = "1"
     />
+    <lada.tag_link_measm
+        id = "1"
+        tag_id = "1"
+        measm_id = "1"
+    />
 
     <lada.sample
         id = "2"

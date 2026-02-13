@@ -14,6 +14,7 @@ BEGIN
             'status_prot',
             'sample_specif_meas_val',
             'tag_link_sample',
+            'tag_link_measm',
             'tag',
             'site'
         ] LOOP
