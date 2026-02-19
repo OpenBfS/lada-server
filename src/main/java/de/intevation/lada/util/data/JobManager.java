@@ -212,11 +212,4 @@ public abstract class JobManager {
             return String.format(hexFormat, timestamp, seqNo, randomPart);
         }
     }
-
-    /**
-     * Thrown if a job cannot be found.
-     */
-    public static class JobNotFoundException extends Exception {
-        private static final long serialVersionUID = 1L;
-    }
 }
