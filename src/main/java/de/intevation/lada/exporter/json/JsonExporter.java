@@ -232,10 +232,7 @@ public class JsonExporter implements QueryExporter<QueryExportParameters> {
             Regulation.class,
             sample.getRegulationId()
         );
-        EnvMedium umw = repository.getById(
-            EnvMedium.class,
-            sample.getEnvMediumId()
-        );
+        EnvMedium umw = sample.getEnvMedium();
         probe.add("sampleMethExtId",
             art == null
             ? nullableString("")
@@ -377,6 +374,9 @@ public class JsonExporter implements QueryExporter<QueryExportParameters> {
 
     private void addDeskriptoren(JsonObjectBuilder probe, Sample sample) {
         String desk = sample.getEnvDescripDisplay();
+        if (desk == null) {
+            return;
+        }
         String[] parts = desk.split(" ");
         if (parts.length <= 1) {
             return;
