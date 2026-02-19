@@ -50,7 +50,7 @@ public abstract class JobManager {
      * @throws ForbiddenException if job does not belong to requesting user
      * @return Job instance with given id
      */
-    protected Job getJobById(String id, UserInfo userInfo) {
+    public Job getJobById(String id, UserInfo userInfo) {
         Job job = activeJobs.get(id);
         if (job == null) {
             throw new NotFoundException();
@@ -119,7 +119,7 @@ public abstract class JobManager {
      * cleanup function.
      * @param jobId ID of job to remove
      */
-    protected void removeJob(String jobId) {
+    public void removeJob(String jobId) {
         logger.debug(String.format("Removing job %s", jobId));
         Job job = activeJobs.get(jobId);
         if (job != null) {

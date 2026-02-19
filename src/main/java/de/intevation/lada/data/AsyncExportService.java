@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -16,11 +14,11 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -33,6 +31,7 @@ import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.data.requests.Laf8ExportParameters;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
+import de.intevation.lada.exporter.ExportJob;
 import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.auth.UserInfo;
@@ -59,6 +58,8 @@ public class AsyncExportService extends AsyncLadaService {
 
     @Inject
     I18n i18n;
+
+    private String jobToRemove;
 
     @Override
     protected JobManager getJobManager() {
@@ -140,24 +141,21 @@ public class AsyncExportService extends AsyncLadaService {
     public Response download(
         @PathParam("jobId") String id
     ) {
-        String filename = exportJobManager.getJobDownloadFilename(
+        ExportJob<?> job = (ExportJob<?>) exportJobManager.getJobById(
             id, authorization.getInfo());
-
-        ByteArrayInputStream resultStream;
-        try {
-            resultStream = exportJobManager.getResultFileAsStream(
-                id, authorization.getInfo());
-        } catch (IOException e) {
-            this.logger.error(String.format(
-                "Error on reading result file for job %s: %s",
-                id, e.getMessage()));
-            throw new InternalServerErrorException();
-        }
-
-        return Response.ok(resultStream)
+        jobToRemove = id;
+        return Response.ok(job.getOutputFile().toFile())
             .header(
                 HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + filename + "\"")
+                "attachment; filename=\""
+                + job.getDownloadFileName() + "\"")
             .build();
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        if (jobToRemove != null) {
+            exportJobManager.removeJob(jobToRemove);
+        }
     }
 }

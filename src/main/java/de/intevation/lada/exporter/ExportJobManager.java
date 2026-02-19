@@ -8,11 +8,7 @@
 
 package de.intevation.lada.exporter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.ResourceBundle;
 
 import jakarta.enterprise.inject.Instance;
@@ -104,38 +100,5 @@ public class ExportJobManager extends JobManager {
         newJob.setEncoding(encoding);
         newJob.setUserInfo(userInfo);
         return addJob(newJob);
-    }
-
-    /**
-     * Get the filename used for downloading by the given job id.
-     * @param id Job id
-     * @param userInfo for authorization
-     * @return Filename as String
-     */
-    public String getJobDownloadFilename(String id, UserInfo userInfo) {
-        ExportJob<?> job = (ExportJob<?>) getJobById(id, userInfo);
-        return job.getDownloadFileName();
-    }
-
-    /**
-     * Get the result file of the export job with the given id as stream.
-     * @param id ExportJob id
-     * @return Result file as stream
-     * @param userInfo for authorization
-     * @throws IOException if the job exists but the result was deleted
-     * or can not be read
-     */
-    public ByteArrayInputStream getResultFileAsStream(
-        String id, UserInfo userInfo
-    ) throws IOException {
-        ExportJob<?> job = (ExportJob<?>) getJobById(id, userInfo);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
-            Files.copy(job.getOutputFile(), outputStream);
-            logger.debug(String.format("Returning result file for job %s", id));
-            return new ByteArrayInputStream(outputStream.toByteArray());
-        } finally {
-            removeJob(id);
-        }
     }
 }
