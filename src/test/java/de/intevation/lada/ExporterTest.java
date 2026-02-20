@@ -56,9 +56,9 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
-import de.intevation.lada.util.data.Job;
-import de.intevation.lada.util.data.Job.JobStatus;
+import de.intevation.lada.rest.AsyncLadaService.JobStatus;
 
 
 /**
@@ -811,7 +811,7 @@ public class ExporterTest extends ClientBaseTest {
     private String startExport(
         String format,
         JsonObject requestJson,
-        Job.Status expectedStatus
+        AsyncLadaService.Status expectedStatus
     ) throws InterruptedException {
         Response exportCreated = exportRequest(format, requestJson);
         AsyncJobResponse asyncJobResponse =
@@ -866,7 +866,7 @@ public class ExporterTest extends ClientBaseTest {
         String format, JsonObject requestJson
     ) throws InterruptedException {
         String jobId = startExport(
-            format, requestJson, Job.Status.FINISHED);
+            format, requestJson, AsyncLadaService.Status.FINISHED);
 
         /* Request export result */
         Response download = target

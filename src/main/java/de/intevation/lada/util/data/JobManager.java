@@ -8,8 +8,11 @@
 
 package de.intevation.lada.util.data;
 
+import static java.util.concurrent.Future.State.FAILED;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 
 import jakarta.annotation.Resource;
@@ -22,8 +25,6 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job.JobNotFinishedException;
-import de.intevation.lada.util.data.Job.JobStatus;
-import de.intevation.lada.util.data.Job.Status;
 
 /**
  * Abstract class for managing jobs.
@@ -44,6 +45,10 @@ public abstract class JobManager {
 
     /**
      * Get job by id.
+     *
+     * If the job is done with an error or has been canceled, it will be
+     * cleaned up.
+     *
      * @param id Id to look for
      * @param userInfo for authorization
      * @throws NotFoundException if job with given ID cannot be found
@@ -58,25 +63,16 @@ public abstract class JobManager {
         if (!job.getUserInfo().getUserId().equals(userInfo.getUserId())) {
             throw new ForbiddenException();
         }
-        return job;
-    }
 
-    /**
-     * Get the status of a job by identifier.
-     *
-     * If the job is done with an error, it will be removed after return
-     * the failure status.
-     * @param id Id to look for
-     * @param userInfo for authorization
-     * @return Job status
-     */
-    public JobStatus getJobStatus(String id, UserInfo userInfo) {
-        Job job = getJobById(id, userInfo);
-        JobStatus statusObject = job.getStatus();
-        if (statusObject.getStatus() == Status.ERROR && statusObject.isDone()) {
+        // Cleanup canceled or failed job
+        Future<?> statusObject = job.getFuture();
+        if ((statusObject.isCancelled() || statusObject.state() == FAILED)
+            && statusObject.isDone()
+        ) {
             removeJob(id);
         }
-        return statusObject;
+
+        return job;
     }
 
     /**

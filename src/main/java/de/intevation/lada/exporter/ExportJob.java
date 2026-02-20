@@ -64,7 +64,7 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
      * @throws JobNotFinishedException Thrown if job is still running
      */
     public void cleanup() throws JobNotFinishedException {
-        if (!currentStatus.isDone()) {
+        if (!this.future.isDone()) {
             throw new JobNotFinishedException();
         }
         removeResultFile();

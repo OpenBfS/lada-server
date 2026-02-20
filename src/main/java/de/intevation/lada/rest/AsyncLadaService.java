@@ -7,19 +7,27 @@
  */
 package de.intevation.lada.rest;
 
-import jakarta.inject.Inject;
+
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
+import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
-import de.intevation.lada.util.data.Job.JobStatus;
 
 
 public abstract class AsyncLadaService extends LadaService {
+
+    private static final Logger LOG = Logger.getLogger(AsyncLadaService.class);
 
     /**
      * Retrieve the class specific JobManager.
@@ -48,9 +56,68 @@ public abstract class AsyncLadaService extends LadaService {
         }
     }
 
+    /**
+     * Possible status values for jobs.
+     */
+    public enum Status {
+        WAITING, FINISHED, ERROR;
+    }
 
-    @Inject
-    protected Logger logger;
+    /**
+     * Class modeling a job status.
+     * Stores job status and message
+     */
+    public static class JobStatus {
+        private Status status = Status.WAITING;
+        private String message = "";
+        private boolean done;
+
+        public JobStatus() {}
+
+        protected JobStatus(Job job) {
+            Future<?> future = job.getFuture();
+            if (future.isDone()) {
+                this.done = true;
+                try {
+                    future.get();
+                    this.status = Status.FINISHED;
+                } catch (CancellationException | InterruptedException e) {
+                    this.status = Status.ERROR;
+                    this.message = INTERNAL_SERVER_ERROR.getReasonPhrase();
+                } catch (ExecutionException ee) {
+                    Throwable cause = ee.getCause();
+                    LOG.error(cause.getMessage());
+                    cause.printStackTrace();
+                    this.status = Status.ERROR;
+                    this.message = INTERNAL_SERVER_ERROR.getReasonPhrase();
+                }
+            }
+        }
+
+        public boolean isDone() {
+            return done;
+        }
+
+        public Status getStatus() {
+            return status;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setDone(boolean done) {
+            this.done = done;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public void setStatus(Status status) {
+            this.status = status;
+        }
+    }
 
     @GET
     @Path("status/{jobId}")
@@ -58,7 +125,8 @@ public abstract class AsyncLadaService extends LadaService {
     public JobStatus getStatus(
         @PathParam("jobId") String id
     ) {
-        return getJobManager().getJobStatus(id, authorization.getInfo());
+        return new JobStatus(
+            getJobManager().getJobById(id, authorization.getInfo()));
     }
 
     @GET

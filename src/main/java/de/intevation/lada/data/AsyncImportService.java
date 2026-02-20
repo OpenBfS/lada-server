@@ -32,6 +32,7 @@ import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Report;
+import de.intevation.lada.importer.laf.ImportJob;
 import de.intevation.lada.importer.laf.Laf8Report;
 import de.intevation.lada.importer.laf.Laf9Report;
 import de.intevation.lada.util.data.JobManager;
@@ -49,6 +50,46 @@ public class AsyncImportService extends AsyncLadaService {
 
     @Inject
     ImportJobManager importJobManager;
+
+    public static class JobStatus extends AsyncLadaService.JobStatus {
+        private boolean errors;
+        private boolean warnings;
+        private boolean notifications;
+
+        public JobStatus() {}
+
+        private JobStatus(ImportJob<?> job) {
+            super(job);
+
+            this.errors = job.hasErrors();
+            this.warnings = job.hasWarnings();
+            this.notifications = job.hasNotifications();
+        }
+
+        public Boolean getErrors() {
+            return errors;
+        }
+
+        public Boolean getWarnings() {
+            return warnings;
+        }
+
+        public Boolean getNotifications() {
+            return notifications;
+        }
+
+        public void setErrors(Boolean errors) {
+            this.errors = errors;
+        }
+
+        public void setWarnings(Boolean warnings) {
+            this.warnings = warnings;
+        }
+
+        public void setNotifications(Boolean notifications) {
+            this.notifications = notifications;
+        }
+    }
 
     @Override
     protected JobManager getJobManager() {
@@ -94,6 +135,15 @@ public class AsyncImportService extends AsyncLadaService {
         String newJobId = importJobManager.createLafImportJob(
             authorization.getInfo(), importParameters);
         return new AsyncLadaService.AsyncJobResponse(newJobId);
+    }
+
+    @Override
+    @GET
+    @Path("status/{jobId}")
+    public JobStatus getStatus(@PathParam("jobId") String id) {
+        JobStatus status = new JobStatus((ImportJob<?>) importJobManager
+            .getJobById(id, authorization.getInfo()));
+        return status;
     }
 
     @GET

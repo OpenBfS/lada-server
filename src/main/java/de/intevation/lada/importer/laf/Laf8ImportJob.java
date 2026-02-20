@@ -57,13 +57,13 @@ public class Laf8ImportJob extends ImportJob<String> {
 
             Laf8Report fileResponseData = importer.getReport();
             if (!fileResponseData.getErrors().isEmpty()) {
-                this.currentStatus.setErrors(true);
+                this.hasErrors = true;
             }
             if (!fileResponseData.getWarnings().isEmpty()) {
-                this.currentStatus.setWarnings(true);
+                this.hasWarnings = true;
             }
             if (!fileResponseData.getNotifications().isEmpty()) {
-                this.currentStatus.setNotifications(true);
+                this.hasNotifications = true;
             }
             importData.put(fileName, fileResponseData);
             importedProbeids.addAll(fileResponseData.getSampleIds());

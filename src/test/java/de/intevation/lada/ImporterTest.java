@@ -49,10 +49,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.TagService;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.test.stamm.TagTest;
 import de.intevation.lada.data.AsyncImportService;
+import de.intevation.lada.data.AsyncImportService.JobStatus;
 import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
@@ -73,8 +75,6 @@ import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.model.master.TestTag;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
-import de.intevation.lada.util.data.Job;
-import de.intevation.lada.util.data.Job.JobStatus;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.JSONBConfig;
 
@@ -1420,7 +1420,7 @@ public class ImporterTest extends ClientBaseTest {
         } while (!done);
 
         Assert.assertEquals(
-            Job.Status.FINISHED.name(),
+            AsyncLadaService.Status.FINISHED.name(),
             importStatusObject.getStatus().name());
 
         /* Fetch import result report */
