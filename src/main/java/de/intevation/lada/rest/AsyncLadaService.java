@@ -8,6 +8,7 @@
 package de.intevation.lada.rest;
 
 
+import jakarta.annotation.PreDestroy;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -28,6 +29,8 @@ import de.intevation.lada.util.data.JobManager;
 public abstract class AsyncLadaService extends LadaService {
 
     private static final Logger LOG = Logger.getLogger(AsyncLadaService.class);
+
+    protected String jobToRemove;
 
     /**
      * Retrieve the class specific JobManager.
@@ -135,5 +138,12 @@ public abstract class AsyncLadaService extends LadaService {
         summary = "Try to cancel execution of all jobs of requesting user")
     public void cancel() {
         getJobManager().cancelJobs(authorization.getInfo());
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        if (jobToRemove != null) {
+            getJobManager().removeJob(jobToRemove);
+        }
     }
 }

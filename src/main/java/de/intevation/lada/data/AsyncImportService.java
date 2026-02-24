@@ -157,6 +157,9 @@ public class AsyncImportService extends AsyncLadaService {
     public Map<String, Report> getResult(
         @PathParam("jobId") String id
     ) {
-        return importJobManager.getImportResult(id, authorization.getInfo());
+        ImportJob<?> job = (ImportJob<?>) importJobManager.getJobById(
+            id, authorization.getInfo());
+        jobToRemove = id;
+        return job.getImportData();
     }
 }

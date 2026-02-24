@@ -14,7 +14,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
-import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
@@ -58,8 +57,6 @@ public class AsyncExportService extends AsyncLadaService {
 
     @Inject
     I18n i18n;
-
-    private String jobToRemove;
 
     @Override
     protected JobManager getJobManager() {
@@ -150,12 +147,5 @@ public class AsyncExportService extends AsyncLadaService {
                 "attachment; filename=\""
                 + job.getDownloadFileName() + "\"")
             .build();
-    }
-
-    @PreDestroy
-    public void cleanup() {
-        if (jobToRemove != null) {
-            exportJobManager.removeJob(jobToRemove);
-        }
     }
 }

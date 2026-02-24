@@ -8,8 +8,6 @@
 
 package de.intevation.lada.importer;
 
-import java.util.Map;
-
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
@@ -71,23 +69,5 @@ public class ImportJobManager extends JobManager {
         newJob.setMst(mst);
         newJob.setFiles(params.getFiles());
         return addJob(newJob);
-    }
-
-    /**
-     * Get the import result for the job with given jobId.
-     * @param id jobId
-     * @param userInfo for authorization
-     * @return Import result report data for requested job
-     */
-    public Map<String, Report> getImportResult(
-        String id, UserInfo userInfo
-    ) {
-        ImportJob<?> job = (ImportJob<?>) getJobById(id, userInfo);
-        logger.debug(String.format("Returning result for job %s", id));
-        try {
-             return job.getImportData();
-        } finally {
-            removeJob(id);
-        }
     }
 }
