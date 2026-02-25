@@ -43,11 +43,6 @@ public class Laf9ExportJob extends ExportJob<LafExportParameters> {
     @Inject
     private Authorization authorization;
 
-    public Laf9ExportJob() {
-        this.format = "json";
-        this.downloadFileName = "export." + this.format;
-    }
-
     /**
      * Start the export.
      */

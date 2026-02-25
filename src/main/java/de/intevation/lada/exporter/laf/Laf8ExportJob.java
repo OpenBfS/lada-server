@@ -29,11 +29,6 @@ public class Laf8ExportJob extends ExportJob<Laf8ExportParameters> {
     @Inject
     private Laf8Exporter exporter;
 
-    public Laf8ExportJob() {
-        this.format = "laf";
-        this.downloadFileName = "export.laf";
-    }
-
     /**
      * Start the export.
      */

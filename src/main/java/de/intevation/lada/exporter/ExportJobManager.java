@@ -54,7 +54,6 @@ public class ExportJobManager extends JobManager {
         UserInfo userInfo
     ) throws IllegalArgumentException {
         ExportJob<?> newJob;
-        String format;
         if (params instanceof CsvExportParameters p) {
             TypeLiteral<ExportJob<CsvExportParameters>> type
                 = new TypeLiteral<>() { };
@@ -62,7 +61,6 @@ public class ExportJobManager extends JobManager {
                 = exportJobProvider.select(type).get();
             job.setExportParameter(p);
             job.setBundle(bundle);
-            format = "csv";
             newJob = job;
         } else if (params instanceof Laf8ExportParameters p) {
             TypeLiteral<ExportJob<Laf8ExportParameters>> type
@@ -70,7 +68,6 @@ public class ExportJobManager extends JobManager {
             ExportJob<Laf8ExportParameters> job
                 = exportJobProvider.select(type).get();
             job.setExportParameter(p);
-            format = "laf";
             newJob = job;
         } else if (params instanceof LafExportParameters p) {
             TypeLiteral<ExportJob<LafExportParameters>> type
@@ -78,7 +75,6 @@ public class ExportJobManager extends JobManager {
             ExportJob<LafExportParameters> job
                 = exportJobProvider.select(type).get();
             job.setExportParameter(p);
-            format = "json";
             newJob = job;
         } else if (params instanceof QueryExportParameters p) {
             TypeLiteral<ExportJob<QueryExportParameters>> type
@@ -86,17 +82,11 @@ public class ExportJobManager extends JobManager {
             ExportJob<QueryExportParameters> job
                 = exportJobProvider.select(type).get();
             job.setExportParameter(p);
-            format = "json";
             newJob = job;
         } else {
             throw new IllegalArgumentException("Unkown export format");
         }
 
-        String downloadFileName =
-            params.getFilename() != null && !params.getFilename().isBlank()
-                ? params.getFilename()
-                : String.format("export.%s", format);
-        newJob.setDownloadFileName(downloadFileName);
         newJob.setEncoding(encoding);
         newJob.setUserInfo(userInfo);
         return addJob(newJob);

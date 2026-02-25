@@ -38,19 +38,9 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
     protected T exportParameters;
 
     /**
-     * The export format.
-     */
-    protected String format;
-
-    /**
      * ResourceBundle for export i18n.
      */
     protected ResourceBundle bundle;
-
-    /**
-     * Filename set by the users request.
-     */
-    protected String downloadFileName;
 
     /**
      * Complete path to the output file.
@@ -70,24 +60,8 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
         removeResultFile();
     }
 
-    /**
-     * Get the filename used for downloading.
-     * @return Filename as String
-     */
-    public String getDownloadFileName() {
-        return downloadFileName;
-    }
-
     public Charset getEncoding() {
         return this.encoding;
-    }
-
-    /**
-     * Get the export format as String.
-     * @return Export format as String
-     */
-    public String getFormat() {
-        return format;
     }
 
     /**
@@ -96,14 +70,6 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
      */
     public Path getOutputFile() {
         return outputFile;
-    }
-
-    /**
-     * Set the filename used for downloading the result file.
-     * @param downloadFileName File name
-     */
-    public void setDownloadFileName(String downloadFileName) {
-        this.downloadFileName = downloadFileName;
     }
 
     public void setEncoding(Charset encoding) {
@@ -141,8 +107,7 @@ public abstract class ExportJob<T extends ExportParameters> extends Job {
 
     protected BufferedWriter createTmpFileWriter() {
         try {
-            this.outputFile = Files.createTempFile(
-                "export-", "." + this.format);
+            this.outputFile = Files.createTempFile("export-", "");
             logger.debug(String.format(
                     "Writing result to file %s", outputFile));
             return Files.newBufferedWriter(outputFile, encoding);

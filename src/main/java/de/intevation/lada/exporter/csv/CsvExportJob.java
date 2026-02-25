@@ -32,12 +32,6 @@ public class CsvExportJob extends QueryExportJob<CsvExportParameters> {
     @Inject
     private QueryExporter<CsvExportParameters> exporter;
 
-    public CsvExportJob() {
-        super();
-        this.format = "csv";
-        this.downloadFileName = "export.csv";
-    }
-
     @Override
     protected Stream<Map<String, Object>> mergeSubData(
         Stream<Map<String, Object>> primaryData,

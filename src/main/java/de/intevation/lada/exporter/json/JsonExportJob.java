@@ -33,12 +33,6 @@ public class JsonExportJob extends QueryExportJob<QueryExportParameters> {
     @Inject
     private QueryExporter<QueryExportParameters> exporter;
 
-    public JsonExportJob() {
-        super();
-        this.format = "json";
-        this.downloadFileName = "export.json";
-    }
-
     @Override
     protected Stream<Map<String, Object>> mergeSubData(
         Stream<Map<String, Object>> primaryData,

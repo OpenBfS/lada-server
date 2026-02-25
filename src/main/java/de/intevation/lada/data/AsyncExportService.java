@@ -142,10 +142,7 @@ public class AsyncExportService extends AsyncLadaService {
             id, authorization.getInfo());
         jobToRemove = id;
         return Response.ok(job.getOutputFile().toFile())
-            .header(
-                HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\""
-                + job.getDownloadFileName() + "\"")
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment")
             .build();
     }
 }

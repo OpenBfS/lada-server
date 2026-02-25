@@ -14,16 +14,6 @@ public abstract class ExportParameters {
 
     private Charset encoding = Charset.forName("iso-8859-15");
 
-    private String filename;
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
     public Charset getEncoding() {
         return encoding;
     }
