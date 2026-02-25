@@ -5,6 +5,7 @@
     <master.network id = "01" name = "test1"/>
     <master.meas_facil id = "06010" network_id = "06" />
     <master.meas_facil id = "01010" network_id = "01" />
+    <master.meas_facil id = "test" network_id = "06" />
     <master.auth
         id = "1"
         ldap_gr = "land_06_stamm"
@@ -17,6 +18,13 @@
         ldap_gr = "land_06_status"
         network_id = "06"
         meas_facil_id = "06010"
+        auth_funct_id = "1"
+    />
+    <master.auth
+        id = "3"
+        ldap_gr = "test"
+        network_id = "06"
+        meas_facil_id = "test"
         auth_funct_id = "1"
     />
     <master.lada_user id = "1" name = "testeins" />

@@ -10,6 +10,7 @@ package de.intevation.lada.util.auth;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.MeasFacilOwned;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 
@@ -39,6 +40,14 @@ class CommMeasmAuthorizer extends Authorizer<CommMeasm> {
         belongsToMeasmAuthorizer.authorizeMethod(data, method);
         if (!RequestMethod.GET.equals(method)) {
             measFacilAuthorizer.authorizeMethod(data, method);
+
+            // User can comment only in name of measFacil related to sample
+            Sample sample = data.getMeasm().getSample();
+            if (!(sample.getMeasFacilId().equals(data.getMeasFacilId())
+                    || sample.getApprLabId().equals(data.getMeasFacilId()))
+            ) {
+                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            }
         }
     }
 

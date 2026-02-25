@@ -406,6 +406,10 @@ public class AuthorizerTest extends ContainerBaseTest {
         final int foreignCommentId = 1004;
         CommMeasm foreignMeasFacil = em.find(CommMeasm.class, foreignCommentId);
 
+        // Comment with wrong role
+        CommMeasm wrongRole = em.find(CommMeasm.class, editableId);
+        wrongRole.setMeasFacilId("test");
+
         return Map.of(
             noStatus, new TestConfig(true, true, true, true, true,
                 "measmIdNoStatus"),
@@ -418,7 +422,9 @@ public class AuthorizerTest extends ContainerBaseTest {
             hijacked, new TestConfig(true, true, false, true, false,
                 "belongsToMeasmHijacked"),
             foreignMeasFacil, new TestConfig(true, false, false, false, true,
-                "foreignMeasFacilCommMeasm")
+                "foreignMeasFacilCommMeasm"),
+            wrongRole, new TestConfig(true, false, false, false, true,
+                "wrongRole")
         );
     }
 
@@ -555,6 +561,10 @@ public class AuthorizerTest extends ContainerBaseTest {
         CommSample foreignMeasFacil = em.find(
             CommSample.class, foreignCommentId);
 
+        // Comment with wrong role
+        CommSample wrongRole = em.find(CommSample.class, commSampleId);
+        wrongRole.setMeasFacilId("test");
+
         return Map.of(
             authorized, new TestConfig(true, true, true, true, true,
                 "sampleIdAuthorized"),
@@ -565,7 +575,9 @@ public class AuthorizerTest extends ContainerBaseTest {
             statusLocked, new TestConfig(false, false, false, false, true,
                 "sampleIdStatusLocked"),
             foreignMeasFacil, new TestConfig(true, false, false, false, true,
-                "foreignMeasFacilCommSample")
+                "foreignMeasFacilCommSample"),
+            wrongRole, new TestConfig(true, false, false, false, true,
+                "wrongRole")
         );
     }
 
