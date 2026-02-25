@@ -552,7 +552,8 @@ public class AuthorizerTest extends ContainerBaseTest {
         statusLocked.setSample(em.find(Sample.class, SAMPLE_ID_LOCKED_BY_STATUS));
 
         final int foreignCommentId = 1004;
-        CommMeasm foreignMeasFacil = em.find(CommMeasm.class, foreignCommentId);
+        CommSample foreignMeasFacil = em.find(
+            CommSample.class, foreignCommentId);
 
         return Map.of(
             authorized, new TestConfig(true, true, true, true, true,
