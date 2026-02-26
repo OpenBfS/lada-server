@@ -19,7 +19,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
 @CheckHQL
-@NamedQuery(name = Names.QUERY_GET_SAMPLE_SPECIF_FOR_ENV_MEDIUM, query =
+@NamedQuery(name = "getSampleSpecifForEnvMedium", query =
     "select sampleSpecifId from EnvSpecifMp where envMediumId = :envMediumId")
 public class EnvSpecifMp implements Serializable {
     private static final long serialVersionUID = 1L;

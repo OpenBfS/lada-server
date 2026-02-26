@@ -8,11 +8,11 @@
 package de.intevation.lada.util.auth;
 
 import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
-import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
 
 import java.util.List;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp;
 import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp_;
@@ -64,7 +64,7 @@ class MeasmAuthorizer extends Authorizer<Measm> {
         }
 
         int statusVal = repository.entityManager()
-            .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+            .createNamedQuery(Measm_.QUERY_MEASM_STATUS, StatusMp.class)
             .setParameter(QUERY_MEASM_PARAM, messung)
             .getSingleResult().getStatusVal().getId();
         if (method == RequestMethod.PUT
@@ -110,7 +110,7 @@ class MeasmAuthorizer extends Authorizer<Measm> {
         }
 
         StatusMp kombi = repository.entityManager()
-            .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+            .createNamedQuery(Measm_.QUERY_MEASM_STATUS, StatusMp.class)
             .setParameter(QUERY_MEASM_PARAM, messung)
             .getSingleResult();
         int stufe = kombi.getStatusLev().getId();

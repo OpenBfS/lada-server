@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.importer.laf;
 
-import static de.intevation.lada.model.lada.Names.QUERY_DELETE_MEAS_VALS;
 import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
 
 import java.sql.Timestamp;
@@ -1038,7 +1037,8 @@ public class LafObjectMapper {
                 }
             }
             messwerte.clear();
-            repository.entityManager().createNamedQuery(QUERY_DELETE_MEAS_VALS)
+            repository.entityManager()
+                .createNamedQuery(Measm_.QUERY_DELETE_MEAS_VALS)
                 .setParameter(QUERY_MEASM_PARAM, messung)
                 .executeUpdate();
         }

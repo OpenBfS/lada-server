@@ -8,7 +8,6 @@
 package de.intevation.lada.rest;
 
 import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
-import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +26,7 @@ import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Names;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.StatusMp;
@@ -120,7 +119,7 @@ public class StatusProtService extends LadaIntegerIdEntityService {
             ).isEmpty();
         if (newKombi.getStatusVal().getId() == 7 && hasNoValidMeasVals) {
             repository.entityManager()
-                .createNamedQuery(Names.QUERY_DELETE_MEAS_VALS)
+                .createNamedQuery(Measm_.QUERY_DELETE_MEAS_VALS)
                 .setParameter("m", messung)
                 .executeUpdate();
         }
@@ -135,7 +134,7 @@ public class StatusProtService extends LadaIntegerIdEntityService {
     ) {
         // Create a new Status with value = 8.
         StatusMp oldKombi = repository.entityManager()
-            .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+            .createNamedQuery(Measm_.QUERY_MEASM_STATUS, StatusMp.class)
             .setParameter(QUERY_MEASM_PARAM, messung)
             .getSingleResult();
 

@@ -15,7 +15,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.model.master.Names;
+import de.intevation.lada.model.master.EnvSpecifMp_;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.SampleSpecif_;
 
@@ -42,7 +42,8 @@ public class SampleSpecifService extends LadaStringIdEntityService {
         if (envMediumId != null) {
             TypedQuery<String> query = repository.entityManager()
                 .createNamedQuery(
-                    Names.QUERY_GET_SAMPLE_SPECIF_FOR_ENV_MEDIUM, String.class)
+                    EnvSpecifMp_.QUERY_GET_SAMPLE_SPECIF_FOR_ENV_MEDIUM,
+                    String.class)
                 .setParameter("envMediumId", envMediumId);
             List<String> ids = query.getResultList();
 

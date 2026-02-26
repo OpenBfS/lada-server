@@ -15,7 +15,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.master.Measd;
-import de.intevation.lada.model.master.Names;
+import de.intevation.lada.model.master.MmtMeasdView_;
 
 
 /**
@@ -42,7 +42,8 @@ public class MeasdService extends LadaIntegerIdEntityService {
         }
 
         return repository.entityManager()
-            .createNamedQuery(Names.QUERY_GET_MEASD_FOR_MMT, Measd.class)
+            .createNamedQuery(
+                MmtMeasdView_.QUERY_GET_MEASD_FOR_MMT, Measd.class)
             .setParameter("mmt", mmtId)
             .getResultList();
     }

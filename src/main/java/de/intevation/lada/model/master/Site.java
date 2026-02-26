@@ -69,9 +69,9 @@ import de.intevation.lada.validation.groups.Warnings;
 @HasValidReiSiteExtId(groups = Warnings.class)
 @ReiSiteExtIdMatchesNuclFacil(groups = Warnings.class)
 @CheckHQL
-@NamedQuery(name = Names.QUERY_UPDATE_SITE_IMG,
+@NamedQuery(name = "updateSiteImg",
     query = "update Site s set s.img = :data WHERE s.id = :siteId")
-@NamedQuery(name = Names.QUERY_UPDATE_SITE_MAP,
+@NamedQuery(name = "updateSiteMap",
     query = "update Site s set s.map = :data WHERE s.id = :siteId")
 public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

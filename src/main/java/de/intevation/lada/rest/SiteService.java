@@ -36,7 +36,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.model.master.AdminUnit_;
-import de.intevation.lada.model.master.Names;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -57,8 +56,8 @@ public class SiteService extends LadaIntegerIdEntityEditingService<Site> {
     private static final String PATH_PATTERN = IMG_PATH + "|" + MAP_PATH;
 
     private static final Map<String, String> UPDATE_QUERIES = Map.of(
-        IMG_PATH, Names.QUERY_UPDATE_SITE_IMG,
-        MAP_PATH, Names.QUERY_UPDATE_SITE_MAP);
+        IMG_PATH, Site_.QUERY_UPDATE_SITE_IMG,
+        MAP_PATH, Site_.QUERY_UPDATE_SITE_MAP);
 
     @Inject
     private OrtFactory ortFactory;

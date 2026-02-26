@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import static de.intevation.lada.model.master.Names.QUERY_MEASD_NAMES;
 import static de.intevation.lada.model.master.Names.QUERY_PARAM_MEASD_NAMES;
 import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.VARIABLES;
 
@@ -26,6 +25,7 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.Measd_;
 import de.intevation.lada.model.master.ObligMeasdMp;
 import de.intevation.lada.model.master.ObligMeasdMp_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -123,7 +123,7 @@ public class HasObligMeasdsValidator
             List<Integer> measdIds = pflicht.stream()
                 .map(ObligMeasdMp::getMeasdId).toList();
             List<String> measdNames = repository.entityManager()
-                .createNamedQuery(QUERY_MEASD_NAMES, String.class)
+                .createNamedQuery(Measd_.QUERY_GET_MEASD_NAMES, String.class)
                 .setParameter(QUERY_PARAM_MEASD_NAMES, measdIds)
                 .getResultList();
 

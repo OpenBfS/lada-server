@@ -89,9 +89,9 @@ import de.intevation.lada.validation.groups.Warnings;
 @HasMeasmStartDateRegulationNot1(groups = Notifications.class)
 @HasObligMeasds(groups = Notifications.class)
 @CheckHQL
-@NamedQuery(name = Names.QUERY_DELETE_MEAS_VALS,
+@NamedQuery(name = "deleteMeasVals",
     query = "delete from MeasVal where measm = :m")
-@NamedQuery(name = Names.QUERY_MEASM_STATUS, query = """
+@NamedQuery(name = "measmStatus", query = """
     select statusMp from StatusProt where measm = :m
     order by seqNo desc fetch first 1 rows only""")
 public class Measm extends BelongsToSample

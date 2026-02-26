@@ -8,8 +8,6 @@
 
 package de.intevation.lada.util.auth;
 
-import static de.intevation.lada.model.master.Names.QUERY_INSERT_USER_NAME;
-import static de.intevation.lada.model.master.Names.QUERY_LADA_USER_ID;
 import static de.intevation.lada.model.master.Names.QUERY_PARAM_USER_NAME;
 import static jakarta.security.enterprise.AuthenticationStatus.SEND_FAILURE;
 
@@ -29,6 +27,7 @@ import jakarta.transaction.Transactional;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.master.Auth;
 import de.intevation.lada.model.master.Auth_;
+import de.intevation.lada.model.master.LadaUser_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -82,11 +81,11 @@ public class Authentication implements HttpAuthenticationMechanism {
 
         // Query the user's ID or create a new one
         repository.entityManager()
-            .createNamedQuery(QUERY_INSERT_USER_NAME)
+            .createNamedQuery(LadaUser_.QUERY_INSERT_USER_NAME)
             .setParameter(QUERY_PARAM_USER_NAME, user)
             .executeUpdate();
         Integer userId = repository.entityManager()
-            .createNamedQuery(QUERY_LADA_USER_ID, Integer.class)
+            .createNamedQuery(LadaUser_.QUERY_GET_LADA_USER_ID, Integer.class)
             .setParameter(QUERY_PARAM_USER_NAME, user)
             .getSingleResult();
 

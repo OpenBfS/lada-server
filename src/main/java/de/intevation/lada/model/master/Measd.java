@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.model.master;
 
-import static de.intevation.lada.model.master.Names.QUERY_MEASD_NAMES;
 import static de.intevation.lada.model.master.Names.QUERY_PARAM_MEASD_NAMES;
 
 import java.io.Serializable;
@@ -32,7 +31,7 @@ import jakarta.validation.constraints.Size;
 @Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ Measd.class, DatabaseConstraints.class })
 @CheckHQL
-@NamedQuery(name = QUERY_MEASD_NAMES, query =
+@NamedQuery(name = "getMeasdNames", query =
     "select name from Measd where id in(:" + QUERY_PARAM_MEASD_NAMES + ")")
 public class Measd implements Serializable {
     private static final long serialVersionUID = 1L;

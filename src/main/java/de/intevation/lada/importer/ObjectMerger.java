@@ -25,7 +25,7 @@ import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Names;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -214,7 +214,7 @@ public class ObjectMerger {
     ) {
         target.getMeasVals().clear();
         repository.entityManager()
-            .createNamedQuery(Names.QUERY_DELETE_MEAS_VALS)
+            .createNamedQuery(Measm_.QUERY_DELETE_MEAS_VALS)
             .setParameter("m", target)
             .executeUpdate();
         for (MeasVal m: measVals) {

@@ -20,9 +20,5 @@ public class Names {
 
     public static final String QUERY_MEASM_PARAM = "m";
 
-    public static final String QUERY_DELETE_MEAS_VALS = "deleteMeasVals";
-
-    public static final String QUERY_MEASM_STATUS = "measmStatus";
-
     private Names() { };
 }

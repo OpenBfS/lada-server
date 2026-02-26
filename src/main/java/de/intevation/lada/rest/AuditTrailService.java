@@ -8,7 +8,6 @@
 package de.intevation.lada.rest;
 
 import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
-import static de.intevation.lada.model.lada.Names.QUERY_MEASM_STATUS;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -222,7 +221,8 @@ public class AuditTrailService extends LadaService {
                     Measm.class, a.getMeasmId());
                 if (messung != null) {
                     StatusMp status = repository.entityManager()
-                        .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+                        .createNamedQuery(
+                            Measm_.QUERY_MEASM_STATUS, StatusMp.class)
                         .setParameter(QUERY_MEASM_PARAM, messung)
                         .getSingleResult();
                     if (status.getId() == 1
@@ -341,7 +341,7 @@ public class AuditTrailService extends LadaService {
             // - User is not owner of the messung
             if (a.getTableName().equals("meas_val")
                 && repository.entityManager()
-                .createNamedQuery(QUERY_MEASM_STATUS, StatusMp.class)
+                .createNamedQuery(Measm_.QUERY_MEASM_STATUS, StatusMp.class)
                 .setParameter(QUERY_MEASM_PARAM, messung)
                 .getSingleResult().getId() == 1
                 && !userInfo.getMessstellen().contains(
