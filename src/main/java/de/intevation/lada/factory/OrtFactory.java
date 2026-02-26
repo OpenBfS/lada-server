@@ -148,11 +148,13 @@ public class OrtFactory {
         if (ort.getAdminUnitId() == null && ort.getGeom() != null) {
             try {
                 ort.setAdminUnitId((String) repository.entityManager()
-                    .createNativeQuery("SELECT vg.munic_id "
-                        + "FROM master.admin_border_view vg "
-                        + "WHERE is_munic "
-                        + "AND public.st_contains(vg.shape, :geom) "
-                        + "FETCH FIRST ROW ONLY",
+                    .createNativeQuery("""
+                        SELECT vg.munic_id
+                        FROM master.admin_border_view vg
+                        JOIN master.admin_unit au ON vg.munic_id = au.id
+                        WHERE vg.is_munic
+                        AND public.st_contains(vg.shape, :geom)
+                        FETCH FIRST ROW ONLY""",
                         String.class)
                     .setParameter("geom", ort.getGeom())
                     .getSingleResult());
