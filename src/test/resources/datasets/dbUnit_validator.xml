@@ -229,7 +229,6 @@
         spat_ref_sys_id = "5"
         coord_x_ext = "32487017"
         coord_y_ext = "5519769"
-        last_mod = "2015-03-01 12:00:00"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
         site_class_id = "1"
         short_text = "kurz"
@@ -260,7 +259,6 @@
         id = "25000"
         opr_mode_id = "1"
         regulation_id = "9"
-        last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 01 59 03 01 01 02 05 01 02 00 00 00"
         meas_facil_id = "06010"
@@ -288,7 +286,6 @@
         sample_id = "25000"
         site_id = "1000"
         add_site_text = "Test"
-        last_mod = "2012-05-07 09:00:00"
     />
     <lada.geolocat
         id = "25001"
@@ -296,7 +293,6 @@
         sample_id = "25000"
         site_id = "1000"
         add_site_text = "Test"
-        last_mod = "2012-05-07 09:00:00"
     />
 
     <lada.sample
@@ -330,7 +326,6 @@
         id = "25001"
         opr_mode_id = "1"
         regulation_id = "4"
-        last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
         meas_facil_id = "06010"
@@ -352,7 +347,6 @@
         sample_id = "25001"
         site_id = "1000"
         add_site_text = "Test"
-        last_mod = "2012-05-07 09:00:00"
     />
 
     <!--Sample data-->
@@ -360,7 +354,6 @@
         id = "1000"
         opr_mode_id = "1"
         regulation_id = "9"
-        last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
         meas_facil_id = "06010"
@@ -392,7 +385,6 @@
         meas_pd = "3600"
         measm_start_date = "2012-05-06 14:00:00"
         is_completed = "false"
-        last_mod = "2012-05-08 12:00:00"
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
     />
@@ -405,7 +397,6 @@
         meas_pd = "3600"
         measm_start_date = "2012-05-06 14:00:00"
         is_completed = "false"
-        last_mod = "2012-05-08 12:00:00"
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
     />
@@ -418,7 +409,6 @@
         detect_lim = "2.4"
         meas_unit_id = "207"
         is_threshold = "false"
-        last_mod = "2012-05-09 09:00:00"
     />
     <lada.geolocat
         id = "1000"
@@ -426,7 +416,6 @@
         sample_id = "1000"
         site_id = "1000"
         add_site_text = "Test"
-        last_mod = "2012-05-07 09:00:00"
     />
     <lada.comm_measm
         id = "1000"
@@ -440,7 +429,6 @@
         id = "2000"
         opr_mode_id = "1"
         regulation_id = "9"
-        last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
         meas_facil_id = "06010"
@@ -473,7 +461,6 @@
         id = "3000"
         opr_mode_id = "1"
         regulation_id = "1"
-        last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
         meas_facil_id = "06010"
@@ -495,15 +482,6 @@
         sample_id = "3000"
         site_id = "1000"
         add_site_text = "Test"
-        last_mod = "2012-05-07 09:00:00"
-    />
-    <lada.geolocat
-        id = "1001"
-        type_regulation = "U"
-        sample_id = "1000"
-        site_id = "1000"
-        add_site_text = "Test"
-        last_mod = "2012-05-07 09:00:00"
     />
     <lada.geolocat
         id = "1003"
@@ -518,7 +496,6 @@
         id = "4000"
         opr_mode_id = "1"
         regulation_id = "4"
-        last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
         meas_facil_id = "06010"
@@ -545,7 +522,6 @@
         meas_pd = "3600"
         measm_start_date = "2012-05-06 14:00:00"
         is_completed = "false"
-        last_mod = "2012-05-08 12:00:00"
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
     />
@@ -563,7 +539,6 @@
         id = "5000"
         opr_mode_id = "1"
         regulation_id = "4"
-        last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
         meas_facil_id = "06010"
@@ -588,7 +563,6 @@
         meas_pd = "3600"
         measm_start_date = "2012-05-06 14:00:00"
         is_completed = "false"
-        last_mod = "2012-05-08 12:00:00"
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
     />
