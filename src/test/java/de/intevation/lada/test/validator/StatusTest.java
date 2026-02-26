@@ -225,6 +225,20 @@ public class StatusTest extends ValidatorBaseTest {
         );
     }
 
+    /**
+     * Cannot set status "undeliverable", if valid measVals exist.
+     */
+    @Test
+    public void undeliverableWithValidMeasVals() {
+        final int undeliverableMpId = 5;
+        StatusProt statusProt = minimalStatusProt();
+        statusProt.setStatusMpId(undeliverableMpId);
+        assertHasErrors(
+            validator.validate(statusProt),
+            StatusProt_.STATUS_MP,
+            "Cannot set status due to existent measured values");
+    }
+
     private StatusProt minimalStatusProt() {
         StatusProt status = new StatusProt();
         final int existingMeasmId = 1200;

@@ -23,8 +23,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.BelongsToSample;
-import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.StatusProt;
@@ -109,15 +107,7 @@ public class StatusProtService extends LadaIntegerIdEntityService {
         StatusMp newKombi,
         Measm messung
     ) {
-        boolean hasNoValidMeasVals = repository.filter(repository
-                .queryBuilder(MeasVal.class)
-                .andIsNull(MeasVal_.measVal)
-                .andIsNull(MeasVal_.lessThanLOD)
-                .not()
-                .and(MeasVal_.measm, messung)
-                .getQuery()
-            ).isEmpty();
-        if (newKombi.getStatusVal().getId() == 7 && hasNoValidMeasVals) {
+        if (newKombi.getStatusVal().getId() == 7) {
             repository.entityManager()
                 .createNamedQuery(Measm_.QUERY_DELETE_MEAS_VALS)
                 .setParameter("m", messung)

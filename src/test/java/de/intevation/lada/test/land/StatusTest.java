@@ -11,6 +11,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
@@ -74,7 +75,7 @@ public class StatusTest extends ServiceTest {
         //Test for measm with partially valid measvals
         //-> MeasVals should be kept
         measmId = undeliverablePartiallyValid.getInt("measmId");
-        create(url, undeliverablePartiallyValid);
+        create(url, undeliverablePartiallyValid, Status.BAD_REQUEST);
         Assert.assertTrue(
             "measVals should have been kept",
             hasMeasVals(measmId));

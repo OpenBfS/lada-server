@@ -30,6 +30,7 @@ import jakarta.validation.constraints.Size;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NoCompleteMeasValsOnUndeliverable;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.StatusOrder;
 import de.intevation.lada.validation.constraints.HaveDependenciesNotifications;
@@ -42,6 +43,7 @@ import de.intevation.lada.validation.groups.PostAuthorization;
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ StatusProt.class, DatabaseConstraints.class })
+@NoCompleteMeasValsOnUndeliverable
 @ValidDependenciesFinalStatus(groups = PostAuthorization.class)
 @HaveDependenciesNotifications(groups = Notifications.class)
 @StatusOrder(groups = DatabaseConstraints.class)

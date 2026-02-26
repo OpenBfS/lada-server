@@ -89,6 +89,10 @@ import de.intevation.lada.validation.groups.Warnings;
 @HasMeasmStartDateRegulationNot1(groups = Notifications.class)
 @HasObligMeasds(groups = Notifications.class)
 @CheckHQL
+@NamedQuery(name = "hasCompleteMeasVals", query = """
+    select exists (select 1 from MeasVal
+        where measm = :m and (measVal is not null or lessThanLOD is not null))
+    """)
 @NamedQuery(name = "deleteMeasVals",
     query = "delete from MeasVal where measm = :m")
 @NamedQuery(name = "measmStatus", query = """

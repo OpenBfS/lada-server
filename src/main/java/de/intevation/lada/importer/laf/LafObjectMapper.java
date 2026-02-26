@@ -1021,28 +1021,6 @@ public class LafObjectMapper {
             return false;
         }
 
-        //Cleanup Messwerte for Status 7
-        List<MeasVal> messwerte = messung.getMeasVals();
-        if (!messwerte.isEmpty() && statusWert == 7) {
-            for (MeasVal messwert: messwerte) {
-                if (!(messwert.getMeasVal() == null
-                        && messwert.getLessThanLOD() == null)
-                ) {
-                    addWarning(
-                        new ReportItem(
-                            "status#" + statusStufe,
-                            statusWert,
-                            StatusCodes.STATUS_RO));
-                    return false;
-                }
-            }
-            messwerte.clear();
-            repository.entityManager()
-                .createNamedQuery(Measm_.QUERY_DELETE_MEAS_VALS)
-                .setParameter(QUERY_MEASM_PARAM, messung)
-                .executeUpdate();
-        }
-
         // Validator: StatusAssignment
         StatusProt newStatus = new StatusProt();
         newStatus.setMeasm(messung);
@@ -1069,6 +1047,19 @@ public class LafObjectMapper {
             messung.setIsCompleted(
                 !(newKombi == 0 || newKombi == 9 || newKombi == 13));
             repository.update(messung);
+
+            //Cleanup Messwerte for Status 7
+            if (statusWert == 7) {
+                List<MeasVal> messwerte = messung.getMeasVals();
+                if (messwerte != null) {
+                    messwerte.clear();
+                }
+                repository.entityManager()
+                    .createNamedQuery(Measm_.QUERY_DELETE_MEAS_VALS)
+                    .setParameter(QUERY_MEASM_PARAM, messung)
+                    .executeUpdate();
+            }
+
             return true;
         }
         addWarning(new ReportItem(

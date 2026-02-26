@@ -8,7 +8,6 @@
 package de.intevation.lada.validation.constraints;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +29,6 @@ import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
 
@@ -91,21 +89,12 @@ public abstract class ValidDependenciesValidator {
                 .and(MeasVal_.measm, messung);
             List<MeasVal> messwerte = repository.filter(
                 builder.getQuery());
-            if (!messwerte.isEmpty()) {
-                for (MeasVal messwert: messwerte) {
-                    if (newStatusWert == 7
-                        && !(messwert.getMeasVal() == null
-                            && messwert.getLessThanLOD() == null)
-                    ) {
-                        addError("status", StatusCodes.STATUS_RO, errors);
-                    }
-
-                    addMessages(
-                        validator.validate(messwert),
-                        errors,
-                        warnings,
-                        notifications);
-                }
+            for (MeasVal messwert: messwerte) {
+                addMessages(
+                    validator.validate(messwert),
+                    errors,
+                    warnings,
+                    notifications);
             }
 
             // Validate sites
@@ -144,15 +133,6 @@ public abstract class ValidDependenciesValidator {
                 && (probe.hasErrors() || probe.hasWarnings()));
         }
         return true;
-    }
-
-    private void addError(
-        String key, int value, Map<String, Set<String>> errors
-    ) {
-        if (!errors.containsKey(key)) {
-            errors.put(key, new HashSet<String>());
-        }
-        errors.get(key).add(String.valueOf(value));
     }
 
     private void addMessages(
