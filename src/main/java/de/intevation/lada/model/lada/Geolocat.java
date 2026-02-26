@@ -44,6 +44,12 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     propertyNodeName = "typeRegulation",
     message = "{de.intevation.lada.validation.GeolocatUniqueSamplingLocation}",
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
+@Unique(fields = {"sample"},
+    predicateFields = { "typeRegulation" },
+    predicateValues = { "ANY (ARRAY['U', 'R'])" },
+    propertyNodeName = "typeRegulation",
+    message = "{de.intevation.lada.validation.constraints.HasOneSiteOfOrigin.message}",
+    groups = DatabaseConstraints.class, clazz = Geolocat.class)
 public class Geolocat extends BelongsToSample implements Serializable {
 
     private static final long serialVersionUID = 1L;

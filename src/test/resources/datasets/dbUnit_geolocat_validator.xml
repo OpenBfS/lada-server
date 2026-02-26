@@ -130,13 +130,6 @@
         site_id = "1000"
         last_mod = "2012-05-07 09:00:00"
     />
-    <lada.geolocat
-        id = "1001"
-        type_regulation = "U"
-        sample_id = "1000"
-        site_id = "1000"
-        last_mod = "2012-05-07 09:00:00"
-    />
 
     <lada.sample
         id = "3000"

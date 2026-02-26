@@ -40,6 +40,12 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     propertyNodeName = "typeRegulation",
     message = "{de.intevation.lada.validation.GeolocatUniqueSamplingLocation}",
     groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
+@Unique(fields = {"mpgId"},
+    predicateFields = { "typeRegulation" },
+    predicateValues = { "ANY (ARRAY['U', 'R'])" },
+    propertyNodeName = "typeRegulation",
+    message = "{de.intevation.lada.validation.constraints.HasOneSiteOfOrigin.message}",
+    groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
 public class GeolocatMpg extends BelongsToMpg implements Serializable {
 
     private static final long serialVersionUID = 1L;
