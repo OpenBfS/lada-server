@@ -9,6 +9,7 @@ package de.intevation.lada;
 
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
+import static de.intevation.lada.util.data.KdaUtil.KDA_GD;
 
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
@@ -408,9 +409,21 @@ public class ImporterTest extends ClientBaseTest {
         Site site = new Site();
         site.setExtId(existingSiteExtId);
         site.setLongText("Long running test");
-        Geolocat loc = laf.getGeolocats().get(0);
+        Geolocat loc = new Geolocat();
+        loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setSite(site);
         loc.setAddSiteText("Test");
+
+        // Set another site in existing geolocat
+        Site site2 = new Site();
+        site2.setSpatRefSysId(KDA_GD);
+        site2.setCoordXExt("50");
+        site2.setCoordYExt("9");
+        Geolocat loc2 = new Geolocat();
+        loc2.setTypeRegulation("U");
+        loc2.setSite(site2);
+
+        laf.setGeolocats(List.of(loc, loc2));
 
         testAsyncLaf9Import(
             laf, existingMainSampleId, true, true, laf,

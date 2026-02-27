@@ -72,6 +72,7 @@
     <master.spat_ref_sys id = "4" name = "test"/>
 
     <master.type_regulation id = "E" name = "E"/>
+    <master.type_regulation id = "U" name = "U"/>
 
     <master.import_conf
         attribute = "datenbasis"
@@ -190,6 +191,12 @@
     <lada.geolocat
         id = "1"
         type_regulation = "E"
+        sample_id = "1"
+        site_id = "1"
+    />
+    <lada.geolocat
+        id = "2"
+        type_regulation = "U"
         sample_id = "1"
         site_id = "1"
     />

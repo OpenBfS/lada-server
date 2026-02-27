@@ -9,6 +9,7 @@ package de.intevation.lada.importer.identification;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.util.data.Repository;
@@ -27,11 +28,12 @@ class GeolocatIdentifier implements Identifier<Geolocat> {
         try {
             return repository.getSingle(repository.queryBuilder(Geolocat.class)
                 .and(Geolocat_.sample, loc.getSample())
-                .and(Geolocat_.site, loc.getSite())
                 .and(Geolocat_.typeRegulation, loc.getTypeRegulation())
                 .getQuery());
         } catch (NoResultException e) {
             return null;
+        } catch (NonUniqueResultException e) {
+            throw new IdentificationException();
         }
     }
 }

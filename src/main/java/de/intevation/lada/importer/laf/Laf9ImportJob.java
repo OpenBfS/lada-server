@@ -222,6 +222,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     rawSample.getJsonArray(attrName).getJsonObject(i);
 
                 // Merge Site for geolocats
+                Site finalSite = null;
                 if (srcObject instanceof Geolocat loc) {
                     Site srcSite = loc.getSite();
                     if (srcSite.getNetworkId() == null) {
@@ -231,7 +232,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                                 MeasFacil.class, targetSample.getMeasFacilId())
                             .getNetworkId());
                     }
-                    Site finalSite = null;
                     try {
                         finalSite = identification.getExisting(srcSite);
                     } catch (IdentificationException e) {
@@ -269,8 +269,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     validator.validate(
                         finalSite, Warnings.class, Notifications.class);
                     if (repository.entityManager().contains(finalSite)) {
-                        /* Successfully imported site.
-                           Set site for identification of Geolocat */
+                        // Successfully imported site.
                         loc.setSite(finalSite);
                     } else {
                         loc.setSite(getInstanceForReport(finalSite, srcSite));
@@ -306,6 +305,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     finalObject = create(srcObject);
                 } else {
                     finalObject = merge(finalObject, rawObject);
+                    if (finalObject instanceof Geolocat loc) {
+                        loc.setSite(finalSite);
+                    }
                 }
 
                 /* Merge Measm child objects if parent has no errors,
