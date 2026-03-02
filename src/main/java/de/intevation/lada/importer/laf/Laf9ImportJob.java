@@ -208,7 +208,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
         mergeTags(srcSample, rawSample, targetSample);
 
-        Map<Measm, JsonObject> importedMeasms = new HashMap<>();
+        Map<Measm, JsonObject> importedMeasms = srcSample.getMeasms() != null
+            ? HashMap.newHashMap(srcSample.getMeasms().size())
+            : Map.of();
         for (String attrName : belongsToSampleGetters.keySet()) {
             List<BelongsToSample> srcObjects =
                 getChildList(attrName, srcSample);

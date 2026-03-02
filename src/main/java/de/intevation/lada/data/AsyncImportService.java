@@ -103,7 +103,8 @@ public class AsyncImportService extends AsyncLadaService {
         @NotNull @Valid Laf8ImportParameters lafImportParameters
     ) throws BadRequestException {
         //Get file content strings from input object
-        Map<String, String> files = new HashMap<String, String>();
+        Map<String, String> files = HashMap.newHashMap(
+            lafImportParameters.getFiles().size());
         Charset charset = lafImportParameters.getEncoding();
         try {
             for (Map.Entry<String, String> e

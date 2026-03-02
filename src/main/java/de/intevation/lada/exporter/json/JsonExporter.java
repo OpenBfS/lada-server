@@ -302,7 +302,8 @@ public class JsonExporter implements QueryExporter<QueryExportParameters> {
 
     private void addMessungen(JsonObjectBuilder probe, Sample sample) {
         Collection<Measm> messungen = sample.getMeasms();
-        List<JsonObjectBuilder> messungenBuilders = new ArrayList<>();
+        List<JsonObjectBuilder> messungenBuilders =
+            new ArrayList<>(messungen.size());
         for (Measm messung: messungen) {
             Mmt mmt = repository.getById(
                 Mmt.class,
@@ -325,7 +326,8 @@ public class JsonExporter implements QueryExporter<QueryExportParameters> {
 
     private void addKommentare(JsonObjectBuilder probe, Sample sample) {
         Collection<CommSample> kommentare = sample.getCommSamples();
-        List<JsonObjectBuilder> kommentareJsonObjectBuilders = new ArrayList<>();
+        List<JsonObjectBuilder> kommentareJsonObjectBuilders =
+            new ArrayList<>(kommentare.size());
         for (CommSample kommentar: kommentare) {
             JsonObject kommentarJsonObject = convertToJsonObject(kommentar);
             JsonObjectBuilder kommentarJsonObjectBuilder =
@@ -346,7 +348,8 @@ public class JsonExporter implements QueryExporter<QueryExportParameters> {
     private void addZusatzwerte(JsonObjectBuilder probe, Sample sample) {
         Collection<SampleSpecifMeasVal> zusatzwerte =
             sample.getSampleSpecifMeasVals();
-        List<JsonObjectBuilder> zusatzwerteJsonObjectBuilders = new ArrayList<>();
+        List<JsonObjectBuilder> zusatzwerteJsonObjectBuilders =
+            new ArrayList<>(zusatzwerte.size());
         for (SampleSpecifMeasVal zusatzwert:zusatzwerte) {
             SampleSpecif pz = repository.getById(
                 SampleSpecif.class,
@@ -430,7 +433,8 @@ public class JsonExporter implements QueryExporter<QueryExportParameters> {
         JsonObjectBuilder messungJsonObjectBuilder, Measm measm
     ) {
         Collection<MeasVal> messwerte = measm.getMeasVals();
-        List<JsonObjectBuilder> messwerteJsonObjectBuilders = new ArrayList<>();
+        List<JsonObjectBuilder> messwerteJsonObjectBuilders =
+            new ArrayList<>(messwerte.size());
         for (MeasVal messwert: messwerte) {
             JsonObject messwertJsonObject = convertToJsonObject(messwert);
             JsonObjectBuilder messwertJsonObjectBuilder =
@@ -459,7 +463,8 @@ public class JsonExporter implements QueryExporter<QueryExportParameters> {
         JsonObjectBuilder messungJsonObjectBuilder, Measm measm
     ) {
         Collection<CommMeasm> kommentare = measm.getCommMeasms();
-        List<JsonObjectBuilder> kommJsonObjectBuilders = new ArrayList<>();
+        List<JsonObjectBuilder> kommJsonObjectBuilders =
+            new ArrayList<>(kommentare.size());
         for (CommMeasm kommentar: kommentare) {
             JsonObject kommentarJsonObject = convertToJsonObject(kommentar);
             JsonObjectBuilder kommentarJsonObjectBuilder =

@@ -205,7 +205,7 @@ public class AuditTrailService extends LadaService {
             repository.filter(builder.getQuery());
 
         AuditResponseData auditResponseData = new AuditResponseData();
-        List<AuditEntry> entries = new ArrayList<>();
+        List<AuditEntry> entries = new ArrayList<>(audit.size());
         auditResponseData.setId(probe.getId());
         auditResponseData.setIdentifier(
             probe.getMainSampleId() == null
@@ -332,7 +332,7 @@ public class AuditTrailService extends LadaService {
             repository.filter(builder.getQuery());
 
         AuditResponseData auditData = new AuditResponseData();
-        List<AuditEntry> entries = new ArrayList<>();
+        List<AuditEntry> entries = new ArrayList<>(audit.size());
         auditData.setId(messung.getId());
         auditData.setIdentifier(getIdentifier(messung));
         for (AuditTrailMeasmView a : audit) {
@@ -406,7 +406,7 @@ public class AuditTrailService extends LadaService {
 
         // Create an empty JsonObject
         AuditResponseData auditData = new AuditResponseData();
-        List<AuditEntry> entries = new ArrayList<>();
+        List<AuditEntry> entries = new ArrayList<>(audit.size());
         auditData.setId(messprogramm.getId());
         auditData.setIdentifier(getIdentifier(messprogramm));
         for (AuditTrailMpgView a : audit) {

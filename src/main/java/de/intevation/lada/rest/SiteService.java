@@ -113,15 +113,16 @@ public class SiteService extends LadaIntegerIdEntityEditingService<Site> {
         @QueryParam("limit") Integer limit
     ) {
         // Build SQL query string
-        List<String> whereClauseParts = new ArrayList<>();
+        List<String> whereClauseParts = new ArrayList<>(2);
         if (networkId != null) {
             whereClauseParts.add(Site_.NETWORK_ID + " in(:networkId)");
         }
         if (search != null) {
-            List<String> filters = new ArrayList<>();
-            for (String attr: List.of(
-                    Site_.EXT_ID, Site_.SHORT_TEXT, Site_.LONG_TEXT,
-                    AdminUnit_.NAME)) {
+            List<String> attrs = List.of(
+                Site_.EXT_ID, Site_.SHORT_TEXT, Site_.LONG_TEXT,
+                AdminUnit_.NAME);
+            List<String> filters = new ArrayList<>(attrs.size());
+            for (String attr: attrs) {
                 filters.add(attr + " LIKE(:pattern)");
             }
             whereClauseParts.add(String.join(" OR ", filters));

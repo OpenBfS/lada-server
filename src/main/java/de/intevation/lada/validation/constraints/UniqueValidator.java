@@ -51,7 +51,7 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
 
     private EntityType<?> entityType;
 
-    private Map<String, Method> fieldGetters = new HashMap<>();
+    private Map<String, Method> fieldGetters;
 
     private String idField;
     private Method idGetter;
@@ -74,6 +74,8 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
             .select(Repository.class).get().entityManager().getMetamodel()
             .entity(clazz);
 
+        this.fieldGetters = HashMap.newHashMap(
+            this.fields.length + this.predicateFields.length);
         try {
             // Getter methods for fields given in annotation
             for (String field: Stream.concat(

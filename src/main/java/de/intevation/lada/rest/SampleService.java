@@ -138,12 +138,12 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
     public Map<String, Object> createFromMessprogramm(
         @Valid PostData object
     ) throws BadRequestException {
-        Map<String, Object> responseData = new HashMap<String, Object>();
-        Map<String, Object> probenData = new HashMap<String, Object>();
+        Map<String, Object> responseData = HashMap.newHashMap(2);
+        Map<String, Object> probenData = HashMap.newHashMap(object.ids.size());
         List<Integer> generatedProbeIds = new ArrayList<Integer>();
 
         object.ids.forEach(id -> {
-            HashMap<String, Object> data = new HashMap<String, Object>();
+            HashMap<String, Object> data = HashMap.newHashMap(3);
             Mpg messprogramm = repository.getById(
                 Mpg.class, id);
 

@@ -111,9 +111,10 @@ public class MpgService extends LadaIntegerIdEntityEditingService<Mpg> {
         List<Mpg> messprogramme =
             repository.filter(builder.getQuery());
 
-        List<Map<String, Integer>> result = new ArrayList<>();
+        List<Map<String, Integer>> result =
+            new ArrayList<>(messprogramme.size());
         for (Mpg m : messprogramme) {
-            Map<String, Integer> mpResult = new HashMap<>();
+            Map<String, Integer> mpResult = HashMap.newHashMap(2);
             int id = m.getId().intValue();
             mpResult.put("id", id);
             if (authorization.isAuthorized(m, RequestMethod.PUT)) {

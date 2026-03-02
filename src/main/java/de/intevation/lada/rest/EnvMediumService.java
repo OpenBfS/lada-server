@@ -52,7 +52,7 @@ public class EnvMediumService extends LadaStringIdEntityService {
         }
         QueryBuilder<EnvMedium> builder1 =
             repository.queryBuilder(EnvMedium.class);
-        List<String> ids = new ArrayList<String>();
+        List<String> ids = new ArrayList<>(zuord.size());
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getEnvMediumId());
         }

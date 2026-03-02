@@ -92,7 +92,7 @@ public class Site extends BaseModel implements Serializable {
                 SiteClassId.ST,  5);
 
         private static final Map<Integer, SiteClassId> ID_TO_SITE_CLASS =
-            new HashMap<>();
+            HashMap.newHashMap(SITE_CLASS_TO_ID.size());
         static {
             for (SiteClassId k: SITE_CLASS_TO_ID.keySet()) {
                 ID_TO_SITE_CLASS.put(SITE_CLASS_TO_ID.get(k), k);

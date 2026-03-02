@@ -153,7 +153,7 @@ public class QueryUser implements Serializable {
      */
     public String[] getMessStellesIds() {
         if (this.messStellesIds == null && this.messStelles != null) {
-            List<String> ids = new ArrayList<>();
+            List<String> ids = new ArrayList<>(this.messStelles.size());
             for (QueryMeasFacilMp ms: this.messStelles) {
                 ids.add(ms.getMeasFacilId());
             }

@@ -146,7 +146,8 @@ public class CsvExporter implements QueryExporter<CsvExportParameters> {
         try (final CSVPrinter printer = new CSVPrinter(sink, format.build())) {
             //For every queryResult row
             queryResult.forEach(row -> {
-                ArrayList<String> rowItems = new ArrayList<String>();
+                ArrayList<String> rowItems =
+                    new ArrayList<>(columnsToInclude.size());
                 for (String key: columnsToInclude) {
                     Object value = row.get(key);
 

@@ -83,11 +83,11 @@ public class QueryUserService
         List<QueryUser> queries =
             repository.filter(criteriaQuery);
         for (QueryUser query: queries) {
-            if (query.getMessStelles() != null
-                && query.getMessStelles().size() > 0
-            ) {
-                List<String> mstIds = new ArrayList<String>();
-                for (QueryMeasFacilMp mst: query.getMessStelles()) {
+            List<QueryMeasFacilMp> queryMeasFacilMps = query.getMessStelles();
+            if (queryMeasFacilMps != null && queryMeasFacilMps.size() > 0) {
+                List<String> mstIds =
+                    new ArrayList<>(queryMeasFacilMps.size());
+                for (QueryMeasFacilMp mst: queryMeasFacilMps) {
                     mstIds.add(mst.getMeasFacilId());
                 }
                 query.setMessStellesIds(

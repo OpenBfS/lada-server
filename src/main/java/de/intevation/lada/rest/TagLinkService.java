@@ -91,7 +91,7 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
         @Valid List<T> tagLinks
     ) throws BadRequestException {
         //Create Response
-        List<Response<T>> responseList = new ArrayList<>();
+        List<Response<T>> responseList = new ArrayList<>(tagLinks.size());
 
         for (T tagLink: tagLinks) {
             if (isExisting(tagLink)) {
@@ -117,7 +117,7 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
     public List<Response<T>> deleteTagReference(
         @Valid List<T> tagLinks
     ) throws BadRequestException {
-        List<Response<T>> responseList = new ArrayList<>();
+        List<Response<T>> responseList = new ArrayList<>(tagLinks.size());
 
         for (T tagLink: tagLinks) {
             if (!isExisting(tagLink)) {

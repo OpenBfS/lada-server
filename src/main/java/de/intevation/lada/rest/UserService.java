@@ -76,7 +76,7 @@ public class UserService extends LadaService {
     @GET
     public Map<String, Object> get() {
         UserInfo userInfo = authorization.getInfo();
-        Map<String, Object> response = new HashMap<String, Object>();
+        Map<String, Object> response = HashMap.newHashMap(8);
         response.put("username", userInfo.getName());
         response.put("roles", userInfo.getAuth().stream()
                 .map(a -> a.getLdapGr()).collect(Collectors.toSet()));

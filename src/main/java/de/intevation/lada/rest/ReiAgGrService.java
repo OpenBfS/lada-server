@@ -60,7 +60,7 @@ public class ReiAgGrService extends LadaIntegerIdEntityService {
             }
             QueryBuilder<ReiAgGr> builder1 =
                 repository.queryBuilder(ReiAgGr.class);
-            List<Integer> ids = new ArrayList<Integer>();
+            List<Integer> ids = new ArrayList<>(zuord.size());
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiAgGrId());
             }
@@ -77,7 +77,7 @@ public class ReiAgGrService extends LadaIntegerIdEntityService {
             }
             QueryBuilder<ReiAgGr> builder1 =
                 repository.queryBuilder(ReiAgGr.class);
-            List<Integer> ids = new ArrayList<Integer>();
+            List<Integer> ids = new ArrayList<>(zuord.size());
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiAgGrId());
             }

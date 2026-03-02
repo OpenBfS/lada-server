@@ -33,7 +33,7 @@ public class ImmutableValidator
 
     private Class<?> clazz;
 
-    private Map<String, Method> fieldGetters = new HashMap<>();
+    private Map<String, Method> fieldGetters;
 
     private Method idGetter;
 
@@ -43,9 +43,11 @@ public class ImmutableValidator
     public void initialize(Immutable constraintAnnotation) {
         this.clazz = constraintAnnotation.clazz();
 
+        final String[] fields = constraintAnnotation.fields();
+        this.fieldGetters = HashMap.newHashMap(fields.length);
         try {
             // Getter methods for fields given in annotation
-            for (String field: constraintAnnotation.fields()) {
+            for (String field: fields) {
                 this.fieldGetters.put(
                     field,
                     new PropertyDescriptor(field, clazz).getReadMethod());

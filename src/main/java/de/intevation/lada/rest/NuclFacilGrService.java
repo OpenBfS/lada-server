@@ -52,7 +52,7 @@ public class NuclFacilGrService extends LadaIntegerIdEntityService {
         }
         QueryBuilder<NuclFacilGr> builder1 =
             repository.queryBuilder(NuclFacilGr.class);
-        List<Integer> ids = new ArrayList<Integer>();
+        List<Integer> ids = new ArrayList<>(zuord.size());
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getNuclFacilGrId());
         }
