@@ -435,7 +435,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test successful asynchronous LAF9 update import of Measm objects.
      */
     @Test
-    public final void testAsyncLaf9UpdateMeasmImport()
+    public final void laf9UpdateMeasmImport()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(existingExtId);
@@ -444,6 +444,12 @@ public class ImporterTest extends ClientBaseTest {
         measmUpdate.setExtId(existingMeasmExtId);
         final String minSampleId = "test";
         measmUpdate.setMinSampleId(minSampleId);
+
+        // Does not actually update comment, but should not throw an error
+        CommMeasm commentUpdate = new CommMeasm();
+        commentUpdate.setMeasFacilId(mstId);
+        commentUpdate.setText("test");
+        measmUpdate.setCommMeasms(List.of(commentUpdate));
 
         Measm measmNew = new Measm();
         measmNew.setMmtId("I3");

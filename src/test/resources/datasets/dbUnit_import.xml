@@ -188,6 +188,11 @@
         measd_id = "1"
         meas_unit_id = "1"
     />
+    <lada.comm_measm
+        measm_id = "1"
+        meas_facil_id = "06010"
+        text = "test"
+    />
     <lada.geolocat
         id = "1"
         type_regulation = "E"

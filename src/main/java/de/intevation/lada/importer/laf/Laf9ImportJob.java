@@ -29,7 +29,6 @@ import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.BelongsToSample;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.Geolocat;
@@ -89,6 +88,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     private Map<Class<?>, Method> idSetters;
 
     private Laf9Report fileResponseData;
+
+    private record Raw(JsonObject object, boolean isNew) { };
 
     @PostConstruct
     private void init() {
@@ -205,7 +206,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
         mergeTags(srcSample, rawSample, targetSample);
 
-        Map<Measm, JsonObject> importedMeasms = srcSample.getMeasms() != null
+        Map<Measm, Raw> importedMeasms = srcSample.getMeasms() != null
             ? HashMap.newHashMap(srcSample.getMeasms().size())
             : Map.of();
         for (String attrName : belongsToSampleGetters.keySet()) {
@@ -277,6 +278,9 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     }
                 }
 
+                // Track whether create or update occurs
+                boolean isNewChild;
+
                 BelongsToSample finalObject = null;
                 List<BelongsToSample> targetList =
                     getChildList(attrName, targetSample);
@@ -293,6 +297,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
 
                 // Merge existent or add new object
                 if (finalObject == null) {
+                    isNewChild = true;
                     /* Ignore IDs in input to prevent Hibernate from
                        considering new objects as transient */
                     try {
@@ -303,6 +308,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     }
                     finalObject = create(srcObject);
                 } else {
+                    isNewChild = false;
                     finalObject = merge(finalObject, rawObject);
                     if (finalObject instanceof Geolocat loc) {
                         loc.setSite(finalSite);
@@ -314,7 +320,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 if (repository.entityManager().contains(finalObject)
                     && finalObject instanceof Measm targetMeasm
                 ) {
-                    importedMeasms.put(targetMeasm, rawObject);
+                    importedMeasms.put(
+                        targetMeasm, new Raw(rawObject, isNewChild));
                 } else {
                     validator.validate(
                         finalObject, Warnings.class, Notifications.class);
@@ -443,7 +450,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         return withMessages;
     }
 
-    private void mergeMeasmChilds(Measm targetMeasm, JsonObject rawMeasm) {
+    private void mergeMeasmChilds(Measm targetMeasm, Raw raw) {
+        JsonObject rawMeasm = raw.object;
         Measm srcMeasm = JSONBConfig.JSONB.fromJson(
             rawMeasm.toString(), Measm.class);
 
@@ -479,24 +487,63 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             }
         }
 
-        // statusProts and commMeasms can only be added, not updated
-        List<CommMeasm> newCommMeasms = srcMeasm.getCommMeasms();
-        if (newCommMeasms != null) {
-            addBelongsToMeasms(targetMeasm, newCommMeasms);
-            // Reporting
-            List<CommMeasm> targetCommMeasms = targetMeasm.getCommMeasms();
-            if (targetCommMeasms == null) {
-                targetMeasm.setCommMeasms(newCommMeasms);
-            } else {
-                targetCommMeasms.addAll(newCommMeasms);
+        List<CommMeasm> srcCommMeasms = srcMeasm.getCommMeasms();
+        if (srcCommMeasms != null) {
+            for (int i = 0; i < srcCommMeasms.size(); i++) {
+                CommMeasm srcCommMeasm = srcCommMeasms.get(i);
+                srcCommMeasm.setMeasm(targetMeasm);
+                CommMeasm finalCommMeasm = null;
+                if (!raw.isNew) {
+                    // Identify
+                    try {
+                        finalCommMeasm =
+                            identification.getExisting(srcCommMeasm);
+                    } catch (IdentificationException e) {
+                        // Reporting
+                        reportIdentificationException(srcCommMeasm);
+                        List<CommMeasm> targetCommMeasms =
+                            targetMeasm.getCommMeasms();
+                        if (targetCommMeasms == null) {
+                            targetMeasm.setCommMeasms(
+                                new ArrayList<>(List.of(srcCommMeasm)));
+                        } else {
+                            targetCommMeasms.add(srcCommMeasm);
+                        }
+                        continue;
+                    }
+                }
+
+                // Add new comment or merge existent
+                if (finalCommMeasm == null) {
+                    /* Ignore IDs in input to prevent Hibernate from
+                       considering new objects as transient */
+                    srcCommMeasm.setId(null);
+                    finalCommMeasm = create(srcCommMeasm);
+                } else {
+                    finalCommMeasm = merge(
+                        finalCommMeasm,
+                        rawMeasm.getJsonArray(Measm_.COMM_MEASMS)
+                        .getJsonObject(i));
+                }
+                validator.validate(
+                    finalCommMeasm, Warnings.class, Notifications.class);
             }
         }
 
         /* Put statusProts last, because validating requires
-           the final state of all objects */
+           the final state of all objects.
+           statusProts can only be added */
         List<StatusProt> newStatusProts = srcMeasm.getStatusProts();
         if (newStatusProts != null) {
-            addBelongsToMeasms(targetMeasm, newStatusProts);
+            for (StatusProt sp : newStatusProts) {
+                /* Ignore IDs in input to prevent Hibernate from
+                   considering new objects as transient */
+                sp.setId(null);
+
+                sp.setMeasm(targetMeasm);
+                create(sp,
+                    CreateErrors.class, Warnings.class, Notifications.class);
+            }
             // Reporting
             List<StatusProt> targetStatusProts = targetMeasm.getStatusProts();
             if (targetStatusProts == null) {
@@ -504,25 +551,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             } else {
                 targetStatusProts.addAll(newStatusProts);
             }
-        }
-    }
-
-    private void addBelongsToMeasms(
-        Measm target,
-        Collection<? extends BelongsToMeasm> newEntries
-    ) {
-        for (BelongsToMeasm newEntry : newEntries) {
-            /* Ignore IDs in input to prevent Hibernate from
-               considering new objects as transient */
-            if (newEntry instanceof CommMeasm cm) {
-                cm.setId(null);
-            } else if (newEntry instanceof StatusProt sp) {
-                sp.setId(null);
-            }
-
-            newEntry.setMeasm(target);
-            create(newEntry,
-                CreateErrors.class, Warnings.class, Notifications.class);
         }
     }
 
