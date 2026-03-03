@@ -185,7 +185,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test synchronous import of a Sample object.
      */
     @Test
-    public final void testImportProbe() {
+    public final void syncImportProbe() {
         final String laf = String.format(
             laf8Template, randomProbeId(),
             regulation, sampleSpecifId, "", mmtId, measd, measUnit, "");
@@ -211,7 +211,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test successful asynchronous LAF8 import of a Sample object.
      */
     @Test
-    public final void testAsyncLaf8ImportSuccess()
+    public final void laf8Success()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         final String laf = String.format(
@@ -278,7 +278,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test successful asynchronous LAF9 import of a Sample object.
      */
     @Test
-    public final void testAsyncLaf9ImportSuccess()
+    public final void laf9Success()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         Sample laf = prepareLaf9Data();
@@ -332,7 +332,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test asynchronous LAF9 import of a Sample without geolocats.
      */
     @Test
-    public final void testAsyncLaf9ImportNoGeolocats()
+    public final void laf9NoGeolocats()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         Sample laf = prepareLaf9Sample();
@@ -352,7 +352,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test successful asynchronous LAF8 update import of a Sample object.
      */
     @Test
-    public final void testAsyncLaf8UpdateImport()
+    public final void laf8Update()
         throws InterruptedException, CharacterCodingException {
         final String laf = String.format(
             laf8Template, existingMainSampleId,
@@ -389,7 +389,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test successful asynchronous LAF9 update import.
      */
     @Test
-    public final void testAsyncLaf9UpdateImport()
+    public final void laf9Update()
         throws InterruptedException, CharacterCodingException {
         Sample laf = prepareLaf9Data();
 
@@ -435,7 +435,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test successful asynchronous LAF9 update import of Measm objects.
      */
     @Test
-    public final void laf9UpdateMeasmImport()
+    public final void laf9UpdateMeasm()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(existingExtId);
@@ -466,7 +466,7 @@ public class ImporterTest extends ClientBaseTest {
      * which means existing measVals are replaced.
      */
     @Test
-    public final void testAsyncLaf9UpdateMeasValImport()
+    public final void laf9UpdateMeasVal()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(existingExtId);
@@ -492,7 +492,7 @@ public class ImporterTest extends ClientBaseTest {
      * duplicate measurand.
      */
     @Test
-    public final void testAsyncLaf9DupMeasValImport()
+    public final void laf9DupMeasVal()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(existingExtId);
@@ -524,7 +524,7 @@ public class ImporterTest extends ClientBaseTest {
      * LAF9 import normalizes measVals.
      */
     @Test
-    public final void testAsyncLaf9NormalizeMeasVals()
+    public final void laf9NormalizeMeasVals()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         Sample laf = prepareLaf9Sample();
@@ -560,7 +560,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test successful asynchronous LAF9 update import of tags.
      */
     @Test
-    public final void testAsyncLaf9UpdateTagsImport()
+    public final void laf9UpdateTags()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(existingExtId);
@@ -605,7 +605,7 @@ public class ImporterTest extends ClientBaseTest {
      * Asynchronous LAF9 update import of tags does not remove existing tags.
      */
     @Test
-    public final void testAsyncLaf9UpdateTagsLeaveExisting()
+    public final void laf9UpdateTagsLeaveExisting()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(existingExtId);
@@ -636,7 +636,7 @@ public class ImporterTest extends ClientBaseTest {
      * Asynchronous LAF9 import reports error, if given invalid child object.
      */
     @Test
-    public final void testAsyncLaf9WithInvalidChildImport()
+    public final void laf9WithInvalidChild()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         Sample laf = prepareLaf9Data();
@@ -657,7 +657,7 @@ public class ImporterTest extends ClientBaseTest {
      * for update.
      */
     @Test
-    public final void testAsyncLaf9UpdateWithInvalidChildImport()
+    public final void laf9UpdateWithInvalidChild()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(existingExtId);
@@ -693,7 +693,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test failing Measm identification with LAF9.
      */
     @Test
-    public final void testAsyncLaf9IdentifyFail()
+    public final void laf9IdentifyFail()
         throws InterruptedException, CharacterCodingException {
         Sample laf = prepareLaf9Data();
         laf.setExtId(existingExtId);
@@ -717,7 +717,7 @@ public class ImporterTest extends ClientBaseTest {
      * Failing sample creation authorization with LAF9.
      */
     @Test
-    public final void asyncLaf9AuthFail()
+    public final void laf9AuthFail()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         Sample laf = prepareLaf9Data();
@@ -732,7 +732,7 @@ public class ImporterTest extends ClientBaseTest {
      * Failing sample update authorization with LAF9.
      */
     @Test
-    public final void asyncLaf9UpdateAuthFail()
+    public final void laf9UpdateAuthFail()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(foreignExtId);
@@ -754,7 +754,7 @@ public class ImporterTest extends ClientBaseTest {
      * Failing authorization of tagging sample with LAF9.
      */
     @Test
-    public final void asyncLaf9TagSampleAuthFail()
+    public final void laf9TagSampleAuthFail()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(foreignExtId);
@@ -775,7 +775,7 @@ public class ImporterTest extends ClientBaseTest {
      * Failing authorization of tagging Measm with LAF9.
      */
     @Test
-    public final void asyncLaf9TagMeasmAuthFail()
+    public final void laf9TagMeasmAuthFail()
         throws InterruptedException, CharacterCodingException {
         Sample laf = new Sample();
         laf.setExtId(foreignExtId);
@@ -800,7 +800,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test import with lowercase LAF keywords.
      */
     @Test
-    public final void testImportLowercaseKeywords()
+    public final void laf8LowercaseKeywords()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         final String lowerCaseLAF = String.format(
@@ -820,7 +820,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test asynchronous LAF8 import with invalid input.
      */
     @Test
-    public final void testAsyncLaf8ImportNoSuccess()
+    public final void laf8NoSuccess()
         throws InterruptedException, CharacterCodingException {
         testAsyncLaf8Import("no valid LAF", "", false);
     }
@@ -829,7 +829,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test asynchronous LAF9 import with invalid input.
      */
     @Test
-    public final void testAsyncLaf9ImportNoSuccess()
+    public final void laf9NoSuccess()
         throws InterruptedException, CharacterCodingException {
         // Only Arrays of non-null objects should be accepted as list of samples
         final JsonValue jsonString = Json.createValue("test");
@@ -870,7 +870,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test message localization in asynchronous import.
      */
     @Test
-    public final void testAsyncImportProbeI18n()
+    public final void laf8ProbeI18n()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         final String noOprModeLAF = String.format(
@@ -903,7 +903,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test asynchronous import of a Sample object with attribute conversion.
      */
     @Test
-    public final void testAsyncImportProbeImportConfConvert()
+    public final void confConvert()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncLaf8Import(
@@ -918,7 +918,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test asynchronous import with attribute transformation in MeasVal.
      */
     @Test
-    public final void testAsyncImportMeasValImportConfTransform()
+    public final void measValConfTransform()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncLaf8Import(
@@ -934,7 +934,7 @@ public class ImporterTest extends ClientBaseTest {
      * in SampleSpecifMeasVal.
      */
     @Test
-    public final void testAsyncImportSampleSpecifMeasValImportConfTransform()
+    public final void sampleSpecifMeasValConfTransform()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncLaf8Import(
@@ -950,7 +950,7 @@ public class ImporterTest extends ClientBaseTest {
      * Ensure that no false warning about missing sampling location occurs.
      */
     @Test
-    public final void testAsyncLaf8ImportGeolocatE()
+    public final void laf8GeolocatE()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncLaf8ImportNoWarnings(
@@ -968,7 +968,7 @@ public class ImporterTest extends ClientBaseTest {
      * Ensure that no false warning about missing sampling location occurs.
      */
     @Test
-    public final void testAsyncLaf9ImportGeolocatE()
+    public final void laf9GeolocatE()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         Sample laf = prepareLaf9Data();
@@ -1017,7 +1017,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test asynchronous import updating sampling location.
      */
     @Test
-    public final void testAsyncImportUpdateGeolocatE()
+    public final void laf8UpdateGeolocatE()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = existingMainSampleId;
         testAsyncLaf8ImportNoWarnings(
@@ -1090,7 +1090,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test asynchronous import including status.
      */
     @Test
-    public final void testAsyncImportStatus()
+    public final void laf8Status()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncLaf8ImportNoWarnings(
@@ -1108,7 +1108,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test creating new sample with forbidden extId via LAF8.
      */
     @Test
-    public final void asyncImportLaf8ForbiddenExtId()
+    public final void asyncLaf8ForbiddenExtId()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = "ZDB123456789012Y";
         JsonObject report = testAsyncLaf8Import(
@@ -1134,7 +1134,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test creating new sample with forbidden extId via LAF9.
      */
     @Test
-    public final void asyncImportLaf9ForbiddenExtId()
+    public final void laf9ForbiddenExtId()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = "ZDB123456789012Y";
         Sample laf = prepareLaf9Data();
@@ -1153,7 +1153,7 @@ public class ImporterTest extends ClientBaseTest {
      * Ensure setting status with warning in measVal fails.
      */
     @Test
-    public final void asyncImportStatusWarningMeasVal()
+    public final void laf8StatusWarningMeasVal()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncLaf8Import(
@@ -1172,7 +1172,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test import MeasVal using "MESSWERT_S".
      */
     @Test
-    public final void asyncImportMeasValS()
+    public final void laf8MeasValS()
         throws InterruptedException, CharacterCodingException {
         final String lafSampleId = randomProbeId();
         testAsyncLaf8Import(
@@ -1189,7 +1189,7 @@ public class ImporterTest extends ClientBaseTest {
      * Test "Zeitbasis" handling in LAF8 import.
      */
     @Test
-    public final void testZeitbasis()
+    public final void zeitbasis()
         throws InterruptedException, CharacterCodingException {
         testZeitbasis("ZEITBASIS", "\"MESZ\"", false);
         testZeitbasis("ZEITBASIS", "\"INVALID\"", true);
