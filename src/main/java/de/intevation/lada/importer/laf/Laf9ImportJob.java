@@ -28,7 +28,6 @@ import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
-import de.intevation.lada.importer.Report;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.BelongsToMeasm;
 import de.intevation.lada.model.lada.BelongsToSample;
@@ -158,8 +157,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                         mergeSampleChilds(
                             finalSample,
                             isNewSample,
-                            rawSample,
-                            fileResponseData);
+                            rawSample);
                     }
 
                     /* Add warnings and notifications to final state
@@ -200,8 +198,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     private void mergeSampleChilds(
         Sample targetSample,
         boolean isNewSample,
-        JsonObject rawSample,
-        Report report
+        JsonObject rawSample
     ) {
         Sample srcSample = JSONBConfig.JSONB.fromJson(
             rawSample.toString(), Sample.class);
