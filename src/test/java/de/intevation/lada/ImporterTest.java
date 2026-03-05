@@ -10,6 +10,11 @@ package de.intevation.lada;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 import static de.intevation.lada.util.data.KdaUtil.KDA_GD;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +47,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.junit.After;
@@ -208,7 +212,7 @@ public class ImporterTest extends ClientBaseTest {
 
         /* Check if a Sample object has been imported */
         assertContains(importResponseObject, SAMPLE_IDS_KEY);
-        Assert.assertEquals(1,
+        assertEquals(1,
             importResponseObject.getJsonArray(SAMPLE_IDS_KEY).size());
     }
 
@@ -231,7 +235,7 @@ public class ImporterTest extends ClientBaseTest {
             .add(REPORT_ITEM_VALUE_KEY, Sample_.GEOLOCATS)
             .add(REPORT_ITEM_CODE_KEY, "A sampling location must be provided")
             .build();
-        MatcherAssert.assertThat(
+        assertThat(
             report.getJsonObject(WARNINGS_KEY).getJsonArray(lafSampleId),
             CoreMatchers.hasItem(expectedWarning));
 
@@ -240,7 +244,7 @@ public class ImporterTest extends ClientBaseTest {
             .add("value", MeasVal_.MEAS_VAL)
             .add("code", "must be greater than 0")
             .build();
-        MatcherAssert.assertThat(
+        assertThat(
             report.getJsonObject("notifications").getJsonArray(lafSampleId),
             CoreMatchers.hasItem(expectedNotification));
     }
@@ -268,11 +272,11 @@ public class ImporterTest extends ClientBaseTest {
             .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .get(new GenericType<List<Tag>>() { });
         final String tagName = fileReport.getString("tag");
-        MatcherAssert.assertThat(tags.stream().map(Tag::getName).toList(),
+        assertThat(tags.stream().map(Tag::getName).toList(),
             CoreMatchers.hasItem(tagName));
         Tag tag = tags.stream().filter(t -> tagName.equals(t.getName()))
             .findFirst().get();
-        Assert.assertEquals(GENERATED_EXPIRATION_TIME,
+        assertEquals(GENERATED_EXPIRATION_TIME,
             /* +1 because until calculates complete units and the tag has
                been generated a few moments ago */
             1 + Instant.now().until(
@@ -378,14 +382,14 @@ public class ImporterTest extends ClientBaseTest {
         final int existingMeasmId = 1;
         List<Measm> measms = getImportedSample(report, Sample.class)
             .getMeasms();
-        Assert.assertEquals(1, measms.size());
-        MatcherAssert.assertThat(
+        assertEquals(1, measms.size());
+        assertThat(
             measms.stream().map(Measm::getId).toList(),
             CoreMatchers.hasItem(existingMeasmId));
         final int existingMeasValId = 1;
         Collection<MeasVal> measVals = measms.get(0).getMeasVals();
-        Assert.assertEquals(1, measVals.size());
-        MatcherAssert.assertThat(
+        assertEquals(1, measVals.size());
+        assertThat(
             measVals.stream().map(MeasVal::getId).toList(),
             CoreMatchers.not(CoreMatchers.hasItem(existingMeasValId)));
     }
@@ -710,9 +714,9 @@ public class ImporterTest extends ClientBaseTest {
             .getJsonObject(0).getJsonArray(Sample_.MEASMS).stream()
             .filter(v -> v.asJsonObject().isNull(Measm_.MMT_ID))
             .findFirst().get().asJsonObject().getJsonObject(ERRORS_KEY);
-        MatcherAssert.assertThat(actualErrors.keySet(),
+        assertThat(actualErrors.keySet(),
             CoreMatchers.hasItem(Laf9ImportJob.ERR_IDENTIFICATION_KEY));
-        MatcherAssert.assertThat(
+        assertThat(
             actualErrors.getJsonArray(Laf9ImportJob.ERR_IDENTIFICATION_KEY),
             CoreMatchers.hasItem(Json.createValue(
                     String.valueOf(StatusCodes.IMP_INVALID_VALUE))));
@@ -897,7 +901,7 @@ public class ImporterTest extends ClientBaseTest {
                 .add(REPORT_ITEM_KEY_KEY, "validation#probe")
                 .add(REPORT_ITEM_VALUE_KEY, "oprModeId")
                 .add(REPORT_ITEM_CODE_KEY, msgs.get(locale)).build();
-            Assert.assertTrue(
+            assertTrue(
                 "Missing error " + expectedError.toString()
                 + " in " + errors.toString(),
                 errors.contains(expectedError));
@@ -1056,7 +1060,7 @@ public class ImporterTest extends ClientBaseTest {
             .add("value", Measm_.EXT_ID + "#" + minSampleId)
             .add("code", "Field can only be set by System")
             .build();
-        MatcherAssert.assertThat(
+        assertThat(
             report.getJsonObject("errors").getJsonArray(lafSampleId),
             CoreMatchers.hasItem(expectedErr));
     }
@@ -1086,7 +1090,7 @@ public class ImporterTest extends ClientBaseTest {
             .add("code",
                 "Non-unique value combination for [minSampleId, sample]")
             .build();
-        MatcherAssert.assertThat(
+        assertThat(
             report.getJsonObject("errors").getJsonArray(lafSampleId),
             CoreMatchers.hasItem(expectedErr));
     }
@@ -1130,7 +1134,7 @@ public class ImporterTest extends ClientBaseTest {
             .add(REPORT_ITEM_VALUE_KEY, Sample_.EXT_ID)
             .add(REPORT_ITEM_CODE_KEY, "ExtId only for LFGB")
             .build();
-        MatcherAssert.assertThat(
+        assertThat(
             report.getJsonObject(ERRORS_KEY).getJsonArray(lafSampleId),
             CoreMatchers.hasItem(expectedError));
     }
@@ -1234,13 +1238,13 @@ public class ImporterTest extends ClientBaseTest {
                 .add(REPORT_ITEM_CODE_KEY, String.valueOf(
                         StatusCodes.IMP_INVALID_VALUE))
                 .build();
-            Assert.assertFalse(
+            assertFalse(
                 "Missing warning: " + expectedWarning.toString(),
                 !warnings.contains(expectedWarning));
         } else {
             for (JsonValue warningVal: warnings) {
                 JsonObject warning = (JsonObject) warningVal;
-                Assert.assertFalse(
+                assertFalse(
                     "Unexpected warning: " + warning.toString(),
                     warning.getString(REPORT_ITEM_KEY_KEY)
                     .startsWith("ZEITBASIS"));
@@ -1257,7 +1261,7 @@ public class ImporterTest extends ClientBaseTest {
             lafData, lafSampleId, expectSuccess);
         JsonObject warnings = response.getJsonObject(WARNINGS_KEY);
         if (!warnings.isEmpty()) {
-            Assert.fail("Unexpected warnings: "
+            fail("Unexpected warnings: "
                 + warnings.getJsonArray(lafSampleId));
         }
         return response;
@@ -1437,13 +1441,13 @@ public class ImporterTest extends ClientBaseTest {
             importStatusObject =
                 parseResponse(response, JobStatus.class);
             done = importStatusObject.isDone();
-            Assert.assertTrue(
+            assertTrue(
                 "Import not done within one minute",
                 waitUntil.isAfter(Instant.now()));
             Thread.sleep(waitASecond);
         } while (!done);
 
-        Assert.assertEquals(
+        assertEquals(
             AsyncLadaService.Status.FINISHED.name(),
             importStatusObject.getStatus().name());
 
@@ -1464,11 +1468,11 @@ public class ImporterTest extends ClientBaseTest {
             assertContains(fileReport, successKey);
             boolean success = fileReport.getBoolean(successKey);
             if (!expectSuccess) {
-                Assert.assertFalse(
+                assertFalse(
                     "Unexpectedly successful import: " + fileReport, success);
                 return report;
             }
-            Assert.assertTrue(
+            assertTrue(
                 "Unsuccessful import: " + fileReport, success);
         }
         return report;
@@ -1549,9 +1553,9 @@ public class ImporterTest extends ClientBaseTest {
         String msgLevelKey, JsonObject object, String key, String value
     ) {
         JsonObject expectedErrors = object.getJsonObject(msgLevelKey);
-        MatcherAssert.assertThat(expectedErrors.keySet(),
+        assertThat(expectedErrors.keySet(),
             CoreMatchers.hasItem(key));
-        MatcherAssert.assertThat(expectedErrors.getJsonArray(key),
+        assertThat(expectedErrors.getJsonArray(key),
             CoreMatchers.hasItem(Json.createValue(value)));
     }
 }
