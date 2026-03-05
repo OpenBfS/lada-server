@@ -1178,6 +1178,33 @@ public class ImporterTest extends ClientBaseTest {
     }
 
     /**
+     * Ensure setting status "undeliverable" removes incomplete measVals.
+     */
+    @Test
+    public final void laf9StatusUndeliverable()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = prepareLaf9Sample();
+        laf.setExtId(existingExtId);
+        Measm measm = new Measm();
+        measm.setExtId(existingMeasmExtId);
+        laf.setMeasms(List.of(measm));
+        StatusProt status = new StatusProt();
+        status.setMeasFacilId(mstId);
+        final int statusMpMstUndeliverable = 5;
+        status.setStatusMpId(statusMpMstUndeliverable);
+        measm.setStatusProts(List.of(status));
+
+        final int existingSampleId = 1;
+        assertEquals("Expect one incomplete measVal before import:",
+            1, getSample(existingSampleId, Sample.class).getMeasms().get(0)
+            .getMeasVals().size());
+        testAsyncLaf9Import(laf, existingExtId, true, true, Map.of());
+        assertEquals("Expect no measVals after import:",
+            0, getSample(existingSampleId, Sample.class).getMeasms().get(0)
+            .getMeasVals().size());
+    }
+
+    /**
      * Test import MeasVal using "MESSWERT_S".
      */
     @Test

@@ -102,7 +102,8 @@
         action = "DEFAULT"
     />
 
-    <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
+    <master.status_ord_mp from_id = "1" to_id = "2" />
+    <master.status_ord_mp from_id = "1" to_id = "5" />
 
     <master.state
         id = "0"

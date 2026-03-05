@@ -153,6 +153,19 @@ CREATE FUNCTION extend_tag_val_until() RETURNS trigger LANGUAGE plpgsql AS $$
     END;
 $$;
 
+-- Delete incomplete meas_val entries when setting status "undeliverable"
+CREATE FUNCTION cleanup_meas_vals() RETURNS TRIGGER LANGUAGE plpgsql AS $$
+    BEGIN
+        IF (SELECT v.id FROM master.status_val v
+            JOIN master.status_mp mp ON v.id = mp.status_val_id
+            WHERE mp.id = NEW.status_mp_id) = 7 THEN
+            DELETE FROM lada.meas_val
+                WHERE measm_id = NEW.measm_id
+                AND meas_val IS NULL AND less_than_lod IS NULL;
+        END IF;
+        RETURN NEW;
+    END;
+$$;
 
 SET default_tablespace = '';
 
@@ -469,6 +482,8 @@ CREATE TRIGGER tree_mod_status_prot BEFORE UPDATE ON status_prot FOR EACH ROW EX
 CREATE TRIGGER seq_no BEFORE INSERT ON status_prot
     FOR EACH ROW EXECUTE PROCEDURE set_status_prot_seq_no();
 CREATE TRIGGER update_measm_after_status_prot_created AFTER INSERT ON status_prot FOR EACH ROW EXECUTE PROCEDURE update_status_measm();
+CREATE TRIGGER cleanup_meas_vals AFTER INSERT ON status_prot
+    FOR EACH ROW EXECUTE PROCEDURE cleanup_meas_vals();
 
 ALTER TABLE ONLY measm
     ADD CONSTRAINT messung_status_protokoll_id_fkey

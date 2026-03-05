@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.importer.laf;
 
-import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
-
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -1047,18 +1045,6 @@ public class LafObjectMapper {
             messung.setIsCompleted(
                 !(newKombi == 0 || newKombi == 9 || newKombi == 13));
             repository.update(messung);
-
-            //Cleanup Messwerte for Status 7
-            if (statusWert == 7) {
-                List<MeasVal> messwerte = messung.getMeasVals();
-                if (messwerte != null) {
-                    messwerte.clear();
-                }
-                repository.entityManager()
-                    .createNamedQuery(Measm_.QUERY_DELETE_MEAS_VALS)
-                    .setParameter(QUERY_MEASM_PARAM, messung)
-                    .executeUpdate();
-            }
 
             return true;
         }

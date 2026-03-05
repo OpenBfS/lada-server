@@ -99,22 +99,6 @@ public class StatusProtService extends LadaIntegerIdEntityService {
             return resetStatus(status, messung);
         }
         // 2. user wants to set new status
-        return setNewStatus(status, newKombi, messung);
-    }
-
-    private StatusProt setNewStatus(
-        StatusProt status,
-        StatusMp newKombi,
-        Measm messung
-    ) {
-        if (newKombi.getStatusVal().getId() == 7) {
-            repository.entityManager()
-                .createNamedQuery(Measm_.QUERY_DELETE_MEAS_VALS)
-                .setParameter("m", messung)
-                .executeUpdate();
-        }
-
-        //NOTE: The referenced messung status field is updated by a DB trigger
         return repository.create(status);
     }
 
