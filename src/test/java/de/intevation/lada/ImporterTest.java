@@ -51,6 +51,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.rest.AsyncLadaService;
+import de.intevation.lada.rest.SampleService;
 import de.intevation.lada.rest.TagService;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.test.stamm.TagTest;
@@ -92,6 +93,10 @@ public class ImporterTest extends ClientBaseTest {
 
     private static final String ASYNC_IMPORT_URL = UriBuilder
         .fromResource(AsyncImportService.class).build().getPath() + "/";
+
+    private static final UriBuilder GET_SAMPLE_URL = UriBuilder
+        .fromResource(SampleService.class)
+        .path(SampleService.class, "getById");
 
     private static final int GENERATED_EXPIRATION_TIME = 584;
 
@@ -1385,7 +1390,7 @@ public class ImporterTest extends ClientBaseTest {
 
     private <T> T getSample(int sampleId, Class<T> type) {
         Response importedSampleResponse = target
-            .path("rest/sample/" + sampleId)
+            .path(GET_SAMPLE_URL.build(sampleId).toString())
             .request()
             .header(HEADER_X_SHIB_USER, BaseTest.testUser)
             .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
