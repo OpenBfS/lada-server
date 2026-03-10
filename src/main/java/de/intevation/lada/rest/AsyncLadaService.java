@@ -22,7 +22,6 @@ import java.util.concurrent.Future;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
 
 
@@ -36,7 +35,7 @@ public abstract class AsyncLadaService extends LadaService {
      * Retrieve the class specific JobManager.
      * @return JobManager
      */
-    protected abstract JobManager getJobManager();
+    protected abstract JobManager<?> getJobManager();
 
     public static final class AsyncJobResponse {
         private String jobId;
@@ -71,14 +70,13 @@ public abstract class AsyncLadaService extends LadaService {
      * Stores job status and message
      */
     public static class JobStatus {
-        private Status status = Status.WAITING;
-        private String message = "";
+        protected Status status = Status.WAITING;
+        protected String message = "";
         private boolean done;
 
         public JobStatus() {}
 
-        protected JobStatus(Job job) {
-            Future<?> future = job.getFuture();
+        protected JobStatus(Future<?> future) {
             if (future.isDone()) {
                 this.done = true;
                 try {

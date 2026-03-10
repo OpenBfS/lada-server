@@ -11,6 +11,8 @@ package de.intevation.lada.importer;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
+import java.util.Map;
+
 import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
@@ -26,7 +28,7 @@ import de.intevation.lada.util.data.Repository;
 /**
  * Class managing import jobs.
  */
-public class ImportJobManager extends JobManager {
+public class ImportJobManager extends JobManager<Map<String, Report>> {
 
     @Inject
     private Repository repository;
@@ -65,9 +67,8 @@ public class ImportJobManager extends JobManager {
         } else {
             throw new IllegalArgumentException();
         }
-        newJob.setUserInfo(userInfo);
         newJob.setMst(mst);
         newJob.setFiles(params.getFiles());
-        return addJob(newJob);
+        return addJob(newJob, userInfo);
     }
 }

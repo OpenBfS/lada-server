@@ -23,7 +23,7 @@ import de.intevation.lada.util.data.TagUtil;
 /**
  * Asynchronous import job.
  */
-public abstract class ImportJob<T> extends Job {
+public abstract class ImportJob<T> extends Job<Map<String, Report>> {
 
     protected Map<String, Report> importData = new HashMap<>();
 

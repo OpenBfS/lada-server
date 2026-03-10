@@ -12,9 +12,11 @@ import static de.intevation.lada.data.LafImportService.logLAFFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.inject.Inject;
 import de.intevation.lada.data.requests.Laf8ImportParameters;
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -36,7 +38,7 @@ public class Laf8ImportJob extends ImportJob<String> {
      * Run the import job.
      */
     @Override
-    public void runWithTx() {
+    public Map<String, Report> callWithTx() {
         logger.debug("Starting LAF import");
 
         // IDs of all imported probe records
@@ -65,6 +67,7 @@ public class Laf8ImportJob extends ImportJob<String> {
         tagImportedData(importedProbeids, mst);
 
         logger.debug("Finished LAF import");
+        return importData;
     }
 
     public void setImportParameters(Laf8ImportParameters importParameters) {

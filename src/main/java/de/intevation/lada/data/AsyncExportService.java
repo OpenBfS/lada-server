@@ -7,7 +7,11 @@
  */
 package de.intevation.lada.data;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -18,6 +22,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -30,7 +35,6 @@ import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.data.requests.Laf8ExportParameters;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
-import de.intevation.lada.exporter.ExportJob;
 import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.auth.UserInfo;
@@ -59,7 +63,7 @@ public class AsyncExportService extends AsyncLadaService {
     I18n i18n;
 
     @Override
-    protected JobManager getJobManager() {
+    protected JobManager<File> getJobManager() {
         return exportJobManager;
     }
 
@@ -137,12 +141,17 @@ public class AsyncExportService extends AsyncLadaService {
     )
     public Response download(
         @PathParam("jobId") String id
-    ) {
-        ExportJob<?> job = (ExportJob<?>) exportJobManager.getJobById(
+    ) throws InterruptedException, ExecutionException {
+        Future<File> job = exportJobManager.getJobById(
             id, authorization.getInfo());
         jobToRemove = id;
-        return Response.ok(job.getOutputFile().toFile())
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment")
-            .build();
+        try {
+            return Response.ok(job.get())
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment")
+                .build();
+        } catch (CancellationException e) {
+            // Job already canceled and about to be removed
+            throw new NotFoundException();
+        }
     }
 }

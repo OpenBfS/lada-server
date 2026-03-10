@@ -24,14 +24,15 @@ import jakarta.ws.rs.NotFoundException;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.Job.JobNotFinishedException;
 
 /**
  * Abstract class for managing jobs.
+ *
+ * @param <V> Result type of managed jobs
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 @ApplicationScoped
-public abstract class JobManager {
+public abstract class JobManager<V> {
 
     protected static JobIdentifier identifier =
         new JobManager.JobIdentifier();
@@ -41,7 +42,26 @@ public abstract class JobManager {
     @Resource
     private ManagedExecutorService executor;
 
-    private ConcurrentMap<String, Job> activeJobs = new ConcurrentHashMap<>();
+    protected ConcurrentMap<String, JobRecord> activeJobs =
+        new ConcurrentHashMap<>();
+
+    protected class JobRecord {
+        private Future<V> future;
+        private UserInfo user;
+
+        JobRecord(Future<V> future, UserInfo user) {
+            this.future = future;
+            this.user = user;
+        }
+
+        public Future<V> getFuture() {
+            return future;
+        }
+
+        public UserInfo getUser() {
+            return user;
+        }
+    };
 
     /**
      * Get job by id.
@@ -53,26 +73,26 @@ public abstract class JobManager {
      * @param userInfo for authorization
      * @throws NotFoundException if job with given ID cannot be found
      * @throws ForbiddenException if job does not belong to requesting user
-     * @return Job instance with given id
+     * @return {@link Future} representing the requested job
      */
-    public Job getJobById(String id, UserInfo userInfo) {
-        Job job = activeJobs.get(id);
+    public Future<V> getJobById(String id, UserInfo userInfo) {
+        JobRecord job = activeJobs.get(id);
         if (job == null) {
             throw new NotFoundException();
         }
-        if (!job.getUserInfo().getUserId().equals(userInfo.getUserId())) {
+        if (!job.user.getUserId().equals(userInfo.getUserId())) {
             throw new ForbiddenException();
         }
 
         // Cleanup canceled or failed job
-        Future<?> statusObject = job.getFuture();
+        Future<V> statusObject = job.future;
         if ((statusObject.isCancelled() || statusObject.state() == FAILED)
             && statusObject.isDone()
         ) {
             removeJob(id);
         }
 
-        return job;
+        return statusObject;
     }
 
     /**
@@ -81,9 +101,12 @@ public abstract class JobManager {
      * @param userInfo for authorization
      */
     public void cancelJobs(UserInfo userInfo) {
-        for (Job job: activeJobs.values()) {
-            if (job.getUserInfo().getUserId().equals(userInfo.getUserId())) {
-                job.cancel();
+        for (String jobId: activeJobs.keySet()) {
+            JobRecord job = activeJobs.get(jobId);
+            if (job.user.getUserId().equals(userInfo.getUserId())) {
+                if (job.future.cancel(true)) {
+                    removeJob(jobId);
+                };
             }
         }
     }
@@ -95,18 +118,20 @@ public abstract class JobManager {
      * @param newJob A new job
      * @return New identifier as String
      */
-    protected synchronized String addJob(Job newJob) {
-        newJob.setFuture(executor.submit(newJob));
-
+    protected synchronized String addJob(Job<V> newJob, UserInfo user) {
         // Create job identifier
         identifier.next();
         String id = identifier.toString();
+
         logger.debug(String.format("Creating new job: %s", id));
-        if (activeJobs.put(id, newJob) != null) {
+        if (activeJobs.put(id, new JobRecord(executor.submit(newJob), user))
+            != null
+        ) {
             // This should never happen
             throw new RuntimeException(
                 String.format("Job with id %s already exists", id));
         }
+
         return id;
     }
 
@@ -117,16 +142,7 @@ public abstract class JobManager {
      */
     public void removeJob(String jobId) {
         logger.debug(String.format("Removing job %s", jobId));
-        Job job = activeJobs.get(jobId);
-        if (job != null) {
-            try {
-                job.cleanup();
-            } catch (JobNotFinishedException jfe) {
-                logger.warn(String.format(
-                        "Tried to remove unfinished job %s", jobId));
-            }
-            activeJobs.remove(jobId);
-        } // else, job has already been removed by concurrent request.
+        activeJobs.remove(jobId);
     }
 
     /**

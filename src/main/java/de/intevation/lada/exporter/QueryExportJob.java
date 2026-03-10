@@ -7,8 +7,10 @@
  */
 package de.intevation.lada.exporter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -276,7 +278,7 @@ public abstract class QueryExportJob<T extends QueryExportParameters>
     protected abstract QueryExporter<T> getExporter();
 
     @Override
-    public void runWithTx() {
+    public File callWithTx() throws IOException {
         parseExportParameters();
 
         try (Writer writer = createTmpFileWriter()) {
@@ -291,8 +293,11 @@ public abstract class QueryExportJob<T extends QueryExportParameters>
                 this.qId,
                 this.dateFormat,
                 this.bundle);
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+            return this.getOutputFile().toFile();
+        } catch (Exception e) {
+            // Prevent orphaned result file of failed export
+            Files.deleteIfExists(this.getOutputFile());
+            throw e;
         }
     }
 }

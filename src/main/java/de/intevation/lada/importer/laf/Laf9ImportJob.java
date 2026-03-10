@@ -26,6 +26,7 @@ import java.util.Set;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ObjectMerger;
+import de.intevation.lada.importer.Report;
 import de.intevation.lada.importer.identification.Identification;
 import de.intevation.lada.importer.identification.IdentificationException;
 import de.intevation.lada.model.BaseModel;
@@ -128,7 +129,7 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
      * Run the import job.
      */
     @Override
-    public void runWithTx() {
+    public Map<String, Report> callWithTx() {
         // IDs of all imported samples
         List<Integer> importedSampleIds = new ArrayList<>();
 
@@ -179,6 +180,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
         });
 
         tagImportedData(importedSampleIds, this.mst);
+
+        return importData;
     }
 
     private void mergeSampleChilds(

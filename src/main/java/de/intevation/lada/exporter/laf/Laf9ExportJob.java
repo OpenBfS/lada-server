@@ -11,6 +11,9 @@ package de.intevation.lada.exporter.laf;
 import static de.intevation.lada.util.rest.JSONBConfig.JSONB;
 import static de.intevation.lada.util.rest.RequestMethod.GET;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Iterator;
 
 import org.hibernate.jpa.AvailableHints;
@@ -43,11 +46,8 @@ public class Laf9ExportJob extends ExportJob<LafExportParameters> {
     @Inject
     private Authorization authorization;
 
-    /**
-     * Start the export.
-     */
     @Override
-    public void runWithTx() {
+    public File callWithTx() throws IOException {
         // Load requested samples in batches
         Iterator<Sample> samples = repository.entityManager()
             .createQuery(repository
@@ -82,6 +82,11 @@ public class Laf9ExportJob extends ExportJob<LafExportParameters> {
                 repository.entityManager().detach(sample);
             }
             generator.writeEnd();
+            return this.getOutputFile().toFile();
+        } catch (Exception e) {
+            // Prevent orphaned result file of failed export
+            Files.deleteIfExists(this.getOutputFile());
+            throw e;
         }
     }
 

@@ -8,8 +8,12 @@
 
 package de.intevation.lada.exporter;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.util.TypeLiteral;
@@ -28,7 +32,7 @@ import de.intevation.lada.util.data.JobManager;
  * Class creating and managing ExportJobs.
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-public class ExportJobManager extends JobManager {
+public class ExportJobManager extends JobManager<File> {
 
     @Inject
     private Instance<ExportJob<? extends ExportParameters>> exportJobProvider;
@@ -88,7 +92,20 @@ public class ExportJobManager extends JobManager {
         }
 
         newJob.setEncoding(encoding);
-        newJob.setUserInfo(userInfo);
-        return addJob(newJob);
+        return addJob(newJob, userInfo);
+    }
+
+    @Override
+    public void removeJob(String jobId) {
+        try {
+            File f = activeJobs.get(jobId).getFuture().get();
+            Files.deleteIfExists(f.toPath());
+        } catch (InterruptedException | ExecutionException | IOException e) {
+            logger.error(String.format(
+                    "Cannot delete result file of job %s: %s",
+                    jobId, e.getMessage()));
+        } finally {
+            super.removeJob(jobId);
+        }
     }
 }

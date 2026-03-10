@@ -7,12 +7,17 @@
  */
 package de.intevation.lada.data;
 
+import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -24,6 +29,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -32,7 +38,6 @@ import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Report;
-import de.intevation.lada.importer.laf.ImportJob;
 import de.intevation.lada.importer.laf.Laf8Report;
 import de.intevation.lada.importer.laf.Laf9Report;
 import de.intevation.lada.util.data.JobManager;
@@ -58,18 +63,25 @@ public class AsyncImportService extends AsyncLadaService {
 
         public JobStatus() {}
 
-        private JobStatus(ImportJob<?> job) {
-            super(job);
+        private JobStatus(Future<Map<String, Report>> future) {
+            super(future);
 
-            for (Report report : job.getImportData().values()) {
-                if (report.hasErrors()) {
-                    this.errors = true;
-                }
-                if (report.hasWarnings()) {
-                    this.warnings = true;
-                }
-                if (report.hasNotifications()) {
-                    this.notifications = true;
+            if (future.isDone()) {
+                try {
+                    for (Report report : future.get().values()) {
+                        if (report.hasErrors()) {
+                            this.errors = true;
+                        }
+                        if (report.hasWarnings()) {
+                            this.warnings = true;
+                        }
+                        if (report.hasNotifications()) {
+                            this.notifications = true;
+                        }
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    this.status = Status.ERROR;
+                    this.message = INTERNAL_SERVER_ERROR.getReasonPhrase();
                 }
             }
         }
@@ -100,7 +112,7 @@ public class AsyncImportService extends AsyncLadaService {
     }
 
     @Override
-    protected JobManager getJobManager() {
+    protected JobManager<Map<String, Report>> getJobManager() {
         return importJobManager;
     }
 
@@ -150,9 +162,8 @@ public class AsyncImportService extends AsyncLadaService {
     @GET
     @Path("status/{jobId}")
     public JobStatus getStatus(@PathParam("jobId") String id) {
-        JobStatus status = new JobStatus((ImportJob<?>) importJobManager
-            .getJobById(id, authorization.getInfo()));
-        return status;
+        return new JobStatus(
+            importJobManager.getJobById(id, authorization.getInfo()));
     }
 
     @GET
@@ -165,10 +176,15 @@ public class AsyncImportService extends AsyncLadaService {
             schema = @Schema(oneOf = {Laf8Report.class, Laf9Report.class})))
     public Map<String, Report> getResult(
         @PathParam("jobId") String id
-    ) {
-        ImportJob<?> job = (ImportJob<?>) importJobManager.getJobById(
+    ) throws InterruptedException, ExecutionException {
+        Future<Map<String, Report>> job = importJobManager.getJobById(
             id, authorization.getInfo());
         jobToRemove = id;
-        return job.getImportData();
+        try {
+            return job.get();
+        } catch (CancellationException e) {
+            // Job already canceled and about to be removed
+            throw new NotFoundException();
+        }
     }
 }
