@@ -84,11 +84,10 @@ public abstract class Job implements Runnable {
     protected abstract void runWithTx();
 
     /**
-     * Should not be overwritten in child classes unless the transaction
-     * handling has to be changed or no transaction is needed.
+     * Call {@link Job#runWithTx()} in transaction context.
      */
     @Override
-    public void run() {
+    public final void run() {
         try {
             this.tx.begin();
             this.runWithTx();
