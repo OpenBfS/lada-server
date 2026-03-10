@@ -139,4 +139,19 @@ public class Laf8Report extends Report {
             (k, v) -> v.forEach(value ->
                 addNotification(key, new ReportItem(itemKey, k + suf, value))));
     }
+
+    @Override
+    public boolean hasErrors() {
+        return !this.getErrors().isEmpty();
+    }
+
+    @Override
+    public boolean hasWarnings() {
+        return !this.getWarnings().isEmpty();
+    }
+
+    @Override
+    public boolean hasNotifications() {
+        return !this.getNotifications().isEmpty();
+    }
 }

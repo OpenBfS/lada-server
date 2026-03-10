@@ -61,9 +61,17 @@ public class AsyncImportService extends AsyncLadaService {
         private JobStatus(ImportJob<?> job) {
             super(job);
 
-            this.errors = job.hasErrors();
-            this.warnings = job.hasWarnings();
-            this.notifications = job.hasNotifications();
+            for (Report report : job.getImportData().values()) {
+                if (report.hasErrors()) {
+                    this.errors = true;
+                }
+                if (report.hasWarnings()) {
+                    this.warnings = true;
+                }
+                if (report.hasNotifications()) {
+                    this.notifications = true;
+                }
+            }
         }
 
         public Boolean getErrors() {

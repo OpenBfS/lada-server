@@ -175,21 +175,6 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
             }
 
             // Reporting
-            if (fileResponseData.getSamples().stream().anyMatch(
-                    Sample::hasErrorsWithChilds)
-            ) {
-                this.hasErrors = true;
-            }
-            if (fileResponseData.getSamples().stream().anyMatch(
-                    Sample::hasWarningsWithChilds)
-            ) {
-                this.hasWarnings = true;
-            }
-            if (fileResponseData.getSamples().stream().anyMatch(
-                    Sample::hasNotificationsWithChilds)
-            ) {
-                this.hasNotifications = true;
-            }
             importData.put(fileName, fileResponseData);
         });
 

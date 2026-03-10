@@ -30,4 +30,10 @@ public abstract class Report {
     public void setTag(String tag) {
         this.tag = tag;
     }
+
+    public abstract boolean hasErrors();
+
+    public abstract boolean hasWarnings();
+
+    public abstract boolean hasNotifications();
 }

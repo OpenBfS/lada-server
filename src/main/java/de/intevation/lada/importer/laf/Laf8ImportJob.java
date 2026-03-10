@@ -56,15 +56,6 @@ public class Laf8ImportJob extends ImportJob<String> {
             importer.doImport(content, mstId, config);
 
             Laf8Report fileResponseData = importer.getReport();
-            if (!fileResponseData.getErrors().isEmpty()) {
-                this.hasErrors = true;
-            }
-            if (!fileResponseData.getWarnings().isEmpty()) {
-                this.hasWarnings = true;
-            }
-            if (!fileResponseData.getNotifications().isEmpty()) {
-                this.hasNotifications = true;
-            }
             importData.put(fileName, fileResponseData);
             importedProbeids.addAll(fileResponseData.getSampleIds());
             logger.debug(

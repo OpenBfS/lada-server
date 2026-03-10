@@ -34,24 +34,6 @@ public abstract class ImportJob<T> extends Job {
     @Inject
     protected TagUtil tagUtil;
 
-    protected boolean hasErrors;
-
-    protected boolean hasWarnings;
-
-    protected boolean hasNotifications;
-
-    public boolean hasErrors() {
-        return hasErrors;
-    }
-
-    public boolean hasWarnings() {
-        return hasWarnings;
-    }
-
-    public boolean hasNotifications() {
-        return hasNotifications;
-    }
-
     public void cleanup() {
         //Intentionally left blank
     }

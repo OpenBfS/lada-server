@@ -23,10 +23,28 @@ public class Laf9Report extends Report {
 
     @Override
     public boolean isSuccess() {
-        return this.samples.stream().noneMatch(Sample::hasErrorsWithChilds);
+        return !this.hasErrors();
     }
 
     public List<Sample> getSamples() {
         return this.samples;
+    }
+
+    @Override
+    public boolean hasErrors() {
+        return this.samples.stream().anyMatch(
+            Sample::hasErrorsWithChilds);
+    }
+
+    @Override
+    public boolean hasWarnings() {
+        return this.samples.stream().anyMatch(
+            Sample::hasWarningsWithChilds);
+    }
+
+    @Override
+    public boolean hasNotifications() {
+        return this.samples.stream().anyMatch(
+            Sample::hasNotificationsWithChilds);
     }
 }
