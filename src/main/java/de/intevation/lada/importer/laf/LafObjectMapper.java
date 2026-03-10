@@ -88,7 +88,6 @@ import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.model.master.Tz;
 import de.intevation.lada.model.master.Tz_;
 import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -130,8 +129,6 @@ public class LafObjectMapper {
     private LafRawData.Sample currentSample;
 
     private int currentZeitbasis;
-
-    private UserInfo userInfo;
 
     private String measFacilId;
 
@@ -230,7 +227,7 @@ public class LafObjectMapper {
         if (!authorizer.isAuthorized(probe, RequestMethod.POST)) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
-            err.setKey(userInfo.getName());
+            err.setKey(authorizer.getInfo().getName());
             err.setValue("Messstelle " + probe.getMeasFacilId());
             addError(err);
             return;
