@@ -143,7 +143,7 @@ public class AsyncExportService extends AsyncLadaService {
         @PathParam("jobId") String id
     ) throws InterruptedException, ExecutionException {
         Future<File> job = exportJobManager.getJobById(
-            id, authorization.getInfo());
+            id, authorization.getInfo()).getFuture();
         jobToRemove = id;
         try {
             return Response.ok(job.get())

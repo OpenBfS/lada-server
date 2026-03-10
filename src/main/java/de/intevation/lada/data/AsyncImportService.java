@@ -56,16 +56,17 @@ public class AsyncImportService extends AsyncLadaService {
     @Inject
     ImportJobManager importJobManager;
 
-    public static class JobStatus extends AsyncLadaService.JobStatus {
+    public class JobStatus extends AsyncLadaService.JobStatus {
         private boolean errors;
         private boolean warnings;
         private boolean notifications;
 
-        public JobStatus() {}
+        private JobStatus(
+            JobManager<Map<String, Report>>.JobRecord jobRecord
+        ) {
+            super(jobRecord);
 
-        private JobStatus(Future<Map<String, Report>> future) {
-            super(future);
-
+            Future<Map<String, Report>> future = jobRecord.getFuture();
             if (future.isDone()) {
                 try {
                     for (Report report : future.get().values()) {
@@ -96,18 +97,6 @@ public class AsyncImportService extends AsyncLadaService {
 
         public Boolean getNotifications() {
             return notifications;
-        }
-
-        public void setErrors(Boolean errors) {
-            this.errors = errors;
-        }
-
-        public void setWarnings(Boolean warnings) {
-            this.warnings = warnings;
-        }
-
-        public void setNotifications(Boolean notifications) {
-            this.notifications = notifications;
         }
     }
 
@@ -178,7 +167,7 @@ public class AsyncImportService extends AsyncLadaService {
         @PathParam("jobId") String id
     ) throws InterruptedException, ExecutionException {
         Future<Map<String, Report>> job = importJobManager.getJobById(
-            id, authorization.getInfo());
+            id, authorization.getInfo()).getFuture();
         jobToRemove = id;
         try {
             return job.get();

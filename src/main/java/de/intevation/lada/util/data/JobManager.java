@@ -8,15 +8,23 @@
 
 package de.intevation.lada.util.data;
 
+import static jakarta.enterprise.concurrent.ManagedTask.IDENTITY_NAME;
 import static java.util.concurrent.Future.State.FAILED;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.annotation.Resource;
 import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.concurrent.ManagedExecutors;
+import jakarta.enterprise.concurrent.ManagedScheduledExecutorService;
+import jakarta.enterprise.concurrent.ManagedTask;
+import jakarta.enterprise.concurrent.ManagedTaskListener;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
@@ -34,20 +42,23 @@ import de.intevation.lada.util.auth.UserInfo;
 @ApplicationScoped
 public abstract class JobManager<V> {
 
+    private static final long KEEP_RESULT_HOURS = 8;
+
     protected static JobIdentifier identifier =
         new JobManager.JobIdentifier();
 
     protected Logger logger = Logger.getLogger(this.getClass());
 
     @Resource
-    private ManagedExecutorService executor;
+    private ManagedScheduledExecutorService executor;
 
     protected ConcurrentMap<String, JobRecord> activeJobs =
         new ConcurrentHashMap<>();
 
-    protected class JobRecord {
+    public class JobRecord {
         private Future<V> future;
         private UserInfo user;
+        private ScheduledFuture<?> scheduledRemoval;
 
         JobRecord(Future<V> future, UserInfo user) {
             this.future = future;
@@ -60,6 +71,44 @@ public abstract class JobManager<V> {
 
         public UserInfo getUser() {
             return user;
+        }
+
+        public ScheduledFuture<?> getScheduledRemoval() {
+            return scheduledRemoval;
+        }
+    }
+
+    private class JobListener implements ManagedTaskListener {
+        @Override
+        public void taskDone(
+            Future<?> f, ManagedExecutorService mes, Object task, Throwable e
+        ) {
+            ManagedTask job = (ManagedTask) task;
+            String jobId = job.getExecutionProperties().get(IDENTITY_NAME);
+            activeJobs.get(jobId).scheduledRemoval =
+                executor.schedule(
+                    () -> removeJob(jobId), KEEP_RESULT_HOURS, TimeUnit.HOURS);
+        }
+
+        @Override
+        public void taskSubmitted(
+            Future<?> f, ManagedExecutorService mes, Object task
+        ) {
+            // No-op
+        }
+
+        @Override
+        public void taskStarting(
+            Future<?> f, ManagedExecutorService mes, Object task
+        ) {
+            // No-op
+        }
+
+        @Override
+        public void taskAborted(
+            Future<?> f, ManagedExecutorService mes, Object task, Throwable e
+        ) {
+            // No-op
         }
     };
 
@@ -75,7 +124,7 @@ public abstract class JobManager<V> {
      * @throws ForbiddenException if job does not belong to requesting user
      * @return {@link Future} representing the requested job
      */
-    public Future<V> getJobById(String id, UserInfo userInfo) {
+    public JobRecord getJobById(String id, UserInfo userInfo) {
         JobRecord job = activeJobs.get(id);
         if (job == null) {
             throw new NotFoundException();
@@ -92,7 +141,7 @@ public abstract class JobManager<V> {
             removeJob(id);
         }
 
-        return statusObject;
+        return job;
     }
 
     /**
@@ -124,9 +173,9 @@ public abstract class JobManager<V> {
         String id = identifier.toString();
 
         logger.debug(String.format("Creating new job: %s", id));
-        if (activeJobs.put(id, new JobRecord(executor.submit(newJob), user))
-            != null
-        ) {
+        Future<V> future = executor.submit(ManagedExecutors.managedTask(
+                newJob, Map.of(IDENTITY_NAME, id), new JobListener()));
+        if (activeJobs.put(id, new JobRecord(future, user)) != null) {
             // This should never happen
             throw new RuntimeException(
                 String.format("Job with id %s already exists", id));

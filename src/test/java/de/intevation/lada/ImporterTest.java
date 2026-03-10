@@ -60,7 +60,6 @@ import de.intevation.lada.rest.TagService;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
 import de.intevation.lada.test.stamm.TagTest;
 import de.intevation.lada.data.AsyncImportService;
-import de.intevation.lada.data.AsyncImportService.JobStatus;
 import de.intevation.lada.data.requests.Laf8ImportParameters;
 import de.intevation.lada.data.requests.Laf9ImportParameters;
 import de.intevation.lada.data.requests.LafImportParameters;
@@ -1459,15 +1458,14 @@ public class ImporterTest extends ClientBaseTest {
             .request()
             .header(HEADER_X_SHIB_USER, BaseTest.testUser)
             .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles);
-        JobStatus importStatusObject;
+        JsonObject importStatusObject;
         boolean done = false;
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
         do {
             Response response = statusRequest.get();
-            importStatusObject =
-                parseResponse(response, JobStatus.class);
-            done = importStatusObject.isDone();
+            importStatusObject = parseResponse(response).asJsonObject();
+            done = importStatusObject.getBoolean("done");
             assertTrue(
                 "Import not done within one minute",
                 waitUntil.isAfter(Instant.now()));
@@ -1476,7 +1474,7 @@ public class ImporterTest extends ClientBaseTest {
 
         assertEquals(
             AsyncLadaService.Status.FINISHED.name(),
-            importStatusObject.getStatus().name());
+            importStatusObject.getString("status"));
 
         /* Fetch import result report */
         Response reportResponse = target

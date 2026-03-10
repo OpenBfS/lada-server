@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.i18n;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import de.intevation.lada.context.ThreadLocale;
@@ -33,9 +34,12 @@ public class I18n {
 
     /**
      * @param key Key to lookup in resource bundle
+     * @param arguments object(s) to format in localized string
      * @return localized string for language given by context locale
      */
-    public String getString(String key) {
-        return this.bundle.getString(key);
+    public String getString(String key, Object... arguments) {
+        MessageFormat format = new MessageFormat(
+            this.bundle.getString(key), ThreadLocale.get());
+        return format.format(arguments);
     }
 }

@@ -58,7 +58,6 @@ import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
-import de.intevation.lada.rest.AsyncLadaService.JobStatus;
 
 
 /**
@@ -828,11 +827,11 @@ public class ExporterTest extends ClientBaseTest {
         boolean done = false;
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
-        JobStatus exportStatusObject;
+        JsonObject exportStatusObject;
         do {
             Response response = statusRequest.get();
-            exportStatusObject = parseResponse(response, JobStatus.class);
-            done = exportStatusObject.isDone();
+            exportStatusObject = parseResponse(response).asJsonObject();
+            done = exportStatusObject.getBoolean("done");
 
             assertTrue(
                 "Export not done within one minute",
@@ -842,7 +841,7 @@ public class ExporterTest extends ClientBaseTest {
 
         assertEquals(
             expectedStatus.name(),
-            exportStatusObject.getStatus().name());
+            exportStatusObject.getString("status"));
 
         return jobId;
     }

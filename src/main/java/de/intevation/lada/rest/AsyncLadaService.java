@@ -9,25 +9,34 @@ package de.intevation.lada.rest;
 
 
 import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.data.JobManager;
 
 
 public abstract class AsyncLadaService extends LadaService {
 
     private static final Logger LOG = Logger.getLogger(AsyncLadaService.class);
+
+    @Inject
+    private I18n i18n;
 
     protected String jobToRemove;
 
@@ -69,19 +78,23 @@ public abstract class AsyncLadaService extends LadaService {
      * Class modeling a job status.
      * Stores job status and message
      */
-    public static class JobStatus {
+    public class JobStatus {
         protected Status status = Status.WAITING;
         protected String message = "";
         private boolean done;
 
-        public JobStatus() {}
-
-        protected JobStatus(Future<?> future) {
-            if (future.isDone()) {
+        protected JobStatus(JobManager<?>.JobRecord jobRecord) {
+            ScheduledFuture<?> scheduledRemoval =
+                jobRecord.getScheduledRemoval();
+            if (scheduledRemoval != null) {
                 this.done = true;
                 try {
-                    future.get();
+                    jobRecord.getFuture().get();
                     this.status = Status.FINISHED;
+                    this.message = i18n.getString("download_until",
+                        Date.from(Instant.now().plus(
+                                scheduledRemoval.getDelay(TimeUnit.SECONDS),
+                                ChronoUnit.SECONDS)));
                 } catch (CancellationException | InterruptedException e) {
                     this.status = Status.ERROR;
                     this.message = INTERNAL_SERVER_ERROR.getReasonPhrase();
@@ -105,18 +118,6 @@ public abstract class AsyncLadaService extends LadaService {
 
         public String getMessage() {
             return message;
-        }
-
-        public void setDone(boolean done) {
-            this.done = done;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-
-        public void setStatus(Status status) {
-            this.status = status;
         }
     }
 
