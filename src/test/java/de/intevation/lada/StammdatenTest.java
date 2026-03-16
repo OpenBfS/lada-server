@@ -117,6 +117,15 @@ public class StammdatenTest extends ClientBaseTest {
     }
 
     /**
+     * Tests for operation mode.
+     */
+    @Test
+    public final void testOprModeAll() {
+        stammdatenTest.init(this.target);
+        stammdatenTest.getAll("oprmode");
+    }
+
+    /**
      * Tests for datenbasis operations.
      */
     @Test
