@@ -43,10 +43,12 @@ import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -172,8 +174,10 @@ public class Sample extends BaseModel
         groups = DatabaseConstraints.class, clazz = MpgCateg.class)
     private Integer mpgCategId;
 
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Mpg.class)
+    @Schema(readOnly = true)
+    @Null(groups = CreateErrors.class,
+        message = "{de.intevation.lada.validation.ReadOnlyField.message}")
+    @Column(updatable = false)
     private Integer mpgId;
 
     @NotBlank
