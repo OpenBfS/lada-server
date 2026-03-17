@@ -227,7 +227,7 @@ public class ImporterTest extends ClientBaseTest {
             regulation, sampleSpecifId, "", mmtId, measd, measUnit, "");
         Map<String, JsonValue> verify = new HashMap<>(expectedAttrs);
         verify.put(Sample_.MAIN_SAMPLE_ID, Json.createValue(lafSampleId));
-        JsonObject report = testAsyncLaf8Import(laf, lafSampleId, true, verify);
+        JsonObject report = testAsyncLaf8Import(laf, true, verify);
 
         JsonObject expectedWarning = Json.createObjectBuilder()
             .add(REPORT_ITEM_KEY_KEY, "validation#probe")
@@ -258,7 +258,7 @@ public class ImporterTest extends ClientBaseTest {
         final String laf = String.format(
             laf8Template, lafSampleId,
             regulation, sampleSpecifId, "", mmtId, measd, measUnit, "");
-        JsonObject fileReport = testAsyncLaf8Import(laf, lafSampleId, true);
+        JsonObject fileReport = testAsyncLaf8Import(laf, true);
         final int sampleId = fileReport.getJsonArray(SAMPLE_IDS_KEY)
             .getJsonNumber(0).intValue();
 
@@ -319,7 +319,7 @@ public class ImporterTest extends ClientBaseTest {
         expected.getMeasms().forEach(m -> m.getTags().add(generatedTag));
 
         JsonObject report = testAsyncLaf9Import(
-            laf, lafSampleId, true, false, expected,
+            laf, true, false, expected,
             OWNER_KEY, Site_.REFERENCE_COUNT, Measm_.MEAS_VALS_COUNT,
             READONLY_KEY);
 
@@ -347,7 +347,7 @@ public class ImporterTest extends ClientBaseTest {
         laf.setMainSampleId(lafSampleId);
 
         JsonObject report = testAsyncLaf9Import(
-            laf, lafSampleId, true, false, laf, OWNER_KEY, TAGS_KEY);
+            laf, true, false, laf, OWNER_KEY, TAGS_KEY);
         JsonArray reportSamples = report.getJsonArray(SAMPLES_KEY);
         assertHasMessage(
             WARNINGS_KEY,
@@ -371,8 +371,7 @@ public class ImporterTest extends ClientBaseTest {
             Sample_.MAIN_SAMPLE_ID, Json.createValue(existingMainSampleId));
         verify.put(Sample_.REGULATION_ID, Json.createValue(2));
 
-        JsonObject report =
-            testAsyncLaf8Import(laf, existingMainSampleId, true, verify);
+        JsonObject report = testAsyncLaf8Import(laf, true, verify);
         assertMeasValIsReplaced(report);
     }
 
@@ -434,7 +433,7 @@ public class ImporterTest extends ClientBaseTest {
         laf.setGeolocats(List.of(loc, loc2));
 
         testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, laf,
+            laf, true, true, laf,
             "readonly", OWNER_KEY, Measm_.STATUS_PROTS, Measm_.MEAS_VALS_COUNT,
             TAGS_KEY, Site_.REFERENCE_COUNT);
     }
@@ -465,8 +464,7 @@ public class ImporterTest extends ClientBaseTest {
         laf.setMeasms(List.of(measmUpdate, measmNew));
 
         testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, laf,
-            OWNER_KEY, TAGS_KEY, Measm_.MEAS_VALS_COUNT);
+            laf, true, true, laf, OWNER_KEY, TAGS_KEY, Measm_.MEAS_VALS_COUNT);
     }
 
     /**
@@ -490,8 +488,7 @@ public class ImporterTest extends ClientBaseTest {
         laf.setMeasms(List.of(measm));
 
         JsonObject report = testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, laf,
-            OWNER_KEY, TAGS_KEY, Measm_.MEAS_VALS_COUNT);
+            laf, true, true, laf, OWNER_KEY, TAGS_KEY, Measm_.MEAS_VALS_COUNT);
         assertMeasValIsReplaced(report);
     }
 
@@ -518,8 +515,7 @@ public class ImporterTest extends ClientBaseTest {
 
         laf.setMeasms(List.of(measm));
 
-        JsonObject report = testAsyncLaf9Import(
-            laf, existingMainSampleId, false, true, laf);
+        JsonObject report = testAsyncLaf9Import(laf, false, true, laf);
         assertHasError(
             report.getJsonArray(SAMPLES_KEY).getJsonObject(0)
             .getJsonArray(Sample_.MEASMS).getJsonObject(0)
@@ -560,7 +556,7 @@ public class ImporterTest extends ClientBaseTest {
         expectedMeasVal.setMeasVal(v * factor);
         expectedMeasm.setMeasVals(List.of(expectedMeasVal));
 
-        testAsyncLaf9Import(laf, lafSampleId, true, false, expected,
+        testAsyncLaf9Import(laf, true, false, expected,
             Measm_.MEAS_VALS_COUNT, TAGS_KEY, OWNER_KEY);
     }
 
@@ -605,8 +601,7 @@ public class ImporterTest extends ClientBaseTest {
         expected.setMeasms(List.of(expectedMeasm));
 
         testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, expected,
-            OWNER_KEY, Measm_.MEAS_VALS_COUNT);
+            laf, true, true, expected, OWNER_KEY, Measm_.MEAS_VALS_COUNT);
     }
 
     /**
@@ -636,8 +631,7 @@ public class ImporterTest extends ClientBaseTest {
         importTag.setIsAutoTag(true);
         expected.setTags(List.of(associatedTag, existingTag, tag, importTag));
 
-        testAsyncLaf9Import(
-            laf, existingMainSampleId, true, true, expected, OWNER_KEY);
+        testAsyncLaf9Import(laf, true, true, expected, OWNER_KEY);
     }
 
     /**
@@ -657,7 +651,7 @@ public class ImporterTest extends ClientBaseTest {
         expected.setMainSampleId(lafSampleId);
 
         assertHasInvalidMmtError(testAsyncLaf9Import(
-                laf, existingMainSampleId, false, true, expected));
+                laf, false, true, expected));
     }
 
     /**
@@ -683,7 +677,7 @@ public class ImporterTest extends ClientBaseTest {
         JsonObject expected = getSample(existingSampleId, JsonObject.class);
 
         assertHasInvalidMmtError(testAsyncLaf9Import(
-                laf, existingMainSampleId, false, true, expected));
+                laf, false, true, expected));
     }
 
     private void assertHasInvalidMmtError(JsonObject report) {
@@ -708,7 +702,7 @@ public class ImporterTest extends ClientBaseTest {
         laf.getMeasms().get(0).setMmtId(null);
 
         JsonObject report = testAsyncLaf9Import(
-            laf, existingMainSampleId, false, false, expectedAttrs);
+            laf, false, false, expectedAttrs);
         JsonObject actualErrors = report.getJsonArray(SAMPLES_KEY)
             .getJsonObject(0).getJsonArray(Sample_.MEASMS).stream()
             .filter(v -> v.asJsonObject().isNull(Measm_.MMT_ID))
@@ -732,8 +726,7 @@ public class ImporterTest extends ClientBaseTest {
         laf.setMainSampleId(lafSampleId);
         laf.setMeasFacilId("06011");
 
-        assertForbidden(testAsyncLaf9Import(
-                laf, lafSampleId, false, false, expectedAttrs));
+        assertForbidden(testAsyncLaf9Import(laf, false, false, expectedAttrs));
     }
 
     /**
@@ -746,8 +739,7 @@ public class ImporterTest extends ClientBaseTest {
         laf.setExtId(foreignExtId);
         laf.setMeasFacilId(mstId);
 
-        assertForbidden(testAsyncLaf9Import(
-                laf, foreignExtId, false, true, expectedAttrs));
+        assertForbidden(testAsyncLaf9Import(laf, false, true, expectedAttrs));
     }
 
     private void assertForbidden(JsonObject report) {
@@ -771,7 +763,7 @@ public class ImporterTest extends ClientBaseTest {
         laf.setTags(List.of(existingTag));
 
         JsonObject report = testAsyncLaf9Import(
-            laf, foreignExtId, false, true, expectedAttrs);
+            laf, false, true, expectedAttrs);
         assertHasError(
             report.getJsonArray(SAMPLES_KEY).getJsonObject(0)
             .getJsonArray(TAGS_KEY).getJsonObject(0),
@@ -795,7 +787,7 @@ public class ImporterTest extends ClientBaseTest {
         laf.setMeasms(List.of(measm));
 
         JsonObject report = testAsyncLaf9Import(
-            laf, foreignExtId, false, true, expectedAttrs);
+            laf, false, true, expectedAttrs);
         assertHasError(
             report.getJsonArray(SAMPLES_KEY).getJsonObject(0)
             .getJsonArray(Sample_.MEASMS).getJsonObject(0)
@@ -821,7 +813,7 @@ public class ImporterTest extends ClientBaseTest {
                     }
                     return line;
                 }).collect(Collectors.joining("\n"));
-        testAsyncLaf8Import(lowerCaseLAF, lafSampleId, true);
+        testAsyncLaf8Import(lowerCaseLAF, true);
     }
 
     /**
@@ -830,7 +822,7 @@ public class ImporterTest extends ClientBaseTest {
     @Test
     public final void laf8NoSuccess()
         throws InterruptedException, CharacterCodingException {
-        testAsyncLaf8Import("no valid LAF", "", false);
+        testAsyncLaf8Import("no valid LAF", false);
     }
 
     /**
@@ -892,7 +884,7 @@ public class ImporterTest extends ClientBaseTest {
             Locale.US, "No value provided");
         for (Locale locale: msgs.keySet()) {
             JsonObject report = testAsyncLaf8Import(
-                locale, noOprModeLAF, "", false);
+                locale, noOprModeLAF, false);
             assertContains(report, ERRORS_KEY);
             JsonArray errors = report.getJsonObject(ERRORS_KEY)
                 .getJsonArray(lafSampleId);
@@ -918,7 +910,6 @@ public class ImporterTest extends ClientBaseTest {
             String.format(
                 laf8Template, lafSampleId, "conv", sampleSpecifId,
                 "", mmtId, measd, measUnit, ""),
-            lafSampleId,
             true);
     }
 
@@ -933,7 +924,6 @@ public class ImporterTest extends ClientBaseTest {
             String.format(
                 laf8Template, lafSampleId, "conv", sampleSpecifId,
                 "", mmtId, "H 3", measUnit, ""),
-            lafSampleId,
             true);
     }
 
@@ -949,7 +939,6 @@ public class ImporterTest extends ClientBaseTest {
             String.format(
                 laf8Template, lafSampleId, "conv", "XX",
                 "", mmtId, measd, measUnit, ""),
-            lafSampleId,
             true);
     }
 
@@ -994,7 +983,7 @@ public class ImporterTest extends ClientBaseTest {
             JSONBConfig.JSONB.toJson(laf), JsonObject.class);
 
         testAsyncLaf9Import(
-            laf, lafSampleId, true, true, expected,
+            laf, true, true, expected,
             // Ignore anything completed by server
             Sample_.ID, Sample_.EXT_ID, Sample_.TREE_MOD,
             Sample_.ENV_DESCRIP_NAME, Sample_.ENV_MEDIUM_ID, OWNER_KEY,
@@ -1018,7 +1007,7 @@ public class ImporterTest extends ClientBaseTest {
         site.setAdminUnitId(null);
         site.setLongText("This site misses required attributes");
 
-        testAsyncLaf9Import(laf, lafSampleId, false, true, laf);
+        testAsyncLaf9Import(laf, false, true, laf);
     }
 
     /**
@@ -1052,7 +1041,6 @@ public class ImporterTest extends ClientBaseTest {
                 // New measm with extId should not be possible
                 mmtId, measd, measUnit,
                 "MESSUNGS_ID 11\n"),
-            lafSampleId,
             false);
         JsonObject expectedErr = Json.createObjectBuilder()
             .add("key", "validation#messung")
@@ -1081,7 +1069,6 @@ public class ImporterTest extends ClientBaseTest {
                 "%MESSUNG%\n"
                 + "MESSUNGS_ID " + existingMeasmExtId + "\n"
                 + "NEBENPROBENNUMMER \"" + minSampleId + "\"\n"),
-            lafSampleId,
             false);
         JsonObject expectedErr = Json.createObjectBuilder()
             .add("key", "validation#messung")
@@ -1126,7 +1113,6 @@ public class ImporterTest extends ClientBaseTest {
                     "PROBE_ID \"" + lafSampleId + "\"\n",
                     mmtId, measd, measUnit,
                     "BEARBEITUNGSSTATUS 1000\n"),
-                lafSampleId,
                 false);
         JsonObject expectedError = Json.createObjectBuilder()
             .add(REPORT_ITEM_KEY_KEY, "validation#probe")
@@ -1148,8 +1134,7 @@ public class ImporterTest extends ClientBaseTest {
         Sample laf = prepareLaf9Data();
         laf.setMainSampleId(lafSampleId);
         laf.setExtId(lafSampleId);
-        JsonObject report = testAsyncLaf9Import(
-            laf, lafSampleId, false, false, Map.of());
+        JsonObject report = testAsyncLaf9Import(laf, false, false, Map.of());
         JsonArray reportSamples = report.getJsonArray(SAMPLES_KEY);
         assertHasError(
             reportSamples.getJsonObject(0),
@@ -1172,7 +1157,6 @@ public class ImporterTest extends ClientBaseTest {
                 // Measurand does not match measuring method
                 mmtId, "Mangan", measUnit,
                 "BEARBEITUNGSSTATUS 1000\n"),
-            lafSampleId,
             false);
     }
 
@@ -1197,7 +1181,7 @@ public class ImporterTest extends ClientBaseTest {
         assertEquals("Expect one incomplete measVal before import:",
             1, getSample(existingSampleId, Sample.class).getMeasms().get(0)
             .getMeasVals().size());
-        testAsyncLaf9Import(laf, existingExtId, true, true, Map.of());
+        testAsyncLaf9Import(laf, true, true, Map.of());
         assertEquals("Expect no measVals after import:",
             0, getSample(existingSampleId, Sample.class).getMeasms().get(0)
             .getMeasVals().size());
@@ -1216,7 +1200,6 @@ public class ImporterTest extends ClientBaseTest {
                 regulation, sampleSpecifId, "",
                 mmtId, measd, measUnit,
                 "MESSWERT_S 1 42.0 1 0.42\n"),
-            lafSampleId,
             true);
     }
 
@@ -1254,7 +1237,7 @@ public class ImporterTest extends ClientBaseTest {
             "");
         LOG.trace(lafZb);
 
-        JsonArray warnings = testAsyncLaf8Import(lafZb, lafSampleId, true)
+        JsonArray warnings = testAsyncLaf8Import(lafZb, true)
             .getJsonObject(WARNINGS_KEY).getJsonArray(lafSampleId);
         LOG.trace(warnings);
         if (expectWarning) {
@@ -1283,8 +1266,7 @@ public class ImporterTest extends ClientBaseTest {
         String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
-        JsonObject response = testAsyncLaf8Import(
-            lafData, lafSampleId, expectSuccess);
+        JsonObject response = testAsyncLaf8Import(lafData, expectSuccess);
         JsonObject warnings = response.getJsonObject(WARNINGS_KEY);
         if (!warnings.isEmpty()) {
             fail("Unexpected warnings: "
@@ -1295,37 +1277,33 @@ public class ImporterTest extends ClientBaseTest {
 
     private JsonObject testAsyncLaf8Import(
         String lafData,
-        String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
         return testAsyncLaf8Import(
-            Locale.US, lafData, lafSampleId, expectSuccess, expectedAttrs);
+            Locale.US, lafData, expectSuccess, expectedAttrs);
     }
 
     private JsonObject testAsyncLaf8Import(
         String lafData,
-        String lafSampleId,
         boolean expectSuccess,
         Map<String, JsonValue> verify
     ) throws InterruptedException, CharacterCodingException {
         return testAsyncLaf8Import(
-            Locale.US, lafData, lafSampleId, expectSuccess, verify);
+            Locale.US, lafData, expectSuccess, verify);
     }
 
     private JsonObject testAsyncLaf8Import(
         Locale locale,
         String lafData,
-        String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
         return testAsyncLaf8Import(
-            locale, lafData, lafSampleId, expectSuccess, expectedAttrs);
+            locale, lafData, expectSuccess, expectedAttrs);
     }
 
     private JsonObject testAsyncLaf8Import(
         Locale locale,
         String lafData,
-        String lafSampleId,
         boolean expectSuccess,
         Map<String, JsonValue> verify
     ) throws InterruptedException, CharacterCodingException {
@@ -1349,14 +1327,13 @@ public class ImporterTest extends ClientBaseTest {
 
     private JsonObject testAsyncLaf9Import(
         Sample lafData,
-        String lafSampleId,
         boolean expectSuccess,
         boolean sparse,
         Sample verify,
         String... ignore
     ) throws InterruptedException, CharacterCodingException {
         return testAsyncLaf9Import(
-            lafData, lafSampleId, expectSuccess, sparse,
+            lafData, expectSuccess, sparse,
             JSONBConfig.JSONB.fromJson(
                 JSONB_SPARSE.toJson(verify), JsonObject.class),
             ignore);
@@ -1364,7 +1341,6 @@ public class ImporterTest extends ClientBaseTest {
 
     private JsonObject testAsyncLaf9Import(
         Sample lafData,
-        String lafSampleId,
         boolean expectSuccess,
         boolean sparse,
         Map<String, JsonValue> verify,
