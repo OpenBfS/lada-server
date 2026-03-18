@@ -398,6 +398,15 @@ public class StammdatenTest extends ClientBaseTest {
     }
 
     /**
+     * Tests site class get all operation.
+     */
+    @Test
+    public final void testSiteClassAll() {
+        stammdatenTest.init(this.target);
+        stammdatenTest.getAll("siteclass");
+    }
+
+    /**
      * Tests type regulation get all operation.
      */
     @Test
