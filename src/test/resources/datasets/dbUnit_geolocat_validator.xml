@@ -2,6 +2,7 @@
 <dataset>
     <!--Auth data-->
     <master.network id = "06" name = "test" />
+    <master.network id = "07" name = "other" />
     <master.meas_facil id = "06010" network_id = "06" />
 
     <!--Master data-->
@@ -66,6 +67,19 @@
     <master.site
         id = "1001"
         network_id = "06"
+        ext_id = "D_00193"
+        long_text = "Langer Text"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "32487017"
+        coord_y_ext = "5519769"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        short_text = "kurz"
+        site_class_id = "1"
+    />
+    <master.site
+        id = "1002"
+        network_id = "07"
         ext_id = "D_00193"
         long_text = "Langer Text"
         is_fuzzy = "true"

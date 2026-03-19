@@ -25,6 +25,7 @@ import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.TypeRegulation;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
+import de.intevation.lada.validation.constraints.ReferencedNetworksMatch;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
@@ -46,6 +47,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     propertyNodeName = "typeRegulation",
     message = "{de.intevation.lada.validation.constraints.HasOneSiteOfOrigin.message}",
     groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
+@ReferencedNetworksMatch(groups = DatabaseConstraints.class)
 public class GeolocatMpg extends BelongsToMpg implements Serializable {
 
     private static final long serialVersionUID = 1L;

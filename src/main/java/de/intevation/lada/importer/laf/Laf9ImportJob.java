@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import de.intevation.lada.factory.OrtFactory;
@@ -297,9 +298,13 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                     finalObject = create(srcObject);
                 } else {
                     isNewChild = false;
-                    finalObject = merge(finalObject, rawObject);
-                    if (finalObject instanceof Geolocat loc) {
+                    if (finalObject instanceof Geolocat loc
+                        && !Objects.equals(loc.getSite(), finalSite)
+                    ) {
                         loc.setSite(finalSite);
+                        finalObject = merge(loc, rawObject, true);
+                    } else {
+                        finalObject = merge(finalObject, rawObject);
                     }
                 }
 
@@ -397,7 +402,13 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
     }
 
     private <T extends BaseModel> T merge(T persistent, JsonObject rawObject) {
-        boolean changed = merger.merge(persistent, rawObject);
+        return merge(persistent, rawObject, false);
+    }
+
+    private <T extends BaseModel> T merge(
+        T persistent, JsonObject rawObject, boolean dirty
+    ) {
+        boolean changed = merger.merge(persistent, rawObject) || dirty;
         if (changed) {
             validator.validate(persistent, Default.class);
             if (!persistent.hasErrors()

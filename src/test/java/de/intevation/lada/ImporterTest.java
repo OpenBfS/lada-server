@@ -67,6 +67,7 @@ import de.intevation.lada.importer.laf.Laf9ImportJob;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
@@ -1008,6 +1009,54 @@ public class ImporterTest extends ClientBaseTest {
         site.setLongText("This site misses required attributes");
 
         testAsyncLaf9Import(laf, false, true, laf);
+    }
+
+    /**
+     * Test asynchronous import with site from wrong network.
+     */
+    @Test
+    public final void laf9ForeignSiteCreate()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = prepareLaf9Data();
+
+        Site site = new Site();
+        site.setExtId(existingSiteExtId);
+        site.setNetworkId("11");
+        laf.getGeolocats().get(0).setSite(site);
+
+        assertForeignSiteFails(laf);
+    }
+
+    /**
+     * Test asynchronous import with site from wrong network.
+     */
+    @Test
+    public final void laf9ForeignSiteUpdate()
+        throws InterruptedException, CharacterCodingException {
+        Sample laf = new Sample();
+        laf.setExtId(existingExtId);
+
+        Geolocat loc = new Geolocat();
+        loc.setTypeRegulation(TYPE_REGULATION_E);
+        Site site = new Site();
+        site.setExtId(existingSiteExtId);
+        site.setNetworkId("11");
+        loc.setSite(site);
+        laf.setGeolocats(List.of(loc));
+
+        assertForeignSiteFails(laf);
+    }
+
+    private void assertForeignSiteFails(
+        Sample laf
+    ) throws CharacterCodingException, InterruptedException {
+        JsonObject loc = testAsyncLaf9Import(laf, false, true, laf)
+            .getJsonArray(SAMPLES_KEY).getJsonObject(0).getJsonArray(
+                Sample_.GEOLOCATS).getJsonObject(0);
+        final String msg =
+            "Referenced entities must belong to the same network";
+        assertHasError(loc, Geolocat_.SAMPLE, msg);
+        assertHasError(loc, Geolocat_.SITE, msg);
     }
 
     /**

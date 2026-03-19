@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.model.lada.GeolocatMpg_;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Site;
@@ -34,6 +35,9 @@ public class GeolocatTest extends ValidatorBaseTest {
 
     private static final String MSG_UNIQUE_SAMPLING_LOCATION =
         "Sampling location (typeRegulation \"E\" or \"R\") must be unique";
+    private static final int FOREIGN_SITE_ID = 1002;
+    private static final String REFERENCE_SAME_NETWORK_MSG =
+        "Referenced entities must belong to the same network";
 
     /**
      * Constructor.
@@ -135,6 +139,32 @@ public class GeolocatTest extends ValidatorBaseTest {
         assertNoMessages(validator.validate(loc));
     }
 
+    @Test
+    public void wrongSiteNetwork() {
+        Geolocat loc = new Geolocat();
+        loc.setTypeRegulation(TYPE_REGULATION_E);
+        loc.setSample(
+            repository.getById(Sample.class, SAMPLE_WITHOUT_E_GEOLOCAT));
+        loc.setSite(repository.getById(Site.class, FOREIGN_SITE_ID));
+        assertHasWrongNetworkError(loc);
+    }
+
+    @Test
+    public void emptySiteNetwork() {
+        Geolocat loc = new Geolocat();
+        loc.setTypeRegulation(TYPE_REGULATION_E);
+        loc.setSample(
+            repository.getById(Sample.class, SAMPLE_WITHOUT_E_GEOLOCAT));
+        loc.setSite(new Site());
+        assertHasWrongNetworkError(loc);
+    }
+
+    private void assertHasWrongNetworkError(Geolocat loc) {
+        validator.validate(loc);
+        assertHasErrors(loc, Geolocat_.SAMPLE, REFERENCE_SAME_NETWORK_MSG);
+        assertHasErrors(loc, Geolocat_.SITE, REFERENCE_SAME_NETWORK_MSG);
+    }
+
     /**
      * Test adding E-type geolocat to Mpg which already has E-type geolocat.
      */
@@ -225,5 +255,29 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSite(repository.getById(Site.class, EXISTING_SITE_ID));
 
         assertNoMessages(validator.validate(loc));
+    }
+
+    @Test
+    public void wrongSiteNetworkMpg() {
+        GeolocatMpg loc = new GeolocatMpg();
+        loc.setTypeRegulation(TYPE_REGULATION_U);
+        loc.setMpgId(MPG_WITH_E_GEOLOCAT);
+        loc.setSite(repository.getById(Site.class, FOREIGN_SITE_ID));
+        assertHasWrongNetworkError(loc);
+    }
+
+    @Test
+    public void emptySiteNetworkMpg() {
+        GeolocatMpg loc = new GeolocatMpg();
+        loc.setTypeRegulation(TYPE_REGULATION_U);
+        loc.setMpgId(MPG_WITH_E_GEOLOCAT);
+        loc.setSite(new Site());
+        assertHasWrongNetworkError(loc);
+    }
+
+    private void assertHasWrongNetworkError(GeolocatMpg loc) {
+        validator.validate(loc);
+        assertHasErrors(loc, GeolocatMpg_.MPG_ID, REFERENCE_SAME_NETWORK_MSG);
+        assertHasErrors(loc, GeolocatMpg_.SITE, REFERENCE_SAME_NETWORK_MSG);
     }
 }
