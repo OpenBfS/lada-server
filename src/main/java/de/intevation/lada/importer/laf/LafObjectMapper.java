@@ -234,7 +234,7 @@ public class LafObjectMapper {
         }
 
         // Compare the probe with objects in the db
-        Sample newProbe = null;
+        Sample newProbe;
         boolean oldProbeIsReadonly = false;
         try {
             Sample old = identification.getExisting(probe);
@@ -277,6 +277,7 @@ public class LafObjectMapper {
                     newProbe.clearMessages();
                 } else {
                     validate(probe, "validation#probe", false, true);
+                    return;
                 }
             }
         } catch (IdentificationException e) {
@@ -288,249 +289,244 @@ public class LafObjectMapper {
             addError(err);
             return;
         }
-        if (newProbe != null) {
-            report.addSampleId(newProbe.getId());
-        } else if (probe != null) {
-            report.addSampleId(probe.getId());
-        }
 
-        if (newProbe != null) {
-            if (!oldProbeIsReadonly) {
-                // Create kommentar objects
-                for (Map<String, String> commRaw: currentSample.getKommentare()) {
-                    createProbeKommentar(commRaw, newProbe);
-                }
+        report.addSampleId(newProbe.getId());
 
-                // Create zusatzwert objects
-                for (Map<String, String> raw: currentSample.getZusatzwerte()) {
-                    createOrUpdateSampleSpecifMeasVal(raw, newProbe);
-                }
+        if (!oldProbeIsReadonly) {
+            // Create kommentar objects
+            for (Map<String, String> commRaw: currentSample.getKommentare()) {
+                createProbeKommentar(commRaw, newProbe);
+            }
 
-                // Create site objects
-                this.configMapper.applyConfigs(currentSample.getEntnahmeOrt());
-                for (Map<String, String> uOrt: currentSample.getUrsprungsOrte()) {
-                    this.configMapper.applyConfigs(uOrt);
-                }
-                // Special things for REI-Messpunkt
-                if (probe.getReiAgGrId() != null
-                    || Integer.valueOf(3).equals(probe.getRegulationId())
-                    || Integer.valueOf(4).equals(probe.getRegulationId())
-                ) {
-                    createReiMesspunkt(currentSample, newProbe);
-                } else {
-                    // Check if we have EOrte present
-                    QueryBuilder<Geolocat> builderPresentEOrte = repository
-                        .queryBuilder(Geolocat.class)
-                        .and(Geolocat_.sample, newProbe)
-                        .and(Geolocat_.typeRegulation, "E");
-                    List<Geolocat> presentEOrte =
-                        repository.filter(builderPresentEOrte.getQuery());
+            // Create zusatzwert objects
+            for (Map<String, String> raw: currentSample.getZusatzwerte()) {
+                createOrUpdateSampleSpecifMeasVal(raw, newProbe);
+            }
 
-                    // Check if we have UOrte present
-                    QueryBuilder<Geolocat> builderPresentUOrte = repository
-                        .queryBuilder(Geolocat.class)
-                        .and(Geolocat_.sample, newProbe)
-                        .and(Geolocat_.typeRegulation, "U");
-                    List<Geolocat> presentUOrte =
-                        repository.filter(builderPresentUOrte.getQuery());
+            // Create site objects
+            this.configMapper.applyConfigs(currentSample.getEntnahmeOrt());
+            for (Map<String, String> uOrt: currentSample.getUrsprungsOrte()) {
+                this.configMapper.applyConfigs(uOrt);
+            }
+            // Special things for REI-Messpunkt
+            if (probe.getReiAgGrId() != null
+                || Integer.valueOf(3).equals(probe.getRegulationId())
+                || Integer.valueOf(4).equals(probe.getRegulationId())
+            ) {
+                createReiMesspunkt(currentSample, newProbe);
+            } else {
+                // Check if we have EOrte present
+                QueryBuilder<Geolocat> builderPresentEOrte = repository
+                    .queryBuilder(Geolocat.class)
+                    .and(Geolocat_.sample, newProbe)
+                    .and(Geolocat_.typeRegulation, "E");
+                List<Geolocat> presentEOrte =
+                    repository.filter(builderPresentEOrte.getQuery());
 
-                    // Check if we have ROrte present
-                    QueryBuilder<Geolocat> builderPresentROrte = repository
-                        .queryBuilder(Geolocat.class)
-                        .and(Geolocat_.sample, newProbe)
-                        .and(Geolocat_.typeRegulation, "R");
-                    List<Geolocat> presentROrte =
-                        repository.filter(builderPresentROrte.getQuery());
+                // Check if we have UOrte present
+                QueryBuilder<Geolocat> builderPresentUOrte = repository
+                    .queryBuilder(Geolocat.class)
+                    .and(Geolocat_.sample, newProbe)
+                    .and(Geolocat_.typeRegulation, "U");
+                List<Geolocat> presentUOrte =
+                    repository.filter(builderPresentUOrte.getQuery());
 
-                    //Switch if we need to create an R-Ort
-                    Boolean rOrt = false;
-                    // First create or find entnahmeOrte and ursprungsOrte
-                    // Create the new entnahmeOrt but do not persist
-                    Geolocat eOrt = createOrtszuordnung(
-                        currentSample.getEntnahmeOrt(), "E", newProbe);
+                // Check if we have ROrte present
+                QueryBuilder<Geolocat> builderPresentROrte = repository
+                    .queryBuilder(Geolocat.class)
+                    .and(Geolocat_.sample, newProbe)
+                    .and(Geolocat_.typeRegulation, "R");
+                List<Geolocat> presentROrte =
+                    repository.filter(builderPresentROrte.getQuery());
 
-                    //Create/Find Ursprungsort(e) from LAF
-                    List<Geolocat> uOrte = new ArrayList<>();
-                    //If object.getUrsprungsOrte().size() > 1
-                    for (Map<String, String> raw: currentSample.getUrsprungsOrte()) {
-                        Geolocat tmp = createOrtszuordnung(raw, "U", newProbe);
-                        if (tmp != null) {
-                            uOrte.add(tmp);
-                        }
+                //Switch if we need to create an R-Ort
+                Boolean rOrt = false;
+                // First create or find entnahmeOrte and ursprungsOrte
+                // Create the new entnahmeOrt but do not persist
+                Geolocat eOrt = createOrtszuordnung(
+                    currentSample.getEntnahmeOrt(), "E", newProbe);
+
+                //Create/Find Ursprungsort(e) from LAF
+                List<Geolocat> uOrte = new ArrayList<>();
+                //If object.getUrsprungsOrte().size() > 1
+                for (Map<String, String> raw: currentSample.getUrsprungsOrte()) {
+                    Geolocat tmp = createOrtszuordnung(raw, "U", newProbe);
+                    if (tmp != null) {
+                        uOrte.add(tmp);
                     }
+                }
 
-                    // If the LAF delivers eOrt and uOrt and those are a match
-                    // by created/found - Id -- we need to create an R-Ort
-                    if (uOrte.size() > 0
+                // If the LAF delivers eOrt and uOrt and those are a match
+                // by created/found - Id -- we need to create an R-Ort
+                if (uOrte.size() > 0
+                    && eOrt != null
+                    && uOrte.stream().anyMatch(
+                        uOrt -> uOrt.getSite().getId().equals(
+                            eOrt.getSite().getId()))) {
+                    rOrt = true;
+                }
+
+                //further conditionals for eOrt
+                if (eOrt != null) {
+                    //Check if the new Ort matches an U-Ort if exists
+                    if (presentUOrte.size() > 0
                         && eOrt != null
-                        && uOrte.stream().anyMatch(
+                        && presentUOrte.stream().anyMatch(
                             uOrt -> uOrt.getSite().getId().equals(
                                 eOrt.getSite().getId()))) {
                         rOrt = true;
+                    } else if (presentROrte.size() > 0
+                        && eOrt != null
+                        && presentROrte.stream().anyMatch(
+                            rtypeOrt -> rtypeOrt.getSite().getId().equals(
+                                eOrt.getSite().getId()))) {
+                        rOrt = true;
+                    } else if (presentROrte.size() > 0 && eOrt != null) {
+                        for (Geolocat loc: presentROrte) {
+                            loc.setTypeRegulation("U");
+                            repository.update(loc);
+                        }
+                        rOrt = false;
                     }
+                }
 
-                    //further conditionals for eOrt
+                //conditionals for the ursprungsOrte
+                if (uOrte.size() == 1) {
+                    // Check if the new Ort matches the U-Ort if exists,
+                    // this only works if we have 1 Ursprungsort in the LAF,
+                    // if we have more we must assume multiple ursprungsorte
+                    if (presentEOrte.size() > 0
+                        && uOrte.size() > 0
+                        && presentEOrte.stream().anyMatch(
+                            etypeOrt -> etypeOrt.getSite().getId().equals(
+                                uOrte.get(0).getSite().getId()))) {
+                        rOrt = true;
+                    } else if (presentROrte.size() > 0
+                        && uOrte.size() > 0
+                        && presentROrte.stream().anyMatch(
+                            rtypeOrt -> rtypeOrt.getSite().getId().equals(
+                                uOrte.get(0).getSite().getId()))) {
+                        //ToDo: We need to handle R-Orte!
+                        rOrt = true;
+                    } else if (presentROrte.size() > 0
+                        && uOrte.size() > 0) {
+                        for (Geolocat loc: presentROrte) {
+                            loc.setTypeRegulation("E");
+                            repository.update(loc);
+                        }
+                        rOrt = false;
+                    }
+                }
+
+                if (!rOrt) {
+                    //persist general entnahmeOrt
                     if (eOrt != null) {
-                        //Check if the new Ort matches an U-Ort if exists
-                        if (presentUOrte.size() > 0
-                            && eOrt != null
-                            && presentUOrte.stream().anyMatch(
-                                uOrt -> uOrt.getSite().getId().equals(
-                                    eOrt.getSite().getId()))) {
-                            rOrt = true;
-                        } else if (presentROrte.size() > 0
-                            && eOrt != null
-                            && presentROrte.stream().anyMatch(
-                                rtypeOrt -> rtypeOrt.getSite().getId().equals(
-                                    eOrt.getSite().getId()))) {
-                            rOrt = true;
-                        } else if (presentROrte.size() > 0 && eOrt != null) {
-                            for (Geolocat loc: presentROrte) {
-                                loc.setTypeRegulation("U");
-                                repository.update(loc);
-                            }
-                            rOrt = false;
-                        }
+                        merger.mergeEntnahmeOrt(newProbe, eOrt);
                     }
-
-                    //conditionals for the ursprungsOrte
-                    if (uOrte.size() == 1) {
-                        // Check if the new Ort matches the U-Ort if exists,
-                        // this only works if we have 1 Ursprungsort in the LAF,
-                        // if we have more we must assume multiple ursprungsorte
-                        if (presentEOrte.size() > 0
-                            && uOrte.size() > 0
-                            && presentEOrte.stream().anyMatch(
-                                etypeOrt -> etypeOrt.getSite().getId().equals(
-                                    uOrte.get(0).getSite().getId()))) {
-                            rOrt = true;
-                        } else if (presentROrte.size() > 0
-                            && uOrte.size() > 0
-                            && presentROrte.stream().anyMatch(
-                                rtypeOrt -> rtypeOrt.getSite().getId().equals(
-                                    uOrte.get(0).getSite().getId()))) {
-                            //ToDo: We need to handle R-Orte!
-                            rOrt = true;
-                        } else if (presentROrte.size() > 0
-                            && uOrte.size() > 0) {
-                            for (Geolocat loc: presentROrte) {
-                                loc.setTypeRegulation("E");
-                                repository.update(loc);
+                    if (uOrte.size() > 0) {
+                        //remove present U-Orte
+                        QueryBuilder<Geolocat> builderUOrt = repository
+                            .queryBuilder(Geolocat.class)
+                            .and(Geolocat_.sample, newProbe)
+                            .and(Geolocat_.typeRegulation, "U");
+                        List<Geolocat> uOrteProbe =
+                            repository.filter(builderUOrt.getQuery());
+                        if (!uOrteProbe.isEmpty()) {
+                            for (Geolocat elemOrt : uOrteProbe) {
+                                repository.delete(elemOrt);
                             }
-                            rOrt = false;
                         }
+                        merger.mergeUrsprungsOrte(newProbe, uOrte);
                     }
+                } else {
+                    if (rOrt && presentROrte.size() == 1) {
+                        // we may have additional information for
+                        // the ortszuordnung such as an ortszusatz,
+                        // we make an update.
+                        QueryBuilder<Geolocat> builderUOrt = repository
+                            .queryBuilder(Geolocat.class)
+                            .and(Geolocat_.sample, newProbe)
+                            .and(Geolocat_.typeRegulation, "R");
+                        List<Geolocat> uOrteProbe =
+                            repository.filter(builderUOrt.getQuery());
+                        if (!uOrteProbe.isEmpty()) {
+                            for (Geolocat elemOrt : uOrteProbe) {
+                                repository.delete(elemOrt);
+                            }
+                        }
 
-                    if (!rOrt) {
-                        //persist general entnahmeOrt
-                        if (eOrt != null) {
+                        if ((eOrt != null)) {
+                            eOrt.setTypeRegulation(("R"));
                             merger.mergeEntnahmeOrt(newProbe, eOrt);
                         }
-                        if (uOrte.size() > 0) {
-                            //remove present U-Orte
-                            QueryBuilder<Geolocat> builderUOrt = repository
-                                .queryBuilder(Geolocat.class)
-                                .and(Geolocat_.sample, newProbe)
-                                .and(Geolocat_.typeRegulation, "U");
-                            List<Geolocat> uOrteProbe =
-                                repository.filter(builderUOrt.getQuery());
-                            if (!uOrteProbe.isEmpty()) {
-                                for (Geolocat elemOrt : uOrteProbe) {
-                                    repository.delete(elemOrt);
-                                }
-                            }
-                            merger.mergeUrsprungsOrte(newProbe, uOrte);
-                        }
-                    } else {
-                        if (rOrt && presentROrte.size() == 1) {
-                            // we may have additional information for
-                            // the ortszuordnung such as an ortszusatz,
-                            // we make an update.
-                            QueryBuilder<Geolocat> builderUOrt = repository
-                                .queryBuilder(Geolocat.class)
-                                .and(Geolocat_.sample, newProbe)
-                                .and(Geolocat_.typeRegulation, "R");
-                            List<Geolocat> uOrteProbe =
-                                repository.filter(builderUOrt.getQuery());
-                            if (!uOrteProbe.isEmpty()) {
-                                for (Geolocat elemOrt : uOrteProbe) {
-                                    repository.delete(elemOrt);
-                                }
-                            }
-
-                            if ((eOrt != null)) {
-                                eOrt.setTypeRegulation(("R"));
-                                merger.mergeEntnahmeOrt(newProbe, eOrt);
-                            }
-                            if (uOrte.size() == 1 && eOrt == null) {
-                                uOrte.get(0).setTypeRegulation("R");
-                                merger.mergeUrsprungsOrte(newProbe, uOrte);
-                            }
-                        }
-                        // clean up ursprungsorte before!
-                        if (currentSample.getUrsprungsOrte().size() > 0
-                            || presentUOrte.size() > 0) {
-                            QueryBuilder<Geolocat> builderUOrt = repository
-                                .queryBuilder(Geolocat.class)
-                                .and(Geolocat_.sample, newProbe)
-                                .and(Geolocat_.typeRegulation, "U");
-                            List<Geolocat> uOrteProbe =
-                                repository.filter(builderUOrt.getQuery());
-                            if (!uOrteProbe.isEmpty()) {
-                                for (Geolocat elemOrt : uOrteProbe) {
-                                    repository.delete(elemOrt);
-                                }
-                            }
-                        }
-                        if (eOrt != null) {
-                            eOrt.setTypeRegulation("R");
-                            //Merging the entnahmeOrt cleans it up!
-                            merger.mergeEntnahmeOrt(newProbe, eOrt);
-                        } else if (uOrte.size() == 1) {
-                            // Clean-up entnahmeOrte before merge
-                            QueryBuilder<Geolocat> builderEOrt = repository
-                                .queryBuilder(Geolocat.class)
-                                .and(Geolocat_.sample, newProbe)
-                                .and(Geolocat_.typeRegulation, "E");
-                            List<Geolocat> eOrteProbe =
-                                repository.filter(builderEOrt.getQuery());
-                            if (!eOrteProbe.isEmpty()) {
-                                for (Geolocat elemOrt : eOrteProbe) {
-                                    repository.delete(elemOrt);
-                                }
-                            }
-
+                        if (uOrte.size() == 1 && eOrt == null) {
                             uOrte.get(0).setTypeRegulation("R");
                             merger.mergeUrsprungsOrte(newProbe, uOrte);
                         }
                     }
+                    // clean up ursprungsorte before!
+                    if (currentSample.getUrsprungsOrte().size() > 0
+                        || presentUOrte.size() > 0) {
+                        QueryBuilder<Geolocat> builderUOrt = repository
+                            .queryBuilder(Geolocat.class)
+                            .and(Geolocat_.sample, newProbe)
+                            .and(Geolocat_.typeRegulation, "U");
+                        List<Geolocat> uOrteProbe =
+                            repository.filter(builderUOrt.getQuery());
+                        if (!uOrteProbe.isEmpty()) {
+                            for (Geolocat elemOrt : uOrteProbe) {
+                                repository.delete(elemOrt);
+                            }
+                        }
+                    }
+                    if (eOrt != null) {
+                        eOrt.setTypeRegulation("R");
+                        //Merging the entnahmeOrt cleans it up!
+                        merger.mergeEntnahmeOrt(newProbe, eOrt);
+                    } else if (uOrte.size() == 1) {
+                        // Clean-up entnahmeOrte before merge
+                        QueryBuilder<Geolocat> builderEOrt = repository
+                            .queryBuilder(Geolocat.class)
+                            .and(Geolocat_.sample, newProbe)
+                            .and(Geolocat_.typeRegulation, "E");
+                        List<Geolocat> eOrteProbe =
+                            repository.filter(builderEOrt.getQuery());
+                        if (!eOrteProbe.isEmpty()) {
+                            for (Geolocat elemOrt : eOrteProbe) {
+                                repository.delete(elemOrt);
+                            }
+                        }
+
+                        uOrte.get(0).setTypeRegulation("R");
+                        merger.mergeUrsprungsOrte(newProbe, uOrte);
+                    }
                 }
             }
+        }
 
-            // Validate probe object
-            validate(newProbe, "validation#probe");
+        // Validate probe object
+        validate(newProbe, "validation#probe");
 
-            // Create measms
-            for (LafRawData.Messung measmRaw: currentSample.getMessungen()) {
-                create(measmRaw, newProbe);
-            }
+        // Create measms
+        for (LafRawData.Messung measmRaw: currentSample.getMessungen()) {
+            create(measmRaw, newProbe);
+        }
 
-            // If key SZENARIO is present in imported file, assign
-            // global tag to probe and its messung objects
-            if (currentSample.getAttributes().containsKey("SZENARIO")) {
-                //assign to probe object
+        // If key SZENARIO is present in imported file, assign
+        // global tag to probe and its messung objects
+        if (currentSample.getAttributes().containsKey("SZENARIO")) {
+            //assign to probe object
+            assignGlobalTag(
+                currentSample.getAttributes().get("SZENARIO"), newProbe);
+            //assign to messung objects
+            QueryBuilder<Measm> builderMessung = repository
+                .queryBuilder(Measm.class)
+                .and(Measm_.sample, newProbe);
+            List<Measm> messungen =
+                repository.filter(builderMessung.getQuery());
+            for (Measm messung: messungen) {
                 assignGlobalTag(
-                    currentSample.getAttributes().get("SZENARIO"), newProbe);
-                //assign to messung objects
-                QueryBuilder<Measm> builderMessung = repository
-                    .queryBuilder(Measm.class)
-                    .and(Measm_.sample, newProbe);
-                List<Measm> messungen =
-                    repository.filter(builderMessung.getQuery());
-                for (Measm messung: messungen) {
-                    assignGlobalTag(
-                        currentSample.getAttributes().get("SZENARIO"), messung);
-                }
+                    currentSample.getAttributes().get("SZENARIO"), messung);
             }
         }
     }
