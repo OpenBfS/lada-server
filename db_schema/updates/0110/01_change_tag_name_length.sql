@@ -1,0 +1,1 @@
+ALTER TABLE master.tag ALTER COLUMN name TYPE VARCHAR(32);

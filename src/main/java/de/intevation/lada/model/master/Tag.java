@@ -26,6 +26,7 @@ import jakarta.security.enterprise.SecurityContext;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.validation.constraints.CanHaveValUntil;
@@ -59,6 +60,7 @@ public class Tag extends BaseModel {
     private Integer id;
 
     @NotBlank
+    @Size(max = 32)
     private String name;
 
     @IsValidPrimaryKey(

@@ -982,7 +982,7 @@ CREATE TABLE grid_col_conf (
 
 CREATE TABLE tag (
     id serial PRIMARY KEY,
-    name text NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    name VARCHAR(32) NOT NULL CHECK (trim(both ' ' from name) <> ''),
     meas_facil_id character varying(5) REFERENCES meas_facil,
     is_auto_tag boolean NOT NULL DEFAULT false,
     network_id varchar(2) REFERENCES network,
