@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +21,10 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 
 import de.intevation.lada.factory.ProbeFactory;
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 
@@ -40,6 +39,9 @@ public class MpgService extends LadaIntegerIdEntityEditingService<Mpg> {
 
     @Inject
     private ProbeFactory factory;
+
+    @Inject
+    private I18n i18n;
 
     /**
      * Expected format for payload in PUT request to setActive.
@@ -97,13 +99,12 @@ public class MpgService extends LadaIntegerIdEntityEditingService<Mpg> {
      * operation.
      *
      * @param data Object representing active status and list of IDs
-     * @return the success status of the operation
-     * per Mpg.
+     * @return A map of IDs with error messages for failed Mpg objects
      * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("active")
-    public List<Map<String, Integer>> setActive(
+    public Map<Integer, String> setActive(
         @Valid SetActive data
     ) throws BadRequestException {
         QueryBuilder<Mpg> builder = repository.queryBuilder(Mpg.class)
@@ -111,20 +112,14 @@ public class MpgService extends LadaIntegerIdEntityEditingService<Mpg> {
         List<Mpg> messprogramme =
             repository.filter(builder.getQuery());
 
-        List<Map<String, Integer>> result =
-            new ArrayList<>(messprogramme.size());
+        Map<Integer, String> result = HashMap.newHashMap(messprogramme.size());
         for (Mpg m : messprogramme) {
-            Map<String, Integer> mpResult = HashMap.newHashMap(2);
-            int id = m.getId().intValue();
-            mpResult.put("id", id);
             if (authorization.isAuthorized(m, RequestMethod.PUT)) {
                 m.setIsActive(data.isActive());
                 repository.update(m);
-                mpResult.put("success", StatusCodes.OK);
             } else {
-                mpResult.put("success", StatusCodes.NOT_ALLOWED);
+                result.put(m.getId(), i18n.getString("forbidden"));
             }
-            result.add(mpResult);
         }
 
         return result;
