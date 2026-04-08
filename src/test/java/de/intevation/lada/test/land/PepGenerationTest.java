@@ -33,7 +33,6 @@ import de.intevation.lada.BaseTest;
 import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.test.ServiceTest;
-import de.intevation.lada.util.data.StatusCodes;
 
 
 /**
@@ -508,7 +507,7 @@ public class PepGenerationTest extends ServiceTest {
 
         Assert.assertTrue(mpData.get("data") == JsonValue.NULL);
         Assert.assertFalse(mpData.getBoolean("success"));
-        Assert.assertEquals(StatusCodes.NOT_ALLOWED, mpData.getInt("message"));
+        Assert.assertEquals("Forbidden", mpData.getString("message"));
     }
 
     private void testZusatzwertgeneration() {

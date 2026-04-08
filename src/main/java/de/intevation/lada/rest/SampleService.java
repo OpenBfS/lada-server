@@ -27,11 +27,11 @@ import jakarta.ws.rs.Path;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import de.intevation.lada.factory.ProbeFactory;
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.lock.TimestampLocker;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
@@ -66,6 +66,9 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
 
     @Inject
     private TagUtil tagUtil;
+
+    @Inject
+    private I18n i18n;
 
     /**
      * Expected format for payload in POST request to createFromMessprogramm().
@@ -115,7 +118,7 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
         public static class Result {
             private boolean success;
 
-            private Integer message;
+            private String message;
 
             private List<Sample> data;
 
@@ -123,7 +126,7 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
                 return success;
             }
 
-            public Integer getMessage() {
+            public String getMessage() {
                 return message;
             }
 
@@ -190,7 +193,7 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
                     !authorization.isAuthorized(testProbe, RequestMethod.POST)
                 ) {
                     data.success = false;
-                    data.message = StatusCodes.NOT_ALLOWED;
+                    data.message = i18n.getString("forbidden");
                     probenData.put(messprogramm.getId().toString(), data);
                     return;
                 }
