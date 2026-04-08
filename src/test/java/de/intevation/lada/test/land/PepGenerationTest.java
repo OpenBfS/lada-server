@@ -504,7 +504,7 @@ public class PepGenerationTest extends ServiceTest {
 
         //Request should have failed with message 699
         JsonObject mpData =
-            entity.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
+            entity.getJsonObject("data").getJsonObject(Integer.toString(mpId));
 
         Assert.assertTrue(mpData.get("data") == JsonValue.NULL);
         Assert.assertFalse(mpData.getBoolean("success"));
@@ -517,7 +517,7 @@ public class PepGenerationTest extends ServiceTest {
         idParam.add(mpId);
 
         JsonObject entity = generateFromMpIds(idParam, TS3, TS11);
-        JsonArray proben = entity.getJsonObject("proben")
+        JsonArray proben = entity.getJsonObject("data")
             .getJsonObject(String.valueOf(mpId)).getJsonArray("data");
         Assert.assertFalse("No samples generated", proben.isEmpty());
 
@@ -563,7 +563,7 @@ public class PepGenerationTest extends ServiceTest {
     ) {
         //Get data for given messprogramm
         JsonObject mpData = content
-            .getJsonObject("proben").getJsonObject(String.valueOf(mpId));
+            .getJsonObject("data").getJsonObject(String.valueOf(mpId));
         Assert.assertNotNull(mpData);
 
         JsonArray proben = mpData.getJsonArray("data");
@@ -600,7 +600,7 @@ public class PepGenerationTest extends ServiceTest {
         JsonObject data = ClientBaseTest.parseResponse(response).asJsonObject();
 
         //If a tag was applied, increase serial number
-        if (data.containsKey("tag") && data.getString("tag") != null) {
+        if (data.containsKey("tag") && !data.isNull("tag")) {
             expectedTagSerNo++;
         }
         return data;
@@ -643,7 +643,7 @@ public class PepGenerationTest extends ServiceTest {
         int index) {
         JsonObject result = null;
         try {
-            JsonArray proben = content.getJsonObject("proben")
+            JsonArray proben = content.getJsonObject("data")
                     .getJsonObject(mpId.toString()).getJsonArray("data");
             result = proben.getJsonObject(index);
         } catch (JsonException je) {

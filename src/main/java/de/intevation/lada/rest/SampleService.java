@@ -107,6 +107,40 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
         }
     }
 
+    public static class Response {
+        private Map<String, Result> data;
+
+        private String tag;
+
+        public static class Result {
+            private boolean success;
+
+            private Integer message;
+
+            private List<Sample> data;
+
+            public boolean isSuccess() {
+                return success;
+            }
+
+            public Integer getMessage() {
+                return message;
+            }
+
+            public List<Sample> getData() {
+                return data;
+            }
+        }
+
+        public Map<String, Result> getData() {
+            return data;
+        }
+
+        public String getTag() {
+            return tag;
+        }
+    }
+
     /**
      * Get a single Sample object by id.
      *
@@ -135,17 +169,17 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
     @Path("messprogramm")
     @Operation(description =
         "Create samples from measuring programs given by IDs for given period")
-    public Map<String, Object> createFromMessprogramm(
+    public Response createFromMessprogramm(
         @Valid PostData object
     ) throws BadRequestException {
-        Map<String, Object> responseData = HashMap.newHashMap(2);
-        Map<String, Object> probenData = HashMap.newHashMap(object.ids.size());
+        Response responseData = new Response();
+        Map<String, Response.Result> probenData =
+            HashMap.newHashMap(object.ids.size());
         List<Integer> generatedProbeIds = new ArrayList<Integer>();
 
         object.ids.forEach(id -> {
-            HashMap<String, Object> data = HashMap.newHashMap(3);
-            Mpg messprogramm = repository.getById(
-                Mpg.class, id);
+            Response.Result data = new Response.Result();
+            Mpg messprogramm = repository.getById(Mpg.class, id);
 
             if (!object.dryrun) {
                 // Use a dummy probe with same mstId as the messprogramm to
@@ -155,9 +189,8 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
                 if (
                     !authorization.isAuthorized(testProbe, RequestMethod.POST)
                 ) {
-                    data.put("success", false);
-                    data.put("message", StatusCodes.NOT_ALLOWED);
-                    data.put("data", null);
+                    data.success = false;
+                    data.message = StatusCodes.NOT_ALLOWED;
                     probenData.put(messprogramm.getId().toString(), data);
                     return;
                 }
@@ -174,12 +207,11 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
                     generatedProbeIds.add(probe.getId());
                 }
             }
-            data.put("success", true);
-            data.put("message", StatusCodes.OK);
-            data.put("data", proben);
+            data.success = true;
+            data.data = proben;
             probenData.put(messprogramm.getId().toString(), data);
         });
-        responseData.put("proben", probenData);
+        responseData.data = probenData;
 
         // Generate and associate tag
         if (!object.dryrun && generatedProbeIds.size() > 0) {
@@ -190,7 +222,7 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
                 "PEP", List.copyOf(authorization.getInfo().getNetzbetreiber())
                     .get(0));
             tagUtil.setTagsByProbeIds(generatedProbeIds, newTag.getId());
-            responseData.put("tag", newTag.getName());
+            responseData.tag = newTag.getName();
         }
         return responseData;
     }
