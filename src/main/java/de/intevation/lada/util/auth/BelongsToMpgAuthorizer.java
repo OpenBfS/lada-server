@@ -36,7 +36,7 @@ class BelongsToMpgAuthorizer extends Authorizer<BelongsToMpg> {
         ) {
             return;
         }
-        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+        throw new AuthorizationException();
     }
 
     @Override

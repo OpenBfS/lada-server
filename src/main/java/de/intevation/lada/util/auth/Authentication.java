@@ -60,14 +60,14 @@ public class Authentication implements HttpAuthenticationMechanism {
         try {
             if (user == null || "".equals(user)) {
                 httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                    i18n.getString("no_valid_user_found"));
+                    i18n.getString(I18n.KEY_NO_VALID_USER));
                 return SEND_FAILURE;
             }
 
             rolesValue = extractRoles(roles);
             if (rolesValue.isEmpty()) {
                 httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                    i18n.getString("no_valid_role_found"));
+                    i18n.getString(I18n.KEY_NO_VALID_ROLE));
                 return SEND_FAILURE;
             }
         } catch (IOException e) {

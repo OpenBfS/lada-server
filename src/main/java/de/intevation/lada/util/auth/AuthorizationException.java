@@ -7,10 +7,15 @@
  */
 package de.intevation.lada.util.auth;
 
+import de.intevation.lada.i18n.I18n;
 
 class AuthorizationException extends Exception {
 
     private static final long serialVersionUID = 1L;
+
+    AuthorizationException() {
+        super(I18n.KEY_FORBIDDEN);
+    }
 
     AuthorizationException(String message) {
         super(message);

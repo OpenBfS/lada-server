@@ -61,7 +61,7 @@ class SampleAuthorizer extends Authorizer<Sample> {
                 || method == RequestMethod.DELETE)
             && anyMeasmReadOnly(probe, userInfo)
         ) {
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         }
     }
 

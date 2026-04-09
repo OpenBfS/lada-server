@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.util.auth;
 
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
@@ -35,13 +36,13 @@ class MpgAuthorizer extends Authorizer<Mpg> {
             MeasFacil.class, messprogramm.getMeasFacilId());
         if (!userInfo.getFunktionenForNetzbetreiber(
                 mst.getNetworkId()).contains(4)) {
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         }
 
         if (method == RequestMethod.DELETE
             && messprogramm.getReferenceCount() > 0
         ) {
-            throw new AuthorizationException(I18N_KEY_CANNOTDELETE);
+            throw new AuthorizationException(I18n.KEY_CANNOT_DELETE);
         }
     }
 }

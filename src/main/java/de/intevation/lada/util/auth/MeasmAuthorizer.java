@@ -60,7 +60,7 @@ class MeasmAuthorizer extends Authorizer<Measm> {
             if (probeAuthorizer.isMethodAuthorized(probe, RequestMethod.POST)) {
                 return;
             }
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         }
 
         int statusVal = repository.entityManager()
@@ -74,7 +74,7 @@ class MeasmAuthorizer extends Authorizer<Measm> {
             ) {
                 return;
             }
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         }
 
         if (statusVal > 0
@@ -82,7 +82,7 @@ class MeasmAuthorizer extends Authorizer<Measm> {
         ) {
             return;
         }
-        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+        throw new AuthorizationException();
     }
 
     @Override

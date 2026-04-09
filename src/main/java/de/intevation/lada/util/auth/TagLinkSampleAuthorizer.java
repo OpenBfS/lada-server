@@ -61,7 +61,7 @@ class TagLinkSampleAuthorizer extends Authorizer<TagLinkSample> {
                 }
             }
         default:
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         }
     }
 }

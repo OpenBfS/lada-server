@@ -34,6 +34,6 @@ public class VersionService extends LadaService {
      */
     @GET
     public String get() {
-        return i18n.getString("version");
+        return i18n.getString(I18n.KEY_VERSION);
     }
 }

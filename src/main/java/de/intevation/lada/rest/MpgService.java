@@ -118,7 +118,7 @@ public class MpgService extends LadaIntegerIdEntityEditingService<Mpg> {
                 m.setIsActive(data.isActive());
                 repository.update(m);
             } else {
-                result.put(m.getId(), i18n.getString("forbidden"));
+                result.put(m.getId(), i18n.getString(I18n.KEY_FORBIDDEN));
             }
         }
 

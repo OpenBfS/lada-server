@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.util.auth;
 
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -29,12 +30,12 @@ class SamplerAuthorizer extends Authorizer<Sampler> {
         if (!userInfo.getFunktionenForNetzbetreiber(
                 sampler.getNetworkId()).contains(4)
         ) {
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         }
         if (method == RequestMethod.DELETE
             && sampler.getReferenceCount() > 0
         ) {
-            throw new AuthorizationException(I18N_KEY_CANNOTDELETE);
+            throw new AuthorizationException(I18n.KEY_CANNOT_DELETE);
         }
     }
 }

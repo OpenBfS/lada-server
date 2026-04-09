@@ -27,7 +27,7 @@ class MeasFacilOwnedAuthorizer extends Authorizer<MeasFacilOwned> {
         RequestMethod method
     ) throws AuthorizationException {
         if (!userInfo.getMessstellen().contains(object.getMeasFacilId())) {
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         }
     }
 }

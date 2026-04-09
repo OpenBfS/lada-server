@@ -14,9 +14,20 @@ import de.intevation.lada.context.ThreadLocale;
 
 
 /**
- * Provides i18n utilities with context locale.
+ * Provides i18n utilities with context locale and constants for defined keys.
  */
 public class I18n {
+
+    public static final String KEY_VERSION = "version";
+    public static final String KEY_TRUE = "true";
+    public static final String KEY_FALSE = "false";
+    public static final String KEY_FORBIDDEN = "forbidden";
+    public static final String KEY_CANNOT_DELETE = "cannot_delete";
+    public static final String KEY_DATASET_CHANGED = "dataset_changed";
+    public static final String KEY_OP_NOT_POSSIBLE = "op_not_possible";
+    public static final String KEY_NO_VALID_USER = "no_valid_user_found";
+    public static final String KEY_NO_VALID_ROLE = "no_valid_role_found";
+    public static final String KEY_DOWNLOAD_UNTIL = "download_until";
 
     private ResourceBundle bundle;
 

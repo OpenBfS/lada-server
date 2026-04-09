@@ -38,13 +38,13 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
         case PUT:
         case DELETE:
             // StatusProt instances should never be edited or deleted
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         case POST:
             // Is user authorized to edit status at all?
             Measm measm = status.getMeasm();
             messungAuthorizer.setAuthAttrs(measm);
             if (!measm.getStatusEdit()) {
-                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+                throw new AuthorizationException();
             }
             // Check if the user is allowed to change to the requested
             // status_kombi
@@ -58,7 +58,7 @@ class StatusProtAuthorizer extends Authorizer<StatusProt> {
             ) {
                 return;
             }
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         default:
             messungAuthorizer.authorizeMethod(
                 status.getMeasm(),

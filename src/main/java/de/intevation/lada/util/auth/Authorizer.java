@@ -13,9 +13,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 abstract class Authorizer<T extends Authorizable> {
 
-    static final String I18N_KEY_FORBIDDEN = "forbidden";
-    static final String I18N_KEY_CANNOTDELETE = "cannot_delete";
-
     protected UserInfo userInfo;
 
     protected Repository repository;

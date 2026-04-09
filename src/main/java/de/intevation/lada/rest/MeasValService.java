@@ -115,7 +115,7 @@ public class MeasValService extends LadaIntegerIdEntityEditingService<MeasVal> {
         if (probe.getEnvMediumId() == null) {
             throw new ClientErrorException(jakarta.ws.rs.core.Response
                 .status(Status.CONFLICT)
-                .entity(i18n.getString("op_not_possible")).build());
+                .entity(i18n.getString(I18n.KEY_OP_NOT_POSSIBLE)).build());
         }
         EnvMedium umwelt = repository.getById(
             EnvMedium.class, probe.getEnvMediumId());

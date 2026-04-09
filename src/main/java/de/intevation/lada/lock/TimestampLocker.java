@@ -43,7 +43,7 @@ public abstract class TimestampLocker<T> {
         if (checkIsLocked(o)) {
             throw new ClientErrorException(Response
                 .status(Response.Status.CONFLICT)
-                .entity(i18n.getString("dataset_changed")).build());
+                .entity(i18n.getString(I18n.KEY_DATASET_CHANGED)).build());
         }
         return;
     }

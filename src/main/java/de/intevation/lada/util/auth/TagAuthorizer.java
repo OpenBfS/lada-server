@@ -40,7 +40,7 @@ class TagAuthorizer extends Authorizer<Tag> {
                 if (userInfo.getNetzbetreiber().contains(tag.getNetworkId())) {
                     return;
                 }
-                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+                throw new AuthorizationException();
             case PUT:
             case DELETE:
                 if (userInfo.getFunktionenForNetzbetreiber(
@@ -48,9 +48,9 @@ class TagAuthorizer extends Authorizer<Tag> {
                 ) {
                     return;
                 }
-                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+                throw new AuthorizationException();
             default:
-                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+                throw new AuthorizationException();
             }
         } else if (tag.getMeasFacilId() != null
             // Tags my only be edited by members of the referenced Messstelle
@@ -59,6 +59,6 @@ class TagAuthorizer extends Authorizer<Tag> {
             return;
         }
         // Global tags (and anything unknown) can not be edited
-        throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+        throw new AuthorizationException();
     }
 }

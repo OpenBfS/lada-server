@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.util.auth;
 
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -33,12 +34,12 @@ class SiteAuthorizer extends Authorizer<Site> {
             || method == RequestMethod.POST
                 && !userInfo.getNetzbetreiber().contains(netId)
         ) {
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         }
         if (method == RequestMethod.DELETE
             && (site.getReferenceCount() > 0 || site.getReferenceCountMp() > 0)
         ) {
-            throw new AuthorizationException(I18N_KEY_CANNOTDELETE);
+            throw new AuthorizationException(I18n.KEY_CANNOT_DELETE);
         }
     }
 }

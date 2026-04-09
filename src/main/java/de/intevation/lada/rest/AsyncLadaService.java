@@ -91,7 +91,7 @@ public abstract class AsyncLadaService extends LadaService {
                 try {
                     jobRecord.getFuture().get();
                     this.status = Status.FINISHED;
-                    this.message = i18n.getString("download_until",
+                    this.message = i18n.getString(I18n.KEY_DOWNLOAD_UNTIL,
                         Date.from(Instant.now().plus(
                                 scheduledRemoval.getDelay(TimeUnit.SECONDS),
                                 ChronoUnit.SECONDS)));

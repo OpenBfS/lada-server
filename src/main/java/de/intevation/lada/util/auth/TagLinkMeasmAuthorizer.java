@@ -61,7 +61,7 @@ class TagLinkMeasmAuthorizer extends Authorizer<TagLinkMeasm> {
                 }
             }
         default:
-            throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+            throw new AuthorizationException();
         }
     }
 }

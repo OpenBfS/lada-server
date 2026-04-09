@@ -46,7 +46,7 @@ class CommSampleAuthorizer extends Authorizer<CommSample> {
             if (!(sample.getMeasFacilId().equals(data.getMeasFacilId())
                     || sample.getApprLabId().equals(data.getMeasFacilId()))
             ) {
-                throw new AuthorizationException(I18N_KEY_FORBIDDEN);
+                throw new AuthorizationException();
             }
         }
     }

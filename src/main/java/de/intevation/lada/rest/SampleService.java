@@ -193,7 +193,7 @@ public class SampleService extends LadaIntegerIdEntityEditingService<Sample> {
                     !authorization.isAuthorized(testProbe, RequestMethod.POST)
                 ) {
                     data.success = false;
-                    data.message = i18n.getString("forbidden");
+                    data.message = i18n.getString(I18n.KEY_FORBIDDEN);
                     probenData.put(messprogramm.getId().toString(), data);
                     return;
                 }
