@@ -10,7 +10,6 @@ package de.intevation.lada.util.data;
 
 public class StatusCodes {
     private StatusCodes() { };
-    public static final int OK = 200;
     public static final int VALUE_MISSING = 631;
     public static final int VALUE_NOT_MATCHING = 632;
     public static final int VAL_EXISTS = 646;

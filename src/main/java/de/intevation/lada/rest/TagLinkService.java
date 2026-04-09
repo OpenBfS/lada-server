@@ -14,18 +14,23 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
+import static de.intevation.lada.i18n.I18n.KEY_FORBIDDEN;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 
 public abstract class TagLinkService<T extends TagLink> extends LadaService {
 
     @Inject
     protected Repository repository;
+
+    @Inject
+    private I18n i18n;
 
     private static final String EXISTS_QUERY_TEMPLATE =
         "SELECT EXISTS("
@@ -38,9 +43,9 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
         private String message;
         private T data;
 
-        public Response(boolean success, int code, T data) {
+        public Response(boolean success, String message, T data) {
             this.success = success;
-            this.message = Integer.toString(code);
+            this.message = message;
             this.data = data;
         }
 
@@ -95,19 +100,18 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
 
         for (T tagLink: tagLinks) {
             if (isExisting(tagLink)) {
-                responseList.add(new Response<T>(
-                        true, StatusCodes.OK, tagLink));
+                responseList.add(new Response<T>(true, "", tagLink));
                 continue;
             }
 
             if (!authorization.isAuthorized(tagLink, RequestMethod.POST)) {
                 responseList.add(new Response<T>(
-                        false, StatusCodes.NOT_ALLOWED, tagLink));
+                        false, i18n.getString(KEY_FORBIDDEN), tagLink));
                 continue;
             }
 
             responseList.add(new Response<T>(
-                    true, StatusCodes.OK, repository.create(tagLink)));
+                    true, "", repository.create(tagLink)));
         }
         return responseList;
     }
@@ -121,21 +125,19 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
 
         for (T tagLink: tagLinks) {
             if (!isExisting(tagLink)) {
-                responseList.add(new Response<T>(
-                        true, StatusCodes.OK, tagLink));
+                responseList.add(new Response<T>(true, "", tagLink));
                 continue;
             }
             if (!authorization.isAuthorized(tagLink, RequestMethod.DELETE)) {
                 responseList.add(new Response<T>(
                         false,
-                        StatusCodes.NOT_ALLOWED,
+                        i18n.getString(KEY_FORBIDDEN),
                         tagLink));
                 continue;
             }
             // Delete existing entity
             deleteTagLink(tagLink);
-            responseList.add(new Response<T>(
-                true, StatusCodes.OK, tagLink));
+            responseList.add(new Response<T>(true, "", tagLink));
         }
         return responseList;
     }

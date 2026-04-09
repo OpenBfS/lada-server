@@ -38,7 +38,6 @@ import de.intevation.lada.rest.TagLinkSampleService;
 import de.intevation.lada.rest.TagService;
 import de.intevation.lada.test.ServiceTest;
 import de.intevation.lada.test.stamm.TagTest;
-import de.intevation.lada.util.data.StatusCodes;
 
 /**
  * Test tagzuordnung entities.
@@ -196,9 +195,7 @@ public class TagZuordnungTest extends ServiceTest {
                 "Unsuccessful response list element:\n" + responseObj,
                 responseObj.getBoolean(successKey));
             BaseTest.assertContains(responseObj, messageKey);
-            Assert.assertEquals(
-                String.valueOf(StatusCodes.OK),
-                responseObj.getString(messageKey));
+            Assert.assertEquals("", responseObj.getString(messageKey));
         });
     }
 
