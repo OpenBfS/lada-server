@@ -49,8 +49,15 @@ public abstract class LadaService {
     @Inject
     protected Authorization authorization;
 
+    /**
+     * Set {@link ThreadLocale} before execution of business methods.
+     *
+     * @param ctx Invocation context
+     * @return The return value of the business method
+     * @throws Exception in case the business method throws an exception
+     */
     @AroundInvoke
-    public Object intercept(InvocationContext ctx) throws Exception {
+    public Object interceptService(InvocationContext ctx) throws Exception {
         ThreadLocale.set(request.getLocale());
         return ctx.proceed();
     }

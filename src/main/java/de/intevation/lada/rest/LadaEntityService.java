@@ -16,7 +16,6 @@ import jakarta.persistence.NoResultException;
 import jakarta.validation.groups.Default;
 import jakarta.ws.rs.BadRequestException;
 
-import de.intevation.lada.context.ThreadLocale;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -62,12 +61,10 @@ abstract class LadaEntityService<I> extends LadaService {
      * business method
      * @throws Exception in case the business method throws an exception
      */
-    @Override
     @AroundInvoke
     @SuppressWarnings("unchecked")
-    public Object intercept(InvocationContext ctx) throws Exception {
-        ThreadLocale.set(request.getLocale());
-
+    public Object interceptEntityService(InvocationContext ctx)
+        throws Exception {
         // Create validator with request/thread locale
         Validator validator = new Validator();
 
