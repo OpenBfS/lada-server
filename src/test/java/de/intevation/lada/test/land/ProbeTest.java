@@ -90,6 +90,8 @@ public class ProbeTest extends ServiceTest {
         MatcherAssert.assertThat(
             created.getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
+        // Assert that object is actually persisted, i.e. transaction committed
+        get(SAMPLE_SERVICE_URL + created.getInt(Sample_.ID));
 
         /* Assert that validation of constraints from Default as well as
            CreateErrors group is performed. */

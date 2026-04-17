@@ -19,6 +19,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import jakarta.validation.constraints.NotNull;
 
 import de.intevation.lada.model.BaseModel;
@@ -31,6 +33,7 @@ public abstract class BelongsToMeasm extends BaseModel {
         EntityManager em;
 
         @Override
+        @Transactional(TxType.MANDATORY)
         public Measm adaptFromJson(Integer id) {
             if (em == null) {
                 // Mock measm when deserializing in client-side tests

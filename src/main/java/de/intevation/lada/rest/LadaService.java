@@ -14,7 +14,7 @@ import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.InvocationContext;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
+import jakarta.transaction.TransactionManager;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -28,7 +28,6 @@ import jakarta.ws.rs.core.MediaType;
  * annotations at this class.
  */
 @RequestScoped
-@Transactional
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public abstract class LadaService {
@@ -49,8 +48,14 @@ public abstract class LadaService {
     @Inject
     protected Authorization authorization;
 
+    @Inject
+    private TransactionManager txManager;
+
     /**
      * Set {@link ThreadLocale} before execution of business methods.
+     * Also start a transaction, if not already done in
+     * {@link de.intevation.lada.util.rest.ReaderTransactionWrapper},
+     * and commit transaction after business method invocation.
      *
      * @param ctx Invocation context
      * @return The return value of the business method
@@ -59,6 +64,11 @@ public abstract class LadaService {
     @AroundInvoke
     public Object interceptService(InvocationContext ctx) throws Exception {
         ThreadLocale.set(request.getLocale());
-        return ctx.proceed();
+        if (txManager.getTransaction() == null) {
+            txManager.begin();
+        }
+        Object result = ctx.proceed();
+        txManager.commit();
+        return result;
     }
 }

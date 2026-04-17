@@ -17,6 +17,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import jakarta.validation.constraints.NotNull;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -32,6 +34,7 @@ public abstract class BelongsToSample extends BaseModel {
         EntityManager em;
 
         @Override
+        @Transactional(TxType.MANDATORY)
         public Sample adaptFromJson(Integer id) {
             if (em == null) {
                 // Mock sample when deserializing in client-side tests
