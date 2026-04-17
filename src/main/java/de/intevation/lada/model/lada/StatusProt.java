@@ -12,8 +12,10 @@ import java.util.Date;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -74,7 +76,8 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
         groups = DatabaseConstraints.class, clazz = StatusMp.class)
     private Integer statusMpId;
 
-    @ManyToOne
+    @JsonbTransient
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(insertable = false, updatable = false)
     private StatusMp statusMp;
 

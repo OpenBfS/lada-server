@@ -15,6 +15,7 @@ import jakarta.json.bind.adapter.JsonbAdapter;
 import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.json.bind.annotation.JsonbTypeAdapter;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PersistenceContext;
@@ -52,7 +53,7 @@ public abstract class BelongsToMeasm extends BaseModel {
     @JsonbTypeAdapter(MeasmToId.class)
     @Schema(implementation = Integer.class)
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     protected Measm measm;
 
     @Transient

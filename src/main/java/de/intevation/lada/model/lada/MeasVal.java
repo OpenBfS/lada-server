@@ -13,6 +13,7 @@ import java.util.Date;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -73,7 +74,7 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
     private Integer measUnitId;
 
     @JsonbTransient
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(insertable = false, updatable = false)
     private MeasUnit measUnit;
 
@@ -85,7 +86,7 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
     private Integer measdId;
 
     @JsonbTransient
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(insertable = false, updatable = false)
     private Measd measd;
 

@@ -18,6 +18,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -122,7 +123,8 @@ public class Site extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String reiReportText;
 
-    @ManyToOne
+    @JsonbTransient
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(updatable = false, insertable = false)
     private AdminUnit adminUnit;
 
@@ -278,13 +280,8 @@ public class Site extends BaseModel implements Serializable {
         this.reiReportText = reiReportText;
     }
 
-    @JsonbTransient
     public AdminUnit getAdminUnit() {
         return this.adminUnit;
-    }
-
-    public void setAdminUnit(AdminUnit munic) {
-        this.adminUnit = munic;
     }
 
     public String getAdminUnitId() {

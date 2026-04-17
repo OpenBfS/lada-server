@@ -219,7 +219,8 @@ public class Sample extends BaseModel
     @Temporal(TIMESTAMP)
     private Date treeMod;
 
-    @ManyToOne
+    @JsonbTransient
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(insertable = false, updatable = false)
     private EnvMedium envMedium;
 
@@ -508,7 +509,6 @@ public class Sample extends BaseModel
         this.treeMod = treeMod;
     }
 
-    @JsonbTransient
     public EnvMedium getEnvMedium() {
         return this.envMedium;
     }
