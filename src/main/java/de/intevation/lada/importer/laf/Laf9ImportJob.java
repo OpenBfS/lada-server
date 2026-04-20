@@ -320,6 +320,8 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                         finalObject, Warnings.class, Notifications.class);
                 }
 
+                // Replace or add list item for reporting
+                targetList.remove(finalObject);
                 targetList.add(getInstanceForReport(finalObject, srcObject));
             }
         }
