@@ -1051,8 +1051,11 @@ public class ImporterTest extends ClientBaseTest {
         Sample laf
     ) throws CharacterCodingException, InterruptedException {
         JsonObject loc = testAsyncLaf9Import(laf, false, true, laf)
-            .getJsonArray(SAMPLES_KEY).getJsonObject(0).getJsonArray(
-                Sample_.GEOLOCATS).getJsonObject(0);
+            .getJsonArray(SAMPLES_KEY).getJsonObject(0)
+            .getJsonArray(Sample_.GEOLOCATS).stream()
+            .filter(l -> TYPE_REGULATION_E.equals(
+                    l.asJsonObject().getString(Geolocat_.TYPE_REGULATION)))
+            .toList().get(0).asJsonObject();
         final String msg =
             "Referenced entities must belong to the same network";
         assertHasError(loc, Geolocat_.SAMPLE, msg);
