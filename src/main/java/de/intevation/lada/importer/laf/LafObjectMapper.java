@@ -1481,7 +1481,10 @@ public class LafObjectMapper {
     //Assign global Tag based on LAF field SZENARIO
     private void assignGlobalTag(String szenario, Object object) {
         QueryBuilder<Tag> builderTag = repository.queryBuilder(Tag.class)
-            .and(Tag_.name, szenario);
+            .and(Tag_.name, szenario)
+            .and(Tag_.isAutoTag, false)
+            .andIsNull(Tag_.measFacilId)
+            .andIsNull(Tag_.networkId);
         List<Tag> globalTag = repository.filter(builderTag.getQuery());
 
         if (globalTag.isEmpty()) {
