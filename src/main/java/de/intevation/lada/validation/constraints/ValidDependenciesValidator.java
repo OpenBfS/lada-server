@@ -20,14 +20,11 @@ import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFea
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusMp;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.validation.Validator;
 
@@ -84,31 +81,27 @@ public abstract class ValidDependenciesValidator {
                 validator.validate(messung), errors, warnings, notifications);
 
             // Validate measVals
-            QueryBuilder<MeasVal> builder = repository
-                .queryBuilder(MeasVal.class)
-                .and(MeasVal_.measm, messung);
-            List<MeasVal> messwerte = repository.filter(
-                builder.getQuery());
-            for (MeasVal messwert: messwerte) {
-                addMessages(
-                    validator.validate(messwert),
-                    errors,
-                    warnings,
-                    notifications);
+            List<MeasVal> messwerte = messung.getMeasVals();
+            if (messwerte != null) {
+                for (MeasVal messwert: messwerte) {
+                    addMessages(
+                        validator.validate(messwert),
+                        errors,
+                        warnings,
+                        notifications);
+                }
             }
 
             // Validate sites
-            QueryBuilder<Geolocat> ortBuilder = repository
-                .queryBuilder(Geolocat.class)
-                .and(Geolocat_.sample, probe);
-            List<Geolocat> assignedOrte = repository.filter(
-                ortBuilder.getQuery());
-            for (Geolocat o : assignedOrte) {
-                addMessages(
-                    validator.validate(o.getSite()),
-                    errors,
-                    warnings,
-                    notifications);
+            List<Geolocat> assignedOrte = probe.getGeolocats();
+            if (assignedOrte != null) {
+                for (Geolocat o : assignedOrte) {
+                    addMessages(
+                        validator.validate(o.getSite()),
+                        errors,
+                        warnings,
+                        notifications);
+                }
             }
 
             HibernateConstraintValidatorContext hibernateCtx = ctx.unwrap(
