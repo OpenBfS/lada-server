@@ -143,6 +143,7 @@ public class Sample extends BaseModel
 
     @NotEmptyNorWhitespace
     @NotBlank(groups = Notifications.class)
+    @Size(max = 20)
     private String mainSampleId;
 
     @NotEmptyNorWhitespace
