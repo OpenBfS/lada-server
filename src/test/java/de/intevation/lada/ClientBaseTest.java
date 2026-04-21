@@ -89,7 +89,9 @@ public class ClientBaseTest extends BaseTest {
      */
     @AfterClass
     public static void tearDownClient() {
-        client.close();
+        if (client != null) {
+            client.close();
+        }
     }
 
     /**
