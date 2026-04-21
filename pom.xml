@@ -15,7 +15,6 @@
     </scm>
 
     <properties>
-        <antlr.version>4.9.2</antlr.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
         <wildfly.version>39.0.1.Final</wildfly.version>
@@ -127,7 +126,6 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
-                <version>${antlr.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -400,7 +398,6 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
-            <version>${antlr.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
