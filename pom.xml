@@ -521,13 +521,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <!-- Keep version in sync with package in base image -->
-            <version>42.3.8</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
             <version>${shrinkwrap.version}</version>
@@ -552,17 +545,27 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.postgis</groupId>
-            <artifactId>postgis-jdbc</artifactId>
-            <version>2021.1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.logmanager</groupId>
             <artifactId>jboss-logmanager</artifactId>
             <version>3.0.2.Final</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- JDBC drivers needed in test deployments for test data loading.
+             Keep versions in sync with packages in base image -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+            <version>2024.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!--Additional arquillian extensions-->
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
