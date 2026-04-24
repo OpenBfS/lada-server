@@ -55,6 +55,7 @@ import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -63,6 +64,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import de.intevation.lada.model.NamingStrategy;
@@ -74,7 +76,8 @@ import de.intevation.lada.util.rest.JSONBConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-public class BaseTest {
+@RunWith(Arquillian.class)
+public abstract class BaseTest {
 
     private static Logger LOG = Logger.getLogger(BaseTest.class);
 

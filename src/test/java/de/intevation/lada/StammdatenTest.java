@@ -10,9 +10,7 @@ package de.intevation.lada;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import de.intevation.lada.test.land.TagZuordnungTest;
 import de.intevation.lada.test.stamm.DatensatzErzeugerTest;
@@ -32,7 +30,6 @@ import de.intevation.lada.test.stamm.TagTest;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@RunWith(Arquillian.class)
 public class StammdatenTest extends ClientBaseTest {
 
     private static final int ID5 = 5;

@@ -39,11 +39,9 @@ import jakarta.ws.rs.core.UriBuilder;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import de.intevation.lada.data.AsyncExportService;
 import de.intevation.lada.data.JsonExportService;
@@ -64,7 +62,6 @@ import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
  * Test export services.
  *
  */
-@RunWith(Arquillian.class)
 public class ExporterTest extends ClientBaseTest {
 
     private static final Logger LOG = Logger.getLogger(ExporterTest.class);

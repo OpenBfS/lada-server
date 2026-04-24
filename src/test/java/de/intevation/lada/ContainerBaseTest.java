@@ -17,7 +17,7 @@ import de.intevation.lada.util.auth.TestAuthentication;
  * Base class for Lada server tests with test methods executed
  * in container.
  */
-public class ContainerBaseTest extends BaseTest {
+public abstract class ContainerBaseTest extends BaseTest {
 
     /**
      * Create deployment for tests run in container.

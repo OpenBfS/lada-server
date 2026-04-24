@@ -11,11 +11,9 @@ package de.intevation.lada.util.auth;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.ContainerBaseTest;
@@ -35,7 +33,6 @@ import jakarta.transaction.UserTransaction;
  * if persistent state of given entity does not allow it,
  * regardless of state of given entity in relation to persistence context.
  */
-@RunWith(Arquillian.class)
 public class PutAuthTest extends ContainerBaseTest {
 
     private static final int SAMPLE_ID_UNAUTHORIZED = 1;

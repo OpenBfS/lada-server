@@ -24,11 +24,9 @@ import jakarta.ws.rs.core.UriBuilder;
 
 import java.util.List;
 
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.GridColConf;
@@ -42,7 +40,6 @@ import de.intevation.lada.rest.UniversalService.UniversalResponse;
  * Class to test the Lada server 'universal' service and related SqlService.
  *
  */
-@RunWith(Arquillian.class)
 public class UniversalServiceTest extends ClientBaseTest {
 
     @PersistenceContext

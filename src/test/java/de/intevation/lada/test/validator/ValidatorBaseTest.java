@@ -11,10 +11,8 @@ import jakarta.inject.Inject;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
-import org.junit.runner.RunWith;
 
 import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.model.BaseModel;
@@ -25,7 +23,6 @@ import de.intevation.lada.validation.Validator;
 /**
  * Baseclass for ValidatorTests.
  */
-@RunWith(Arquillian.class)
 @Transactional
 public abstract class ValidatorBaseTest extends ContainerBaseTest {
 

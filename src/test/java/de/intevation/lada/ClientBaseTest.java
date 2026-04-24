@@ -41,7 +41,7 @@ import de.intevation.lada.util.rest.JSONBConfig;
  * Base class for Lada server tests with test methods executed
  * at client side.
  */
-public class ClientBaseTest extends BaseTest {
+public abstract class ClientBaseTest extends BaseTest {
 
     /**
      * The client used for interface tests.

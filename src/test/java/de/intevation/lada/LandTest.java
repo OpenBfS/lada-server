@@ -10,9 +10,7 @@ package de.intevation.lada;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import de.intevation.lada.test.land.AssociationTest;
 import de.intevation.lada.test.land.ValidationTest;
@@ -37,7 +35,6 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@RunWith(Arquillian.class)
 public class LandTest extends ClientBaseTest {
 
     @PersistenceContext

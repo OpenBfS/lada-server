@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.jpa.AvailableHints;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +58,6 @@ import jakarta.transaction.UserTransaction;
 /**
  * Class testing authorizers.
  */
-@RunWith(Arquillian.class)
 public class AuthorizerTest extends ContainerBaseTest {
 
     private static final Logger LOG = Logger.getLogger(AuthorizerTest.class);

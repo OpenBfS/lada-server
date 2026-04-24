@@ -23,10 +23,8 @@ import jakarta.json.JsonValue;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.transaction.UserTransaction;
 
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import de.intevation.lada.ContainerBaseTest;
 import de.intevation.lada.model.lada.MeasVal;
@@ -42,7 +40,6 @@ import de.intevation.lada.util.data.Repository;
 /**
  * Unit tests for ObjectMerger.
  */
-@RunWith(Arquillian.class)
 public class ObjectMergerTest extends ContainerBaseTest {
 
     private static final double MESS15D = 1.5d;

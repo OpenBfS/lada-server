@@ -47,12 +47,10 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 
 import org.hamcrest.CoreMatchers;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import de.intevation.lada.rest.AsyncLadaService;
 import de.intevation.lada.rest.SampleService;
@@ -90,7 +88,6 @@ import de.intevation.lada.util.rest.JSONBConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@RunWith(Arquillian.class)
 public class ImporterTest extends ClientBaseTest {
 
     private static final Logger LOG = Logger.getLogger(ImporterTest.class);
