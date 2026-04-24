@@ -135,24 +135,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.4.7.v20170914</version>
-                <configuration>
-                    <webAppConfig>
-                        <descriptor>
-                            ${project.basedir}/src/main/webapp/WEB-INF/jetty.xml
-                        </descriptor>
-                        <contextPath>
-                            /${project.artifactId}
-                        </contextPath>
-                        <jettyEnvXml>
-                            ${project.basedir}/src/main/resources/META-INF/jetty-env.xml
-                        </jettyEnvXml>
-                    </webAppConfig>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
                 <version>1.4</version>
