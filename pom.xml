@@ -552,7 +552,7 @@
         </dependency>
 
         <!-- JDBC drivers needed in test deployments for test data loading.
-             Keep versions in sync with packages in base image -->
+             Keep versions in sync with packages provided in base image -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -563,7 +563,7 @@
             <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc</artifactId>
             <version>2024.1.0</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
 
         <!--Additional arquillian extensions-->

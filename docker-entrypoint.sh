@@ -13,7 +13,7 @@ LADA_JBOSS_PW=${LADA_JBOSS_PW:-secret}
 $JBOSS_HOME/bin/jboss-cli.sh <<EOF
 embed-server
 batch
-/subsystem=datasources/data-source=lada:write-attribute(name=connection-url,value=jdbc:postgresql_postGIS://${LADA_DB_SRV}:${LADA_DB_PORT}/${LADA_DB_NAME})
+/subsystem=datasources/data-source=lada:write-attribute(name=connection-url,value=jdbc:postgresql://${LADA_DB_SRV}:${LADA_DB_PORT}/${LADA_DB_NAME})
 /subsystem=datasources/data-source=lada:write-attribute(name=user-name,value=${LADA_DB_USER})
 /subsystem=datasources/data-source=lada:write-attribute(name=password,value=${LADA_DB_PW})
 run-batch

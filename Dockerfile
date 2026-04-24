@@ -12,7 +12,7 @@ LABEL maintainer=tom@intevation.de
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
             libxml2-utils curl ca-certificates-java openjdk-21-jdk-headless \
-            libpostgis-java libjts-java \
+            libpostgresql-jdbc-java libjts-java \
             git maven
 
 
@@ -58,10 +58,6 @@ RUN curl -s $MVN_REPO/org/geolatte/geolatte-geom/${GEOLATTE_GEOM_VERSION}/geolat
         $HIBERNATE_MODULE/geolatte-geom.jar
 
 RUN ln -s /usr/share/java/postgresql.jar \
-       $JBOSS_HOME/modules/org/postgres/main/
-RUN ln -s /usr/share/java/postgis-jdbc.jar \
-       $JBOSS_HOME/modules/org/postgres/main/
-RUN ln -s /usr/share/java/postgis-geometry.jar \
        $JBOSS_HOME/modules/org/postgres/main/
 RUN ln -s /usr/share/java/jts-core.jar \
        $HIBERNATE_MODULE/jts-core.jar
