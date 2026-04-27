@@ -45,8 +45,6 @@ EXPOSE 8080 9990 80
 #
 # Wildfly setup specific for LADA
 #
-RUN mkdir -p $JBOSS_HOME/modules/org/postgres/main
-
 ENV MVN_REPO=https://repo1.maven.org/maven2
 ENV WFLY_MODULES=$JBOSS_HOME/modules/system/layers/base
 ENV HIBERNATE_MODULE=$WFLY_MODULES/org/hibernate/main
@@ -57,8 +55,6 @@ RUN HIBERNATE_VERSION=$(xmllint --xpath "//*[local-name()='hibernate.version']/t
 RUN curl -s $MVN_REPO/org/geolatte/geolatte-geom/${GEOLATTE_GEOM_VERSION}/geolatte-geom-${GEOLATTE_GEOM_VERSION}.jar >\
         $HIBERNATE_MODULE/geolatte-geom.jar
 
-RUN ln -s /usr/share/java/postgresql.jar \
-       $JBOSS_HOME/modules/org/postgres/main/
 RUN ln -s /usr/share/java/jts-core.jar \
        $HIBERNATE_MODULE/jts-core.jar
 
@@ -71,13 +67,8 @@ RUN mvn -q -f $SRC/pom.xml dependency:go-offline
 ADD . $SRC
 WORKDIR $SRC
 
-RUN ln -s $PWD/wildfly/postgres-module.xml \
-       $JBOSS_HOME/modules/org/postgres/main/module.xml
 RUN ln -fs $PWD/wildfly/hibernate-module.xml \
        $HIBERNATE_MODULE/module.xml
-# The jdbcadapters need to know the postgres module to cope with PGeometry
-RUN sed -i '/<\/dependencies>/i         <module name="org.postgres"/>' \
-    $WFLY_MODULES/org/jboss/ironjacamar/jdbcadapters/main/module.xml
 RUN ln -fs $PWD/wildfly/standalone.conf $JBOSS_HOME/bin/
 
 RUN $JBOSS_HOME/bin/jboss-cli.sh --file=wildfly/commands.cli

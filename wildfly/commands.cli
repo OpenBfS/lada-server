@@ -1,5 +1,6 @@
 embed-server
 batch
+module add --name=org.postgresql.jdbc --absolute-resources=/usr/share/java/postgresql.jar
 /subsystem=undertow/server=default-server/http-listener=default/:write-attribute(name=max-post-size,value=1398149)
 /subsystem=undertow/server=default-server/https-listener=https/:write-attribute(name=max-post-size,value=1398149)
 /subsystem=undertow/application-security-domain=other:write-attribute(name=integrated-jaspi, value=false)
