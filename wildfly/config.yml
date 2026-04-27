@@ -1,0 +1,27 @@
+wildfly-configuration:
+  subsystem:
+    ee:
+      service:
+        default-bindings:
+          datasource: !undefine
+  subsystem:
+    datasources:
+      jdbc-driver:
+        h2: !remove
+        postgres:
+          driver-name: postgres
+          driver-module-name: org.postgres
+          driver-class-name: org.postgresql.Driver
+      data-source:
+        ExampleDS: !remove
+        lada: # Set connection-url, user-name and password via env vars
+          jndi-name: java:/jboss/lada
+          driver-name: postgres
+          check-valid-connection-sql: "SELECT 1"
+        lada-test:
+          jndi-name: java:/jboss/lada-test
+          connection-url: jdbc:postgresql://db:5432/lada_test
+          driver-name: postgres
+          user-name: lada_test
+          password: lada_test
+          check-valid-connection-sql: "SELECT 1"

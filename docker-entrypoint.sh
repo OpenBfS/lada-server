@@ -17,4 +17,5 @@ export SUBSYSTEM_DATASOURCES_DATA_SOURCE_LADA__USER_NAME=${LADA_DB_USER}
 export SUBSYSTEM_DATASOURCES_DATA_SOURCE_LADA__PASSWORD=${LADA_DB_PW}
 
 export JAVA_OPTS='${LADA_JAVA_OPTS}'
-/opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
+/opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0 \
+    -y /usr/src/lada-server/wildfly/config.yml
