@@ -126,6 +126,8 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
+                <!-- keep in sync with ANTLR version provided by Wildfly -->
+                <version>4.13.0</version>
                 <executions>
                     <execution>
                         <goals>
