@@ -107,7 +107,7 @@ public abstract class BaseTest {
 
     protected String testDatasetName;
 
-    private static final String DATASETS_DIR = "datasets";
+    protected static final String DATASETS_DIR = "datasets";
     private static final String INIT_SCRIPT = DATASETS_DIR + "/init.sql";
     private static final String CLEANUP_SCRIPT = DATASETS_DIR + "/cleanup.sql";
     private static final String NULL_PLACEHOLDER = "[null]";
@@ -148,7 +148,7 @@ public abstract class BaseTest {
 
     /**
      * Create a deployable WAR archive with complete LADA server
-     * including runtime and test dependencies.
+     * including runtime dependencies.
      *
      * @return WebArchive to deploy in wildfly application server.
      */
@@ -164,7 +164,7 @@ public abstract class BaseTest {
         final String beansXmlResource = "META-INF/beans.xml";
         final String threadContextProviderResource = "META-INF/services/"
             + "jakarta.enterprise.concurrent.spi.ThreadContextProvider";
-        WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
+        return ShrinkWrap.create(WebArchive.class, archiveName)
             .add(new FileAsset(new File("src/main/webapp/WEB-INF/web.xml")),
                 "WEB-INF/web.xml")
             .addPackages(true, ClassLoader.getSystemClassLoader()
@@ -179,23 +179,7 @@ public abstract class BaseTest {
                 "META-INF/persistence.xml")
             .addAsResource(beansXmlResource, beansXmlResource)
             .addAsResource(threadContextProviderResource,
-                threadContextProviderResource)
-            //Add cleanup script and datasets for container mode tests
-            .addAsResource(DATASETS_DIR, DATASETS_DIR);
-        //Add additional test dependencies
-        addWithDependencies("org.postgresql:postgresql", archive);
-        addWithDependencies("net.postgis:postgis-jdbc", archive);
-        addWithDependencies("org.dbunit:dbunit", archive);
-        addWithDependencies(
-            "org.jboss.arquillian.extension:arquillian-transaction-api",
-            archive);
-        addWithDependencies(
-            "org.jboss.arquillian.extension:arquillian-transaction-jta",
-            archive);
-        addWithDependencies(
-            "org.eclipse.parsson:parsson",
-            archive);
-        return archive;
+                threadContextProviderResource);
     }
 
     /**
@@ -208,22 +192,6 @@ public abstract class BaseTest {
             // Ensure clean database after test
             executeSql(CLEANUP_SCRIPT);
             con.close();
-        }
-    }
-
-    /**
-     * Add a dependency to the given webarchive.
-     *
-     * @param coordinate
-     * @param archive
-     */
-    private static void addWithDependencies(
-        String coordinate, WebArchive archive
-    ) {
-        File[] files = Maven.resolver().loadPomFromFile("pom.xml")
-            .resolve(coordinate).withTransitivity().asFile();
-        for (File f : files) {
-            archive.addAsLibrary(f);
         }
     }
 
