@@ -535,7 +535,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JDBC drivers needed in test deployments for test data loading.
+        <!-- JDBC drivers needed for test data loading.
              Keep versions in sync with packages provided in base image -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -548,6 +548,13 @@
             <artifactId>postgis-jdbc</artifactId>
             <version>2024.1.0</version>
             <scope>test</scope>
+            <exclusions>
+                <!-- Keep only the provided one -->
+                <exclusion>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--Additional arquillian extensions-->
