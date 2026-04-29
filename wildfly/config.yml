@@ -9,7 +9,6 @@ wildfly-configuration:
       jdbc-driver:
         h2: !remove
         postgres:
-          driver-name: postgres
           driver-module-name: org.postgresql.jdbc
           driver-class-name: org.postgresql.Driver
       data-source:
