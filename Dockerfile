@@ -83,10 +83,4 @@ RUN mvn -q package && \
 
 HEALTHCHECK CMD [ $(curl -sfw '%{http_code}' http://localhost:8080/lada-server/rest/version) = 401 ] || exit 1
 
-#
-# This will boot WildFly in the standalone mode and bind to all interface
-#
-#CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", \
-#     "-bmanagement=0.0.0.0"]
-
 ENTRYPOINT ["/usr/src/lada-server/docker-entrypoint.sh"]
