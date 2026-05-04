@@ -40,7 +40,6 @@ public abstract class ContainerBaseTest extends BaseTest {
             .addClass(TestAuthentication.class)
             .addAsResource(DATASETS_DIR, DATASETS_DIR);
         //Add additional test dependencies
-        addWithDependencies("org.postgresql:postgresql", archive);
         addWithDependencies("net.postgis:postgis-jdbc", archive);
         addWithDependencies("org.dbunit:dbunit", archive);
         addWithDependencies(

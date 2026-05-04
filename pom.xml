@@ -535,21 +535,14 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JDBC drivers needed for test data loading.
-             Keep versions in sync with packages provided in base image -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.7</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- JDBC drivers needed for test data loading -->
         <dependency>
             <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc</artifactId>
             <version>2024.1.0</version>
             <scope>test</scope>
             <exclusions>
-                <!-- Keep only the provided one -->
+                <!-- Keep only the dependency of dbUnit -->
                 <exclusion>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>

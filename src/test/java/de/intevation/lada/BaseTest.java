@@ -7,6 +7,8 @@
  */
 package de.intevation.lada;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -65,7 +67,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.postgresql.ds.PGSimpleDataSource;
 
 import de.intevation.lada.model.NamingStrategy;
 import de.intevation.lada.util.rest.JSONBConfig;
@@ -121,13 +122,12 @@ public abstract class BaseTest {
 
         if (this.testDatasetName != null) {
             // Set up database connection
-            PGSimpleDataSource ds = new PGSimpleDataSource();
             final String testDbUserPw = "lada_test";
-            ds.setServerNames(new String[]{"db"});
-            ds.setDatabaseName(testDbUserPw);
-            ds.setUser(testDbUserPw);
-            ds.setPassword(testDbUserPw);
-            this.con = new DatabaseConnection(ds.getConnection());
+            Connection dbConnection = DriverManager.getConnection(
+                "jdbc:postgresql://db/" + testDbUserPw,
+                testDbUserPw,
+                testDbUserPw);
+            this.con = new DatabaseConnection(dbConnection);
             DatabaseConfig config = con.getConfig();
             config.setProperty(
                 DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES,
