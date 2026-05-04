@@ -5,9 +5,17 @@
     <persistence-unit name="lada">
         <jta-data-source>java:jboss/lada</jta-data-source>
         <properties>
+            <!-- Provide Hibernate including hibernate-spatial in application -->
+            <property name="jboss.as.jpa.providerModule" value="application"/>
+
+            <!-- Use adapter from Wildfly's internal Hibernate module to enable
+                 automatic discovery of managed persistence classes -->
+            <property name="jboss.as.jpa.adapterModule" value="org.hibernate"/>
+
             <property
                 name="hibernate.implicit_naming_strategy"
                 value="de.intevation.lada.model.NamingStrategy"/>
+
             <property name="hibernate.jpa.compliance.query" value="false"/>
         </properties>
         <validation-mode>NONE</validation-mode>

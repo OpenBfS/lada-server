@@ -12,15 +12,8 @@ LABEL maintainer=tom@intevation.de
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
             libxml2-utils curl ca-certificates-java openjdk-21-jdk-headless \
-            libpostgresql-jdbc-java libjts-java \
+            libpostgis-java \
             git maven
-
-
-#
-# Set ENV for pacakge versions
-ENV GEOLATTE_GEOM_VERSION=1.9.0
-
-RUN echo "Building Image using GEOLATTE_GEOM_VERSION=${GEOLATTE_GEOM_VERSION}."
 
 #
 # Set up Wildfly
@@ -42,22 +35,6 @@ RUN $JBOSS_HOME/bin/add-user.sh admin secret --silent
 
 EXPOSE 8080 9990 80
 
-#
-# Wildfly setup specific for LADA
-#
-ENV MVN_REPO=https://repo1.maven.org/maven2
-ENV WFLY_MODULES=$JBOSS_HOME/modules/system/layers/base
-ENV HIBERNATE_MODULE=$WFLY_MODULES/org/hibernate/main
-RUN HIBERNATE_VERSION=$(xmllint --xpath "//*[local-name()='hibernate.version']/text()" $SRC/pom.xml); \
-    curl -s $MVN_REPO/org/hibernate/orm/hibernate-spatial/${HIBERNATE_VERSION}/hibernate-spatial-${HIBERNATE_VERSION}.jar >\
-        $HIBERNATE_MODULE/hibernate-spatial.jar;
-
-RUN curl -s $MVN_REPO/org/geolatte/geolatte-geom/${GEOLATTE_GEOM_VERSION}/geolatte-geom-${GEOLATTE_GEOM_VERSION}.jar >\
-        $HIBERNATE_MODULE/geolatte-geom.jar
-
-RUN ln -s /usr/share/java/jts-core.jar \
-       $HIBERNATE_MODULE/jts-core.jar
-
 # Download dependencies before adding sources to leverage build cache
 RUN mvn -q -f $SRC/pom.xml dependency:go-offline
 
@@ -67,8 +44,9 @@ RUN mvn -q -f $SRC/pom.xml dependency:go-offline
 ADD . $SRC
 WORKDIR $SRC
 
-RUN ln -fs $PWD/wildfly/hibernate-module.xml \
-       $HIBERNATE_MODULE/module.xml
+#
+# Wildfly setup specific for LADA
+#
 RUN ln -fs $PWD/wildfly/standalone.conf $JBOSS_HOME/bin/
 
 RUN $JBOSS_HOME/bin/jboss-cli.sh --file=wildfly/commands.cli

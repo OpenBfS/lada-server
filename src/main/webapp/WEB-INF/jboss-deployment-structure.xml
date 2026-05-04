@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+  <deployment>
+    <dependencies>
+      <!-- Application provided Hibernate needs access to JDBC driver classes -->
+      <module name="org.postgresql.jdbc"/>
+    </dependencies>
+  </deployment>
+</jboss-deployment-structure>

@@ -8,6 +8,7 @@
 package de.intevation.lada;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -60,7 +61,6 @@ import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
@@ -118,9 +118,16 @@ public abstract class BaseTest {
      */
     @Before
     public void setup()
-        throws DatabaseUnitException, SQLException, IOException {
+        throws DatabaseUnitException, SQLException, IOException,
+        ClassNotFoundException, ReflectiveOperationException {
 
         if (this.testDatasetName != null) {
+            // Ensure PostgreSQL driver is registered
+            DriverManager.registerDriver((Driver) Class
+                .forName("org.postgresql.Driver")
+                .getDeclaredConstructor()
+                .newInstance());
+
             // Set up database connection
             final String testDbUserPw = "lada_test";
             Connection dbConnection = DriverManager.getConnection(
@@ -161,12 +168,14 @@ public abstract class BaseTest {
             .importCompileAndRuntimeDependencies().resolve()
             .withTransitivity().asFile();
 
+        final String webInfPath = "src/main/webapp/WEB-INF/";
         final String beansXmlResource = "META-INF/beans.xml";
         final String threadContextProviderResource = "META-INF/services/"
             + "jakarta.enterprise.concurrent.spi.ThreadContextProvider";
         return ShrinkWrap.create(WebArchive.class, archiveName)
-            .add(new FileAsset(new File("src/main/webapp/WEB-INF/web.xml")),
-                "WEB-INF/web.xml")
+            .addAsWebInfResource(new File(webInfPath + "web.xml"))
+            .addAsWebInfResource(new File(
+                    webInfPath + "jboss-deployment-structure.xml"))
             .addPackages(true, ClassLoader.getSystemClassLoader()
                 .getDefinedPackage("de.intevation.lada"))
             .addAsResource("lada_en.properties", "lada_en.properties")

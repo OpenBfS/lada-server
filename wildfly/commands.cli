@@ -1,6 +1,9 @@
 embed-server
 batch
-module add --name=org.postgresql.jdbc --absolute-resources=/usr/share/java/postgresql.jar
+
+# Access to PostGIS from the module is needed to load dbUnit test data
+module add --name=org.postgresql.jdbc --absolute-resources=/usr/share/java/postgresql.jar:/usr/share/java/postgis-jdbc.jar:/usr/share/java/postgis-geometry.jar
+
 /subsystem=undertow/server=default-server/http-listener=default/:write-attribute(name=max-post-size,value=1398149)
 /subsystem=undertow/server=default-server/https-listener=https/:write-attribute(name=max-post-size,value=1398149)
 /subsystem=undertow/application-security-domain=other:write-attribute(name=integrated-jaspi, value=false)
