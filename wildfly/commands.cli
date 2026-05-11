@@ -1,4 +1,3 @@
-embed-server
 batch
 
 # Access to PostGIS from the module is needed to load dbUnit test data
@@ -14,4 +13,3 @@ module add --name=org.postgresql.jdbc --absolute-resources=/usr/share/java/postg
 /extension=org.wildfly.extension.microprofile.openapi-smallrye:add()
 /subsystem=microprofile-openapi-smallrye:add()
 run-batch
-stop-embedded-server

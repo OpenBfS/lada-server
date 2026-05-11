@@ -24,14 +24,7 @@ ENV SRC=/usr/src/lada-server
 
 ADD pom.xml $SRC/
 
-RUN WILDFLY_VERSION=$(xmllint --xpath "//*[local-name()='wildfly.version']/text()" $SRC/pom.xml); \
-    curl -Ls \
-    https://github.com/wildfly/wildfly/releases/download/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.tar.gz\
-    | tar zx && mv wildfly-${WILDFLY_VERSION} /opt/jboss/wildfly
-
 ENV JBOSS_HOME=/opt/jboss/wildfly
-
-RUN $JBOSS_HOME/bin/add-user.sh admin secret --silent
 
 EXPOSE 8080 9990 80
 
@@ -45,19 +38,16 @@ ADD . $SRC
 WORKDIR $SRC
 
 #
+# Build and deploy LADA-server
+#
+RUN mvn -q -Dwildfly.provisioning.dir=$JBOSS_HOME package
+
+#
 # Wildfly setup specific for LADA
 #
 RUN ln -fs $PWD/wildfly/standalone.conf $JBOSS_HOME/bin/
 
-RUN $JBOSS_HOME/bin/jboss-cli.sh --file=wildfly/commands.cli
-
-#
-# Build and deploy LADA-server
-#
-RUN mvn -q package && \
-    mv target/lada-server-*.war \
-       $JBOSS_HOME/standalone/deployments/lada-server.war && \
-    touch $JBOSS_HOME/standalone/deployments/lada-server.war.dodeploy
+RUN $JBOSS_HOME/bin/add-user.sh admin secret --silent
 
 HEALTHCHECK CMD [ $(curl -sfw '%{http_code}' http://localhost:8080/lada-server/rest/version) = 401 ] || exit 1
 
