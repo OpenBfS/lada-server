@@ -624,35 +624,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>remote-deploy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <configuration>
-                            <hostname>localhost</hostname>
-                            <port>9990</port>
-<!--
-                            <username>admin</username>
-                            <password>secret</password>
--->
-                        </configuration>
-                        <!-- <executions>
-                            <execution>
-                                <id>deploy-jar</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals>
-                            </execution>
-                        </executions>-->
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <reporting>
