@@ -275,7 +275,7 @@
                 <configuration>
                     <feature-packs>
                         <feature-pack>
-                            <location>wildfly@maven(org.jboss.universe:community-universe):current#${wildfly.version}</location>
+                            <location>org.wildfly:wildfly-galleon-pack:${wildfly.version}</location>
                         </feature-pack>
                     </feature-packs>
                     <packaging-scripts>
