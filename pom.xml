@@ -278,6 +278,7 @@
                             <location>org.wildfly:wildfly-galleon-pack:${wildfly.version}</location>
                         </feature-pack>
                     </feature-packs>
+                    <layers>ee-core-profile-server,jpa,microprofile-openapi,ee-security</layers>
                     <packaging-scripts>
                         <packaging-script>
                             <scripts>

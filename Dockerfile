@@ -49,8 +49,6 @@ RUN --mount=type=cache,target=/root/.m2 \
 #
 RUN ln -fs $PWD/wildfly/standalone.conf $JBOSS_HOME/bin/
 
-RUN $JBOSS_HOME/bin/add-user.sh admin secret --silent
-
 HEALTHCHECK CMD [ $(curl -sfw '%{http_code}' http://localhost:8080/lada-server/rest/version) = 401 ] || exit 1
 
 ENTRYPOINT ["/usr/src/lada-server/docker-entrypoint.sh"]

@@ -169,6 +169,12 @@ hier vorher sicherstellen, dass nur ein Deployment vorhanden ist, und den
 Wildfly neu starten.
 
 Zum Remote-Monitoring mit jconsole zunächst
+`<layers>` aus der Konfiguration des WildFly-Maven-Plugins in `pom.xml` entfernen
+und `mvn package` ausführen bzw. Docker-Container neu bauen.
+Einen administrativen Nutzer für den Fern-Zugriff erstellen (im Container):
+
+ $ $JBOSS_HOME/bin/add-user.sh admin secret
+
 /opt/jboss/wildfly/bin/client/jboss-cli-client.jar aus dem Server-Container
 kopieren (mit docker cp) und jconsole folgendermaßen starten:
 

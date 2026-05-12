@@ -7,12 +7,10 @@ wildfly-configuration:
   subsystem:
     datasources:
       jdbc-driver:
-        h2: !remove
         postgres:
           driver-module-name: org.postgresql.jdbc
           driver-class-name: org.postgresql.Driver
       data-source:
-        ExampleDS: !remove
         lada: # Set connection-url, user-name and password via env vars
           jndi-name: java:/jboss/lada
           driver-name: postgres
