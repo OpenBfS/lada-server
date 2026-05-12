@@ -48,4 +48,4 @@ services:
     depends_on:
       - lada-ldap
     ports:
-      - 28443:8443
+      - 28443 # bind to host port 8443 for testing Shibboleth
