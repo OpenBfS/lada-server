@@ -29,7 +29,8 @@ ENV JBOSS_HOME=/opt/jboss/wildfly
 EXPOSE 8080 9990 80
 
 # Download dependencies before adding sources to leverage build cache
-RUN mvn -q -f $SRC/pom.xml dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -q -f $SRC/pom.xml dependency:go-offline
 
 #
 # Add LADA-server repo
@@ -40,7 +41,8 @@ WORKDIR $SRC
 #
 # Build and deploy LADA-server
 #
-RUN mvn -q -Dwildfly.provisioning.dir=$JBOSS_HOME package
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -q -Dwildfly.provisioning.dir=$JBOSS_HOME package
 
 #
 # Wildfly setup specific for LADA
