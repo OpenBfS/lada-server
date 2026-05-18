@@ -22,26 +22,6 @@ import org.jboss.logging.Logger;
 
 /**
  * REST service to get login data for the Lada application.
- * <p>
- * This service produces data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean],
- *  "message": [string],
- *  "data":{
- *      "username": [string],
- *      "servertime": [timestamp],
- *      "roles": [string]
- *  },
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
@@ -53,23 +33,6 @@ public class UserService extends LadaService {
 
     /**
      * Get login data.
-     * <pre>
-     * <code>
-     * {
-     *  "success": [boolean],
-     *  "message": [string],
-     *  "data": {
-     *      "username": [string],
-     *      "servertime": [timestamp],
-     *      "roles": [string]
-     *  },
-     *  "errors": [object],
-     *  "warnings": [object],
-     *  "readonly": [boolean],
-     *  "totalCount": [number]
-     * }
-     * </code>
-     * </pre>
      *
      * @return login data.
      */
@@ -80,7 +43,7 @@ public class UserService extends LadaService {
         response.put("username", userInfo.getName());
         response.put("roles", userInfo.getAuth().stream()
                 .map(a -> a.getLdapGr()).collect(Collectors.toSet()));
-        response.put("servertime", new Date().getTime());
+        response.put("servertime", new Date());
         response.put("messstelleLabor", userInfo.getMessLaborId());
         response.put("netzbetreiber", userInfo.getNetzbetreiber());
         response.put("funktionen", userInfo.getFunktionen());
