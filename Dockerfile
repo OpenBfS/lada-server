@@ -1,8 +1,3 @@
-#
-# Dockerfile for jboss wildfly application server cutomized for usage in the
-# BfS-Lada project
-#
-
 FROM debian:trixie
 LABEL maintainer=tom@intevation.de
 
@@ -15,33 +10,28 @@ RUN apt-get update -y && \
             libpostgis-java \
             git maven
 
-#
-# Set up Wildfly
-#
-RUN mkdir /opt/jboss
-
-ENV SRC=/usr/src/lada-server
-
-ADD pom.xml $SRC/
-
-ENV JBOSS_HOME=/opt/jboss/wildfly
-
-EXPOSE 8080 9990 80
+# Add system user for building and running LADA server
+ENV LADA_HOME=/opt/lada LADA_UID=999 LADA_USER=lada
+RUN useradd -rmd $LADA_HOME -u $LADA_UID $LADA_USER
+USER $LADA_USER
 
 # Download dependencies before adding sources to leverage build cache
-RUN --mount=type=cache,target=/root/.m2 \
+ENV SRC=$LADA_HOME/lada-server
+ADD --chown=$LADA_UID pom.xml $SRC/
+RUN --mount=type=cache,target=$LADA_HOME/.m2,uid=$LADA_UID \
     mvn -q -f $SRC/pom.xml dependency:go-offline
 
 #
 # Add LADA-server repo
 #
-ADD . $SRC
+ADD --chown=$LADA_UID . $SRC
 WORKDIR $SRC
 
 #
 # Build and deploy LADA-server
 #
-RUN --mount=type=cache,target=/root/.m2 \
+ENV JBOSS_HOME=$LADA_HOME/wildfly
+RUN --mount=type=cache,target=$LADA_HOME/.m2,uid=$LADA_UID \
     mvn -q -Dwildfly.provisioning.dir=$JBOSS_HOME package
 
 #
@@ -51,4 +41,4 @@ RUN ln -fs $PWD/wildfly/standalone.conf $JBOSS_HOME/bin/
 
 HEALTHCHECK CMD [ $(curl -sfw '%{http_code}' http://localhost:8080/lada-server/rest/version) = 401 ] || exit 1
 
-ENTRYPOINT ["/usr/src/lada-server/docker-entrypoint.sh"]
+ENTRYPOINT ["/opt/lada/lada-server/docker-entrypoint.sh"]
