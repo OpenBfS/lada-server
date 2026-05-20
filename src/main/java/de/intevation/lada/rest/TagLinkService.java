@@ -93,7 +93,7 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
      */
     @POST
     public List<Response<T>> createTagReference(
-        @Valid List<T> tagLinks
+        List<@Valid T> tagLinks
     ) throws BadRequestException {
         //Create Response
         List<Response<T>> responseList = new ArrayList<>(tagLinks.size());
@@ -119,7 +119,7 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
     @POST
     @Path("delete")
     public List<Response<T>> deleteTagReference(
-        @Valid List<T> tagLinks
+        List<@Valid T> tagLinks
     ) throws BadRequestException {
         List<Response<T>> responseList = new ArrayList<>(tagLinks.size());
 

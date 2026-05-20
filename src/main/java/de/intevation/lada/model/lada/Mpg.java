@@ -208,9 +208,8 @@ public class Mpg extends BaseModel implements Serializable {
         schema = Names.SCHEMA_NAME,
         inverseJoinColumns = @JoinColumn(name = "sample_specif_id")
     )
-    @Valid
     @SuppressWarnings("serial")
-    private Set<SampleSpecif> sampleSpecifs;
+    private Set<@Valid SampleSpecif> sampleSpecifs;
 
     @Formula("""
         (SELECT count(*) FROM lada.sample s WHERE {alias}.id = s.mpg_id)
