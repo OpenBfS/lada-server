@@ -136,7 +136,7 @@ public class Measm extends BelongsToSample
         cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OrderBy(StatusProt_.SEQ_NO)
+    @OrderBy("seqNo") // TODO: StatusProt_.SEQ_NO. Annotation processor bug?
     @SuppressWarnings("serial")
     private List<StatusProt> statusProts;
 

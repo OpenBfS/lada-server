@@ -47,7 +47,11 @@ public class EnvDescripDisplayValidator
                 HibernateConstraintValidatorContext.class
             );
             hibernateCtx.disableDefaultConstraintViolation();
-            hibernateCtx.addExpressionVariable("field", e.getField())
+            hibernateCtx
+                .addExpressionVariable("field",
+                    /* TODO: Work-around for
+                       https://hibernate.atlassian.net/browse/HV-2217 */
+                    e.getField() == null ? "" : e.getField())
                 .buildConstraintViolationWithTemplate(this.message)
                 .enableExpressionLanguage(BEAN_METHODS)
                 .addConstraintViolation();

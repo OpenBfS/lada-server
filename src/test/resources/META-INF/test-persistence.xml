@@ -17,6 +17,9 @@
                 value="de.intevation.lada.model.NamingStrategy"/>
 
             <property name="hibernate.jpa.compliance.query" value="false"/>
+            <property
+                name="hibernate.query.native.prefer_jdbc_datetime_types"
+                value="true"/>
         </properties>
         <validation-mode>NONE</validation-mode>
     </persistence-unit>
