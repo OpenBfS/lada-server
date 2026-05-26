@@ -3,16 +3,12 @@ services:
     build:
       context: ./db_schema
     image: "koala/lada_db"
-    volumes:
-      - ./db_schema:/opt/lada_sql/
   server:
     build:
       context: ./
     image: "koala/lada_wildfly"
     depends_on:
       - db
-    volumes:
-      - ./:/usr/src/lada-server
     ports:
       - 8080 # direct access to interfaces
       - 9990 # Wildfly management console
@@ -20,8 +16,6 @@ services:
       - 5005 # Remote debugging of test code
   printer:
     image: "koala/lada_print_templates"
-    volumes:
-      - ../lada_print_templates/:/usr/local/tomcat/webapps/ROOT/print-apps
   client: # Assumes client checkout in ../client
     build:
       context: ../client
@@ -32,8 +26,6 @@ services:
       printer:
         condition: service_started
         required: false
-    volumes:
-      - ../client:/usr/local/lada
     ports:
       - 80-86
   lada-ldap:
