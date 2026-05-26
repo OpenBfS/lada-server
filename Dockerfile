@@ -34,6 +34,11 @@ ENV JBOSS_HOME=$LADA_HOME/wildfly
 RUN --mount=type=cache,target=$LADA_HOME/.m2,uid=$LADA_UID \
     mvn -q -Dwildfly.provisioning.dir=$JBOSS_HOME package
 
+# Persist local Maven repository in image (speed up mvn commands in container)
+RUN --mount=type=cache,target=$LADA_HOME/.m2,uid=$LADA_UID \
+    cp -a $LADA_HOME/.m2 $LADA_HOME/m2
+RUN mv $LADA_HOME/m2 $LADA_HOME/.m2
+
 #
 # Wildfly setup specific for LADA
 #
