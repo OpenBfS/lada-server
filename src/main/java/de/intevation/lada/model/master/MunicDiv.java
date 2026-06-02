@@ -44,8 +44,6 @@ public class MunicDiv extends BelongsToNetwork implements Serializable {
     private String adminUnitId;
 
     @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Site.class)
     private Integer siteId;
 
     @Size(max = 180)
