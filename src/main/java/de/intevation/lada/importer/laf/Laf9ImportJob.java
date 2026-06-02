@@ -529,6 +529,13 @@ public class Laf9ImportJob extends ImportJob<Collection<JsonObject>> {
                 validator.validate(
                     finalCommMeasm, Warnings.class, Notifications.class);
             }
+            // Reporting
+            List<CommMeasm> targetCommMeasms = targetMeasm.getCommMeasms();
+            if (targetCommMeasms == null) {
+                targetMeasm.setCommMeasms(srcCommMeasms);
+            } else {
+                targetCommMeasms.addAll(srcCommMeasms);
+            }
         }
 
         /* Put statusProts last, because validating requires
