@@ -21,6 +21,7 @@ SET row_security = off;
 
 COPY master.munic_div (id, network_id, admin_unit_id, div_code, name, last_mod) FROM stdin;
 1	11	11000000	28	Johannisthal	2011-11-21 10:35:17
+2	06	03254028	42	Ruthe	2026-06-03 16:24:30
 \.
 
 

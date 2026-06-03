@@ -50,6 +50,7 @@ COPY master.base_query (id, sql) FROM stdin;
 61	SELECT sample_specif.id AS pzsId,\n sample_specif.ext_id AS pzsBez,\n sample_specif.name AS pzsBeschr,\n meas_unit.unit_symbol AS pzsEinhei\n, sample_specif.eudf_keyword AS pzsEud\n FROM master.sample_specif\n LEFT JOIN master.meas_unit ON (sample_specif.meas_unit_id = meas_unit.id)
 62	SELECT rei_ag_gr.id AS reiproggrpId,\n rei_ag_gr.name AS reiproggrp,\n rei_ag_gr.descr AS reiproggrpbeschr\n FROM master.rei_ag_gr
 63	SELECT tag.id AS tagId,\n tag.name,\n tag.meas_facil_id AS mstId,\n tag.network_id AS netzId,\n lada_user.name AS username,\n tag_type.tag_type as tagTyp,\n tag.val_until AS gueltigBis,\n tag.created_at AS createdAt,\n tag.is_auto_tag as autoTag\n FROM master.tag\n LEFT JOIN master.lada_user ON tag.lada_user_id = lada_user.id \n LEFT JOIN master.tag_type ON CASE WHEN network_id IS NOT NULL THEN 'netz' WHEN meas_facil_id IS NOT NULL THEN 'mst' ELSE 'global' END = tag_type.id
+64	SELECT id AS municDivId, network_id AS netzId, admin_unit_id AS eGemId, div_code AS divCode, name FROM master.munic_div
 \.
 
 
@@ -107,6 +108,7 @@ COPY master.disp (id, name, format) FROM stdin;
 47	tagTyp	\N
 48	textLineBr	\N
 49	ortTyp	\N
+50	municDivId	\N
 \.
 
 
@@ -242,6 +244,8 @@ COPY master.filter (id, sql, param, filter_type_id, name) FROM stdin;
 141	tag.val_until BETWEEN to_timestamp(cast(:fromTagGueltigBis AS DOUBLE PRECISION)) AND to_timestamp(cast(:toTagGueltigBis AS DOUBLE PRECISION))	fromTagGueltigBis,toTagGueltigBis	6	tag_gueltig_bis
 142	env_descrip.last_mod BETWEEN to_timestamp(cast(:fromDeskLetzteAenderung AS DOUBLE PRECISION)) AND to_timestamp(cast(:toDeskLetzteAenderung AS DOUBLE PRECISION))	fromDeskLetzteAenderung,toDeskLetzteAenderung	6	deskLetzteAenderung
 143	site.site_class_id IN ( :ortTyp )	ortTyp	5	ortTyp
+144	munic_div.network_id IN ( :netzId )	netzId	4	netzbetreiber_id
+145	munic_div.admin_unit_id IN (:gemId)	gemId	4	munic_div_gem_id
 \.
 
 
@@ -1028,6 +1032,11 @@ COPY master.grid_col_mp (id, base_query_id, grid_col, data_index, "position", fi
 6307	63	Gültig bis	gueltigBis	7	141	2
 6308	63	Erzeugt am	createdAt	8	\N	2
 6309	63	Auto-Tag	autoTag	9	139	11
+6310	64	interne ID	municDivId	1	\N	50
+6311	64	Netzbetreiber	netzId	2	144	18
+6312	64	Verwaltungseinheit	gemId	3	145	16
+6313	64	Ortszusatzkennzahl	divCode	4	\N	33
+6314	64	Bezeichung	name	5	\N	1
 \.
 
 
@@ -1075,6 +1084,7 @@ COPY master.query_user (id, name, lada_user_id, base_query_id, descr) FROM stdin
 35	Messwerte mit Umrechnung	0	43	Es werden nur Messungen mit Messstellen-Status angezeigt!
 36	Messungen mit Probenzusatzwerten	0	16	Vorlage für Messungesselektion mit Probenzusatzwerten\nIn den Spalten der Nuklide werden nur Messwerte mit Messstellen-Status angezeigt. In den Details richtet sich die Sichtbarkeit nach den persönlichen Berechtigungen.
 37	Tags	0	63	Tags
+38	Gemeindeuntergliederungen	0	64	Gemeindeuntergliederungen
 \.
 
 
@@ -1861,6 +1871,11 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 1129	0	3133	4	\N	\N	\N	f	f	\N	300	f	f	f
 1130	0	148	1	\N	\N	\N	f	f	\N	150	f	f	f
 1197	0	149	1	\N	\N	\N	f	f	-1	76	f	f	f
+1204	0	6310	38	\N	\N	\N	f	f	-1	150	f	f	f
+1200	0	6311	38	\N	\N	\N	t	t	1	150	f	f	f
+1201	0	6312	38	\N	\N	\N	t	t	2	150	f	f	f
+1202	0	6313	38	\N	\N	\N	f	t	3	150	f	f	f
+1203	0	6314	38	\N	\N	\N	f	t	4	150	f	f	f
 \.
 
 

@@ -30,6 +30,7 @@ import de.intevation.lada.model.master.Disp;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.GridColMp;
 import de.intevation.lada.model.master.MpgCateg;
+import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
@@ -58,6 +59,7 @@ public class UniversalService extends LadaService {
     private static final LinkedHashMap<String, Class<? extends BaseModel>>
         AUTH_HIERARCHY = new LinkedHashMap<>();
     static {
+        AUTH_HIERARCHY.put("municDivId",  MunicDiv.class);
         AUTH_HIERARCHY.put("tagId",       Tag.class);
         AUTH_HIERARCHY.put("mprkat",      MpgCateg.class);
         AUTH_HIERARCHY.put("dsatzerz",    DatasetCreator.class);
