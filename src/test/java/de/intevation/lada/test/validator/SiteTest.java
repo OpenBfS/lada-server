@@ -484,6 +484,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test valid UTM WGS84 coordinates.
      */
+    @Test
     public void validUtmWgs84() {
         testValidUtmCoordinates(SPAT_REF_SYS_ID_UTM_WGS_84);
     }
@@ -491,6 +492,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test invalid UTM WGS84 coordinates.
      */
+    @Test
     public void invalidUtmWgs84() {
         testInvalidUtmCoordinates(SPAT_REF_SYS_ID_UTM_WGS_84);
     }
@@ -498,6 +500,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test valid UTM ETRS89 coordinates.
      */
+    @Test
     public void validUtmEtrs89() {
         testValidUtmCoordinates(SPAT_REF_SYS_ID_UTM_ETRS89);
     }
@@ -505,6 +508,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test invalid UTM ETRS89 coordinates.
      */
+    @Test
     public void invalidEtrs89() {
         testInvalidUtmCoordinates(SPAT_REF_SYS_ID_UTM_ETRS89);
     }
@@ -512,6 +516,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test valid UTM ED50 coordinates.
      */
+    @Test
     public void validUtmEd50() {
         testValidUtmCoordinates(SPAT_REF_SYS_ID_UTM_ED50);
     }
@@ -519,6 +524,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test invalid UTM ED50 coordinates.
      */
+    @Test
     public void invalidUtmEd50() {
         testInvalidUtmCoordinates(SPAT_REF_SYS_ID_UTM_ED50);
     }
