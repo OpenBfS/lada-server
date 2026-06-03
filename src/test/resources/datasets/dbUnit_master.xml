@@ -734,7 +734,7 @@
         id = "1000"
         network_id = "06"
         admin_unit_id = "11000000"
-        site_id = "1001"
+        div_code = "1001"
         name = "Testname"
         />
     <master.status_ord_mp

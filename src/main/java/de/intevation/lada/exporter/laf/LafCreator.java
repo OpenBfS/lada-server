@@ -277,7 +277,7 @@ public class LafCreator implements Closeable {
             MunicDiv gu = repository.getById(
                 MunicDiv.class, sOrt.getMunicDivId());
             lafLine(typePrefix + "ORTS_ZUSATZKENNZAHL",
-                gu.getSiteId(), CN);
+                gu.getDivCode(), CN);
         }
 
         String koord = String.format("%02d", sOrt.getSpatRefSysId())

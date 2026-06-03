@@ -27,7 +27,7 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ MunicDiv.class, DatabaseConstraints.class })
-@Unique(fields = {"networkId", "siteId"},
+@Unique(fields = {"networkId", MunicDiv_.DIV_CODE},
     groups = DatabaseConstraints.class, clazz = MunicDiv.class)
 public class MunicDiv extends BelongsToNetwork implements Serializable {
 
@@ -44,7 +44,7 @@ public class MunicDiv extends BelongsToNetwork implements Serializable {
     private String adminUnitId;
 
     @NotNull
-    private Integer siteId;
+    private Integer divCode;
 
     @Size(max = 180)
     @NotEmptyNorWhitespace
@@ -66,12 +66,12 @@ public class MunicDiv extends BelongsToNetwork implements Serializable {
         this.adminUnitId = municId;
     }
 
-    public Integer getSiteId() {
-        return this.siteId;
+    public Integer getDivCode() {
+        return this.divCode;
     }
 
-    public void setSiteId(Integer siteId) {
-        this.siteId = siteId;
+    public void setDivCode(Integer siteId) {
+        this.divCode = siteId;
     }
 
     public String getName() {

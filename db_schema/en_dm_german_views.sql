@@ -495,7 +495,7 @@ CREATE VIEW stamm.gemeindeuntergliederung AS SELECT
 	id,
 	network_id AS netzbetreiber_id,
 	admin_unit_id AS gem_id,
-	site_id AS ozk_id,
+	div_code AS ozk_id,
 	name AS gemeindeuntergliederung,
 	last_mod AS letzte_aenderung
 FROM master.munic_div;
