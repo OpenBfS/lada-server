@@ -38,6 +38,8 @@ public class GeolocatTest extends ValidatorBaseTest {
     private static final int FOREIGN_SITE_ID = 1002;
     private static final String REFERENCE_SAME_NETWORK_MSG =
         "Referenced entities must belong to the same network";
+    private static final String MSG_MUNIC_DIV_MATCH =
+        "Municipality division must match administrative unit";
 
     /**
      * Constructor.
@@ -279,5 +281,54 @@ public class GeolocatTest extends ValidatorBaseTest {
         validator.validate(loc);
         assertHasErrors(loc, GeolocatMpg_.MPG_ID, REFERENCE_SAME_NETWORK_MSG);
         assertHasErrors(loc, GeolocatMpg_.SITE, REFERENCE_SAME_NETWORK_MSG);
+    }
+
+    @Test
+    public void municDivMatches() {
+        Geolocat loc = geolocatReferencingAdminUnit();
+        loc.setMunicDivId(1);
+        assertNoMessages(validator.validate(loc));
+    }
+
+    @Test
+    public void municDivMatchesNot() {
+        Geolocat loc = geolocatReferencingAdminUnit();
+        loc.setMunicDivId(2);
+        assertHasNotifications(validator.validate(loc),
+            Geolocat_.MUNIC_DIV_ID,
+            MSG_MUNIC_DIV_MATCH);
+    }
+
+    private Geolocat geolocatReferencingAdminUnit() {
+        Geolocat loc = new Geolocat();
+        loc.setTypeRegulation(TYPE_REGULATION_E);
+        loc.setSample(
+            repository.getById(Sample.class, SAMPLE_WITHOUT_E_GEOLOCAT));
+        loc.setSite(repository.getById(Site.class, REFERENCED_SITE_ID));
+        return loc;
+    }
+
+    @Test
+    public void municDivMatchesMpg() {
+        GeolocatMpg loc = geolocatMpgReferencingAdminUnit();
+        loc.setMunicDivId(1);
+        assertNoMessages(validator.validate(loc));
+    }
+
+    @Test
+    public void municDivMatchesNotMpg() {
+        GeolocatMpg loc = geolocatMpgReferencingAdminUnit();
+        loc.setMunicDivId(2);
+        assertHasNotifications(validator.validate(loc),
+            GeolocatMpg_.MUNIC_DIV_ID,
+            MSG_MUNIC_DIV_MATCH);
+    }
+
+    private GeolocatMpg geolocatMpgReferencingAdminUnit() {
+        GeolocatMpg loc = new GeolocatMpg();
+        loc.setTypeRegulation(TYPE_REGULATION_E);
+        loc.setMpgId(MPG_WITHOUT_E_GEOLOCAT);
+        loc.setSite(repository.getById(Site.class, REFERENCED_SITE_ID));
+        return loc;
     }
 }

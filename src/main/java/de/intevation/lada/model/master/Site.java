@@ -48,12 +48,14 @@ import de.intevation.lada.validation.constraints.HasValidReiSiteExtId;
 import de.intevation.lada.validation.constraints.IsAdminBorderKey;
 import de.intevation.lada.validation.constraints.IsReiComplete;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.MunicDivMatchesAdminUnit;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.ReiSiteExtIdMatchesNuclFacil;
 import de.intevation.lada.validation.constraints.SupportedSpatRefSysId;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.constraints.ValidCoordinates;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
 
 
@@ -69,6 +71,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @IsReiComplete(groups = Warnings.class)
 @HasValidReiSiteExtId(groups = Warnings.class)
 @ReiSiteExtIdMatchesNuclFacil(groups = Warnings.class)
+@MunicDivMatchesAdminUnit(groups = Notifications.class)
 @CheckHQL
 @NamedQuery(name = "updateSiteImg",
     query = "update Site s set s.img = :data WHERE s.id = :siteId")

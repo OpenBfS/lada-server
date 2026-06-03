@@ -19,15 +19,17 @@ import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
+import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.TypeRegulation;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.MunicDivMatchesAdminUnit;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.ReferencedNetworksMatch;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Notifications;
 
 
 @Entity
@@ -48,6 +50,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     message = "{de.intevation.lada.validation.constraints.HasOneSiteOfOrigin.message}",
     groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
 @ReferencedNetworksMatch(groups = DatabaseConstraints.class)
+@MunicDivMatchesAdminUnit(groups = Notifications.class)
 public class GeolocatMpg extends BelongsToMpg implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -74,6 +77,10 @@ public class GeolocatMpg extends BelongsToMpg implements Serializable {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Poi.class)
     private String poiId;
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MunicDiv.class)
+    private Integer municDivId;
 
 
     public Integer getId() {
@@ -114,5 +121,13 @@ public class GeolocatMpg extends BelongsToMpg implements Serializable {
 
     public void setPoiId(String poiId) {
         this.poiId = poiId;
+    }
+
+    public Integer getMunicDivId() {
+        return municDivId;
+    }
+
+    public void setMunicDivId(Integer municDivId) {
+        this.municDivId = municDivId;
     }
 }

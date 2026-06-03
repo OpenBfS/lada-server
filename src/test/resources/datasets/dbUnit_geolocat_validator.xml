@@ -37,6 +37,29 @@
         is_gov_dist = "false"
         geom_center = "SRID=4326;POINT(52.5 13.5)"
     />
+    <master.admin_unit
+        id = "420042"
+        state_id = "11000000"
+        name = "Berlin"
+        is_state = "true"
+        is_munic = "true"
+        is_rural_dist = "true"
+        is_gov_dist = "false"
+        geom_center = "SRID=4326;POINT(52.5 13.5)"
+    />
+    <master.munic_div
+        id = "1"
+        network_id = "06"
+        admin_unit_id = "11000000"
+        div_code = "1"
+    />
+    <master.munic_div
+        id = "2"
+        network_id = "06"
+        admin_unit_id = "420042"
+        div_code = "2"
+    />
+
     <master.spat_ref_sys id = "5" name = "test" />
     <master.state
         id = "0"

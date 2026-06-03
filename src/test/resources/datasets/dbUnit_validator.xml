@@ -202,6 +202,18 @@
         is_gov_dist = "false"
         geom_center = "SRID=4326;POINT(52.5 13.5)"
     />
+    <master.munic_div
+        id = "1"
+        network_id = "06"
+        admin_unit_id = "11000000"
+        div_code = "1"
+    />
+    <master.munic_div
+        id = "2"
+        network_id = "06"
+        admin_unit_id = "420042"
+        div_code = "2"
+    />
 
     <master.spat_ref_sys id = "1" name = "test1" />
     <master.spat_ref_sys id = "2" name = "test2" />

@@ -547,6 +547,24 @@ public class SiteTest extends ValidatorBaseTest {
         assertCoordErrors(site);
     }
 
+    @Test
+    public void municDivMatches() {
+        Site site = createMinimalSite();
+        site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
+        site.setMunicDivId(1);
+        assertNoMessages(validator.validate(site));
+    }
+
+    @Test
+    public void municDivMatchesNot() {
+        Site site = createMinimalSite();
+        site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
+        site.setMunicDivId(2);
+        assertHasNotifications(validator.validate(site),
+            Site_.MUNIC_DIV_ID,
+            "Municipality division must match administrative unit");
+    }
+
     private Site createMinimalSite() {
         Site site = new Site();
         site.setNetworkId("06");
