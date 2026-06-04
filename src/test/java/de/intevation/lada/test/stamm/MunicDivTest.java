@@ -10,14 +10,25 @@ package de.intevation.lada.test.stamm;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.UriBuilder;
+
+import static de.intevation.lada.model.master.MunicDiv_.ADMIN_UNIT_ID;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.master.MunicDiv;
+import de.intevation.lada.model.master.MunicDiv_;
+import de.intevation.lada.rest.MunicDivService;
 import de.intevation.lada.test.ServiceTest;
 
 public class MunicDivTest extends ServiceTest {
+
+    private static final UriBuilder MUNIC_DIV_URL_BUILDER =
+        UriBuilder.fromResource(MunicDivService.class);
+    private static final String MUNIC_DIV_URL =
+        MUNIC_DIV_URL_BUILDER.build() + "/";
 
     private JsonObject expectedById;
     private JsonObject create;
@@ -43,14 +54,25 @@ public class MunicDivTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("rest/municdiv");
-        getById("rest/municdiv/1000", expectedById);
+        assertEquals("Expected two entries in total",
+            2, get(MUNIC_DIV_URL).asJsonArray().size());
+
+        final String adminUnitId = "11000001";
+        assertEquals("Expected one entry with given " + ADMIN_UNIT_ID,
+            1,
+            get(MUNIC_DIV_URL_BUILDER
+                .queryParam(ADMIN_UNIT_ID, adminUnitId))
+            .asJsonArray().size());
+
+        final int municDivId = 1000;
+        getById(MUNIC_DIV_URL + municDivId, expectedById);
         update(
-            "rest/municdiv/1000",
-            "name",
+            MUNIC_DIV_URL + municDivId,
+            MunicDiv_.NAME,
             "Testname",
             "UpdatedName");
-        JsonObject created = create("rest/municdiv", create);
-        delete("rest/municdiv/" + created.get("id"));
+
+        JsonObject created = create(MUNIC_DIV_URL, create);
+        delete(MUNIC_DIV_URL + created.get("id"));
     }
 }

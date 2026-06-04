@@ -12,9 +12,10 @@ import java.util.List;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-
+import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.model.master.MunicDiv;
+import de.intevation.lada.model.master.MunicDiv_;
 
 
 /**
@@ -31,7 +32,15 @@ public class MunicDivService
      * @return requested objects.
      */
     @GET
-    public List<MunicDiv> get() {
+    public List<MunicDiv> get(
+        @QueryParam(MunicDiv_.ADMIN_UNIT_ID) String adminUnitId
+    ) {
+        if (adminUnitId != null) {
+            return repository.filter(repository
+                .queryBuilder(MunicDiv.class)
+                .and(MunicDiv_.adminUnitId, adminUnitId)
+                .getQuery());
+        }
         return repository.getAll(MunicDiv.class);
     }
 

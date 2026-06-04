@@ -737,6 +737,13 @@
         div_code = "1001"
         name = "Testname"
         />
+    <master.munic_div
+        id = "1001"
+        network_id = "06"
+        admin_unit_id = "11000001"
+        div_code = "1002"
+        name = "Testname"
+        />
     <master.status_ord_mp
         id = "1"
         from_id = "1"
