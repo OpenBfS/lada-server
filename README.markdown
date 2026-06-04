@@ -201,7 +201,7 @@ Erstellen von Queries
 ---------------------
 
 Basequeries enthalten die grundlegenden Definitionen für Abfragen. Diese werden
-fest in der Datenbank vorgegeben und sind in der Tabelle stamm.base_query
+fest in der Datenbank vorgegeben und sind in der Tabelle `master.base_query`
 definiert. Die SQL-Abfrage in der Tabelle muss zumindest das SELECT- und
 FROM-Statement enthalten. Den Ergebnisspalten der Abfrage sollte zudem
 mithilfe des AS-Ausdrucks ein Alias zugewiesen werden.
@@ -209,14 +209,14 @@ Der Spaltenname 'extjs_id' wird intern vom Client genutzt und sollte nicht
 vergeben werden.
 
 Der Basequery zugeordnete Spalten werden zusätzlich in der Tabelle
-stamm.grid_column festgelegt, wobei der gegebene DataIndex einem Alias der
-zugeordneten Basequery entsprechen sollte. Der Datentyp data_type bestimmt
+`master.grid_col_mp` festgelegt, wobei der gegebene DataIndex einem Alias der
+zugeordneten Basequery entsprechen sollte. Der Datentyp (`disp_id`) bestimmt
 das Verhalten des Clients und den dort angezeigten Filterwidgets mit (siehe
-unten). Die Position gibt die Stellung innerhalb der Basequery an, name ist die
-im Ergebnisgrid anzuzeigende Spaltenbeschriftung.
+unten). `position` gibt die Stellung innerhalb der Basequery an,
+`grid_col` ist die im Ergebnisgrid anzuzeigende Spaltenbeschriftung.
 
-Die Spalte filter innerhalb einer stamm.grid_column verweist auf einen Eintrag
-in der Tabelle stamm.filter. Diese enthält Filter-Typ, das entsprechende
+Die Spalte `filter_id` von `master.grid_col_mp` verweist auf einen Eintrag
+in der Tabelle `master.filter`. Diese enthält Filter-Typ, das entsprechende
 SQL-Statement und den Namen des Parameters.
 Neben einfachen Text-, Zahlen- oder boolschen- Filtern existieren auch
 Filter-Typen für von-bis-Datums-Filter, Multiselect-Filter und generische
@@ -225,19 +225,19 @@ Komma-separierten Werten.
 Für die Definition der Filter mit SQL-Statement und Paramter gilt:
   * Datums-Filter: 2 Parameter. Beispielsweise:
     * SQL: probe.probeentnahme_beginn BETWEEN :fromTime AND :toTime
-    * Spalte "Parameter": fromTime,toTime
+    * Spalte `param`: fromTime,toTime
   * Generischer Filter: 1 Parameter. Beispielsweise:
-    * SQL: :genTextParam LIKE :genTextValue
-    * Spalte "Parameter": genText
+    * SQL: genTextValue LIKE :genTextParam
+    * Spalte `param`: genTextParam
   * Sonst: 1 Parameter. Beispielsweise:
     * SQL: probe.id_alt LIKE :idAlt
-    * Spalte "Parameter": idAlt
+    * Spalte `param`: idAlt
 
 Einzelne Nutzer können aus bereits bestehenden Queries Kopien erstellen.
-Hierfür gibt es zwei Speicherorte: In query_user werden die grundsätzlichen
+Hierfür gibt es zwei Speicherorte: In `query_user` werden die grundsätzlichen
 Parameter festgelegt, wie etwa eine eigene Beschreibung oder ein eigener Namen
 der kopierten Query.
-In grid_column_values werden die Definitionen der
+In `grid_col_conf` werden die Definitionen der
 einzelnen Spalten (z.B. Sichtbarkeit, derzeitig gespeicherter Filter)
 persistiert.
 
@@ -260,9 +260,11 @@ Datentypen mit ID-Funktionalität, in absteigender Hierarchie:
   3. 'probeId' - Zeile enthält eine Probe
   4. 'mpId' - Zeile enthält ein Messprogramm
   5. 'ortId' - Zeile enthält einen (Stammdaten-)Ort
-  6. 'pnehmer' - Zeile enthält einen Probenehmer
+  6. 'probenehmer' - Zeile enthält einen Probenehmer
   7. 'dsatzerz'- Zeile enthält einen Datensatzerzeuger
   8. 'mprkat'- Zeile enthält eine Messprogrammkategorie
+  9. 'tagId' - Zeile enthält einen Tag
+ 10. 'municDivId' - Zeile enthält eine Gemeindeuntergliederung
 
 Diese Datentypen sollten jeweils eine entsprechende Datenbank-ID enthalten,
 bzw. im Fall von 'id' einen eindeutigen Wert (Zahl oder Text). Mehrere IDs von
@@ -271,7 +273,7 @@ gegebenenfalls in eigenen Dialogen bearbeitbar.
 
 Das Verhalten der 'Hinzufügen/Löschen' - Buttons und des Doppelklicks auf eine
 Zeile richtet sich jeweils nach dem Datentyp mit der höchsten Hierarchiestufe.
-(Beispiel: In einer Abfrage mit messungId, pnehmer und probeId können -bei
+(Beispiel: In einer Abfrage mit messungId, probenehmer und probeId können -bei
 Berechtigung- alle drei Elemente bearbeitet werden. Die höchste Hierarchieebene
 ist hier Messung, weshalb ein "Löschen" für die entsprechende Messung einer
 Zeile gilt. Der 'Hinzufügen'- Button ist nicht verfügbar, da eine Messung nur
@@ -286,9 +288,6 @@ dass in der Konfiguration einer Query die Verwendung des Datentyps mit der
 höchsten Hierarchiestufe tatsächlich einer Spalte mit eindeutigen Werten
 entspricht.
 
-Um neue Queries für die Suche von Proben, Messungen und Messprogrammen zu
-erstellen sind die folgenden Schritte erforderlich:
-
 ### Sonderfälle in Datentypen
 
 Für einige in stamm.column definerten möglichen Datentypen erwartet der
@@ -300,8 +299,8 @@ Client spezielle Angaben:
   'SELECT ST_ASGEOJSON(geom) AS geometrie FROM stamm.ort;'
 ```
 
-* Resultate für Zahlen können in E-Notation erzwungen werden, wenn im Tabelle
-  stamm.result_type das Format auf 'e' gesetzt wird.
+* Resultate für Zahlen können in E-Notation erzwungen werden, wenn in
+  `master.disp` das Format auf 'e' gesetzt wird.
 
 
 Erstellen von Importerkonfigurationen
