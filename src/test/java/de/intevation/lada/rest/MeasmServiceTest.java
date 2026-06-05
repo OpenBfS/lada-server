@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+
 import org.jboss.arquillian.container.test.api.BeforeDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -14,7 +16,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.ClientBaseTest;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.test.ServiceTest;
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.UriBuilder;
@@ -40,7 +44,18 @@ public class MeasmServiceTest extends ClientBaseTest {
         }
 
         void execute() {
+            // Valid Measm
             create(TEST_URL, this.measm);
+
+            // Invalid JSON
+            create(TEST_URL, "{]", BAD_REQUEST);
+
+            // Invalid Measm
+            JsonObject invalidMeasm = Json
+                .createObjectBuilder(this.measm)
+                .add(Measm_.EXT_ID, 1)
+                .build();
+            create(TEST_URL, invalidMeasm, BAD_REQUEST);
         }
     }
 
@@ -50,7 +65,8 @@ public class MeasmServiceTest extends ClientBaseTest {
 
     @BeforeDeployment
     public static WebArchive adaptDeployment(WebArchive archive) {
-        return archive.addClasses(MeasmTestService.class);
+        return archive.addClasses(
+            MeasmTestService.class, WriterTestWrapper.class);
     }
 
     @Test
