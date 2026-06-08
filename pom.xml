@@ -21,9 +21,7 @@
         <hibernate.version>6.6.40.Final</hibernate.version>
         <geotools.version>21.0</geotools.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <shrinkwrap.version>1.2.6</shrinkwrap.version>
         <shrinkwrap-resolvers.version>2.2.7</shrinkwrap-resolvers.version>
-        <arquillian.version>1.10.0.Final</arquillian.version>
         <checkstyle.plugin.version>3.1.2</checkstyle.plugin.version>
     </properties>
 
@@ -315,6 +313,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-standard-test-bom</artifactId>
+                <version>${wildfly.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -492,7 +497,6 @@
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-core</artifactId>
-            <version>${arquillian.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -503,13 +507,11 @@
         <dependency>
             <groupId>org.jboss.arquillian.test</groupId>
             <artifactId>arquillian-test-api</artifactId>
-            <version>${arquillian.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-container-test-api</artifactId>
-            <version>${arquillian.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -542,7 +544,6 @@
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
-            <version>${shrinkwrap.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
