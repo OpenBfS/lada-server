@@ -30,7 +30,7 @@ import de.intevation.lada.test.stamm.TagTest;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-public class StammdatenTest extends ClientBaseTest {
+public class StammdatenTest extends ClientBaseTestWithDeployment {
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;

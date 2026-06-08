@@ -9,7 +9,7 @@ package de.intevation.lada.rest;
 
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 
-import org.jboss.arquillian.container.test.api.BeforeDeployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
@@ -63,9 +63,9 @@ public class MeasmServiceTest extends ClientBaseTest {
         testDatasetName = "datasets/dbUnit_lada.xml";
     }
 
-    @BeforeDeployment
-    public static WebArchive adaptDeployment(WebArchive archive) {
-        return archive.addClasses(
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return createFullDeployment().addClasses(
             MeasmTestService.class, WriterTestWrapper.class);
     }
 

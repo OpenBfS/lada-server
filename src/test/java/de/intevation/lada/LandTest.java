@@ -35,7 +35,7 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-public class LandTest extends ClientBaseTest {
+public class LandTest extends ClientBaseTestWithDeployment {
 
     @PersistenceContext
     EntityManager em;

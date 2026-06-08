@@ -62,7 +62,7 @@ import de.intevation.lada.rest.AsyncLadaService.AsyncJobResponse;
  * Test export services.
  *
  */
-public class ExporterTest extends ClientBaseTest {
+public class ExporterTest extends ClientBaseTestWithDeployment {
 
     private static final Logger LOG = Logger.getLogger(ExporterTest.class);
 

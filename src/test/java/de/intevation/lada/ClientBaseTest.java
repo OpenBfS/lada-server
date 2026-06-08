@@ -25,15 +25,12 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import de.intevation.lada.util.auth.TestAuthentication;
 import de.intevation.lada.util.rest.JSONBConfig;
 
 
@@ -58,16 +55,6 @@ public abstract class ClientBaseTest extends BaseTest {
      * Basis for building requests for interface tests.
      */
     protected WebTarget target;
-
-    /**
-     * Create deployment for client side tests.
-     */
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-        return createFullDeployment()
-            // Real request processing should happen:
-            .deleteClass(TestAuthentication.class);
-    }
 
     /**
      * Set up shared infrastructure for test methods.

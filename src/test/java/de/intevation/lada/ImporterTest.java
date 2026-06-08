@@ -88,7 +88,7 @@ import de.intevation.lada.util.rest.JSONBConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-public class ImporterTest extends ClientBaseTest {
+public class ImporterTest extends ClientBaseTestWithDeployment {
 
     private static final Logger LOG = Logger.getLogger(ImporterTest.class);
 

@@ -40,7 +40,7 @@ import de.intevation.lada.rest.UniversalService.UniversalResponse;
  * Class to test the Lada server 'universal' service and related SqlService.
  *
  */
-public class UniversalServiceTest extends ClientBaseTest {
+public class UniversalServiceTest extends ClientBaseTestWithDeployment {
 
     @PersistenceContext
     EntityManager em;

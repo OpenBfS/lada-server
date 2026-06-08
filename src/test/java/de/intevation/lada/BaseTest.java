@@ -60,6 +60,7 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
+import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -69,6 +70,9 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.model.NamingStrategy;
+import de.intevation.lada.rest.MeasmTestService;
+import de.intevation.lada.rest.WriterTestWrapper;
+import de.intevation.lada.util.auth.TestAuthentication;
 import de.intevation.lada.util.rest.JSONBConfig;
 
 
@@ -176,8 +180,12 @@ public abstract class BaseTest {
             .addAsWebInfResource(new File(webInfPath + "web.xml"))
             .addAsWebInfResource(new File(
                     webInfPath + "jboss-deployment-structure.xml"))
-            .addPackages(true, ClassLoader.getSystemClassLoader()
-                .getDefinedPackage("de.intevation.lada"))
+            .addPackages(true, Filters.exclude(
+                    TestAuthentication.class,
+                    MeasmTestService.class,
+                    WriterTestWrapper.class),
+                ClassLoader.getSystemClassLoader().getDefinedPackage(
+                    "de.intevation.lada"))
             .addAsResource("lada_en.properties", "lada_en.properties")
             .addAsResource("ValidationMessages.properties",
                 "ValidationMessages.properties")
