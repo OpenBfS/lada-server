@@ -12,11 +12,11 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Path;
 
 /**
- * Wrap service methods in {@link MeasmService} in order to test
- * internal state.
+ * Wrap service method in order to test internal state.
  */
 @Path("test/measm")
-public class MeasmTestService extends MeasmService {
+public class MeasmTestService
+    extends LadaIntegerIdEntityEditingService<Measm> {
     /**
      * Ensure that {@link de.intevation.lada.model.lada.Sample} retrieved
      * during deserialization in
