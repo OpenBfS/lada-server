@@ -136,7 +136,9 @@ public class Measm extends BelongsToSample
         cascade = { REMOVE, DETACH },
         fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OrderBy("seqNo") // TODO: StatusProt_.SEQ_NO. Annotation processor bug?
+    /* TODO: Use StatusProt_.SEQ_NO.
+       See https://hibernate.atlassian.net/browse/HHH-20556 */
+    @OrderBy("seqNo")
     @SuppressWarnings("serial")
     private List<StatusProt> statusProts;
 
