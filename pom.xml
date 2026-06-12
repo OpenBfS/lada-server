@@ -213,7 +213,7 @@
                 <configuration>
                     <ignoreUnusedRuntime>true</ignoreUnusedRuntime>
                     <ignoredUnusedDeclaredDependencies>
-                        <!-- XXX: Prevent "module not found: jakarta.security.auth.message" -->
+                        <!-- TODO: Work-around https://github.com/jakartaee/security/issues/369 -->
                         <ignoredUnusedDeclaredDependency>
                             jakarta.authentication:jakarta.authentication-api
                         </ignoredUnusedDeclaredDependency>
@@ -327,7 +327,7 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- XXX: Prevent "module not found: jakarta.security.auth.message" -->
+        <!-- TODO: Work-around https://github.com/jakartaee/security/issues/369 -->
         <dependency>
             <groupId>jakarta.authentication</groupId>
             <artifactId>jakarta.authentication-api</artifactId>
