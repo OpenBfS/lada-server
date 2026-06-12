@@ -39,3 +39,6 @@ SELECT pg_catalog.setval('sampler_id_seq', (SELECT max(id) FROM sampler), true);
 SELECT pg_catalog.setval('base_query_id_seq', (SELECT max(id) FROM base_query), true);
 
 SELECT pg_catalog.setval('state_id_seq', (SELECT max(id) FROM state), true);
+
+SELECT pg_catalog.setval(
+    'master.munic_div_id_seq', (SELECT max(id) FROM munic_div), true);

@@ -23,16 +23,3 @@ COPY master.munic_div (id, network_id, admin_unit_id, div_code, name, last_mod) 
 1	11	11000000	28	Johannisthal	2011-11-21 10:35:17
 2	06	03254028	42	Ruthe	2026-06-03 16:24:30
 \.
-
-
---
--- Name: munic_div_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('master.munic_div_id_seq', 1, false);
-
-
---
--- PostgreSQL database dump complete
---
-
