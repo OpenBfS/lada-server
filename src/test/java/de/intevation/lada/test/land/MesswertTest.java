@@ -12,7 +12,9 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
+import static de.intevation.lada.model.lada.MeasVal_.DETECT_LIM;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 
@@ -23,6 +25,8 @@ import org.junit.Assert;
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.ClientBaseTest;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
+import de.intevation.lada.rest.MeasValService;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -30,6 +34,11 @@ import de.intevation.lada.test.ServiceTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class MesswertTest extends ServiceTest {
+
+    private static final UriBuilder MEASVAL_URI_BUILDER =
+        UriBuilder.fromResource(MeasValService.class);
+    private static final String MEASVAL_URL =
+        MEASVAL_URI_BUILDER.build() + "/";
 
     private JsonObject expectedById;
     private JsonObject create;
@@ -62,17 +71,19 @@ public class MesswertTest extends ServiceTest {
         // Assert that GET receives warnings in items of response array
         final String warningsKey = "warnings";
         final String[] expectedWarningKeys = {
-            "measUnitId", "error" };
+            MeasVal_.MEAS_UNIT_ID, MeasVal_.ERROR };
         MatcherAssert.assertThat(
-            get("rest/measval?measmId=" + measmId).asJsonArray().getJsonObject(0)
+            get(MEASVAL_URI_BUILDER.clone().queryParam("measmId", measmId))
+                .asJsonArray().getJsonObject(0)
                 .getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItems(expectedWarningKeys));
 
-        getById("rest/measval/10000", expectedById);
+        final int measValId = 10000;
+        getById(MEASVAL_URL + measValId, expectedById);
         normalize(expectedById);
-        JsonObject created = create("rest/measval", create);
-        update("rest/measval/10000", "lessThanLOD", "<", ">");
-        delete("rest/measval/" + created.get("id"));
+        JsonObject created = create(MEASVAL_URL, create);
+        update(MEASVAL_URL + measValId, MeasVal_.LESS_THAN_LOD, "<", ">");
+        delete(MEASVAL_URL + created.get(MeasVal_.ID));
     }
 
     /**
@@ -80,7 +91,8 @@ public class MesswertTest extends ServiceTest {
      */
     private void normalize(JsonObject oldValue) {
         Response normalized = target
-            .path("rest/measval/normalize")
+            .path(MEASVAL_URI_BUILDER.clone().path("normalize")
+                .build().toString())
             .queryParam("measmId", measmId)
             .request()
             .header(HEADER_X_SHIB_USER, BaseTest.testUser)
@@ -92,19 +104,17 @@ public class MesswertTest extends ServiceTest {
             .asJsonArray().getJsonObject(0);
 
         /* Verify normalized unit */
-        final String unitK = "measUnitId";
         final int unitV = 208; // converted from 207
         Assert.assertEquals(
             unitV,
-            normalizedMesswert.getInt(unitK));
+            normalizedMesswert.getInt(MeasVal_.MEAS_UNIT_ID));
 
         /* Verify normalized value */
-        final String valueK = "detectLim";
         final double valueFactor = 2; // factor for 207 -> 208
         final double epsilon = 1e-10;
         Assert.assertEquals(
-            oldValue.getJsonNumber(valueK).doubleValue() * valueFactor,
-            normalizedMesswert.getJsonNumber(valueK).doubleValue(),
+            oldValue.getJsonNumber(DETECT_LIM).doubleValue() * valueFactor,
+            normalizedMesswert.getJsonNumber(DETECT_LIM).doubleValue(),
             epsilon);
     }
 }
