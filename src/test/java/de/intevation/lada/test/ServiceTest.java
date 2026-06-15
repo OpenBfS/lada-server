@@ -39,6 +39,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 
+import org.jboss.logging.Logger;
 import org.junit.Assert;
 
 import org.locationtech.jts.io.ParseException;
@@ -59,6 +60,8 @@ import de.intevation.lada.test.land.ProbeTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class ServiceTest {
+
+    private static final Logger LOG = Logger.getLogger(ServiceTest.class);
 
     private static final String LAT_KEY = "latitude";
     private static final String LONG_KEY = "longitude";
@@ -530,9 +533,10 @@ public class ServiceTest {
         });
 
         /* Send modified object via put request*/
+        JsonObject mod = updateBuilder.build();
+        LOG.trace("Update request payload: " + mod);
         JsonValue updated = ClientBaseTest.parseResponse(requestBuilder
-            .put(Entity.entity(
-                    updateBuilder.build(), MediaType.APPLICATION_JSON)),
+            .put(Entity.entity(mod, MediaType.APPLICATION_JSON)),
             expectedStatus);
 
         /* Verify the response*/
