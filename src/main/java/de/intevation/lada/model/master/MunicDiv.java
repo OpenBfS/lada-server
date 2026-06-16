@@ -27,7 +27,7 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
 @GroupSequence({ MunicDiv.class, DatabaseConstraints.class })
-@Unique(fields = {"networkId", MunicDiv_.DIV_CODE},
+@Unique(fields = {MunicDiv_.DIV_CODE, MunicDiv_.NETWORK_ID},
     groups = DatabaseConstraints.class, clazz = MunicDiv.class)
 public class MunicDiv extends BelongsToNetwork implements Serializable {
 
