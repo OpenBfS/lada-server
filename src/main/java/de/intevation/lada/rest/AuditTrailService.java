@@ -201,7 +201,7 @@ public class AuditTrailService extends LadaService {
         if (ortIds.size() > 0) {
             builder.orIn(AuditTrailSampleView_.siteId, ortIds);
         }
-        builder.orderBy(AuditTrailSampleView_.tstamp, true);
+        builder.orderBy(AuditTrailSampleView_.tstamp, false);
         List<AuditTrailSampleView> audit =
             repository.filter(builder.getQuery());
 
@@ -328,7 +328,7 @@ public class AuditTrailService extends LadaService {
             .and(AuditTrailMeasmView_.objectId, mId)
             .and(AuditTrailMeasmView_.tableName, "measm")
             .or(AuditTrailMeasmView_.measmId, mId);
-        builder.orderBy(AuditTrailMeasmView_.tstamp, true);
+        builder.orderBy(AuditTrailMeasmView_.tstamp, false);
         List<AuditTrailMeasmView> audit =
             repository.filter(builder.getQuery());
 
@@ -401,7 +401,7 @@ public class AuditTrailService extends LadaService {
         builder.and(AuditTrailMpgView_.objectId, mpgId);
         builder.and(AuditTrailMpgView_.tableName, "mpg");
         builder.or(AuditTrailMpgView_.mpgId, mpgId);
-        builder.orderBy(AuditTrailMpgView_.tstamp, true);
+        builder.orderBy(AuditTrailMpgView_.tstamp, false);
         List<AuditTrailMpgView> audit =
             repository.filter(builder.getQuery());
 
