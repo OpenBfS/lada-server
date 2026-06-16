@@ -8,7 +8,7 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,8 +27,6 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -162,10 +160,9 @@ public class Site extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String longText;
 
-    @Schema(ref = "java.util.Date", readOnly = true)
+    @Schema(readOnly = true)
     @Column(insertable = false, updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date lastMod;
+    private Instant lastMod;
 
     @Size(max = 10)
     @NotEmptyNorWhitespace
@@ -370,7 +367,7 @@ public class Site extends BaseModel implements Serializable {
             : null;
     }
 
-    public Date getLastMod() {
+    public Instant getLastMod() {
         return this.lastMod;
     }
 

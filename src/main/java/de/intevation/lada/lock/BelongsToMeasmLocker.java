@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.lock;
 
-import java.util.Date;
+import java.time.Instant;
 
 import de.intevation.lada.model.lada.BelongsToMeasm;
 
@@ -18,7 +18,8 @@ public class BelongsToMeasmLocker extends TimestampLocker<BelongsToMeasm> {
 
     @Override
     boolean checkIsLocked(BelongsToMeasm o) {
-        Date ot = o.getParentModified();
-        return ot == null || o.getMeasm().getTreeMod().getTime() > ot.getTime();
+        Instant ot = o.getParentModified();
+        return ot == null
+            || o.getMeasm().getTreeMod().toEpochMilli() > ot.toEpochMilli();
     }
 }

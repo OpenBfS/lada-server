@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.importer.laf;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -1347,7 +1347,7 @@ public class LafObjectMapper {
         return o;
     }
 
-    private Timestamp getDate(String date) {
+    private Instant getDate(String date) {
         ZoneId fromLaf = ZoneId.of("UTC");
         switch (currentZeitbasis) {
             case 1: fromLaf = ZoneId.of("UTC+2");
@@ -1362,7 +1362,7 @@ public class LafObjectMapper {
             DateTimeFormatter.ofPattern("yyyyMMdd HHmm").withZone(fromLaf);
         ZonedDateTime orig = ZonedDateTime.parse(date, formatter);
         ZonedDateTime utc = orig.withZoneSameInstant(ZoneOffset.UTC);
-        return Timestamp.from(utc.toInstant());
+        return utc.toInstant();
     }
 
     //Assign global Tag based on LAF field SZENARIO

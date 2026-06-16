@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import java.util.Date;
+import java.time.Instant;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -40,15 +40,15 @@ public class MeasuringAfterSamplingValidator
         }
 
         Sample probe = messung.getSample();
-        Date measmStartDate = messung.getMeasmStartDate();
+        Instant measmStartDate = messung.getMeasmStartDate();
         if (probe == null || measmStartDate == null) {
             return true;
         }
 
-        Date sampleStartDate = probe.getSampleStartDate();
-        Date sampleEndDate = probe.getSampleEndDate();
-        if (sampleStartDate != null && sampleStartDate.after(measmStartDate)
-            || sampleEndDate != null && sampleEndDate.after(measmStartDate)
+        Instant sampleStartDate = probe.getSampleStartDate();
+        Instant sampleEndDate = probe.getSampleEndDate();
+        if (sampleStartDate != null && sampleStartDate.isAfter(measmStartDate)
+            || sampleEndDate != null && sampleEndDate.isAfter(measmStartDate)
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)

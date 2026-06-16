@@ -10,9 +10,9 @@ package de.intevation.lada.test.land;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -710,12 +710,12 @@ public class AssociationTest extends ServiceTest {
         return tag;
     }
 
-    private Date createDate(int year, int month, int day) {
+    private Instant createDate(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month - 1);
         cal.set(Calendar.DAY_OF_MONTH, day);
-        return cal.getTime();
+        return cal.toInstant();
     }
 
     private Measm getMeasm(final String mmtId) {

@@ -11,7 +11,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
@@ -143,7 +142,7 @@ public class MessungTest extends ValidatorBaseTest {
     public void measmStartDateInFuture() {
         Instant tomorrow = Instant.now().plus(1, ChronoUnit.DAYS);
         Measm measm = createMinimalValidMeasm();
-        measm.setMeasmStartDate(Date.from(tomorrow));
+        measm.setMeasmStartDate(tomorrow);
 
         assertHasWarnings(
             validator.validate(measm),
@@ -163,7 +162,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
-        measm.setMeasmStartDate(Date.from(measmStartDate));
+        measm.setMeasmStartDate(measmStartDate);
 
         assertHasWarnings(
             validator.validate(measm),

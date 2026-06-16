@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -148,9 +148,9 @@ public class ObjectMergerTest extends ContainerBaseTest {
         probe.setApprLabId(mstId);
         probe.setSampleMethId(2);
         probe.setEnvMediumId("A6");
-        probe.setSchedStartDate(Timestamp.valueOf("2013-05-01 16:00:00"));
-        probe.setSchedEndDate(Timestamp.valueOf("2013-05-05 16:00:00"));
-        probe.setSampleStartDate(Timestamp.valueOf("2012-05-03 13:07:00"));
+        probe.setSchedStartDate(Instant.parse("2013-05-01T16:00:00Z"));
+        probe.setSchedEndDate(Instant.parse("2013-05-05T16:00:00Z"));
+        probe.setSampleStartDate(Instant.parse("2012-05-03T13:07:00Z"));
         Sample dbProbe = repository.getById(Sample.class, PID1000);
         merger.merge(dbProbe, probe);
         transaction.commit();
@@ -171,7 +171,7 @@ public class ObjectMergerTest extends ContainerBaseTest {
         messung.setIsCompleted(false);
         messung.setMeasPd(MDAUER1000);
         messung.setMmtId("A3");
-        messung.setMeasmStartDate(Timestamp.valueOf("2012-05-06 14:00:00"));
+        messung.setMeasmStartDate(Instant.parse("2012-05-06T14:00:00Z"));
         Measm dbMessung = repository.entityManager().find(Measm.class, MID1200);
         merger.mergeMessung(dbMessung, messung);
 

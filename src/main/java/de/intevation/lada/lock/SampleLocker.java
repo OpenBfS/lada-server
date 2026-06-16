@@ -19,7 +19,7 @@ public class SampleLocker extends TimestampLocker<Sample> {
     boolean checkIsLocked(Sample newProbe) {
         Sample oldProbe = repository.getById(
             Sample.class, newProbe.getId());
-        return oldProbe.getTreeMod().getTime()
-            > newProbe.getTreeMod().getTime();
+        return oldProbe.getTreeMod().toEpochMilli()
+            > newProbe.getTreeMod().toEpochMilli();
     }
 }

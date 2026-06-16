@@ -8,7 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
@@ -20,8 +20,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -100,8 +98,7 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
     private Double detectLim;
 
     @Column(insertable = false, updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date treeMod;
+    private Instant treeMod;
 
 
     public Integer getId() {
@@ -168,11 +165,11 @@ public class MeasVal extends BelongsToMeasm implements Serializable {
         this.detectLim = detectLim;
     }
 
-    public Date getTreeMod() {
+    public Instant getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Date treeMod) {
+    public void setTreeMod(Instant treeMod) {
         this.treeMod = treeMod;
     }
 }

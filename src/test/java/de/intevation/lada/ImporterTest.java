@@ -24,7 +24,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -276,8 +275,7 @@ public class ImporterTest extends ClientBaseTestWithDeployment {
         assertEquals(GENERATED_EXPIRATION_TIME,
             /* +1 because until calculates complete units and the tag has
                been generated a few moments ago */
-            1 + Instant.now().until(
-                tag.getValUntil().toInstant(), ChronoUnit.DAYS));
+            1 + Instant.now().until(tag.getValUntil(), ChronoUnit.DAYS));
     }
 
     /**
@@ -1537,7 +1535,7 @@ public class ImporterTest extends ClientBaseTestWithDeployment {
         laf9Template.setSampleMethId(1);
         laf9Template.setIsTest(false);
         laf9Template.setEnvDescripDisplay(envDescrip);
-        laf9Template.setSampleStartDate(new Date(0l));
+        laf9Template.setSampleStartDate(Instant.ofEpochMilli(0l));
         return laf9Template;
     }
 

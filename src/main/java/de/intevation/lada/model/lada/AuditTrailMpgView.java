@@ -9,7 +9,7 @@ package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.io.StringReader;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -31,7 +31,7 @@ public class AuditTrailMpgView implements Serializable {
 
     private String action;
 
-    private Timestamp tstamp;
+    private Instant tstamp;
 
     private String changedFields;
 
@@ -56,11 +56,11 @@ public class AuditTrailMpgView implements Serializable {
         this.action = action;
     }
 
-    public Timestamp getTstamp() {
+    public Instant getTstamp() {
         return this.tstamp;
     }
 
-    public void setTstamp(Timestamp tstamp) {
+    public void setTstamp(Instant tstamp) {
         this.tstamp = tstamp;
     }
 

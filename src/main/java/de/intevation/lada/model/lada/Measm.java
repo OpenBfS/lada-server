@@ -8,9 +8,9 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,14 +29,12 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
 
 import static jakarta.persistence.CascadeType.DETACH;
 import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.CascadeType.REFRESH;
 import static jakarta.persistence.CascadeType.REMOVE;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
@@ -118,9 +116,8 @@ public class Measm extends BelongsToSample
 
     private Integer measPd;
 
-    @Temporal(TIMESTAMP)
     @PastOrPresent(groups = Warnings.class)
-    private Date measmStartDate;
+    private Instant measmStartDate;
 
     @NotBlank
     @Size(max = 2)
@@ -170,8 +167,7 @@ public class Measm extends BelongsToSample
     private List<Tag> tags;
 
     @Column(insertable = false, updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date treeMod;
+    private Instant treeMod;
 
     @Schema(readOnly = true)
     @Formula("""
@@ -232,11 +228,11 @@ public class Measm extends BelongsToSample
         this.measPd = measPd;
     }
 
-    public Date getMeasmStartDate() {
+    public Instant getMeasmStartDate() {
         return this.measmStartDate;
     }
 
-    public void setMeasmStartDate(Date measmStartDate) {
+    public void setMeasmStartDate(Instant measmStartDate) {
         this.measmStartDate = measmStartDate;
     }
 
@@ -256,11 +252,11 @@ public class Measm extends BelongsToSample
         this.minSampleId = minSampleId;
     }
 
-    public Date getTreeMod() {
+    public Instant getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Date treeMod) {
+    public void setTreeMod(Instant treeMod) {
         this.treeMod = treeMod;
     }
 

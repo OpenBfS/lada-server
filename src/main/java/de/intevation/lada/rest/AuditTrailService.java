@@ -12,6 +12,7 @@ import static de.intevation.lada.model.lada.Names.QUERY_MEASM_PARAM;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -251,7 +252,7 @@ public class AuditTrailService extends LadaService {
         AuditTrailSampleView audit
     ) {
         AuditEntry node = new AuditEntry();
-        node.setTimestamp(audit.getTstamp().getTime());
+        node.setTimestamp(audit.getTstamp());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
         node.setChangedFields(translateValues(audit.getChangedFieldsJson()));
@@ -364,7 +365,7 @@ public class AuditTrailService extends LadaService {
         AuditTrailMeasmView audit
     ) {
         AuditEntry node = new AuditEntry();
-        node.setTimestamp(audit.getTstamp().getTime());
+        node.setTimestamp(audit.getTstamp());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
         node.setChangedFields(audit.getChangedFieldsJson());
@@ -418,7 +419,7 @@ public class AuditTrailService extends LadaService {
 
     private AuditEntry createEntry(AuditTrailMpgView audit) {
         AuditEntry node = new AuditEntry();
-        node.setTimestamp(audit.getTstamp().getTime());
+        node.setTimestamp(audit.getTstamp());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
         node.setChangedFields(audit.getChangedFieldsJson());
@@ -559,15 +560,15 @@ public class AuditTrailService extends LadaService {
      * Class modeling an audit trail entry.
      */
     public class AuditEntry {
-        Long timestamp;
+        Instant timestamp;
         String type;
         String action;
         JsonObject changedFields;
         Object identifier;
-        public Long getTimestamp() {
+        public Instant getTimestamp() {
             return timestamp;
         }
-        public void setTimestamp(Long timestamp) {
+        public void setTimestamp(Instant timestamp) {
             this.timestamp = timestamp;
         }
         public String getType() {

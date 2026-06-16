@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.model.lada;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -60,7 +60,7 @@ public abstract class BelongsToMeasm extends BaseModel {
     private boolean owner;
 
     @Transient
-    private Date parentModified;
+    private Instant parentModified;
 
 
     public Measm getMeasm() {
@@ -83,14 +83,14 @@ public abstract class BelongsToMeasm extends BaseModel {
      * Check if a parent object was modified.
      * @return timestamp when the parent was modified
      */
-    public Date getParentModified() {
+    public Instant getParentModified() {
         if (this.parentModified == null && this.measm != null) {
             return this.measm.getTreeMod();
         }
         return this.parentModified;
     }
 
-    public void setParentModified(Date parentModified) {
+    public void setParentModified(Instant parentModified) {
         this.parentModified = parentModified;
     }
 }

@@ -10,9 +10,9 @@ package de.intevation.lada.exporter.laf;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 import de.intevation.lada.model.lada.CommMeasm;
@@ -438,8 +438,8 @@ public class LafCreator implements Closeable {
             + "\n");
     }
 
-    private String toUTCString(Date timestamp) {
+    private String toUTCString(Instant timestamp) {
         return DATE_FORMATTER.format(
-            timestamp.toInstant().atZone(ZoneOffset.UTC));
+            timestamp.atZone(ZoneOffset.UTC));
     }
 }

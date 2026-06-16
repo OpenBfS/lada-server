@@ -8,7 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 
 import org.hibernate.annotations.DynamicInsert;
 
@@ -23,8 +23,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
@@ -48,8 +46,7 @@ public class CommSample extends BelongsToSample
 
     @PastOrPresent(groups = CreateErrors.class)
     @Column(updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date date;
+    private Instant date;
 
     @NotBlank
     @Size(max = 5)
@@ -70,11 +67,11 @@ public class CommSample extends BelongsToSample
         this.id = id;
     }
 
-    public Date getDate() {
+    public Instant getDate() {
         return this.date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Instant date) {
         this.date = date;
     }
 

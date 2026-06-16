@@ -12,7 +12,7 @@ import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 import jakarta.json.Json;
@@ -187,7 +187,7 @@ public class TagTest extends ServiceTest {
 
     public static void checkValUntil(Tag tag) {
         if (tag.getMeasFacilId() != null) {
-            Date valUntil = tag.getValUntil();
+            Instant valUntil = tag.getValUntil();
             Assert.assertNotNull(valUntil);
             long diff = getDaysFromNow(valUntil);
             Assert.assertEquals(MF_TAG_EXPIRATION_DAYS, diff);

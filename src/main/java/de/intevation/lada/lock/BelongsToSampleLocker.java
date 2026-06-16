@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.lock;
 
-import java.util.Date;
+import java.time.Instant;
 
 import de.intevation.lada.model.lada.BelongsToSample;
 
@@ -19,8 +19,8 @@ public class BelongsToSampleLocker extends TimestampLocker<BelongsToSample> {
 
     @Override
     boolean checkIsLocked(BelongsToSample o) {
-        Date ot = o.getParentModified();
+        Instant ot = o.getParentModified();
         return ot == null
-            || o.getSample().getTreeMod().getTime() > ot.getTime();
+            || o.getSample().getTreeMod().toEpochMilli() > ot.toEpochMilli();
     }
 }

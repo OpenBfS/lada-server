@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.model.lada;
 
-import java.util.Date;
+import java.time.Instant;
 
 import jakarta.json.bind.adapter.JsonbAdapter;
 import jakarta.json.bind.annotation.JsonbProperty;
@@ -61,7 +61,7 @@ public abstract class BelongsToSample extends BaseModel {
     private boolean owner;
 
     @Transient
-    private Date parentModified;
+    private Instant parentModified;
 
 
     public Sample getSample() {
@@ -84,14 +84,14 @@ public abstract class BelongsToSample extends BaseModel {
      * Check if a parent object was modified.
      * @return timestamp when the parent was modified
      */
-    public Date getParentModified() {
+    public Instant getParentModified() {
         if (this.parentModified == null && this.sample != null) {
             return this.sample.getTreeMod();
         }
         return this.parentModified;
     }
 
-    public void setParentModified(Date parentModified) {
+    public void setParentModified(Instant parentModified) {
         this.parentModified = parentModified;
     }
 }

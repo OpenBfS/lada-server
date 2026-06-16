@@ -9,15 +9,13 @@ package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.io.StringReader;
-import java.util.Date;
+import java.time.Instant;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(schema = Names.SCHEMA_NAME)
@@ -31,8 +29,7 @@ public class AuditTrailSampleView implements Serializable {
 
     private String rowData;
 
-    @Temporal(TIMESTAMP)
-    private Date tstamp;
+    private Instant tstamp;
 
     private String action;
 
@@ -67,11 +64,11 @@ public class AuditTrailSampleView implements Serializable {
         this.rowData = rowData;
     }
 
-    public Date getTstamp() {
+    public Instant getTstamp() {
         return tstamp;
     }
 
-    public void setTstamp(Date tstamp) {
+    public void setTstamp(Instant tstamp) {
         this.tstamp = tstamp;
     }
 

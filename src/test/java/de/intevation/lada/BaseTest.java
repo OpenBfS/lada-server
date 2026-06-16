@@ -29,7 +29,6 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -408,7 +407,7 @@ public abstract class BaseTest {
                     } else if (type.isAssignableFrom(Boolean.class)
                         || type.isAssignableFrom(boolean.class)) {
                         builder.add(key, (Boolean) value);
-                    } else if (type.isAssignableFrom(Date.class)) {
+                    } else if (type.isAssignableFrom(Instant.class)) {
                         builder.add(key, BaseTest.TIMESTAMP_FORMATTER
                             .format((Instant) value));
                     } else {
@@ -443,7 +442,7 @@ public abstract class BaseTest {
             LOG.tracef("Convert '%s' to Boolean", value);
             return Boolean.parseBoolean(value);
         }
-        if (type.isAssignableFrom(Date.class)) {
+        if (type.isAssignableFrom(Instant.class)) {
             LOG.tracef("Convert '%s' to timestamp", value);
             return Timestamp.valueOf(value).toInstant();
         }

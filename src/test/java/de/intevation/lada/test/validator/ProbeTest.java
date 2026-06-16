@@ -7,10 +7,8 @@
  */
 package de.intevation.lada.test.validator;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -48,9 +46,9 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final int EXISTING_OPR_MODE = 1;
 
     //Other constants
-    private static final long TS1 = 1376287046510L;
-    private static final long TS2 = 1376287046511L;
-    private static final long TS3 = 2376287046511L;
+    private static final Instant TS1 = Instant.ofEpochMilli(1376287046510L);
+    private static final Instant TS2 = Instant.ofEpochMilli(1376287046511L);
+    private static final Instant TS3 = Instant.ofEpochMilli(2376287046511L);
     private static final int ID710 = 710;
     private static final int ID1000 = 1000;
 
@@ -248,8 +246,8 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void hasProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
-        sample.setSampleStartDate(new Timestamp(TS1));
-        sample.setSampleEndDate(new Timestamp(TS2));
+        sample.setSampleStartDate(TS1);
+        sample.setSampleEndDate(TS2);
         sample.setIsTest(false);
 
         validator.validate(sample);
@@ -276,7 +274,7 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void timeNoEndProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
-        sample.setSampleStartDate(new Timestamp(TS1));
+        sample.setSampleStartDate(TS1);
         sample.setSampleEndDate(null);
 
         assertHasWarnings(
@@ -293,7 +291,7 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         final Integer sampleMethIdS = 3;
         sample.setSampleMethId(sampleMethIdS);
-        sample.setSampleStartDate(new Timestamp(TS1));
+        sample.setSampleStartDate(TS1);
         sample.setSampleEndDate(null);
 
         assertHasWarnings(
@@ -308,8 +306,8 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void timeBeginAfterEndProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
-        sample.setSampleStartDate(new Timestamp(TS2));
-        sample.setSampleEndDate(new Timestamp(TS1));
+        sample.setSampleStartDate(TS2);
+        sample.setSampleEndDate(TS1);
 
         assertHasWarnings(
             validator.validate(sample),
@@ -323,7 +321,7 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void timeBeginFutureProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
-        sample.setSampleStartDate(new Timestamp(TS3));
+        sample.setSampleStartDate(TS3);
 
         assertHasWarnings(
             validator.validate(sample),
@@ -369,8 +367,8 @@ public class ProbeTest extends ValidatorBaseTest {
     public void peBeginEqualsPeEnd() {
         Instant now = Instant.now();
         Sample sample = createMinimumValidSample();
-        sample.setSampleStartDate(Date.from(now));
-        sample.setSampleEndDate(Date.from(now));
+        sample.setSampleStartDate(now);
+        sample.setSampleEndDate(now);
 
         validator.validate(sample);
         assertNoMessages(sample);
@@ -386,8 +384,8 @@ public class ProbeTest extends ValidatorBaseTest {
 
         Sample sample = createMinimumValidREISample();
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
-        sample.setSampleStartDate(Date.from(yesterday));
-        sample.setSampleEndDate(Date.from(now));
+        sample.setSampleStartDate(yesterday);
+        sample.setSampleEndDate(now);
 
         assertHasWarnings(
             validator.validate(sample),
@@ -403,8 +401,8 @@ public class ProbeTest extends ValidatorBaseTest {
         Instant now = Instant.now();
         Instant yesterday = now.minus(1, ChronoUnit.DAYS);
         Sample sample = createMinimumValidSample();
-        sample.setSampleStartDate(Date.from(yesterday));
-        sample.setOrigDate(Date.from(now));
+        sample.setSampleStartDate(yesterday);
+        sample.setOrigDate(now);
 
         assertHasWarnings(
             validator.validate(sample),
@@ -420,8 +418,8 @@ public class ProbeTest extends ValidatorBaseTest {
         Instant now = Instant.now();
         Instant yesterday = now.minus(1, ChronoUnit.DAYS);
         Sample sample = createMinimumValidSample();
-        sample.setSampleStartDate(Date.from(now));
-        sample.setOrigDate(Date.from(yesterday));
+        sample.setSampleStartDate(now);
+        sample.setOrigDate(yesterday);
 
         validator.validate(sample);
         assertNoMessages(sample);
@@ -599,8 +597,8 @@ public class ProbeTest extends ValidatorBaseTest {
         Instant now = Instant.now();
         Instant yesterday = now.minus(1, ChronoUnit.DAYS);
         Sample sample = createMinimumValidREISample();
-        sample.setSampleStartDate(Date.from(yesterday));
-        sample.setSampleEndDate(Date.from(now));
+        sample.setSampleStartDate(yesterday);
+        sample.setSampleEndDate(now);
 
         validator.validate(sample);
         assertNoMessages(sample);
@@ -613,7 +611,7 @@ public class ProbeTest extends ValidatorBaseTest {
     public void hasNoSampleEndDate() {
         Instant now = Instant.now();
         Sample sample = createMinimumValidREISample();
-        sample.setSampleStartDate(Date.from(now));
+        sample.setSampleStartDate(now);
         sample.setSampleEndDate(null);
 
         assertHasWarnings(
@@ -848,8 +846,8 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setOprModeId(EXISTING_OPR_MODE);
         sample.setEnvDescripDisplay(VALID_ENV_DESCRIP_DISPLAY_FOR_N71);
         sample.setEnvMediumId(ENV_MEDIUM_N71);
-        sample.setSampleStartDate(new Date());
-        sample.setSampleEndDate(new Date());
+        sample.setSampleStartDate(Instant.now());
+        sample.setSampleEndDate(Instant.now());
         sample.setRegulationId(regulationId);
         sample.setSampleMethId(SAMPLE_METH_ID_CONT);
         sample.setIsTest(false);

@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.test.validator;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.junit.Test;
 
@@ -102,7 +102,7 @@ public class TagTest extends ValidatorBaseTest {
     public void measFacilTagWithValidity() {
         Tag tag = createMinimumValidTag();
         tag.setMeasFacilId(MEAS_FACIL);
-        tag.setValUntil(new Date());
+        tag.setValUntil(Instant.now());
         assertNoMessages(validator.validate(tag));
     }
 
@@ -112,7 +112,7 @@ public class TagTest extends ValidatorBaseTest {
         tag.setName("generated");
         tag.setNetworkId(NETWORK_ID);
         tag.setIsAutoTag(true);
-        tag.setValUntil(new Date());
+        tag.setValUntil(Instant.now());
         assertNoMessages(validator.validate(tag));
     }
 
@@ -130,7 +130,7 @@ public class TagTest extends ValidatorBaseTest {
     }
 
     private void assertValidityNotAllowed(Tag tag) {
-        tag.setValUntil(new Date());
+        tag.setValUntil(Instant.now());
         assertHasErrors(
             validator.validate(tag),
             Tag_.VAL_UNTIL,

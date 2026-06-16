@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import java.util.Date;
+import java.time.Instant;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -36,15 +36,15 @@ public class BeginBeforeEndSampleValidator
             return true;
         }
 
-        Date begin = sample.getSampleStartDate();
-        Date end = sample.getSampleEndDate();
+        Instant begin = sample.getSampleStartDate();
+        Instant end = sample.getSampleEndDate();
 
         // Leave null checks up to field-level constraints
         if (begin == null || end == null) {
             return true;
         }
 
-        if (begin.after(end)) {
+        if (begin.isAfter(end)) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
                 .addPropertyNode(Sample_.SAMPLE_START_DATE)

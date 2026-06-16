@@ -8,7 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,8 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -61,8 +59,7 @@ public class SampleSpecifMeasVal extends BelongsToSample
     private String sampleSpecifId;
 
     @Column(insertable = false, updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date treeMod;
+    private Instant treeMod;
 
 
     public Integer getId() {
@@ -105,11 +102,11 @@ public class SampleSpecifMeasVal extends BelongsToSample
         this.smallerThan = smallerThan;
     }
 
-    public Date getTreeMod() {
+    public Instant getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Date treeMod) {
+    public void setTreeMod(Instant treeMod) {
         this.treeMod = treeMod;
     }
 }

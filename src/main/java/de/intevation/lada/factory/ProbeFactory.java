@@ -7,10 +7,9 @@
  */
 package de.intevation.lada.factory;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -358,8 +357,8 @@ public class ProbeFactory {
             ) {
                 Sample probe = createObjects(
                     messprogramm,
-                    sollFrom.getTime(),
-                    sollTo.getTime(),
+                    sollFrom.toInstant(),
+                    sollTo.toInstant(),
                     dryrun
                 );
                 if (probe != null) {
@@ -382,8 +381,8 @@ public class ProbeFactory {
      */
     private Sample createObjects(
         Mpg messprogramm,
-        Date startDate,
-        Date endDate,
+        Instant startDate,
+        Instant endDate,
         boolean dryrun
     ) {
         QueryBuilder<MpgMmtMp> builder = repository
@@ -436,8 +435,8 @@ public class ProbeFactory {
         probe.setApprLabId(messprogramm.getApprLabId());
         probe.setSampleMethId(messprogramm.getSampleMethId());
         probe.setSamplerId(messprogramm.getSamplerId());
-        probe.setSchedStartDate(new Timestamp(startDate.getTime()));
-        probe.setSchedEndDate(new Timestamp(endDate.getTime()));
+        probe.setSchedStartDate(startDate);
+        probe.setSchedEndDate(endDate);
         probe.setIsTest(messprogramm.getIsTest());
         probe.setEnvMediumId(messprogramm.getEnvMediumId());
         probe.setMpgId(messprogramm.getId());
@@ -467,7 +466,7 @@ public class ProbeFactory {
             && !messprogramm.getCommSample().equals("")
         ) {
             CommSample kommentar = new CommSample();
-            kommentar.setDate(new Timestamp(new Date().getTime()));
+            kommentar.setDate(Instant.now());
             kommentar.setSample(probe);
             kommentar.setText(messprogramm.getCommSample());
             kommentar.setMeasFacilId(messprogramm.getMeasFacilId());

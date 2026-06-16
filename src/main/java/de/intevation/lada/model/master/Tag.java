@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.model.master;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -20,10 +20,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
 import jakarta.security.enterprise.SecurityContext;
 
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -78,13 +76,11 @@ public class Tag extends BaseModel {
     @Column(updatable = false)
     private Integer ladaUserId;
 
-    @Temporal(TIMESTAMP)
-    private Date valUntil;
+    private Instant valUntil;
 
-    @Schema(ref = "java.util.Date", readOnly = true)
+    @Schema(readOnly = true)
     @Column(insertable = false, updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date createdAt;
+    private Instant createdAt;
 
     @Column(updatable = false)
     private boolean isAutoTag;
@@ -124,15 +120,15 @@ public class Tag extends BaseModel {
         this.isAutoTag = isAutoTag;
     }
 
-    public Date getValUntil() {
+    public Instant getValUntil() {
         return valUntil;
     }
 
-    public void setValUntil(Date valUntil) {
+    public void setValUntil(Instant valUntil) {
         this.valUntil = valUntil;
     }
 
-    public Date getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 

@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import java.util.Date;
+import java.time.Instant;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -32,9 +32,9 @@ public class OrigDateVsStartDateValidator
 
     @Override
     public boolean isValid(Sample probe, ConstraintValidatorContext ctx) {
-        Date uZeit = probe.getOrigDate();
-        Date begin = probe.getSampleStartDate();
-        if (uZeit != null && begin != null && uZeit.after(begin)) {
+        Instant uZeit = probe.getOrigDate();
+        Instant begin = probe.getSampleStartDate();
+        if (uZeit != null && begin != null && uZeit.isAfter(begin)) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
                 .addPropertyNode(Sample_.ORIG_DATE)

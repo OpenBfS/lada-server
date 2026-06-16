@@ -8,9 +8,9 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,14 +31,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
 
 import static jakarta.persistence.CascadeType.DETACH;
 import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.CascadeType.REFRESH;
 import static jakarta.persistence.CascadeType.REMOVE;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
@@ -193,32 +191,26 @@ public class Sample extends BaseModel
 
     @NotNull(groups = Warnings.class)
     @PastOrPresent(groups = Warnings.class)
-    @Temporal(TIMESTAMP)
-    private Date sampleStartDate;
+    private Instant sampleStartDate;
 
     @PastOrPresent(groups = Warnings.class)
-    @Temporal(TIMESTAMP)
-    private Date sampleEndDate;
+    private Instant sampleEndDate;
 
     @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = SampleMeth.class)
     private Integer sampleMethId;
 
-    @Temporal(TIMESTAMP)
-    private Date schedStartDate;
+    private Instant schedStartDate;
 
-    @Temporal(TIMESTAMP)
-    private Date schedEndDate;
+    private Instant schedEndDate;
 
-    @Temporal(TIMESTAMP)
-    private Date origDate;
+    private Instant origDate;
 
     private boolean isTest;
 
     @Column(insertable = false, updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date treeMod;
+    private Instant treeMod;
 
     @JsonbTransient
     @ManyToOne(fetch = FetchType.LAZY)
@@ -446,19 +438,19 @@ public class Sample extends BaseModel
         this.samplerId = samplerId;
     }
 
-    public Date getSampleStartDate() {
+    public Instant getSampleStartDate() {
         return this.sampleStartDate;
     }
 
-    public void setSampleStartDate(Date sampleStartDate) {
+    public void setSampleStartDate(Instant sampleStartDate) {
         this.sampleStartDate = sampleStartDate;
     }
 
-    public Date getSampleEndDate() {
+    public Instant getSampleEndDate() {
         return this.sampleEndDate;
     }
 
-    public void setSampleEndDate(Date sampleEndDate) {
+    public void setSampleEndDate(Instant sampleEndDate) {
         this.sampleEndDate = sampleEndDate;
     }
 
@@ -470,27 +462,27 @@ public class Sample extends BaseModel
         this.sampleMethId = sampleMethId;
     }
 
-    public Date getSchedStartDate() {
+    public Instant getSchedStartDate() {
         return this.schedStartDate;
     }
 
-    public void setSchedStartDate(Date schedStartDate) {
+    public void setSchedStartDate(Instant schedStartDate) {
         this.schedStartDate = schedStartDate;
     }
 
-    public Date getSchedEndDate() {
+    public Instant getSchedEndDate() {
         return this.schedEndDate;
     }
 
-    public void setSchedEndDate(Date schedEndDate) {
+    public void setSchedEndDate(Instant schedEndDate) {
         this.schedEndDate = schedEndDate;
     }
 
-    public Date getOrigDate() {
+    public Instant getOrigDate() {
         return this.origDate;
     }
 
-    public void setOrigDate(Date origDate) {
+    public void setOrigDate(Instant origDate) {
         this.origDate = origDate;
     }
 
@@ -502,11 +494,11 @@ public class Sample extends BaseModel
         this.isTest = isTest;
     }
 
-    public Date getTreeMod() {
+    public Instant getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Date treeMod) {
+    public void setTreeMod(Instant treeMod) {
         this.treeMod = treeMod;
     }
 

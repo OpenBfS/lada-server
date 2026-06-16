@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import java.util.Date;
+import java.time.Instant;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -35,8 +35,8 @@ public class DatesVsSampleMethValidator
 
     @Override
     public boolean isValid(Sample probe, ConstraintValidatorContext ctx) {
-        Date end = probe.getSampleEndDate();
-        Date begin = probe.getSampleStartDate();
+        Instant end = probe.getSampleEndDate();
+        Instant begin = probe.getSampleStartDate();
         if (probe.getSampleMethId() != null
             && !DATENBASIS_161.equals(probe.getRegulationId())
             && begin != null && end != null && !begin.equals(end)

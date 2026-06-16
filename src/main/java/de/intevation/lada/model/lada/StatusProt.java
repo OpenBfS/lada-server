@@ -8,7 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -22,8 +22,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -60,10 +58,9 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     @Column(insertable = false, updatable = false)
     private int seqNo;
 
-    @Schema(ref = "java.util.Date", readOnly = true)
+    @Schema(readOnly = true)
     @Column(insertable = false, updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date date;
+    private Instant date;
 
     @NotBlank
     @Size(max = 5)
@@ -86,8 +83,7 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
     private String text;
 
     @Column(insertable = false, updatable = false)
-    @Temporal(TIMESTAMP)
-    private Date treeMod;
+    private Instant treeMod;
 
 
     public Integer getId() {
@@ -98,7 +94,7 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
         this.id = id;
     }
 
-    public Date getDate() {
+    public Instant getDate() {
         return this.date;
     }
 
@@ -126,11 +122,11 @@ public class StatusProt extends BelongsToMeasm implements Serializable {
         this.text = text;
     }
 
-    public Date getTreeMod() {
+    public Instant getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Date treeMod) {
+    public void setTreeMod(Instant treeMod) {
         this.treeMod = treeMod;
     }
 }
