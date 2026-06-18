@@ -13,6 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.validation.constraints.NotNull;
@@ -59,19 +60,23 @@ public class GridColConfService
             builder.createQuery(GridColConf.class);
         Root<GridColConf> root = criteriaQuery.from(GridColConf.class);
         Join<GridColConf, QueryUser> value =
-            root.join(GridColConf_.queryUser, jakarta.persistence.criteria.JoinType.LEFT);
+            root.join(GridColConf_.queryUser, JoinType.LEFT);
         Join<MeasFacil, QueryUser> mess =
-            value.join(QueryUser_.MESS_STELLES, jakarta.persistence.criteria.JoinType.LEFT);
-        Predicate filter = builder.equal(root.get(GridColConf_.queryUser).get(QueryUser_.id), queryUser);
-        Predicate uId = builder.equal(root.get(GridColConf_.ladaUserId), userInfo.getUserId());
-        Predicate zeroIdFilter = builder.equal(root.get(GridColConf_.ladaUserId), "0");
+            value.join(QueryUser_.MESS_STELLES, JoinType.LEFT);
+        Predicate filter = builder.equal(
+            root.get(GridColConf_.queryUser).get(QueryUser_.id), queryUser);
+        Predicate uId = builder.equal(
+            root.get(GridColConf_.ladaUserId), userInfo.getUserId());
+        Predicate zeroIdFilter = builder.equal(
+            root.get(GridColConf_.ladaUserId), "0");
         Predicate userFilter = builder.or(uId, zeroIdFilter);
         if (userInfo.getMessstellen() != null
             && !userInfo.getMessstellen().isEmpty()
         ) {
             userFilter = builder.or(
                 userFilter,
-                mess.get(QueryMeasFacilMp_.MEAS_FACIL_ID).in(userInfo.getMessstellen()));
+                mess.get(QueryMeasFacilMp_.MEAS_FACIL_ID).in(
+                    userInfo.getMessstellen()));
         }
         filter = builder.and(filter, userFilter);
         criteriaQuery.where(filter).distinct(true);
