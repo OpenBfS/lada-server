@@ -66,9 +66,9 @@ public class GridColConfService
         Predicate filter = builder.equal(
             root.get(GridColConf_.queryUser).get(QueryUser_.id), queryUser);
         Predicate uId = builder.equal(
-            root.get(GridColConf_.ladaUserId), userInfo.getUserId());
+            value.get(QueryUser_.ladaUserId), userInfo.getUserId());
         Predicate zeroIdFilter = builder.equal(
-            root.get(GridColConf_.ladaUserId), "0");
+            value.get(QueryUser_.ladaUserId), 0);
         Predicate userFilter = builder.or(uId, zeroIdFilter);
         if (userInfo.getMessstellen() != null
             && !userInfo.getMessstellen().isEmpty()
@@ -97,20 +97,19 @@ public class GridColConfService
     ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
 
+        gridColumnValue.setQueryUser(repository.getById(
+                QueryUser.class, gridColumnValue.getQueryUserId()));
+
         // TODO: Move to authorization
-        if (gridColumnValue.getLadaUserId() != null
-            && !gridColumnValue.getLadaUserId().equals(userInfo.getUserId())
+        if (!gridColumnValue.getQueryUser().getLadaUserId().equals(
+                userInfo.getUserId())
         ) {
             throw new ForbiddenException();
         }
-        gridColumnValue.setLadaUserId(userInfo.getUserId());
+
         GridColMp gridColumn = new GridColMp();
         gridColumn.setId(gridColumnValue.getGridColMpId());
         gridColumnValue.setGridColMp(gridColumn);
-
-        QueryUser queryUser = repository.getById(
-            QueryUser.class, gridColumnValue.getQueryUserId());
-        gridColumnValue.setQueryUser(queryUser);
 
         return super.create(gridColumnValue);
     }
@@ -121,17 +120,19 @@ public class GridColConfService
     ) throws BadRequestException {
         // TODO: Really authorize with an Authorizer implementation.
         // Currently any object can be hijacked by passing it with
-        // userId set to the users ID.
+        // queryUserId of a QueryUser belonging to requesting user
+        gridColumnValue.setQueryUser(repository.getById(
+                QueryUser.class, gridColumnValue.getQueryUserId()));
+
         UserInfo userInfo = authorization.getInfo();
-        if (!userInfo.getUserId().equals(gridColumnValue.getLadaUserId())) {
+        if (!userInfo.getUserId().equals(
+                gridColumnValue.getQueryUser().getLadaUserId())
+        ) {
             throw new ForbiddenException();
         }
         GridColMp gridColumn = repository.getById(
             GridColMp.class, gridColumnValue.getGridColMpId());
-        QueryUser queryUser = repository.getById(
-            QueryUser.class, gridColumnValue.getQueryUserId());
         gridColumnValue.setGridColMp(gridColumn);
-        gridColumnValue.setQueryUser(queryUser);
 
         return super.update(gridColumnValue);
     }
@@ -146,10 +147,11 @@ public class GridColConfService
         GridColConf gridColumnValue = repository.getById(
             GridColConf.class, id);
         // TODO: Move to authorization
-        if (gridColumnValue.getLadaUserId().equals(userInfo.getUserId())) {
-            repository.delete(gridColumnValue);
-            return;
+        if (!gridColumnValue.getQueryUser().getLadaUserId().equals(
+                userInfo.getUserId())
+        ) {
+            throw new ForbiddenException();
         }
-        throw new ForbiddenException();
+        repository.delete(gridColumnValue);
     }
 }

@@ -234,13 +234,11 @@
     />
     <master.grid_col_conf
         id = "1"
-        lada_user_id = "1"
         query_user_id = "1"
         grid_col_mp_id = "1"
     />
     <master.grid_col_conf
         id = "2"
-        lada_user_id = "1"
         query_user_id = "1"
         grid_col_mp_id = "2"
     />

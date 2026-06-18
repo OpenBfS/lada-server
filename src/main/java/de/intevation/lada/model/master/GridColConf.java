@@ -53,10 +53,6 @@ public class GridColConf implements Serializable {
 
     private Integer sortIndex;
 
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = LadaUser.class)
-    private Integer ladaUserId;
-
     private boolean isVisible;
 
     private Integer width;
@@ -133,14 +129,6 @@ public class GridColConf implements Serializable {
 
     public void setSortIndex(Integer sortIndex) {
         this.sortIndex = sortIndex;
-    }
-
-    public Integer getLadaUserId() {
-        return this.ladaUserId;
-    }
-
-    public void setLadaUserId(Integer userId) {
-        this.ladaUserId = userId;
     }
 
     public boolean getIsVisible() {

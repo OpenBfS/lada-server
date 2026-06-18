@@ -1092,790 +1092,790 @@ COPY master.query_user (id, name, lada_user_id, base_query_id, descr) FROM stdin
 -- Data for Name: grid_col_conf; Type: TABLE DATA; Schema: master; Owner: lada
 --
 
-COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort, sort_index, filter_val, is_filter_active, is_visible, col_index, width, is_filter_negate, is_filter_regex, is_filter_null) FROM stdin;
-8	0	103	1	\N	\N	\N	f	t	1	77	f	f	f
-11	0	102	1	\N	\N	\N	t	t	0	92	f	f	f
-19	0	118	1	\N	\N	\N	f	f	-1	150	f	f	f
-22	0	117	1	\N	\N	\N	f	f	-1	55	f	f	f
-28	0	128	1	\N	\N	\N	f	f	\N	200	f	f	f
-40	0	1128	2	\N	\N	\N	f	f	-1	75	f	f	f
-46	0	1123	2	\N	\N	\N	f	f	-1	75	f	f	f
-63	0	1135	2	\N	\N	\N	f	f	-1	75	f	f	f
-71	0	1104	2	\N	\N	\N	t	t	1	54	f	f	f
-75	0	1152	2	\N	\N	\N	f	f	-1	164	f	f	f
-107	0	2113	3	\N	\N	\N	f	f	-1	55	f	f	f
-114	0	2120	3	\N	\N	\N	f	f	\N	120	f	f	f
-129	0	3110	4	\N	\N	\N	f	f	-1	110	f	f	f
-132	0	3103	4	\N	\N	\N	t	t	1	120	f	f	f
-135	0	3113	4	\N	\N	\N	f	f	-1	120	f	f	f
-91	0	3306	6	\N	\N	\N	f	f	-1	125	f	f	f
-94	0	3307	6	\N	\N	\N	t	f	-1	120	f	f	f
-95	0	3308	6	\N	\N	\N	f	f	-1	164	f	f	f
-123	0	3406	7	\N	\N	\N	t	f	-1	120	f	f	f
-33	0	1110	2	\N	\N	\N	f	t	8	69	f	f	f
-36	0	1146	2	\N	\N	\N	f	f	-1	200	f	f	f
-43	0	1124	2	\N	\N	\N	f	f	-1	75	f	f	f
-59	0	1121	2	\N	\N	\N	f	f	-1	75	f	f	f
-72	0	1119	2	\N	\N	\N	f	f	-1	75	f	f	f
-79	0	1140	2	\N	\N	\N	t	t	7	150	f	f	f
-82	0	1105	2	\N	\N	\N	f	f	-1	125	f	f	f
-84	0	1157	2	\N	\N	\N	f	f	\N	200	f	f	f
-97	0	2102	3	\N	\N	\N	f	f	-1	52	f	f	f
-101	0	2106	3	\N	\N	\N	f	t	6	69	f	f	f
-104	0	2109	3	\N	\N	\N	f	t	9	102	f	f	f
-111	0	2115	3	\N	\N	\N	t	t	3	164	f	f	f
-137	0	3101	4	\N	\N	\N	f	f	-1	92	f	f	f
-143	0	3106	4	\N	\N	\N	f	t	4	200	f	f	f
-150	0	3116	4	\N	\N	\N	f	f	-1	75	f	f	f
-154	0	3201	5	\N	\N	\N	f	f	-1	92	f	f	f
-157	0	3204	5	\N	\N	\N	f	f	-1	120	f	f	f
-160	0	3207	5	\N	\N	\N	f	t	3	300	f	f	f
-163	0	3210	5	\N	\N	\N	f	f	-1	57	f	f	f
-166	0	3213	5	\N	\N	\N	f	f	-1	50	f	f	f
-169	0	3216	5	\N	\N	\N	t	f	-1	120	f	f	f
-88	0	3301	6	\N	\N	\N	f	f	-1	92	f	f	f
-122	0	3405	7	\N	\N	\N	f	f	-1	125	f	f	f
-9	0	112	1	\N	\N	\N	f	f	-1	120	f	f	f
-12	0	105	1	\N	\N	\N	f	t	3	92	f	f	f
-20	0	101	1	\N	\N	\N	f	f	-1	92	f	f	f
-26	0	110	1	\N	\N	\N	f	t	10	125	f	f	f
-177	0	4123	9	\N	\N	\N	f	t	1	84	f	f	f
-182	0	4103	9	\N	\N	\N	t	t	2	92	f	f	f
-198	0	4112	9	\N	\N	\N	f	t	6	125	f	f	f
-201	0	4139	9	\N	\N	\N	f	f	-1	125	f	f	f
-204	0	4124	9	\N	\N	\N	t	t	10	145	f	f	f
-258	0	1213	10	\N	\N	\N	f	f	\N	70	f	f	f
-264	0	1227	10	\N	\N	\N	f	f	\N	150	f	f	f
-267	0	1218	10	\N	\N	\N	f	f	\N	150	f	f	f
-270	0	1217	10	\N	\N	\N	f	t	15	55	f	f	f
-275	0	1212	10	\N	\N	\N	f	t	11	120	f	f	f
-280	0	1240	10	\N	\N	\N	f	t	20	46	f	f	f
-293	0	1226	10	\N	\N	\N	t	f	\N	40	f	f	f
-296	0	1238	10	\N	\N	\N	f	t	13	100	f	f	f
-178	0	4119	9	\N	\N	\N	f	t	17	141	f	f	f
-179	0	4122	9	\N	\N	\N	t	t	0	145	f	f	f
-180	0	4138	9	\N	\N	\N	f	f	-1	70	f	f	f
-181	0	4101	9	\N	\N	\N	f	f	-1	92	f	f	f
-183	0	4136	9	\N	\N	\N	f	f	-1	150	f	f	f
-184	0	4121	9	\N	\N	\N	f	t	11	53	f	f	f
-185	0	4134	9	\N	\N	\N	f	f	-1	150	f	f	f
-187	0	4132	9	\N	\N	\N	f	f	-1	100	f	f	f
-188	0	4137	9	\N	\N	\N	f	t	4	154	f	f	f
-190	0	4107	9	\N	\N	\N	f	f	-1	52	f	f	f
-191	0	4126	9	\N	\N	\N	t	f	-1	120	f	f	f
-193	0	4110	9	\N	\N	\N	f	f	-1	69	f	f	f
-194	0	4116	9	\N	\N	\N	f	t	13	40	f	f	f
-196	0	4130	9	\N	\N	\N	f	f	-1	69	f	f	f
-197	0	4111	9	\N	\N	\N	t	t	5	125	f	f	f
-199	0	4102	9	\N	\N	\N	f	f	-1	92	f	f	f
-200	0	4131	9	\N	\N	\N	f	f	-1	200	f	f	f
-203	0	4105	9	\N	\N	\N	f	f	-1	125	f	f	f
-186	0	4133	9	\N	\N	\N	f	f	-1	55	f	f	f
-189	0	4108	9	\N	\N	\N	f	f	-1	92	f	f	f
-192	0	4104	9	\N	\N	\N	f	t	3	53	f	f	f
-195	0	4118	9	\N	\N	\N	f	t	15	120	f	f	f
-202	0	4140	9	\N	\N	\N	f	f	-1	125	f	f	f
-205	0	4135	9	\N	\N	\N	t	f	-1	40	f	f	f
-208	0	4125	9	\N	\N	\N	t	t	20	150	f	f	f
-253	0	1222	10	\N	\N	\N	f	t	10	70	f	f	f
-261	0	1202	10	\N	\N	\N	t	t	3	92	f	f	f
-284	0	1241	10	\N	\N	\N	f	f	\N	125	f	f	f
-287	0	1224	10	\N	\N	\N	f	t	14	69	f	f	f
-290	0	1208	10	\N	\N	\N	t	t	6	125	f	f	f
-1	0	122	1	\N	\N	\N	f	t	5	70	f	f	f
-2	0	116	1	\N	\N	\N	f	f	-1	100	f	f	f
-3	0	115	1	\N	\N	\N	t	f	-1	145	f	f	f
-4	0	124	1	\N	\N	\N	f	f	-1	69	f	f	f
-5	0	125	1	\N	\N	\N	f	f	-1	200	f	f	f
-6	0	127	1	\N	\N	\N	f	f	-1	150	f	f	f
-7	0	120	1	\N	\N	\N	t	t	2	120	f	f	f
-10	0	109	1	\N	\N	\N	f	f	-1	125	f	f	f
-13	0	123	1	\N	\N	\N	f	t	6	120	f	f	f
-14	0	106	1	\N	\N	\N	f	t	7	56	f	f	f
-15	0	113	1	\N	\N	\N	f	f	-1	70	f	f	f
-16	0	104	1	\N	\N	\N	f	f	-1	52	f	f	f
-17	0	108	1	\N	\N	\N	f	f	-1	125	f	f	f
-18	0	114	1	\N	\N	\N	f	f	-1	150	f	f	f
-21	0	126	1	\N	\N	\N	t	f	-1	40	f	f	f
-23	0	107	1	\N	\N	\N	f	t	9	69	f	f	f
-24	0	111	1	\N	\N	\N	f	t	11	125	f	f	f
-25	0	119	1	\N	\N	\N	t	t	8	150	f	f	f
-27	0	121	1	\N	\N	\N	t	t	4	164	f	f	f
-29	0	129	1	\N	\N	\N	f	f	\N	200	f	f	f
-30	0	1109	2	\N	\N	\N	f	t	6	56	f	f	f
-31	0	1116	2	\N	\N	\N	f	t	14	75	f	f	f
-32	0	1131	2	\N	\N	\N	f	f	-1	75	f	f	f
-34	0	1145	2	\N	\N	\N	f	f	-1	69	f	f	f
-35	0	1112	2	\N	\N	\N	f	t	10	125	f	f	f
-37	0	1102	2	\N	\N	\N	f	f	-1	92	f	f	f
-38	0	1137	2	\N	\N	\N	t	f	-1	145	f	f	f
-39	0	1143	2	\N	\N	\N	f	f	-1	70	f	f	f
-41	0	1147	2	\N	\N	\N	f	f	-1	100	f	f	f
-42	0	1134	2	\N	\N	\N	f	f	-1	75	f	f	f
-44	0	1138	2	\N	\N	\N	f	f	-1	81	f	f	f
-45	0	1141	2	\N	\N	\N	t	t	5	120	f	f	f
-47	0	1117	2	\N	\N	\N	f	f	-1	75	f	f	f
-48	0	1126	2	\N	\N	\N	f	f	-1	75	f	f	f
-49	0	1115	2	\N	\N	\N	f	t	13	75	f	f	f
-50	0	1120	2	\N	\N	\N	f	f	-1	75	f	f	f
-51	0	1133	2	\N	\N	\N	f	f	-1	75	f	f	f
-52	0	1127	2	\N	\N	\N	f	f	-1	75	f	f	f
-53	0	1113	2	\N	\N	\N	f	t	11	70	f	f	f
-54	0	1144	2	\N	\N	\N	f	f	-1	120	f	f	f
-55	0	1136	2	\N	\N	\N	f	t	2	53	f	f	f
-56	0	1148	2	\N	\N	\N	f	f	-1	55	f	f	f
-57	0	1129	2	\N	\N	\N	f	f	-1	75	f	f	f
-58	0	1149	2	\N	\N	\N	f	f	-1	150	f	f	f
-60	0	1108	2	\N	\N	\N	f	f	-1	92	f	f	f
-61	0	1139	2	\N	\N	\N	t	t	3	145	f	f	f
-62	0	1103	2	\N	\N	\N	t	t	0	92	f	f	f
-64	0	1107	2	\N	\N	\N	f	f	-1	52	f	f	f
-65	0	1106	2	\N	\N	\N	f	t	4	77	f	f	f
-66	0	1101	2	\N	\N	\N	f	f	-1	92	f	f	f
-67	0	1150	2	\N	\N	\N	t	f	-1	40	f	f	f
-68	0	1122	2	\N	\N	\N	f	f	-1	75	f	f	f
-69	0	1114	2	\N	\N	\N	f	t	12	150	f	f	f
-70	0	1142	2	\N	\N	\N	f	f	-1	76	f	f	f
-73	0	1130	2	\N	\N	\N	f	f	-1	75	f	f	f
-74	0	1111	2	\N	\N	\N	t	t	9	125	f	f	f
-76	0	1132	2	\N	\N	\N	f	f	-1	75	f	f	f
-77	0	1125	2	\N	\N	\N	f	f	-1	75	f	f	f
-78	0	1151	2	\N	\N	\N	f	f	-1	150	f	f	f
-80	0	1118	2	\N	\N	\N	f	f	-1	75	f	f	f
-81	0	1153	2	\N	\N	\N	f	f	\N	70	f	f	f
-83	0	1156	2	\N	\N	\N	f	f	\N	120	f	f	f
-85	0	1158	2	\N	\N	\N	f	f	\N	200	f	f	f
-86	0	1154	2	\N	\N	\N	f	f	\N	125	f	f	f
-87	0	1155	2	\N	\N	\N	f	f	\N	125	f	f	f
-96	0	2101	3	\N	\N	\N	f	t	0	100	f	f	f
-98	0	2105	3	\N	\N	\N	f	t	5	150	f	f	f
-99	0	2103	3	\N	\N	\N	f	t	2	92	f	f	f
-100	0	2107	3	\N	\N	\N	f	t	7	56	f	f	f
-102	0	2104	3	\N	\N	\N	f	t	4	77	f	f	f
-103	0	2108	3	\N	\N	\N	f	t	8	255	f	f	f
-105	0	2110	3	\N	\N	\N	f	t	10	120	f	f	f
-106	0	2112	3	\N	\N	\N	f	t	12	150	f	f	f
-108	0	2111	3	\N	\N	\N	f	t	11	70	f	f	f
-109	0	2114	3	\N	\N	\N	f	f	-1	150	f	f	f
-110	0	2119	3	\N	\N	\N	f	f	\N	70	f	f	f
-112	0	2116	3	\N	\N	\N	f	f	-1	55	f	f	f
-113	0	2117	3	\N	\N	\N	t	t	1	120	f	f	f
-115	0	2121	3	\N	\N	\N	f	f	\N	69	f	f	f
-116	0	2122	3	\N	\N	\N	f	f	\N	200	f	f	f
-117	0	2123	3	\N	\N	\N	f	f	\N	40	f	f	f
-118	0	2118	3	\N	\N	\N	f	f	\N	150	f	f	f
-125	0	3107	4	\N	\N	\N	f	t	5	120	f	f	f
-126	0	3105	4	\N	\N	\N	f	t	3	200	f	f	f
-127	0	3120	4	\N	\N	\N	f	f	-1	55	f	f	f
-128	0	3125	4	\N	\N	\N	f	f	-1	200	f	f	f
-130	0	3127	4	\N	\N	\N	t	t	0	120	f	f	f
-131	0	3104	4	\N	\N	\N	t	t	2	70	f	f	f
-133	0	3102	4	\N	\N	\N	f	f	-1	52	f	f	f
-134	0	3122	4	\N	\N	\N	f	f	-1	40	f	f	f
-136	0	3123	4	\N	\N	\N	f	f	-1	40	f	f	f
-138	0	3118	4	\N	\N	\N	f	f	-1	75	f	f	f
-139	0	3124	4	\N	\N	\N	f	f	-1	100	f	f	f
-140	0	3117	4	\N	\N	\N	f	f	-1	75	f	f	f
-141	0	3115	4	\N	\N	\N	f	f	-1	125	f	f	f
-142	0	3121	4	\N	\N	\N	f	f	-1	125	f	f	f
-144	0	3112	4	\N	\N	\N	f	f	-1	100	f	f	f
-145	0	3114	4	\N	\N	\N	f	f	-1	125	f	f	f
-147	0	3119	4	\N	\N	\N	f	f	-1	75	f	f	f
-148	0	3108	4	\N	\N	\N	t	t	6	150	f	f	f
-149	0	3126	4	\N	\N	\N	f	f	-1	70	f	f	f
-151	0	3111	4	\N	\N	\N	f	f	-1	70	f	f	f
-152	0	3128	4	\N	\N	\N	f	f	\N	120	f	f	f
-153	0	3129	4	\N	\N	\N	f	f	\N	70	f	f	f
-155	0	3202	5	\N	\N	\N	f	t	0	52	f	f	f
-156	0	3203	5	\N	\N	\N	f	t	1	70	f	f	f
-158	0	3205	5	\N	\N	\N	f	f	-1	200	f	f	f
-159	0	3206	5	\N	\N	\N	f	f	-1	120	f	f	f
-161	0	3208	5	\N	\N	\N	f	t	2	150	f	f	f
-162	0	3209	5	\N	\N	\N	f	f	-1	120	f	f	f
-164	0	3211	5	\N	\N	\N	f	f	-1	200	f	f	f
-165	0	3212	5	\N	\N	\N	f	f	-1	140	f	f	f
-167	0	3214	5	\N	\N	\N	f	f	-1	50	f	f	f
-168	0	3215	5	\N	\N	\N	f	f	-1	125	f	f	f
-89	0	3302	6	\N	\N	\N	f	t	0	52	f	f	f
-90	0	3303	6	\N	\N	\N	f	t	1	120	f	f	f
-92	0	3305	6	\N	\N	\N	f	t	3	300	f	f	f
-93	0	3304	6	\N	\N	\N	f	t	2	92	f	f	f
-119	0	3401	7	\N	\N	\N	f	f	-1	92	f	f	f
-120	0	3402	7	\N	\N	\N	f	t	0	52	f	f	f
-121	0	3403	7	\N	\N	\N	f	t	1	50	f	f	f
-124	0	3404	7	\N	\N	\N	f	t	2	300	f	f	f
-170	0	4128	9	\N	\N	\N	f	f	-1	70	f	f	f
-171	0	4129	9	\N	\N	\N	f	f	-1	120	f	f	f
-172	0	4114	9	\N	\N	\N	f	t	8	150	f	f	f
-173	0	4113	9	\N	\N	\N	f	f	-1	70	f	f	f
-174	0	4120	9	\N	\N	\N	f	t	16	100	f	f	f
-175	0	4106	9	\N	\N	\N	f	f	-1	77	f	f	f
-176	0	4127	9	\N	\N	\N	f	t	18	76	f	f	f
-206	0	4109	9	\N	\N	\N	f	t	9	56	f	f	f
-207	0	4115	9	\N	\N	\N	f	t	12	76	f	f	f
-209	0	4117	9	\N	\N	\N	f	t	14	81	f	f	f
-254	0	1223	10	\N	\N	\N	f	f	\N	120	f	f	f
-255	0	1233	10	\N	\N	\N	f	f	\N	255	f	f	f
-256	0	1203	10	\N	\N	\N	t	t	0	77	f	f	f
-257	0	1214	10	\N	\N	\N	f	t	12	150	f	f	f
-259	0	1215	10	\N	\N	\N	t	t	1	145	f	f	f
-260	0	1228	10	\N	\N	\N	f	t	2	70	f	f	f
-262	0	1242	10	\N	\N	\N	f	f	\N	92	f	f	f
-263	0	1234	10	\N	\N	\N	f	f	\N	150	f	f	f
-265	0	1229	10	\N	\N	\N	f	f	\N	125	f	f	f
-266	0	1231	10	\N	\N	\N	f	f	\N	75	f	f	f
-268	0	1230	10	\N	\N	\N	f	f	\N	53	f	f	f
-269	0	1216	10	\N	\N	\N	f	t	16	100	f	f	f
-271	0	1221	10	\N	\N	\N	t	t	4	164	f	f	f
-272	0	1205	10	\N	\N	\N	f	f	\N	92	f	f	f
-273	0	1204	10	\N	\N	\N	f	f	\N	52	f	f	f
-274	0	1220	10	\N	\N	\N	t	t	5	120	f	f	f
-276	0	1237	10	\N	\N	\N	f	f	\N	56	f	f	f
-277	0	1207	10	\N	\N	\N	f	f	\N	69	f	f	f
-278	0	1210	10	\N	\N	\N	f	f	\N	125	f	f	f
-279	0	1211	10	\N	\N	\N	f	f	\N	125	f	f	f
-281	0	1201	10	\N	\N	\N	f	f	\N	92	f	f	f
-282	0	1235	10	\N	\N	\N	f	t	19	128	f	f	f
-283	0	1232	10	\N	\N	\N	f	t	21	250	f	f	f
-285	0	1243	10	\N	\N	\N	f	t	17	120	f	f	f
-286	0	1236	10	\N	\N	\N	f	t	18	250	f	f	f
-289	0	1225	10	\N	\N	\N	f	f	\N	200	f	f	f
-291	0	1209	10	\N	\N	\N	t	t	7	125	f	f	f
-292	0	1239	10	\N	\N	\N	f	t	9	145	f	f	f
-294	0	1219	10	\N	\N	\N	f	t	8	150	f	f	f
-295	0	1206	10	\N	\N	\N	f	f	\N	56	f	f	f
-299	0	130	1	\N	\N	\N	f	f	\N	255	f	f	f
-300	0	131	1	\N	\N	\N	f	f	\N	150	f	f	f
-301	0	132	1	\N	\N	\N	f	f	\N	250	f	f	f
-302	0	133	1	\N	\N	\N	f	f	\N	46	f	f	f
-303	0	134	1	\N	\N	\N	f	f	\N	125	f	f	f
-304	0	1159	2	\N	\N	\N	f	f	\N	250	f	f	f
-305	0	1160	2	\N	\N	\N	f	f	\N	46	f	f	f
-306	0	1161	2	\N	\N	\N	f	f	\N	125	f	f	f
-307	0	4141	9	\N	\N	\N	f	f	-1	250	f	f	f
-308	0	4142	9	\N	\N	\N	f	f	-1	46	f	f	f
-309	0	4143	9	\N	\N	\N	f	f	-1	125	f	f	f
-310	0	1162	2	\N	\N	\N	f	f	\N	75	f	f	f
-311	0	4144	9	\N	\N	\N	f	f	-1	75	f	f	f
-312	0	1163	2	\N	\N	\N	f	f	\N	125	f	f	f
-313	0	1164	2	\N	\N	\N	f	f	\N	75	f	f	f
-314	0	4145	9	\N	\N	\N	f	f	-1	125	f	f	f
-315	0	4146	9	\N	\N	\N	f	f	-1	75	f	f	f
-316	0	1165	2	\N	\N	\N	f	f	\N	255	f	f	f
-317	0	1166	2	\N	\N	\N	f	f	\N	150	f	f	f
-318	0	4147	9	\N	\N	\N	f	f	-1	200	f	f	f
-319	0	4148	9	\N	\N	\N	f	f	-1	200	f	f	f
-320	0	4149	9	\N	\N	\N	f	f	-1	255	f	f	f
-321	0	4150	9	\N	\N	\N	f	f	-1	150	f	f	f
-322	0	135	1	\N	\N	\N	f	f	\N	120	f	f	f
-323	0	2124	3	\N	\N	\N	f	f	\N	200	f	f	f
-324	0	2125	3	\N	\N	\N	f	f	\N	200	f	f	f
-325	0	4201	11	\N	\N	\N	f	f	-1	92	f	f	f
-326	0	4202	11	\N	\N	\N	f	f	-1	92	f	f	f
-327	0	4203	11	\N	\N	\N	f	f	-1	92	f	f	f
-328	0	4204	11	\N	\N	\N	f	f	-1	53	f	f	f
-329	0	4205	11	\N	\N	\N	f	f	-1	125	f	f	f
-330	0	4206	11	\N	\N	\N	t	f	-1	77	f	f	f
-331	0	4207	11	\N	\N	\N	f	f	-1	52	f	f	f
-332	0	4208	11	\N	\N	\N	f	t	1	92	f	f	f
-333	0	4209	11	\N	\N	\N	f	f	-1	56	f	f	f
-334	0	4210	11	\N	\N	\N	f	f	-1	120	f	f	f
-335	0	4211	11	asc	5	\N	f	t	9	125	f	f	f
-336	0	4212	11	asc	6	\N	f	t	10	125	f	f	f
-337	0	4213	11	\N	\N	\N	f	f	-1	70	f	f	f
-338	0	4214	11	asc	4	\N	f	t	7	150	f	f	f
-339	0	4215	11	\N	\N	\N	f	t	11	76	f	f	f
-440	0	4216	11	\N	\N	\N	f	t	12	40	f	f	f
-441	0	4217	11	\N	\N	\N	f	t	13	81	f	f	f
-442	0	4218	11	\N	\N	\N	f	t	14	120	f	f	f
-443	0	4219	11	\N	\N	\N	f	t	16	141	f	f	f
-444	0	4220	11	\N	\N	\N	f	t	15	75	f	f	f
-445	0	4221	11	\N	\N	\N	f	f	-1	53	f	f	f
-446	0	4222	11	asc	7	\N	f	t	8	145	f	f	f
-447	0	4223	11	\N	\N	\N	f	f	-1	84	f	f	f
-448	0	4224	11	\N	\N	\N	t	f	-1	145	f	f	f
-449	0	4225	11	\N	\N	\N	f	f	-1	150	f	f	f
-450	0	4226	11	\N	\N	\N	t	f	-1	120	f	f	f
-452	0	4228	11	\N	\N	\N	t	f	-1	70	f	f	f
-453	0	4229	11	asc	0	\N	f	t	0	120	f	f	f
-454	0	4230	11	asc	1	\N	t	t	3	69	f	f	f
-455	0	4231	11	\N	\N	\N	f	t	4	200	f	f	f
-456	0	4232	11	asc	3	\N	f	t	6	200	f	f	f
-457	0	4233	11	\N	\N	\N	t	f	-1	40	f	f	f
-458	0	4234	11	\N	\N	\N	f	f	-1	150	f	f	f
-459	0	4235	11	\N	\N	\N	t	t	2	154	f	f	f
-460	0	4236	11	\N	\N	\N	f	f	-1	70	f	f	f
-461	0	4237	11	\N	\N	\N	f	f	-1	125	f	f	f
-462	0	4238	11	\N	\N	\N	f	f	-1	125	f	f	f
-463	0	4239	11	asc	2	\N	f	t	5	75	f	f	f
-464	0	4240	11	\N	\N	\N	f	f	-1	125	f	f	f
-465	0	4241	11	\N	\N	\N	f	f	-1	75	f	f	f
-466	0	4242	11	\N	\N	\N	f	f	-1	200	f	f	f
-467	0	4243	11	\N	\N	\N	f	f	-1	200	f	f	f
-468	0	4244	11	\N	\N	\N	f	t	27	150	f	f	f
-469	0	4245	11	\N	\N	\N	t	f	-1	125	f	f	f
-470	0	4246	11	\N	\N	\N	f	t	20	40	f	f	f
-471	0	4247	11	\N	\N	\N	f	t	21	55	f	f	f
-472	0	4248	11	\N	\N	\N	f	t	19	220	f	f	f
-473	0	4249	11	\N	\N	\N	f	t	17	220	f	f	f
-474	0	4250	11	\N	\N	\N	f	t	18	220	f	f	f
-475	0	136	1	\N	\N	\N	f	f	\N	80	f	f	f
-476	0	1167	2	\N	\N	\N	f	f	\N	80	f	f	f
-477	0	1168	2	\N	\N	\N	f	f	\N	100	f	f	f
-478	0	4151	9	\N	\N	\N	f	f	-1	80	f	f	f
-479	0	138	1	\N	\N	\N	f	f	\N	70	f	f	f
-480	0	139	1	\N	\N	\N	f	f	\N	70	f	f	f
-481	0	140	1	\N	\N	\N	f	f	\N	80	f	f	f
-482	0	137	1	\N	\N	\N	f	f	\N	100	f	f	f
-483	0	4152	9	\N	\N	\N	f	f	-1	100	f	f	f
-484	0	1172	2	\N	\N	\N	f	f	-1	50	f	f	f
-485	0	4156	9	\N	\N	\N	f	t	19	81	f	f	f
-486	0	4157	9	\N	\N	\N	f	t	7	120	f	f	f
-487	0	1169	2	\N	\N	\N	f	f	\N	70	f	f	f
-488	0	1170	2	\N	\N	\N	f	f	\N	70	f	f	f
-489	0	1171	2	\N	\N	\N	f	f	\N	80	f	f	f
-490	0	4153	9	\N	\N	\N	f	f	-1	70	f	f	f
-491	0	4154	9	\N	\N	\N	f	f	-1	70	f	f	f
-492	0	4155	9	\N	\N	\N	f	f	-1	80	f	f	f
-493	0	1245	10	\N	\N	\N	f	f	\N	70	f	f	f
-494	0	1246	10	\N	\N	\N	f	f	\N	70	f	f	f
-495	0	1247	10	\N	\N	\N	f	f	\N	80	f	f	f
-496	0	1248	10	\N	\N	\N	f	f	\N	70	f	f	f
-497	0	1249	10	\N	\N	\N	f	f	\N	81	f	f	f
-498	0	1250	10	\N	\N	\N	f	f	\N	125	f	f	f
-499	0	1251	10	\N	\N	\N	f	f	\N	100	f	f	f
-500	0	1252	10	\N	\N	\N	f	f	\N	100	f	f	f
-501	0	1253	10	\N	\N	\N	f	f	\N	125	f	f	f
-502	0	1254	10	\N	\N	\N	f	f	\N	100	f	f	f
-503	0	1255	10	\N	\N	\N	f	f	\N	200	f	f	f
-504	0	1256	10	\N	\N	\N	f	f	\N	200	f	f	f
-505	0	1257	10	\N	\N	\N	f	f	\N	200	f	f	f
-506	0	1258	10	\N	\N	\N	f	f	\N	200	f	f	f
-507	0	1259	10	\N	\N	\N	f	f	\N	150	f	f	f
-508	0	1260	10	\N	\N	\N	f	f	\N	150	f	f	f
-509	0	1261	10	\N	\N	\N	f	f	\N	200	f	f	f
-510	0	4251	11	\N	\N	\N	t	f	\N	200	f	f	f
-511	0	3501	12	\N	\N	\N	f	t	0	50	f	f	f
-512	0	3502	12	asc	\N	\N	t	t	1	90	f	f	f
-513	0	3503	12	\N	\N	\N	f	t	2	120	f	f	f
-514	0	3504	12	\N	\N	\N	f	t	3	90	f	f	f
-515	0	3505	12	\N	\N	\N	f	t	4	90	f	f	f
-516	0	3506	12	\N	\N	\N	f	t	5	90	f	f	f
-517	0	3507	12	\N	\N	\N	f	t	6	110	f	f	f
-518	0	1173	2	\N	\N	\N	f	f	\N	80	f	f	f
-519	0	4252	11	\N	\N	\N	f	t	23	100	f	f	f
-521	0	3601	13	\N	\N	\N	f	t	0	50	f	f	f
-522	0	3602	13	asc	\N	\N	t	t	1	100	f	f	f
-523	0	3603	13	\N	\N	\N	f	t	2	350	f	f	f
-524	0	3604	13	\N	\N	\N	f	t	3	100	f	f	f
-525	0	3605	13	\N	\N	\N	f	f	\N	100	f	f	f
-526	0	141	1	\N	\N	\N	t	f	\N	200	f	f	f
-527	0	3701	14	asc	\N	\N	f	t	0	50	f	f	f
-528	0	3702	14	\N	\N	\N	t	t	1	250	f	f	f
-529	0	3703	14	\N	\N	\N	f	f	\N	250	f	f	f
-530	0	142	1	\N	\N	\N	f	f	\N	125	f	f	f
-531	0	3801	15	asc	\N	\N	t	t	0	80	f	f	f
-532	0	3802	15	\N	\N	\N	t	t	1	180	f	f	f
-533	0	3803	15	\N	\N	\N	f	f	\N	80	f	f	f
-534	0	3804	15	\N	\N	\N	t	t	3	280	f	f	f
-535	0	3805	15	\N	\N	\N	f	t	4	80	f	f	f
-536	0	3806	15	\N	\N	\N	f	t	5	80	f	f	f
-537	0	3807	15	\N	\N	\N	t	t	2	125	f	f	f
-538	0	3901	16	asc	\N	\N	t	t	0	80	f	f	f
-539	0	3902	16	\N	\N	\N	t	t	1	450	f	f	f
-540	0	3903	16	\N	\N	\N	f	t	2	150	f	f	f
-541	0	3904	16	\N	\N	\N	f	t	3	150	f	f	f
-542	0	3905	16	\N	\N	\N	f	f	\N	200	f	f	f
-543	0	5101	17	asc	\N	\N	t	t	0	70	f	f	f
-544	0	5102	17	\N	\N	\N	t	t	1	200	f	f	f
-545	0	5103	17	\N	\N	\N	f	t	2	40	f	f	f
-546	0	5104	17	\N	\N	\N	f	t	3	200	f	f	f
-547	0	5105	17	\N	\N	\N	f	t	4	40	f	f	f
-548	0	5106	17	\N	\N	\N	f	t	5	200	f	f	f
-549	0	5107	17	\N	\N	\N	f	t	6	40	f	f	f
-550	0	5108	17	\N	\N	\N	f	t	7	200	f	f	f
-551	0	5109	17	\N	\N	\N	f	t	8	40	f	f	f
-552	0	5110	17	\N	\N	\N	f	t	9	200	f	f	f
-553	0	5111	17	\N	\N	\N	f	t	10	40	f	f	f
-554	0	5112	17	\N	\N	\N	f	t	11	200	f	f	f
-555	0	5113	17	\N	\N	\N	f	t	12	40	f	f	f
-556	0	5114	17	\N	\N	\N	f	t	13	200	f	f	f
-557	0	5115	17	\N	\N	\N	f	t	14	40	f	f	f
-558	0	5116	17	\N	\N	\N	f	t	15	200	f	f	f
-559	0	5117	17	\N	\N	\N	f	t	16	40	f	f	f
-560	0	5118	17	\N	\N	\N	f	t	17	200	f	f	f
-561	0	5119	17	\N	\N	\N	f	t	18	40	f	f	f
-562	0	5120	17	\N	\N	\N	f	t	19	200	f	f	f
-563	0	5121	17	\N	\N	\N	f	t	20	40	f	f	f
-564	0	5122	17	\N	\N	\N	f	t	21	200	f	f	f
-565	0	5123	17	\N	\N	\N	f	t	22	40	f	f	f
-566	0	5124	17	\N	\N	\N	f	t	23	200	f	f	f
-567	0	5125	17	\N	\N	\N	f	t	24	40	f	f	f
-568	0	5126	17	\N	\N	\N	f	t	25	200	f	f	f
-569	0	5201	18	\N	\N	\N	f	f	\N	70	f	f	f
-570	0	5202	18	asc	0	\N	t	t	3	60	f	f	f
-571	0	5203	18	asc	4	\N	t	t	4	60	f	t	f
-572	0	5204	18	\N	\N	\N	t	t	5	400	f	f	f
-573	0	5205	18	\N	\N	\N	f	f	\N	170	f	f	f
-574	0	5206	18	\N	\N	\N	f	f	\N	100	f	f	f
-575	0	5207	18	asc	1	\N	f	t	0	120	f	f	f
-576	0	5208	18	asc	2	\N	f	t	1	100	f	t	f
-577	0	5209	18	\N	\N	\N	t	t	2	200	f	f	f
-578	0	5301	19	asc	\N	\N	t	t	0	100	f	f	f
-579	0	5302	19	\N	\N	\N	t	t	1	200	f	f	f
-580	0	5303	19	\N	\N	\N	f	t	2	100	f	f	f
-581	0	5304	19	\N	\N	\N	t	t	3	100	f	f	f
-582	0	5305	19	\N	\N	\N	t	t	4	100	f	f	f
-583	0	5306	19	\N	\N	\N	t	t	5	100	f	f	f
-584	0	5307	19	\N	\N	\N	t	t	6	100	f	f	f
-586	0	5309	19	\N	\N	\N	f	t	8	100	f	f	f
-587	0	5310	19	\N	\N	\N	f	t	9	100	f	f	f
-588	0	5311	19	\N	\N	\N	f	t	10	100	f	f	f
-589	0	5312	19	\N	\N	\N	f	t	11	100	f	f	f
-590	0	5313	19	\N	\N	\N	f	t	12	100	f	f	f
-591	0	5314	19	\N	\N	\N	f	t	13	100	f	f	f
-592	0	4253	11	asc	8	\N	f	t	26	100	f	f	f
-593	0	4254	11	\N	\N	\N	f	t	25	100	f	f	f
-594	0	4255	11	\N	\N	\N	f	t	24	80	f	f	f
-595	0	4256	11	\N	\N	\N	f	t	22	80	f	f	f
-596	0	1244	10	\N	\N	\N	f	f	\N	75	f	f	f
-597	0	5401	20	\N	\N	\N	f	t	0	80	f	f	f
-598	0	5402	20	asc	\N	\N	t	t	1	120	f	f	f
-599	0	5403	20	\N	\N	\N	t	t	2	400	f	f	f
-600	0	5501	21	asc	\N	\N	f	t	0	70	f	f	f
-601	0	5502	21	\N	\N	\N	f	t	1	70	f	f	f
-602	0	5503	21	\N	\N	\N	t	t	2	200	f	f	f
-603	0	5510	21	\N	\N	\N	f	t	9	120	f	f	f
-604	0	5505	21	\N	\N	\N	f	t	4	70	f	f	f
-605	0	5506	21	\N	\N	\N	f	t	5	70	f	f	f
-606	0	5507	21	\N	\N	\N	f	t	6	150	f	f	f
-607	0	5508	21	\N	\N	\N	f	t	7	100	f	f	f
-608	0	5509	21	\N	\N	\N	f	t	8	100	f	f	f
-609	0	5601	22	asc	\N	\N	t	t	0	120	f	f	f
-610	0	5602	22	\N	\N	\N	t	t	1	400	f	f	f
-611	0	143	1	\N	\N	\N	f	f	\N	80	f	f	f
-612	0	144	1	\N	\N	\N	f	f	\N	120	f	f	f
-613	0	145	1	\N	\N	\N	f	f	\N	125	f	f	f
-614	0	1174	2	\N	\N	\N	f	f	\N	80	f	f	f
-615	0	1175	2	\N	\N	\N	f	f	\N	120	f	f	f
-616	0	1176	2	\N	\N	\N	f	f	\N	125	f	f	f
-617	0	4158	9	\N	\N	\N	f	f	\N	80	f	f	f
-618	0	4159	9	\N	\N	\N	f	f	\N	120	f	f	f
-619	0	4160	9	\N	\N	\N	f	f	\N	125	f	f	f
-620	0	2126	3	\N	\N	\N	f	f	\N	120	f	f	f
-621	0	1177	2	\N	\N	\N	t	f	\N	200	f	f	f
-622	0	4161	9	\N	\N	\N	t	f	\N	200	f	f	f
-807	0	2127	3	\N	\N	\N	f	f	\N	200	f	f	f
-808	0	2128	3	\N	\N	\N	f	f	\N	200	f	f	f
-809	0	1262	10	\N	\N	\N	f	f	\N	200	f	f	f
-810	0	1401	27	\N	\N	\N	f	t	0	120	f	f	f
-811	0	1402	27	\N	\N	\N	t	t	1	160	f	f	f
-812	0	1403	27	\N	\N	\N	f	f	\N	200	f	f	f
-813	0	1404	27	\N	\N	\N	t	f	\N	200	f	f	f
-814	0	1405	27	\N	\N	\N	f	t	2	80	f	f	f
-815	0	1406	27	\N	\N	\N	f	t	3	100	f	f	f
-816	0	1407	27	\N	\N	\N	t	f	\N	80	f	f	f
-817	0	1408	27	\N	\N	\N	f	t	4	100	f	f	f
-818	0	1409	27	\N	\N	\N	f	t	5	100	f	f	f
-819	0	1410	27	\N	\N	\N	t	t	6	150	f	f	f
-820	0	1411	27	\N	\N	\N	t	t	7	150	f	f	f
-821	0	1412	27	\N	\N	\N	t	t	8	100	f	f	f
-822	0	1413	27	\N	\N	\N	f	t	9	260	f	f	f
-823	0	1414	27	\N	\N	\N	f	t	10	80	f	f	f
-824	0	1415	27	\N	\N	\N	f	t	11	200	f	f	f
-825	0	1416	27	\N	\N	\N	f	t	12	100	f	f	f
-826	0	1417	27	\N	\N	\N	f	t	13	80	f	f	f
-827	0	1418	27	\N	\N	\N	t	f	\N	200	f	f	f
-844	0	1501	31	\N	\N	\N	f	f	\N	92	f	f	f
-845	0	1502	31	\N	\N	\N	f	f	\N	92	f	f	f
-846	0	1503	31	\N	\N	\N	t	f	\N	92	f	f	f
-847	0	1504	31	\N	\N	\N	t	f	\N	54	f	f	f
-848	0	1505	31	\N	\N	\N	f	f	\N	125	f	f	f
-849	0	1506	31	\N	\N	\N	t	f	\N	77	f	f	f
-850	0	1507	31	\N	\N	\N	f	f	\N	52	f	f	f
-851	0	1508	31	\N	\N	\N	f	f	\N	92	f	f	f
-852	0	1509	31	\N	\N	\N	f	t	2	56	f	f	f
-853	0	1510	31	\N	\N	\N	f	f	\N	69	f	f	f
-854	0	1511	31	\N	\N	\N	t	f	\N	125	f	f	f
-855	0	1512	31	\N	\N	\N	f	f	\N	125	f	f	f
-856	0	1513	31	\N	\N	\N	f	f	\N	70	f	f	f
-857	0	1514	31	\N	\N	\N	f	f	\N	150	f	f	f
-858	0	1515	31	\N	\N	\N	f	f	\N	75	f	f	f
-859	0	1516	31	\N	\N	\N	f	f	\N	75	f	f	f
-860	0	1517	31	\N	\N	\N	f	f	\N	75	f	f	f
-861	0	1518	31	\N	\N	\N	f	f	\N	75	f	f	f
-862	0	1519	31	\N	\N	\N	f	f	\N	75	f	f	f
-863	0	1520	31	\N	\N	\N	f	f	\N	75	f	f	f
-864	0	1521	31	\N	\N	\N	f	f	\N	75	f	f	f
-865	0	1522	31	\N	\N	\N	f	f	\N	75	f	f	f
-866	0	1523	31	\N	\N	\N	f	f	\N	75	f	f	f
-867	0	1524	31	\N	\N	\N	f	f	\N	75	f	f	f
-868	0	1525	31	\N	\N	\N	f	f	\N	75	f	f	f
-869	0	1526	31	\N	\N	\N	f	f	\N	75	f	f	f
-870	0	1527	31	\N	\N	\N	f	f	\N	75	f	f	f
-871	0	1528	31	\N	\N	\N	f	f	\N	75	f	f	f
-872	0	1529	31	\N	\N	\N	f	f	\N	75	f	f	f
-873	0	1530	31	\N	\N	\N	f	f	\N	75	f	f	f
-874	0	1531	31	\N	\N	\N	f	f	\N	75	f	f	f
-875	0	1532	31	\N	\N	\N	f	f	\N	75	f	f	f
-876	0	1533	31	\N	\N	\N	f	f	\N	75	f	f	f
-877	0	1534	31	\N	\N	\N	f	f	\N	75	f	f	f
-878	0	1535	31	\N	\N	\N	f	f	\N	75	f	f	f
-879	0	1536	31	\N	\N	\N	f	f	\N	53	f	f	f
-880	0	1537	31	\N	\N	\N	t	t	0	145	f	f	f
-881	0	1538	31	\N	\N	\N	f	t	1	81	f	f	f
-882	0	1539	31	\N	\N	\N	t	f	\N	145	f	f	f
-883	0	1540	31	\N	\N	\N	t	t	3	150	f	f	f
-884	0	1541	31	\N	\N	\N	t	f	\N	120	f	f	f
-885	0	1542	31	\N	\N	\N	f	f	\N	76	f	f	f
-886	0	1543	31	\N	\N	\N	f	f	\N	100	f	f	f
-887	0	1544	31	\N	\N	\N	f	f	\N	55	f	f	f
-888	0	1545	31	\N	\N	\N	f	f	\N	150	f	f	f
-889	0	1546	31	\N	\N	\N	t	f	\N	40	f	f	f
-890	0	1547	31	\N	\N	\N	f	f	\N	150	f	f	f
-891	0	1548	31	\N	\N	\N	f	f	\N	70	f	f	f
-892	0	1549	31	\N	\N	\N	f	f	\N	164	f	f	f
-893	0	1550	31	\N	\N	\N	f	f	\N	125	f	f	f
-894	0	1551	31	\N	\N	\N	f	f	\N	125	f	f	f
-895	0	1552	31	\N	\N	\N	f	f	\N	120	f	f	f
-896	0	1553	31	\N	\N	\N	f	f	\N	200	f	f	f
-897	0	1554	31	\N	\N	\N	f	f	\N	200	f	f	f
-898	0	1555	31	\N	\N	\N	f	t	10	180	f	f	f
-899	0	1556	31	\N	\N	\N	f	f	\N	125	f	f	f
-900	0	1557	31	\N	\N	\N	f	f	\N	75	f	f	f
-901	0	1558	31	\N	\N	D: %	t	t	4	255	f	f	f
-902	0	1559	31	\N	\N	\N	f	f	\N	150	f	f	f
-903	0	1560	31	\N	\N	\N	f	f	\N	80	f	f	f
-904	0	1561	31	\N	\N	\N	f	f	\N	100	f	f	f
-905	0	1562	31	\N	\N	\N	f	f	\N	70	f	f	f
-906	0	1563	31	\N	\N	\N	f	f	\N	70	f	f	f
-907	0	1564	31	\N	\N	\N	f	f	\N	80	f	f	f
-908	0	1565	31	\N	\N	\N	f	f	\N	50	f	f	f
-909	0	1566	31	\N	\N	\N	f	f	\N	80	f	f	f
-910	0	1567	31	\N	\N	\N	f	f	\N	120	f	f	f
-911	0	1568	31	\N	\N	\N	f	f	\N	125	f	f	f
-912	0	1569	31	\N	\N	\N	t	f	\N	200	f	f	f
-913	0	1570	31	\N	\N	\N	f	f	\N	200	f	f	f
-914	0	1571	31	\N	\N	\N	f	f	\N	200	f	f	f
-915	0	1572	31	\N	\N	\N	f	t	5	200	f	f	f
-916	0	1573	31	\N	\N	\N	f	t	6	200	f	f	f
-917	0	1574	31	\N	\N	\N	f	t	7	200	f	f	f
-918	0	1575	31	\N	\N	\N	f	t	8	200	f	f	f
-919	0	1576	31	\N	\N	\N	f	t	9	200	f	f	f
-920	0	2129	3	\N	\N	\N	f	f	\N	250	f	f	f
-921	0	2130	3	\N	\N	\N	f	f	\N	80	f	f	f
-922	0	2131	3	\N	\N	\N	f	f	\N	125	f	f	f
-923	0	1263	10	\N	\N	\N	t	f	\N	200	f	f	f
-924	0	6001	32	\N	\N	\N	f	t	0	100	f	f	f
-925	0	6002	32	\N	\N	\N	t	t	1	250	f	f	f
-926	0	6003	32	\N	\N	\N	f	t	2	150	f	f	f
-927	0	6004	32	\N	\N	\N	f	t	3	100	f	f	f
-928	0	6101	33	asc	\N	\N	f	t	0	100	f	f	f
-929	0	6102	33	\N	\N	\N	f	t	1	150	f	f	f
-930	0	6103	33	\N	\N	\N	t	t	2	250	f	f	f
-931	0	6104	33	\N	\N	\N	f	t	3	100	f	f	f
-932	0	6105	33	\N	\N	\N	f	t	4	100	f	f	f
-933	0	6201	34	\N	\N	\N	f	t	0	70	f	f	f
-934	0	6202	34	asc	\N	\N	f	t	1	150	f	f	f
-935	0	6203	34	\N	\N	\N	t	t	2	550	f	f	f
-937	0	4301	35	\N	\N	\N	f	f	-1	92	f	f	f
-938	0	4302	35	\N	\N	\N	f	f	-1	92	f	f	f
-939	0	4303	35	\N	\N	\N	t	t	2	92	f	f	f
-940	0	4304	35	\N	\N	\N	f	t	3	53	f	f	f
-941	0	4305	35	\N	\N	\N	f	f	-1	125	f	f	f
-942	0	4306	35	\N	\N	\N	f	f	-1	77	f	f	f
-943	0	4307	35	\N	\N	\N	f	f	-1	52	f	f	f
-944	0	4308	35	\N	\N	\N	f	f	-1	92	f	f	f
-945	0	4309	35	\N	\N	\N	f	t	9	56	f	f	f
-946	0	4310	35	\N	\N	\N	f	f	-1	69	f	f	f
-947	0	4311	35	\N	\N	\N	t	t	5	125	f	f	f
-948	0	4312	35	\N	\N	\N	f	t	6	125	f	f	f
-949	0	4313	35	\N	\N	\N	f	f	-1	70	f	f	f
-950	0	4314	35	\N	\N	\N	f	t	8	150	f	f	f
-951	0	4315	35	\N	\N	\N	f	t	12	76	f	f	f
-952	0	4316	35	\N	\N	\N	f	t	13	40	f	f	f
-953	0	4317	35	\N	\N	\N	f	t	14	81	f	f	f
-954	0	4318	35	\N	\N	\N	f	t	15	120	f	f	f
-955	0	4319	35	\N	\N	\N	f	t	17	141	f	f	f
-956	0	4320	35	\N	\N	\N	f	t	16	100	f	f	f
-957	0	4321	35	\N	\N	\N	f	t	11	53	f	f	f
-958	0	4322	35	\N	\N	\N	t	t	0	145	f	f	f
-959	0	4323	35	\N	\N	\N	f	t	1	84	f	f	f
-960	0	4324	35	\N	\N	\N	t	t	10	145	f	f	f
-961	0	4325	35	\N	\N	\N	t	t	20	150	f	f	f
-962	0	4326	35	\N	\N	\N	t	f	-1	120	f	f	f
-963	0	4327	35	\N	\N	\N	f	t	18	76	f	f	f
-964	0	4328	35	\N	\N	\N	f	f	-1	70	f	f	f
-965	0	4329	35	\N	\N	\N	f	f	-1	120	f	f	f
-966	0	4330	35	\N	\N	\N	f	f	-1	69	f	f	f
-967	0	4331	35	\N	\N	\N	f	f	-1	200	f	f	f
-968	0	4332	35	\N	\N	\N	f	f	-1	100	f	f	f
-969	0	4333	35	\N	\N	\N	f	f	-1	55	f	f	f
-970	0	4334	35	\N	\N	\N	f	f	-1	150	f	f	f
-971	0	4335	35	\N	\N	\N	t	f	-1	40	f	f	f
-972	0	4336	35	\N	\N	\N	f	f	-1	150	f	f	f
-973	0	4337	35	\N	\N	\N	f	t	4	154	f	f	f
-974	0	4338	35	\N	\N	\N	f	f	-1	70	f	f	f
-975	0	4339	35	\N	\N	\N	f	f	-1	125	f	f	f
-976	0	4340	35	\N	\N	\N	f	f	-1	125	f	f	f
-977	0	4341	35	\N	\N	\N	f	f	-1	250	f	f	f
-978	0	4342	35	\N	\N	\N	f	f	-1	46	f	f	f
-979	0	4343	35	\N	\N	\N	f	f	-1	125	f	f	f
-980	0	4344	35	\N	\N	\N	f	f	-1	75	f	f	f
-981	0	4345	35	\N	\N	\N	f	f	-1	125	f	f	f
-982	0	4346	35	\N	\N	\N	f	f	-1	75	f	f	f
-983	0	4347	35	\N	\N	\N	f	f	-1	200	f	f	f
-984	0	4348	35	\N	\N	\N	f	f	-1	200	f	f	f
-985	0	4349	35	\N	\N	\N	f	f	-1	255	f	f	f
-986	0	4350	35	\N	\N	\N	f	f	-1	150	f	f	f
-987	0	4351	35	\N	\N	\N	f	f	-1	80	f	f	f
-988	0	4352	35	\N	\N	\N	f	f	-1	100	f	f	f
-989	0	4353	35	\N	\N	\N	f	f	-1	70	f	f	f
-990	0	4354	35	\N	\N	\N	f	f	-1	70	f	f	f
-991	0	4355	35	\N	\N	\N	f	f	-1	80	f	f	f
-992	0	4356	35	\N	\N	\N	f	t	19	81	f	f	f
-993	0	4357	35	\N	\N	\N	f	t	7	120	f	f	f
-994	0	4358	35	\N	\N	\N	f	f	\N	80	f	f	f
-995	0	4359	35	\N	\N	\N	f	f	\N	120	f	f	f
-996	0	4360	35	\N	\N	\N	f	f	\N	125	f	f	f
-997	0	4361	35	\N	\N	\N	t	f	\N	200	f	f	f
-998	0	4362	35	\N	\N	\N	f	f	\N	180	f	f	f
-999	0	1601	36	\N	\N	\N	f	f	-1	92	f	f	f
-1000	0	1602	36	\N	\N	\N	f	f	-1	92	f	f	f
-1001	0	1603	36	\N	\N	\N	t	t	0	92	f	f	f
-1002	0	1604	36	\N	\N	\N	t	t	1	54	f	f	f
-1003	0	1605	36	\N	\N	\N	f	f	-1	125	f	f	f
-1004	0	1606	36	\N	\N	\N	f	t	4	77	f	f	f
-1005	0	1607	36	\N	\N	\N	f	f	-1	52	f	f	f
-1006	0	1608	36	\N	\N	\N	f	f	-1	92	f	f	f
-1007	0	1609	36	\N	\N	\N	f	t	6	56	f	f	f
-1008	0	1610	36	\N	\N	\N	f	t	8	69	f	f	f
-1009	0	1611	36	\N	\N	\N	t	t	9	125	f	f	f
-1010	0	1612	36	\N	\N	\N	f	t	10	125	f	f	f
-1011	0	1613	36	\N	\N	\N	f	t	11	70	f	f	f
-1012	0	1614	36	\N	\N	\N	f	t	12	150	f	f	f
-1013	0	1615	36	\N	\N	\N	f	t	13	75	f	f	f
-1014	0	1616	36	\N	\N	\N	f	t	14	75	f	f	f
-1015	0	1617	36	\N	\N	\N	f	f	-1	75	f	f	f
-1016	0	1618	36	\N	\N	\N	f	f	-1	75	f	f	f
-1017	0	1619	36	\N	\N	\N	f	f	-1	75	f	f	f
-1018	0	1620	36	\N	\N	\N	f	f	-1	75	f	f	f
-1019	0	1621	36	\N	\N	\N	f	f	-1	75	f	f	f
-1020	0	1622	36	\N	\N	\N	f	f	-1	75	f	f	f
-1021	0	1623	36	\N	\N	\N	f	f	-1	75	f	f	f
-1022	0	1624	36	\N	\N	\N	f	f	-1	75	f	f	f
-1023	0	1625	36	\N	\N	\N	f	f	-1	75	f	f	f
-1024	0	1626	36	\N	\N	\N	f	f	-1	75	f	f	f
-1025	0	1627	36	\N	\N	\N	f	f	-1	75	f	f	f
-1026	0	1628	36	\N	\N	\N	f	f	-1	75	f	f	f
-1027	0	1629	36	\N	\N	\N	f	f	-1	75	f	f	f
-1028	0	1630	36	\N	\N	\N	f	f	-1	75	f	f	f
-1029	0	1631	36	\N	\N	\N	f	f	-1	75	f	f	f
-1030	0	1632	36	\N	\N	\N	f	f	-1	75	f	f	f
-1031	0	1633	36	\N	\N	\N	f	f	-1	75	f	f	f
-1032	0	1634	36	\N	\N	\N	f	f	-1	75	f	f	f
-1033	0	1635	36	\N	\N	\N	f	f	-1	75	f	f	f
-1034	0	1636	36	\N	\N	\N	f	t	2	53	f	f	f
-1035	0	1637	36	\N	\N	\N	t	f	-1	145	f	f	f
-1036	0	1638	36	\N	\N	\N	f	f	-1	81	f	f	f
-1037	0	1639	36	\N	\N	\N	t	t	3	145	f	f	f
-1038	0	1640	36	\N	\N	\N	t	t	7	150	f	f	f
-1039	0	1641	36	\N	\N	\N	t	t	5	120	f	f	f
-1040	0	1642	36	\N	\N	\N	f	f	-1	76	f	f	f
-1041	0	1643	36	\N	\N	\N	f	f	-1	70	f	f	f
-1042	0	1644	36	\N	\N	\N	f	f	-1	120	f	f	f
-1043	0	1645	36	\N	\N	\N	f	f	-1	69	f	f	f
-1044	0	1646	36	\N	\N	\N	f	f	-1	200	f	f	f
-1045	0	1647	36	\N	\N	\N	f	f	-1	100	f	f	f
-1046	0	1648	36	\N	\N	\N	f	f	-1	55	f	f	f
-1047	0	1649	36	\N	\N	\N	f	f	-1	150	f	f	f
-1048	0	1650	36	\N	\N	\N	t	f	-1	40	f	f	f
-1049	0	1651	36	\N	\N	\N	f	f	-1	150	f	f	f
-1050	0	1652	36	\N	\N	\N	f	f	-1	164	f	f	f
-1051	0	1653	36	\N	\N	\N	f	f	\N	70	f	f	f
-1052	0	1654	36	\N	\N	\N	f	f	\N	125	f	f	f
-1053	0	1655	36	\N	\N	\N	f	f	\N	125	f	f	f
-1054	0	1656	36	\N	\N	\N	f	f	\N	120	f	f	f
-1055	0	1657	36	\N	\N	\N	f	f	\N	200	f	f	f
-1056	0	1658	36	\N	\N	\N	f	f	\N	200	f	f	f
-1057	0	1659	36	\N	\N	\N	f	f	\N	250	f	f	f
-1058	0	1660	36	\N	\N	\N	f	f	\N	46	f	f	f
-1059	0	1661	36	\N	\N	\N	f	f	\N	125	f	f	f
-1060	0	1662	36	\N	\N	\N	f	f	\N	75	f	f	f
-1061	0	1663	36	\N	\N	\N	f	f	\N	125	f	f	f
-1062	0	1664	36	\N	\N	\N	f	f	\N	75	f	f	f
-1063	0	1665	36	\N	\N	\N	f	f	\N	255	f	f	f
-1064	0	1666	36	\N	\N	\N	f	f	\N	150	f	f	f
-1065	0	1667	36	\N	\N	\N	f	f	\N	80	f	f	f
-1066	0	1668	36	\N	\N	\N	f	f	\N	100	f	f	f
-1067	0	1669	36	\N	\N	\N	f	f	\N	70	f	f	f
-1068	0	1670	36	\N	\N	\N	f	f	\N	70	f	f	f
-1069	0	1671	36	\N	\N	\N	f	f	\N	80	f	f	f
-1070	0	1672	36	\N	\N	\N	f	f	-1	50	f	f	f
-1071	0	1673	36	\N	\N	\N	f	f	\N	80	f	f	f
-1072	0	1674	36	\N	\N	\N	f	f	\N	80	f	f	f
-1073	0	1675	36	\N	\N	\N	f	f	\N	120	f	f	f
-1074	0	1676	36	\N	\N	\N	f	f	\N	125	f	f	f
-1075	0	1677	36	\N	\N	\N	t	f	\N	200	f	f	f
-1076	0	1678	36	\N	\N	\N	f	t	15	250	f	f	f
-1077	0	4363	35	\N	\N	\N	f	f	\N	180	f	f	f
-1078	0	4364	35	\N	\N	\N	f	f	\N	180	f	f	f
-1079	0	4162	9	\N	\N	\N	f	f	\N	100	f	f	f
-1080	0	4257	11	\N	\N	\N	f	f	-1	100	f	f	f
-1081	0	4365	35	\N	\N	\N	f	f	-1	100	f	f	f
-1082	0	2132	3	\N	\N	\N	f	f	\N	110	f	f	f
-1083	0	2133	3	\N	\N	\N	f	f	\N	110	f	f	f
-1085	0	2134	3	\N	\N	\N	f	f	\N	80	f	f	f
-1086	0	3906	16	\N	\N	\N	f	t	4	100	f	f	f
-1087	0	3907	16	\N	\N	\N	t	t	5	300	f	f	f
-1088	0	3130	4	\N	\N	\N	f	f	\N	70	f	f	f
-1089	0	3131	4	\N	\N	\N	f	f	\N	200	f	f	f
-1090	0	146	1	\N	\N	\N	f	f	\N	80	f	f	f
-1091	0	147	1	\N	\N	\N	f	f	\N	100	f	f	f
-1092	0	3132	4	\N	\N	\N	f	t	7	76	f	f	f
-1093	0	2135	3	\N	\N	\N	f	f	\N	80	f	f	f
-1094	0	1178	2	\N	\N	\N	f	f	\N	80	f	f	f
-1095	0	1179	2	\N	\N	\N	f	f	\N	100	f	f	f
-1096	0	1577	31	\N	\N	\N	f	f	\N	80	f	f	f
-1097	0	1578	31	\N	\N	\N	f	f	\N	100	f	f	f
-1098	0	1679	36	\N	\N	\N	f	f	\N	80	f	f	f
-1099	0	1680	36	\N	\N	\N	f	f	\N	100	f	f	f
-1100	0	4163	9	\N	\N	\N	f	f	\N	80	f	f	f
-1101	0	4164	9	\N	\N	\N	f	f	\N	100	f	f	f
-1102	0	4366	35	\N	\N	\N	f	f	\N	80	f	f	f
-1103	0	4367	35	\N	\N	\N	f	f	\N	100	f	f	f
-1104	0	2136	3	\N	\N	\N	f	f	\N	80	f	f	f
-1105	0	2137	3	\N	\N	\N	f	f	\N	100	f	f	f
-1106	0	2138	3	\N	\N	\N	f	f	\N	80	f	f	f
-1107	0	2139	3	\N	\N	\N	f	f	\N	100	f	f	f
-1108	0	1180	2	\N	\N	\N	f	f	\N	200	f	f	f
-1109	0	1579	31	\N	\N	\N	f	f	\N	200	f	f	f
-1110	0	1681	36	\N	\N	\N	f	f	\N	200	f	f	f
-1111	0	6301	37	\N	\N	\N	f	t	1	80	f	f	f
-1112	0	6302	37	\N	\N	\N	t	t	2	200	f	f	f
-1113	0	6303	37	\N	\N	\N	t	t	3	120	f	f	f
-1114	0	6304	37	\N	\N	\N	t	t	4	150	f	f	f
-1115	0	6305	37	\N	\N	\N	t	t	5	150	f	f	f
-1116	0	6306	37	\N	\N	\N	t	t	6	150	f	f	f
-1117	0	6307	37	\N	\N	\N	t	t	8	170	f	f	f
-1118	0	6308	37	\N	\N	\N	f	t	9	170	f	f	f
-1119	0	6309	37	\N	\N	\N	t	t	7	100	f	f	f
-1120	0	5210	18	\N	\N	\N	f	f	\N	125	f	f	f
-1121	0	2140	3	\N	\N	\N	f	f	\N	100	f	f	f
-1122	0	2141	3	\N	\N	\N	f	f	\N	100	f	f	f
-1123	0	2142	3	\N	\N	\N	f	f	\N	100	f	f	f
-1124	0	2143	3	\N	\N	\N	f	f	\N	150	f	f	f
-1125	0	2144	3	\N	\N	\N	f	f	\N	150	f	f	f
-1127	0	3217	5	\N	\N	\N	f	f	\N	140	f	f	f
-1128	0	3218	5	\N	\N	\N	f	f	\N	200	f	f	f
-1129	0	3133	4	\N	\N	\N	f	f	\N	300	f	f	f
-1130	0	148	1	\N	\N	\N	f	f	\N	150	f	f	f
-1197	0	149	1	\N	\N	\N	f	f	-1	76	f	f	f
-1204	0	6310	38	\N	\N	\N	f	f	-1	150	f	f	f
-1200	0	6311	38	\N	\N	\N	t	t	1	150	f	f	f
-1201	0	6312	38	\N	\N	\N	t	t	2	150	f	f	f
-1202	0	6313	38	\N	\N	\N	f	t	3	150	f	f	f
-1203	0	6314	38	\N	\N	\N	f	t	4	150	f	f	f
+COPY master.grid_col_conf (id, grid_col_mp_id, query_user_id, sort, sort_index, filter_val, is_filter_active, is_visible, col_index, width, is_filter_negate, is_filter_regex, is_filter_null) FROM stdin;
+8	103	1	\N	\N	\N	f	t	1	77	f	f	f
+11	102	1	\N	\N	\N	t	t	0	92	f	f	f
+19	118	1	\N	\N	\N	f	f	-1	150	f	f	f
+22	117	1	\N	\N	\N	f	f	-1	55	f	f	f
+28	128	1	\N	\N	\N	f	f	\N	200	f	f	f
+40	1128	2	\N	\N	\N	f	f	-1	75	f	f	f
+46	1123	2	\N	\N	\N	f	f	-1	75	f	f	f
+63	1135	2	\N	\N	\N	f	f	-1	75	f	f	f
+71	1104	2	\N	\N	\N	t	t	1	54	f	f	f
+75	1152	2	\N	\N	\N	f	f	-1	164	f	f	f
+107	2113	3	\N	\N	\N	f	f	-1	55	f	f	f
+114	2120	3	\N	\N	\N	f	f	\N	120	f	f	f
+129	3110	4	\N	\N	\N	f	f	-1	110	f	f	f
+132	3103	4	\N	\N	\N	t	t	1	120	f	f	f
+135	3113	4	\N	\N	\N	f	f	-1	120	f	f	f
+91	3306	6	\N	\N	\N	f	f	-1	125	f	f	f
+94	3307	6	\N	\N	\N	t	f	-1	120	f	f	f
+95	3308	6	\N	\N	\N	f	f	-1	164	f	f	f
+123	3406	7	\N	\N	\N	t	f	-1	120	f	f	f
+33	1110	2	\N	\N	\N	f	t	8	69	f	f	f
+36	1146	2	\N	\N	\N	f	f	-1	200	f	f	f
+43	1124	2	\N	\N	\N	f	f	-1	75	f	f	f
+59	1121	2	\N	\N	\N	f	f	-1	75	f	f	f
+72	1119	2	\N	\N	\N	f	f	-1	75	f	f	f
+79	1140	2	\N	\N	\N	t	t	7	150	f	f	f
+82	1105	2	\N	\N	\N	f	f	-1	125	f	f	f
+84	1157	2	\N	\N	\N	f	f	\N	200	f	f	f
+97	2102	3	\N	\N	\N	f	f	-1	52	f	f	f
+101	2106	3	\N	\N	\N	f	t	6	69	f	f	f
+104	2109	3	\N	\N	\N	f	t	9	102	f	f	f
+111	2115	3	\N	\N	\N	t	t	3	164	f	f	f
+137	3101	4	\N	\N	\N	f	f	-1	92	f	f	f
+143	3106	4	\N	\N	\N	f	t	4	200	f	f	f
+150	3116	4	\N	\N	\N	f	f	-1	75	f	f	f
+154	3201	5	\N	\N	\N	f	f	-1	92	f	f	f
+157	3204	5	\N	\N	\N	f	f	-1	120	f	f	f
+160	3207	5	\N	\N	\N	f	t	3	300	f	f	f
+163	3210	5	\N	\N	\N	f	f	-1	57	f	f	f
+166	3213	5	\N	\N	\N	f	f	-1	50	f	f	f
+169	3216	5	\N	\N	\N	t	f	-1	120	f	f	f
+88	3301	6	\N	\N	\N	f	f	-1	92	f	f	f
+122	3405	7	\N	\N	\N	f	f	-1	125	f	f	f
+9	112	1	\N	\N	\N	f	f	-1	120	f	f	f
+12	105	1	\N	\N	\N	f	t	3	92	f	f	f
+20	101	1	\N	\N	\N	f	f	-1	92	f	f	f
+26	110	1	\N	\N	\N	f	t	10	125	f	f	f
+177	4123	9	\N	\N	\N	f	t	1	84	f	f	f
+182	4103	9	\N	\N	\N	t	t	2	92	f	f	f
+198	4112	9	\N	\N	\N	f	t	6	125	f	f	f
+201	4139	9	\N	\N	\N	f	f	-1	125	f	f	f
+204	4124	9	\N	\N	\N	t	t	10	145	f	f	f
+258	1213	10	\N	\N	\N	f	f	\N	70	f	f	f
+264	1227	10	\N	\N	\N	f	f	\N	150	f	f	f
+267	1218	10	\N	\N	\N	f	f	\N	150	f	f	f
+270	1217	10	\N	\N	\N	f	t	15	55	f	f	f
+275	1212	10	\N	\N	\N	f	t	11	120	f	f	f
+280	1240	10	\N	\N	\N	f	t	20	46	f	f	f
+293	1226	10	\N	\N	\N	t	f	\N	40	f	f	f
+296	1238	10	\N	\N	\N	f	t	13	100	f	f	f
+178	4119	9	\N	\N	\N	f	t	17	141	f	f	f
+179	4122	9	\N	\N	\N	t	t	0	145	f	f	f
+180	4138	9	\N	\N	\N	f	f	-1	70	f	f	f
+181	4101	9	\N	\N	\N	f	f	-1	92	f	f	f
+183	4136	9	\N	\N	\N	f	f	-1	150	f	f	f
+184	4121	9	\N	\N	\N	f	t	11	53	f	f	f
+185	4134	9	\N	\N	\N	f	f	-1	150	f	f	f
+187	4132	9	\N	\N	\N	f	f	-1	100	f	f	f
+188	4137	9	\N	\N	\N	f	t	4	154	f	f	f
+190	4107	9	\N	\N	\N	f	f	-1	52	f	f	f
+191	4126	9	\N	\N	\N	t	f	-1	120	f	f	f
+193	4110	9	\N	\N	\N	f	f	-1	69	f	f	f
+194	4116	9	\N	\N	\N	f	t	13	40	f	f	f
+196	4130	9	\N	\N	\N	f	f	-1	69	f	f	f
+197	4111	9	\N	\N	\N	t	t	5	125	f	f	f
+199	4102	9	\N	\N	\N	f	f	-1	92	f	f	f
+200	4131	9	\N	\N	\N	f	f	-1	200	f	f	f
+203	4105	9	\N	\N	\N	f	f	-1	125	f	f	f
+186	4133	9	\N	\N	\N	f	f	-1	55	f	f	f
+189	4108	9	\N	\N	\N	f	f	-1	92	f	f	f
+192	4104	9	\N	\N	\N	f	t	3	53	f	f	f
+195	4118	9	\N	\N	\N	f	t	15	120	f	f	f
+202	4140	9	\N	\N	\N	f	f	-1	125	f	f	f
+205	4135	9	\N	\N	\N	t	f	-1	40	f	f	f
+208	4125	9	\N	\N	\N	t	t	20	150	f	f	f
+253	1222	10	\N	\N	\N	f	t	10	70	f	f	f
+261	1202	10	\N	\N	\N	t	t	3	92	f	f	f
+284	1241	10	\N	\N	\N	f	f	\N	125	f	f	f
+287	1224	10	\N	\N	\N	f	t	14	69	f	f	f
+290	1208	10	\N	\N	\N	t	t	6	125	f	f	f
+1	122	1	\N	\N	\N	f	t	5	70	f	f	f
+2	116	1	\N	\N	\N	f	f	-1	100	f	f	f
+3	115	1	\N	\N	\N	t	f	-1	145	f	f	f
+4	124	1	\N	\N	\N	f	f	-1	69	f	f	f
+5	125	1	\N	\N	\N	f	f	-1	200	f	f	f
+6	127	1	\N	\N	\N	f	f	-1	150	f	f	f
+7	120	1	\N	\N	\N	t	t	2	120	f	f	f
+10	109	1	\N	\N	\N	f	f	-1	125	f	f	f
+13	123	1	\N	\N	\N	f	t	6	120	f	f	f
+14	106	1	\N	\N	\N	f	t	7	56	f	f	f
+15	113	1	\N	\N	\N	f	f	-1	70	f	f	f
+16	104	1	\N	\N	\N	f	f	-1	52	f	f	f
+17	108	1	\N	\N	\N	f	f	-1	125	f	f	f
+18	114	1	\N	\N	\N	f	f	-1	150	f	f	f
+21	126	1	\N	\N	\N	t	f	-1	40	f	f	f
+23	107	1	\N	\N	\N	f	t	9	69	f	f	f
+24	111	1	\N	\N	\N	f	t	11	125	f	f	f
+25	119	1	\N	\N	\N	t	t	8	150	f	f	f
+27	121	1	\N	\N	\N	t	t	4	164	f	f	f
+29	129	1	\N	\N	\N	f	f	\N	200	f	f	f
+30	1109	2	\N	\N	\N	f	t	6	56	f	f	f
+31	1116	2	\N	\N	\N	f	t	14	75	f	f	f
+32	1131	2	\N	\N	\N	f	f	-1	75	f	f	f
+34	1145	2	\N	\N	\N	f	f	-1	69	f	f	f
+35	1112	2	\N	\N	\N	f	t	10	125	f	f	f
+37	1102	2	\N	\N	\N	f	f	-1	92	f	f	f
+38	1137	2	\N	\N	\N	t	f	-1	145	f	f	f
+39	1143	2	\N	\N	\N	f	f	-1	70	f	f	f
+41	1147	2	\N	\N	\N	f	f	-1	100	f	f	f
+42	1134	2	\N	\N	\N	f	f	-1	75	f	f	f
+44	1138	2	\N	\N	\N	f	f	-1	81	f	f	f
+45	1141	2	\N	\N	\N	t	t	5	120	f	f	f
+47	1117	2	\N	\N	\N	f	f	-1	75	f	f	f
+48	1126	2	\N	\N	\N	f	f	-1	75	f	f	f
+49	1115	2	\N	\N	\N	f	t	13	75	f	f	f
+50	1120	2	\N	\N	\N	f	f	-1	75	f	f	f
+51	1133	2	\N	\N	\N	f	f	-1	75	f	f	f
+52	1127	2	\N	\N	\N	f	f	-1	75	f	f	f
+53	1113	2	\N	\N	\N	f	t	11	70	f	f	f
+54	1144	2	\N	\N	\N	f	f	-1	120	f	f	f
+55	1136	2	\N	\N	\N	f	t	2	53	f	f	f
+56	1148	2	\N	\N	\N	f	f	-1	55	f	f	f
+57	1129	2	\N	\N	\N	f	f	-1	75	f	f	f
+58	1149	2	\N	\N	\N	f	f	-1	150	f	f	f
+60	1108	2	\N	\N	\N	f	f	-1	92	f	f	f
+61	1139	2	\N	\N	\N	t	t	3	145	f	f	f
+62	1103	2	\N	\N	\N	t	t	0	92	f	f	f
+64	1107	2	\N	\N	\N	f	f	-1	52	f	f	f
+65	1106	2	\N	\N	\N	f	t	4	77	f	f	f
+66	1101	2	\N	\N	\N	f	f	-1	92	f	f	f
+67	1150	2	\N	\N	\N	t	f	-1	40	f	f	f
+68	1122	2	\N	\N	\N	f	f	-1	75	f	f	f
+69	1114	2	\N	\N	\N	f	t	12	150	f	f	f
+70	1142	2	\N	\N	\N	f	f	-1	76	f	f	f
+73	1130	2	\N	\N	\N	f	f	-1	75	f	f	f
+74	1111	2	\N	\N	\N	t	t	9	125	f	f	f
+76	1132	2	\N	\N	\N	f	f	-1	75	f	f	f
+77	1125	2	\N	\N	\N	f	f	-1	75	f	f	f
+78	1151	2	\N	\N	\N	f	f	-1	150	f	f	f
+80	1118	2	\N	\N	\N	f	f	-1	75	f	f	f
+81	1153	2	\N	\N	\N	f	f	\N	70	f	f	f
+83	1156	2	\N	\N	\N	f	f	\N	120	f	f	f
+85	1158	2	\N	\N	\N	f	f	\N	200	f	f	f
+86	1154	2	\N	\N	\N	f	f	\N	125	f	f	f
+87	1155	2	\N	\N	\N	f	f	\N	125	f	f	f
+96	2101	3	\N	\N	\N	f	t	0	100	f	f	f
+98	2105	3	\N	\N	\N	f	t	5	150	f	f	f
+99	2103	3	\N	\N	\N	f	t	2	92	f	f	f
+100	2107	3	\N	\N	\N	f	t	7	56	f	f	f
+102	2104	3	\N	\N	\N	f	t	4	77	f	f	f
+103	2108	3	\N	\N	\N	f	t	8	255	f	f	f
+105	2110	3	\N	\N	\N	f	t	10	120	f	f	f
+106	2112	3	\N	\N	\N	f	t	12	150	f	f	f
+108	2111	3	\N	\N	\N	f	t	11	70	f	f	f
+109	2114	3	\N	\N	\N	f	f	-1	150	f	f	f
+110	2119	3	\N	\N	\N	f	f	\N	70	f	f	f
+112	2116	3	\N	\N	\N	f	f	-1	55	f	f	f
+113	2117	3	\N	\N	\N	t	t	1	120	f	f	f
+115	2121	3	\N	\N	\N	f	f	\N	69	f	f	f
+116	2122	3	\N	\N	\N	f	f	\N	200	f	f	f
+117	2123	3	\N	\N	\N	f	f	\N	40	f	f	f
+118	2118	3	\N	\N	\N	f	f	\N	150	f	f	f
+125	3107	4	\N	\N	\N	f	t	5	120	f	f	f
+126	3105	4	\N	\N	\N	f	t	3	200	f	f	f
+127	3120	4	\N	\N	\N	f	f	-1	55	f	f	f
+128	3125	4	\N	\N	\N	f	f	-1	200	f	f	f
+130	3127	4	\N	\N	\N	t	t	0	120	f	f	f
+131	3104	4	\N	\N	\N	t	t	2	70	f	f	f
+133	3102	4	\N	\N	\N	f	f	-1	52	f	f	f
+134	3122	4	\N	\N	\N	f	f	-1	40	f	f	f
+136	3123	4	\N	\N	\N	f	f	-1	40	f	f	f
+138	3118	4	\N	\N	\N	f	f	-1	75	f	f	f
+139	3124	4	\N	\N	\N	f	f	-1	100	f	f	f
+140	3117	4	\N	\N	\N	f	f	-1	75	f	f	f
+141	3115	4	\N	\N	\N	f	f	-1	125	f	f	f
+142	3121	4	\N	\N	\N	f	f	-1	125	f	f	f
+144	3112	4	\N	\N	\N	f	f	-1	100	f	f	f
+145	3114	4	\N	\N	\N	f	f	-1	125	f	f	f
+147	3119	4	\N	\N	\N	f	f	-1	75	f	f	f
+148	3108	4	\N	\N	\N	t	t	6	150	f	f	f
+149	3126	4	\N	\N	\N	f	f	-1	70	f	f	f
+151	3111	4	\N	\N	\N	f	f	-1	70	f	f	f
+152	3128	4	\N	\N	\N	f	f	\N	120	f	f	f
+153	3129	4	\N	\N	\N	f	f	\N	70	f	f	f
+155	3202	5	\N	\N	\N	f	t	0	52	f	f	f
+156	3203	5	\N	\N	\N	f	t	1	70	f	f	f
+158	3205	5	\N	\N	\N	f	f	-1	200	f	f	f
+159	3206	5	\N	\N	\N	f	f	-1	120	f	f	f
+161	3208	5	\N	\N	\N	f	t	2	150	f	f	f
+162	3209	5	\N	\N	\N	f	f	-1	120	f	f	f
+164	3211	5	\N	\N	\N	f	f	-1	200	f	f	f
+165	3212	5	\N	\N	\N	f	f	-1	140	f	f	f
+167	3214	5	\N	\N	\N	f	f	-1	50	f	f	f
+168	3215	5	\N	\N	\N	f	f	-1	125	f	f	f
+89	3302	6	\N	\N	\N	f	t	0	52	f	f	f
+90	3303	6	\N	\N	\N	f	t	1	120	f	f	f
+92	3305	6	\N	\N	\N	f	t	3	300	f	f	f
+93	3304	6	\N	\N	\N	f	t	2	92	f	f	f
+119	3401	7	\N	\N	\N	f	f	-1	92	f	f	f
+120	3402	7	\N	\N	\N	f	t	0	52	f	f	f
+121	3403	7	\N	\N	\N	f	t	1	50	f	f	f
+124	3404	7	\N	\N	\N	f	t	2	300	f	f	f
+170	4128	9	\N	\N	\N	f	f	-1	70	f	f	f
+171	4129	9	\N	\N	\N	f	f	-1	120	f	f	f
+172	4114	9	\N	\N	\N	f	t	8	150	f	f	f
+173	4113	9	\N	\N	\N	f	f	-1	70	f	f	f
+174	4120	9	\N	\N	\N	f	t	16	100	f	f	f
+175	4106	9	\N	\N	\N	f	f	-1	77	f	f	f
+176	4127	9	\N	\N	\N	f	t	18	76	f	f	f
+206	4109	9	\N	\N	\N	f	t	9	56	f	f	f
+207	4115	9	\N	\N	\N	f	t	12	76	f	f	f
+209	4117	9	\N	\N	\N	f	t	14	81	f	f	f
+254	1223	10	\N	\N	\N	f	f	\N	120	f	f	f
+255	1233	10	\N	\N	\N	f	f	\N	255	f	f	f
+256	1203	10	\N	\N	\N	t	t	0	77	f	f	f
+257	1214	10	\N	\N	\N	f	t	12	150	f	f	f
+259	1215	10	\N	\N	\N	t	t	1	145	f	f	f
+260	1228	10	\N	\N	\N	f	t	2	70	f	f	f
+262	1242	10	\N	\N	\N	f	f	\N	92	f	f	f
+263	1234	10	\N	\N	\N	f	f	\N	150	f	f	f
+265	1229	10	\N	\N	\N	f	f	\N	125	f	f	f
+266	1231	10	\N	\N	\N	f	f	\N	75	f	f	f
+268	1230	10	\N	\N	\N	f	f	\N	53	f	f	f
+269	1216	10	\N	\N	\N	f	t	16	100	f	f	f
+271	1221	10	\N	\N	\N	t	t	4	164	f	f	f
+272	1205	10	\N	\N	\N	f	f	\N	92	f	f	f
+273	1204	10	\N	\N	\N	f	f	\N	52	f	f	f
+274	1220	10	\N	\N	\N	t	t	5	120	f	f	f
+276	1237	10	\N	\N	\N	f	f	\N	56	f	f	f
+277	1207	10	\N	\N	\N	f	f	\N	69	f	f	f
+278	1210	10	\N	\N	\N	f	f	\N	125	f	f	f
+279	1211	10	\N	\N	\N	f	f	\N	125	f	f	f
+281	1201	10	\N	\N	\N	f	f	\N	92	f	f	f
+282	1235	10	\N	\N	\N	f	t	19	128	f	f	f
+283	1232	10	\N	\N	\N	f	t	21	250	f	f	f
+285	1243	10	\N	\N	\N	f	t	17	120	f	f	f
+286	1236	10	\N	\N	\N	f	t	18	250	f	f	f
+289	1225	10	\N	\N	\N	f	f	\N	200	f	f	f
+291	1209	10	\N	\N	\N	t	t	7	125	f	f	f
+292	1239	10	\N	\N	\N	f	t	9	145	f	f	f
+294	1219	10	\N	\N	\N	f	t	8	150	f	f	f
+295	1206	10	\N	\N	\N	f	f	\N	56	f	f	f
+299	130	1	\N	\N	\N	f	f	\N	255	f	f	f
+300	131	1	\N	\N	\N	f	f	\N	150	f	f	f
+301	132	1	\N	\N	\N	f	f	\N	250	f	f	f
+302	133	1	\N	\N	\N	f	f	\N	46	f	f	f
+303	134	1	\N	\N	\N	f	f	\N	125	f	f	f
+304	1159	2	\N	\N	\N	f	f	\N	250	f	f	f
+305	1160	2	\N	\N	\N	f	f	\N	46	f	f	f
+306	1161	2	\N	\N	\N	f	f	\N	125	f	f	f
+307	4141	9	\N	\N	\N	f	f	-1	250	f	f	f
+308	4142	9	\N	\N	\N	f	f	-1	46	f	f	f
+309	4143	9	\N	\N	\N	f	f	-1	125	f	f	f
+310	1162	2	\N	\N	\N	f	f	\N	75	f	f	f
+311	4144	9	\N	\N	\N	f	f	-1	75	f	f	f
+312	1163	2	\N	\N	\N	f	f	\N	125	f	f	f
+313	1164	2	\N	\N	\N	f	f	\N	75	f	f	f
+314	4145	9	\N	\N	\N	f	f	-1	125	f	f	f
+315	4146	9	\N	\N	\N	f	f	-1	75	f	f	f
+316	1165	2	\N	\N	\N	f	f	\N	255	f	f	f
+317	1166	2	\N	\N	\N	f	f	\N	150	f	f	f
+318	4147	9	\N	\N	\N	f	f	-1	200	f	f	f
+319	4148	9	\N	\N	\N	f	f	-1	200	f	f	f
+320	4149	9	\N	\N	\N	f	f	-1	255	f	f	f
+321	4150	9	\N	\N	\N	f	f	-1	150	f	f	f
+322	135	1	\N	\N	\N	f	f	\N	120	f	f	f
+323	2124	3	\N	\N	\N	f	f	\N	200	f	f	f
+324	2125	3	\N	\N	\N	f	f	\N	200	f	f	f
+325	4201	11	\N	\N	\N	f	f	-1	92	f	f	f
+326	4202	11	\N	\N	\N	f	f	-1	92	f	f	f
+327	4203	11	\N	\N	\N	f	f	-1	92	f	f	f
+328	4204	11	\N	\N	\N	f	f	-1	53	f	f	f
+329	4205	11	\N	\N	\N	f	f	-1	125	f	f	f
+330	4206	11	\N	\N	\N	t	f	-1	77	f	f	f
+331	4207	11	\N	\N	\N	f	f	-1	52	f	f	f
+332	4208	11	\N	\N	\N	f	t	1	92	f	f	f
+333	4209	11	\N	\N	\N	f	f	-1	56	f	f	f
+334	4210	11	\N	\N	\N	f	f	-1	120	f	f	f
+335	4211	11	asc	5	\N	f	t	9	125	f	f	f
+336	4212	11	asc	6	\N	f	t	10	125	f	f	f
+337	4213	11	\N	\N	\N	f	f	-1	70	f	f	f
+338	4214	11	asc	4	\N	f	t	7	150	f	f	f
+339	4215	11	\N	\N	\N	f	t	11	76	f	f	f
+440	4216	11	\N	\N	\N	f	t	12	40	f	f	f
+441	4217	11	\N	\N	\N	f	t	13	81	f	f	f
+442	4218	11	\N	\N	\N	f	t	14	120	f	f	f
+443	4219	11	\N	\N	\N	f	t	16	141	f	f	f
+444	4220	11	\N	\N	\N	f	t	15	75	f	f	f
+445	4221	11	\N	\N	\N	f	f	-1	53	f	f	f
+446	4222	11	asc	7	\N	f	t	8	145	f	f	f
+447	4223	11	\N	\N	\N	f	f	-1	84	f	f	f
+448	4224	11	\N	\N	\N	t	f	-1	145	f	f	f
+449	4225	11	\N	\N	\N	f	f	-1	150	f	f	f
+450	4226	11	\N	\N	\N	t	f	-1	120	f	f	f
+452	4228	11	\N	\N	\N	t	f	-1	70	f	f	f
+453	4229	11	asc	0	\N	f	t	0	120	f	f	f
+454	4230	11	asc	1	\N	t	t	3	69	f	f	f
+455	4231	11	\N	\N	\N	f	t	4	200	f	f	f
+456	4232	11	asc	3	\N	f	t	6	200	f	f	f
+457	4233	11	\N	\N	\N	t	f	-1	40	f	f	f
+458	4234	11	\N	\N	\N	f	f	-1	150	f	f	f
+459	4235	11	\N	\N	\N	t	t	2	154	f	f	f
+460	4236	11	\N	\N	\N	f	f	-1	70	f	f	f
+461	4237	11	\N	\N	\N	f	f	-1	125	f	f	f
+462	4238	11	\N	\N	\N	f	f	-1	125	f	f	f
+463	4239	11	asc	2	\N	f	t	5	75	f	f	f
+464	4240	11	\N	\N	\N	f	f	-1	125	f	f	f
+465	4241	11	\N	\N	\N	f	f	-1	75	f	f	f
+466	4242	11	\N	\N	\N	f	f	-1	200	f	f	f
+467	4243	11	\N	\N	\N	f	f	-1	200	f	f	f
+468	4244	11	\N	\N	\N	f	t	27	150	f	f	f
+469	4245	11	\N	\N	\N	t	f	-1	125	f	f	f
+470	4246	11	\N	\N	\N	f	t	20	40	f	f	f
+471	4247	11	\N	\N	\N	f	t	21	55	f	f	f
+472	4248	11	\N	\N	\N	f	t	19	220	f	f	f
+473	4249	11	\N	\N	\N	f	t	17	220	f	f	f
+474	4250	11	\N	\N	\N	f	t	18	220	f	f	f
+475	136	1	\N	\N	\N	f	f	\N	80	f	f	f
+476	1167	2	\N	\N	\N	f	f	\N	80	f	f	f
+477	1168	2	\N	\N	\N	f	f	\N	100	f	f	f
+478	4151	9	\N	\N	\N	f	f	-1	80	f	f	f
+479	138	1	\N	\N	\N	f	f	\N	70	f	f	f
+480	139	1	\N	\N	\N	f	f	\N	70	f	f	f
+481	140	1	\N	\N	\N	f	f	\N	80	f	f	f
+482	137	1	\N	\N	\N	f	f	\N	100	f	f	f
+483	4152	9	\N	\N	\N	f	f	-1	100	f	f	f
+484	1172	2	\N	\N	\N	f	f	-1	50	f	f	f
+485	4156	9	\N	\N	\N	f	t	19	81	f	f	f
+486	4157	9	\N	\N	\N	f	t	7	120	f	f	f
+487	1169	2	\N	\N	\N	f	f	\N	70	f	f	f
+488	1170	2	\N	\N	\N	f	f	\N	70	f	f	f
+489	1171	2	\N	\N	\N	f	f	\N	80	f	f	f
+490	4153	9	\N	\N	\N	f	f	-1	70	f	f	f
+491	4154	9	\N	\N	\N	f	f	-1	70	f	f	f
+492	4155	9	\N	\N	\N	f	f	-1	80	f	f	f
+493	1245	10	\N	\N	\N	f	f	\N	70	f	f	f
+494	1246	10	\N	\N	\N	f	f	\N	70	f	f	f
+495	1247	10	\N	\N	\N	f	f	\N	80	f	f	f
+496	1248	10	\N	\N	\N	f	f	\N	70	f	f	f
+497	1249	10	\N	\N	\N	f	f	\N	81	f	f	f
+498	1250	10	\N	\N	\N	f	f	\N	125	f	f	f
+499	1251	10	\N	\N	\N	f	f	\N	100	f	f	f
+500	1252	10	\N	\N	\N	f	f	\N	100	f	f	f
+501	1253	10	\N	\N	\N	f	f	\N	125	f	f	f
+502	1254	10	\N	\N	\N	f	f	\N	100	f	f	f
+503	1255	10	\N	\N	\N	f	f	\N	200	f	f	f
+504	1256	10	\N	\N	\N	f	f	\N	200	f	f	f
+505	1257	10	\N	\N	\N	f	f	\N	200	f	f	f
+506	1258	10	\N	\N	\N	f	f	\N	200	f	f	f
+507	1259	10	\N	\N	\N	f	f	\N	150	f	f	f
+508	1260	10	\N	\N	\N	f	f	\N	150	f	f	f
+509	1261	10	\N	\N	\N	f	f	\N	200	f	f	f
+510	4251	11	\N	\N	\N	t	f	\N	200	f	f	f
+511	3501	12	\N	\N	\N	f	t	0	50	f	f	f
+512	3502	12	asc	\N	\N	t	t	1	90	f	f	f
+513	3503	12	\N	\N	\N	f	t	2	120	f	f	f
+514	3504	12	\N	\N	\N	f	t	3	90	f	f	f
+515	3505	12	\N	\N	\N	f	t	4	90	f	f	f
+516	3506	12	\N	\N	\N	f	t	5	90	f	f	f
+517	3507	12	\N	\N	\N	f	t	6	110	f	f	f
+518	1173	2	\N	\N	\N	f	f	\N	80	f	f	f
+519	4252	11	\N	\N	\N	f	t	23	100	f	f	f
+521	3601	13	\N	\N	\N	f	t	0	50	f	f	f
+522	3602	13	asc	\N	\N	t	t	1	100	f	f	f
+523	3603	13	\N	\N	\N	f	t	2	350	f	f	f
+524	3604	13	\N	\N	\N	f	t	3	100	f	f	f
+525	3605	13	\N	\N	\N	f	f	\N	100	f	f	f
+526	141	1	\N	\N	\N	t	f	\N	200	f	f	f
+527	3701	14	asc	\N	\N	f	t	0	50	f	f	f
+528	3702	14	\N	\N	\N	t	t	1	250	f	f	f
+529	3703	14	\N	\N	\N	f	f	\N	250	f	f	f
+530	142	1	\N	\N	\N	f	f	\N	125	f	f	f
+531	3801	15	asc	\N	\N	t	t	0	80	f	f	f
+532	3802	15	\N	\N	\N	t	t	1	180	f	f	f
+533	3803	15	\N	\N	\N	f	f	\N	80	f	f	f
+534	3804	15	\N	\N	\N	t	t	3	280	f	f	f
+535	3805	15	\N	\N	\N	f	t	4	80	f	f	f
+536	3806	15	\N	\N	\N	f	t	5	80	f	f	f
+537	3807	15	\N	\N	\N	t	t	2	125	f	f	f
+538	3901	16	asc	\N	\N	t	t	0	80	f	f	f
+539	3902	16	\N	\N	\N	t	t	1	450	f	f	f
+540	3903	16	\N	\N	\N	f	t	2	150	f	f	f
+541	3904	16	\N	\N	\N	f	t	3	150	f	f	f
+542	3905	16	\N	\N	\N	f	f	\N	200	f	f	f
+543	5101	17	asc	\N	\N	t	t	0	70	f	f	f
+544	5102	17	\N	\N	\N	t	t	1	200	f	f	f
+545	5103	17	\N	\N	\N	f	t	2	40	f	f	f
+546	5104	17	\N	\N	\N	f	t	3	200	f	f	f
+547	5105	17	\N	\N	\N	f	t	4	40	f	f	f
+548	5106	17	\N	\N	\N	f	t	5	200	f	f	f
+549	5107	17	\N	\N	\N	f	t	6	40	f	f	f
+550	5108	17	\N	\N	\N	f	t	7	200	f	f	f
+551	5109	17	\N	\N	\N	f	t	8	40	f	f	f
+552	5110	17	\N	\N	\N	f	t	9	200	f	f	f
+553	5111	17	\N	\N	\N	f	t	10	40	f	f	f
+554	5112	17	\N	\N	\N	f	t	11	200	f	f	f
+555	5113	17	\N	\N	\N	f	t	12	40	f	f	f
+556	5114	17	\N	\N	\N	f	t	13	200	f	f	f
+557	5115	17	\N	\N	\N	f	t	14	40	f	f	f
+558	5116	17	\N	\N	\N	f	t	15	200	f	f	f
+559	5117	17	\N	\N	\N	f	t	16	40	f	f	f
+560	5118	17	\N	\N	\N	f	t	17	200	f	f	f
+561	5119	17	\N	\N	\N	f	t	18	40	f	f	f
+562	5120	17	\N	\N	\N	f	t	19	200	f	f	f
+563	5121	17	\N	\N	\N	f	t	20	40	f	f	f
+564	5122	17	\N	\N	\N	f	t	21	200	f	f	f
+565	5123	17	\N	\N	\N	f	t	22	40	f	f	f
+566	5124	17	\N	\N	\N	f	t	23	200	f	f	f
+567	5125	17	\N	\N	\N	f	t	24	40	f	f	f
+568	5126	17	\N	\N	\N	f	t	25	200	f	f	f
+569	5201	18	\N	\N	\N	f	f	\N	70	f	f	f
+570	5202	18	asc	0	\N	t	t	3	60	f	f	f
+571	5203	18	asc	4	\N	t	t	4	60	f	t	f
+572	5204	18	\N	\N	\N	t	t	5	400	f	f	f
+573	5205	18	\N	\N	\N	f	f	\N	170	f	f	f
+574	5206	18	\N	\N	\N	f	f	\N	100	f	f	f
+575	5207	18	asc	1	\N	f	t	0	120	f	f	f
+576	5208	18	asc	2	\N	f	t	1	100	f	t	f
+577	5209	18	\N	\N	\N	t	t	2	200	f	f	f
+578	5301	19	asc	\N	\N	t	t	0	100	f	f	f
+579	5302	19	\N	\N	\N	t	t	1	200	f	f	f
+580	5303	19	\N	\N	\N	f	t	2	100	f	f	f
+581	5304	19	\N	\N	\N	t	t	3	100	f	f	f
+582	5305	19	\N	\N	\N	t	t	4	100	f	f	f
+583	5306	19	\N	\N	\N	t	t	5	100	f	f	f
+584	5307	19	\N	\N	\N	t	t	6	100	f	f	f
+586	5309	19	\N	\N	\N	f	t	8	100	f	f	f
+587	5310	19	\N	\N	\N	f	t	9	100	f	f	f
+588	5311	19	\N	\N	\N	f	t	10	100	f	f	f
+589	5312	19	\N	\N	\N	f	t	11	100	f	f	f
+590	5313	19	\N	\N	\N	f	t	12	100	f	f	f
+591	5314	19	\N	\N	\N	f	t	13	100	f	f	f
+592	4253	11	asc	8	\N	f	t	26	100	f	f	f
+593	4254	11	\N	\N	\N	f	t	25	100	f	f	f
+594	4255	11	\N	\N	\N	f	t	24	80	f	f	f
+595	4256	11	\N	\N	\N	f	t	22	80	f	f	f
+596	1244	10	\N	\N	\N	f	f	\N	75	f	f	f
+597	5401	20	\N	\N	\N	f	t	0	80	f	f	f
+598	5402	20	asc	\N	\N	t	t	1	120	f	f	f
+599	5403	20	\N	\N	\N	t	t	2	400	f	f	f
+600	5501	21	asc	\N	\N	f	t	0	70	f	f	f
+601	5502	21	\N	\N	\N	f	t	1	70	f	f	f
+602	5503	21	\N	\N	\N	t	t	2	200	f	f	f
+603	5510	21	\N	\N	\N	f	t	9	120	f	f	f
+604	5505	21	\N	\N	\N	f	t	4	70	f	f	f
+605	5506	21	\N	\N	\N	f	t	5	70	f	f	f
+606	5507	21	\N	\N	\N	f	t	6	150	f	f	f
+607	5508	21	\N	\N	\N	f	t	7	100	f	f	f
+608	5509	21	\N	\N	\N	f	t	8	100	f	f	f
+609	5601	22	asc	\N	\N	t	t	0	120	f	f	f
+610	5602	22	\N	\N	\N	t	t	1	400	f	f	f
+611	143	1	\N	\N	\N	f	f	\N	80	f	f	f
+612	144	1	\N	\N	\N	f	f	\N	120	f	f	f
+613	145	1	\N	\N	\N	f	f	\N	125	f	f	f
+614	1174	2	\N	\N	\N	f	f	\N	80	f	f	f
+615	1175	2	\N	\N	\N	f	f	\N	120	f	f	f
+616	1176	2	\N	\N	\N	f	f	\N	125	f	f	f
+617	4158	9	\N	\N	\N	f	f	\N	80	f	f	f
+618	4159	9	\N	\N	\N	f	f	\N	120	f	f	f
+619	4160	9	\N	\N	\N	f	f	\N	125	f	f	f
+620	2126	3	\N	\N	\N	f	f	\N	120	f	f	f
+621	1177	2	\N	\N	\N	t	f	\N	200	f	f	f
+622	4161	9	\N	\N	\N	t	f	\N	200	f	f	f
+807	2127	3	\N	\N	\N	f	f	\N	200	f	f	f
+808	2128	3	\N	\N	\N	f	f	\N	200	f	f	f
+809	1262	10	\N	\N	\N	f	f	\N	200	f	f	f
+810	1401	27	\N	\N	\N	f	t	0	120	f	f	f
+811	1402	27	\N	\N	\N	t	t	1	160	f	f	f
+812	1403	27	\N	\N	\N	f	f	\N	200	f	f	f
+813	1404	27	\N	\N	\N	t	f	\N	200	f	f	f
+814	1405	27	\N	\N	\N	f	t	2	80	f	f	f
+815	1406	27	\N	\N	\N	f	t	3	100	f	f	f
+816	1407	27	\N	\N	\N	t	f	\N	80	f	f	f
+817	1408	27	\N	\N	\N	f	t	4	100	f	f	f
+818	1409	27	\N	\N	\N	f	t	5	100	f	f	f
+819	1410	27	\N	\N	\N	t	t	6	150	f	f	f
+820	1411	27	\N	\N	\N	t	t	7	150	f	f	f
+821	1412	27	\N	\N	\N	t	t	8	100	f	f	f
+822	1413	27	\N	\N	\N	f	t	9	260	f	f	f
+823	1414	27	\N	\N	\N	f	t	10	80	f	f	f
+824	1415	27	\N	\N	\N	f	t	11	200	f	f	f
+825	1416	27	\N	\N	\N	f	t	12	100	f	f	f
+826	1417	27	\N	\N	\N	f	t	13	80	f	f	f
+827	1418	27	\N	\N	\N	t	f	\N	200	f	f	f
+844	1501	31	\N	\N	\N	f	f	\N	92	f	f	f
+845	1502	31	\N	\N	\N	f	f	\N	92	f	f	f
+846	1503	31	\N	\N	\N	t	f	\N	92	f	f	f
+847	1504	31	\N	\N	\N	t	f	\N	54	f	f	f
+848	1505	31	\N	\N	\N	f	f	\N	125	f	f	f
+849	1506	31	\N	\N	\N	t	f	\N	77	f	f	f
+850	1507	31	\N	\N	\N	f	f	\N	52	f	f	f
+851	1508	31	\N	\N	\N	f	f	\N	92	f	f	f
+852	1509	31	\N	\N	\N	f	t	2	56	f	f	f
+853	1510	31	\N	\N	\N	f	f	\N	69	f	f	f
+854	1511	31	\N	\N	\N	t	f	\N	125	f	f	f
+855	1512	31	\N	\N	\N	f	f	\N	125	f	f	f
+856	1513	31	\N	\N	\N	f	f	\N	70	f	f	f
+857	1514	31	\N	\N	\N	f	f	\N	150	f	f	f
+858	1515	31	\N	\N	\N	f	f	\N	75	f	f	f
+859	1516	31	\N	\N	\N	f	f	\N	75	f	f	f
+860	1517	31	\N	\N	\N	f	f	\N	75	f	f	f
+861	1518	31	\N	\N	\N	f	f	\N	75	f	f	f
+862	1519	31	\N	\N	\N	f	f	\N	75	f	f	f
+863	1520	31	\N	\N	\N	f	f	\N	75	f	f	f
+864	1521	31	\N	\N	\N	f	f	\N	75	f	f	f
+865	1522	31	\N	\N	\N	f	f	\N	75	f	f	f
+866	1523	31	\N	\N	\N	f	f	\N	75	f	f	f
+867	1524	31	\N	\N	\N	f	f	\N	75	f	f	f
+868	1525	31	\N	\N	\N	f	f	\N	75	f	f	f
+869	1526	31	\N	\N	\N	f	f	\N	75	f	f	f
+870	1527	31	\N	\N	\N	f	f	\N	75	f	f	f
+871	1528	31	\N	\N	\N	f	f	\N	75	f	f	f
+872	1529	31	\N	\N	\N	f	f	\N	75	f	f	f
+873	1530	31	\N	\N	\N	f	f	\N	75	f	f	f
+874	1531	31	\N	\N	\N	f	f	\N	75	f	f	f
+875	1532	31	\N	\N	\N	f	f	\N	75	f	f	f
+876	1533	31	\N	\N	\N	f	f	\N	75	f	f	f
+877	1534	31	\N	\N	\N	f	f	\N	75	f	f	f
+878	1535	31	\N	\N	\N	f	f	\N	75	f	f	f
+879	1536	31	\N	\N	\N	f	f	\N	53	f	f	f
+880	1537	31	\N	\N	\N	t	t	0	145	f	f	f
+881	1538	31	\N	\N	\N	f	t	1	81	f	f	f
+882	1539	31	\N	\N	\N	t	f	\N	145	f	f	f
+883	1540	31	\N	\N	\N	t	t	3	150	f	f	f
+884	1541	31	\N	\N	\N	t	f	\N	120	f	f	f
+885	1542	31	\N	\N	\N	f	f	\N	76	f	f	f
+886	1543	31	\N	\N	\N	f	f	\N	100	f	f	f
+887	1544	31	\N	\N	\N	f	f	\N	55	f	f	f
+888	1545	31	\N	\N	\N	f	f	\N	150	f	f	f
+889	1546	31	\N	\N	\N	t	f	\N	40	f	f	f
+890	1547	31	\N	\N	\N	f	f	\N	150	f	f	f
+891	1548	31	\N	\N	\N	f	f	\N	70	f	f	f
+892	1549	31	\N	\N	\N	f	f	\N	164	f	f	f
+893	1550	31	\N	\N	\N	f	f	\N	125	f	f	f
+894	1551	31	\N	\N	\N	f	f	\N	125	f	f	f
+895	1552	31	\N	\N	\N	f	f	\N	120	f	f	f
+896	1553	31	\N	\N	\N	f	f	\N	200	f	f	f
+897	1554	31	\N	\N	\N	f	f	\N	200	f	f	f
+898	1555	31	\N	\N	\N	f	t	10	180	f	f	f
+899	1556	31	\N	\N	\N	f	f	\N	125	f	f	f
+900	1557	31	\N	\N	\N	f	f	\N	75	f	f	f
+901	1558	31	\N	\N	D: %	t	t	4	255	f	f	f
+902	1559	31	\N	\N	\N	f	f	\N	150	f	f	f
+903	1560	31	\N	\N	\N	f	f	\N	80	f	f	f
+904	1561	31	\N	\N	\N	f	f	\N	100	f	f	f
+905	1562	31	\N	\N	\N	f	f	\N	70	f	f	f
+906	1563	31	\N	\N	\N	f	f	\N	70	f	f	f
+907	1564	31	\N	\N	\N	f	f	\N	80	f	f	f
+908	1565	31	\N	\N	\N	f	f	\N	50	f	f	f
+909	1566	31	\N	\N	\N	f	f	\N	80	f	f	f
+910	1567	31	\N	\N	\N	f	f	\N	120	f	f	f
+911	1568	31	\N	\N	\N	f	f	\N	125	f	f	f
+912	1569	31	\N	\N	\N	t	f	\N	200	f	f	f
+913	1570	31	\N	\N	\N	f	f	\N	200	f	f	f
+914	1571	31	\N	\N	\N	f	f	\N	200	f	f	f
+915	1572	31	\N	\N	\N	f	t	5	200	f	f	f
+916	1573	31	\N	\N	\N	f	t	6	200	f	f	f
+917	1574	31	\N	\N	\N	f	t	7	200	f	f	f
+918	1575	31	\N	\N	\N	f	t	8	200	f	f	f
+919	1576	31	\N	\N	\N	f	t	9	200	f	f	f
+920	2129	3	\N	\N	\N	f	f	\N	250	f	f	f
+921	2130	3	\N	\N	\N	f	f	\N	80	f	f	f
+922	2131	3	\N	\N	\N	f	f	\N	125	f	f	f
+923	1263	10	\N	\N	\N	t	f	\N	200	f	f	f
+924	6001	32	\N	\N	\N	f	t	0	100	f	f	f
+925	6002	32	\N	\N	\N	t	t	1	250	f	f	f
+926	6003	32	\N	\N	\N	f	t	2	150	f	f	f
+927	6004	32	\N	\N	\N	f	t	3	100	f	f	f
+928	6101	33	asc	\N	\N	f	t	0	100	f	f	f
+929	6102	33	\N	\N	\N	f	t	1	150	f	f	f
+930	6103	33	\N	\N	\N	t	t	2	250	f	f	f
+931	6104	33	\N	\N	\N	f	t	3	100	f	f	f
+932	6105	33	\N	\N	\N	f	t	4	100	f	f	f
+933	6201	34	\N	\N	\N	f	t	0	70	f	f	f
+934	6202	34	asc	\N	\N	f	t	1	150	f	f	f
+935	6203	34	\N	\N	\N	t	t	2	550	f	f	f
+937	4301	35	\N	\N	\N	f	f	-1	92	f	f	f
+938	4302	35	\N	\N	\N	f	f	-1	92	f	f	f
+939	4303	35	\N	\N	\N	t	t	2	92	f	f	f
+940	4304	35	\N	\N	\N	f	t	3	53	f	f	f
+941	4305	35	\N	\N	\N	f	f	-1	125	f	f	f
+942	4306	35	\N	\N	\N	f	f	-1	77	f	f	f
+943	4307	35	\N	\N	\N	f	f	-1	52	f	f	f
+944	4308	35	\N	\N	\N	f	f	-1	92	f	f	f
+945	4309	35	\N	\N	\N	f	t	9	56	f	f	f
+946	4310	35	\N	\N	\N	f	f	-1	69	f	f	f
+947	4311	35	\N	\N	\N	t	t	5	125	f	f	f
+948	4312	35	\N	\N	\N	f	t	6	125	f	f	f
+949	4313	35	\N	\N	\N	f	f	-1	70	f	f	f
+950	4314	35	\N	\N	\N	f	t	8	150	f	f	f
+951	4315	35	\N	\N	\N	f	t	12	76	f	f	f
+952	4316	35	\N	\N	\N	f	t	13	40	f	f	f
+953	4317	35	\N	\N	\N	f	t	14	81	f	f	f
+954	4318	35	\N	\N	\N	f	t	15	120	f	f	f
+955	4319	35	\N	\N	\N	f	t	17	141	f	f	f
+956	4320	35	\N	\N	\N	f	t	16	100	f	f	f
+957	4321	35	\N	\N	\N	f	t	11	53	f	f	f
+958	4322	35	\N	\N	\N	t	t	0	145	f	f	f
+959	4323	35	\N	\N	\N	f	t	1	84	f	f	f
+960	4324	35	\N	\N	\N	t	t	10	145	f	f	f
+961	4325	35	\N	\N	\N	t	t	20	150	f	f	f
+962	4326	35	\N	\N	\N	t	f	-1	120	f	f	f
+963	4327	35	\N	\N	\N	f	t	18	76	f	f	f
+964	4328	35	\N	\N	\N	f	f	-1	70	f	f	f
+965	4329	35	\N	\N	\N	f	f	-1	120	f	f	f
+966	4330	35	\N	\N	\N	f	f	-1	69	f	f	f
+967	4331	35	\N	\N	\N	f	f	-1	200	f	f	f
+968	4332	35	\N	\N	\N	f	f	-1	100	f	f	f
+969	4333	35	\N	\N	\N	f	f	-1	55	f	f	f
+970	4334	35	\N	\N	\N	f	f	-1	150	f	f	f
+971	4335	35	\N	\N	\N	t	f	-1	40	f	f	f
+972	4336	35	\N	\N	\N	f	f	-1	150	f	f	f
+973	4337	35	\N	\N	\N	f	t	4	154	f	f	f
+974	4338	35	\N	\N	\N	f	f	-1	70	f	f	f
+975	4339	35	\N	\N	\N	f	f	-1	125	f	f	f
+976	4340	35	\N	\N	\N	f	f	-1	125	f	f	f
+977	4341	35	\N	\N	\N	f	f	-1	250	f	f	f
+978	4342	35	\N	\N	\N	f	f	-1	46	f	f	f
+979	4343	35	\N	\N	\N	f	f	-1	125	f	f	f
+980	4344	35	\N	\N	\N	f	f	-1	75	f	f	f
+981	4345	35	\N	\N	\N	f	f	-1	125	f	f	f
+982	4346	35	\N	\N	\N	f	f	-1	75	f	f	f
+983	4347	35	\N	\N	\N	f	f	-1	200	f	f	f
+984	4348	35	\N	\N	\N	f	f	-1	200	f	f	f
+985	4349	35	\N	\N	\N	f	f	-1	255	f	f	f
+986	4350	35	\N	\N	\N	f	f	-1	150	f	f	f
+987	4351	35	\N	\N	\N	f	f	-1	80	f	f	f
+988	4352	35	\N	\N	\N	f	f	-1	100	f	f	f
+989	4353	35	\N	\N	\N	f	f	-1	70	f	f	f
+990	4354	35	\N	\N	\N	f	f	-1	70	f	f	f
+991	4355	35	\N	\N	\N	f	f	-1	80	f	f	f
+992	4356	35	\N	\N	\N	f	t	19	81	f	f	f
+993	4357	35	\N	\N	\N	f	t	7	120	f	f	f
+994	4358	35	\N	\N	\N	f	f	\N	80	f	f	f
+995	4359	35	\N	\N	\N	f	f	\N	120	f	f	f
+996	4360	35	\N	\N	\N	f	f	\N	125	f	f	f
+997	4361	35	\N	\N	\N	t	f	\N	200	f	f	f
+998	4362	35	\N	\N	\N	f	f	\N	180	f	f	f
+999	1601	36	\N	\N	\N	f	f	-1	92	f	f	f
+1000	1602	36	\N	\N	\N	f	f	-1	92	f	f	f
+1001	1603	36	\N	\N	\N	t	t	0	92	f	f	f
+1002	1604	36	\N	\N	\N	t	t	1	54	f	f	f
+1003	1605	36	\N	\N	\N	f	f	-1	125	f	f	f
+1004	1606	36	\N	\N	\N	f	t	4	77	f	f	f
+1005	1607	36	\N	\N	\N	f	f	-1	52	f	f	f
+1006	1608	36	\N	\N	\N	f	f	-1	92	f	f	f
+1007	1609	36	\N	\N	\N	f	t	6	56	f	f	f
+1008	1610	36	\N	\N	\N	f	t	8	69	f	f	f
+1009	1611	36	\N	\N	\N	t	t	9	125	f	f	f
+1010	1612	36	\N	\N	\N	f	t	10	125	f	f	f
+1011	1613	36	\N	\N	\N	f	t	11	70	f	f	f
+1012	1614	36	\N	\N	\N	f	t	12	150	f	f	f
+1013	1615	36	\N	\N	\N	f	t	13	75	f	f	f
+1014	1616	36	\N	\N	\N	f	t	14	75	f	f	f
+1015	1617	36	\N	\N	\N	f	f	-1	75	f	f	f
+1016	1618	36	\N	\N	\N	f	f	-1	75	f	f	f
+1017	1619	36	\N	\N	\N	f	f	-1	75	f	f	f
+1018	1620	36	\N	\N	\N	f	f	-1	75	f	f	f
+1019	1621	36	\N	\N	\N	f	f	-1	75	f	f	f
+1020	1622	36	\N	\N	\N	f	f	-1	75	f	f	f
+1021	1623	36	\N	\N	\N	f	f	-1	75	f	f	f
+1022	1624	36	\N	\N	\N	f	f	-1	75	f	f	f
+1023	1625	36	\N	\N	\N	f	f	-1	75	f	f	f
+1024	1626	36	\N	\N	\N	f	f	-1	75	f	f	f
+1025	1627	36	\N	\N	\N	f	f	-1	75	f	f	f
+1026	1628	36	\N	\N	\N	f	f	-1	75	f	f	f
+1027	1629	36	\N	\N	\N	f	f	-1	75	f	f	f
+1028	1630	36	\N	\N	\N	f	f	-1	75	f	f	f
+1029	1631	36	\N	\N	\N	f	f	-1	75	f	f	f
+1030	1632	36	\N	\N	\N	f	f	-1	75	f	f	f
+1031	1633	36	\N	\N	\N	f	f	-1	75	f	f	f
+1032	1634	36	\N	\N	\N	f	f	-1	75	f	f	f
+1033	1635	36	\N	\N	\N	f	f	-1	75	f	f	f
+1034	1636	36	\N	\N	\N	f	t	2	53	f	f	f
+1035	1637	36	\N	\N	\N	t	f	-1	145	f	f	f
+1036	1638	36	\N	\N	\N	f	f	-1	81	f	f	f
+1037	1639	36	\N	\N	\N	t	t	3	145	f	f	f
+1038	1640	36	\N	\N	\N	t	t	7	150	f	f	f
+1039	1641	36	\N	\N	\N	t	t	5	120	f	f	f
+1040	1642	36	\N	\N	\N	f	f	-1	76	f	f	f
+1041	1643	36	\N	\N	\N	f	f	-1	70	f	f	f
+1042	1644	36	\N	\N	\N	f	f	-1	120	f	f	f
+1043	1645	36	\N	\N	\N	f	f	-1	69	f	f	f
+1044	1646	36	\N	\N	\N	f	f	-1	200	f	f	f
+1045	1647	36	\N	\N	\N	f	f	-1	100	f	f	f
+1046	1648	36	\N	\N	\N	f	f	-1	55	f	f	f
+1047	1649	36	\N	\N	\N	f	f	-1	150	f	f	f
+1048	1650	36	\N	\N	\N	t	f	-1	40	f	f	f
+1049	1651	36	\N	\N	\N	f	f	-1	150	f	f	f
+1050	1652	36	\N	\N	\N	f	f	-1	164	f	f	f
+1051	1653	36	\N	\N	\N	f	f	\N	70	f	f	f
+1052	1654	36	\N	\N	\N	f	f	\N	125	f	f	f
+1053	1655	36	\N	\N	\N	f	f	\N	125	f	f	f
+1054	1656	36	\N	\N	\N	f	f	\N	120	f	f	f
+1055	1657	36	\N	\N	\N	f	f	\N	200	f	f	f
+1056	1658	36	\N	\N	\N	f	f	\N	200	f	f	f
+1057	1659	36	\N	\N	\N	f	f	\N	250	f	f	f
+1058	1660	36	\N	\N	\N	f	f	\N	46	f	f	f
+1059	1661	36	\N	\N	\N	f	f	\N	125	f	f	f
+1060	1662	36	\N	\N	\N	f	f	\N	75	f	f	f
+1061	1663	36	\N	\N	\N	f	f	\N	125	f	f	f
+1062	1664	36	\N	\N	\N	f	f	\N	75	f	f	f
+1063	1665	36	\N	\N	\N	f	f	\N	255	f	f	f
+1064	1666	36	\N	\N	\N	f	f	\N	150	f	f	f
+1065	1667	36	\N	\N	\N	f	f	\N	80	f	f	f
+1066	1668	36	\N	\N	\N	f	f	\N	100	f	f	f
+1067	1669	36	\N	\N	\N	f	f	\N	70	f	f	f
+1068	1670	36	\N	\N	\N	f	f	\N	70	f	f	f
+1069	1671	36	\N	\N	\N	f	f	\N	80	f	f	f
+1070	1672	36	\N	\N	\N	f	f	-1	50	f	f	f
+1071	1673	36	\N	\N	\N	f	f	\N	80	f	f	f
+1072	1674	36	\N	\N	\N	f	f	\N	80	f	f	f
+1073	1675	36	\N	\N	\N	f	f	\N	120	f	f	f
+1074	1676	36	\N	\N	\N	f	f	\N	125	f	f	f
+1075	1677	36	\N	\N	\N	t	f	\N	200	f	f	f
+1076	1678	36	\N	\N	\N	f	t	15	250	f	f	f
+1077	4363	35	\N	\N	\N	f	f	\N	180	f	f	f
+1078	4364	35	\N	\N	\N	f	f	\N	180	f	f	f
+1079	4162	9	\N	\N	\N	f	f	\N	100	f	f	f
+1080	4257	11	\N	\N	\N	f	f	-1	100	f	f	f
+1081	4365	35	\N	\N	\N	f	f	-1	100	f	f	f
+1082	2132	3	\N	\N	\N	f	f	\N	110	f	f	f
+1083	2133	3	\N	\N	\N	f	f	\N	110	f	f	f
+1085	2134	3	\N	\N	\N	f	f	\N	80	f	f	f
+1086	3906	16	\N	\N	\N	f	t	4	100	f	f	f
+1087	3907	16	\N	\N	\N	t	t	5	300	f	f	f
+1088	3130	4	\N	\N	\N	f	f	\N	70	f	f	f
+1089	3131	4	\N	\N	\N	f	f	\N	200	f	f	f
+1090	146	1	\N	\N	\N	f	f	\N	80	f	f	f
+1091	147	1	\N	\N	\N	f	f	\N	100	f	f	f
+1092	3132	4	\N	\N	\N	f	t	7	76	f	f	f
+1093	2135	3	\N	\N	\N	f	f	\N	80	f	f	f
+1094	1178	2	\N	\N	\N	f	f	\N	80	f	f	f
+1095	1179	2	\N	\N	\N	f	f	\N	100	f	f	f
+1096	1577	31	\N	\N	\N	f	f	\N	80	f	f	f
+1097	1578	31	\N	\N	\N	f	f	\N	100	f	f	f
+1098	1679	36	\N	\N	\N	f	f	\N	80	f	f	f
+1099	1680	36	\N	\N	\N	f	f	\N	100	f	f	f
+1100	4163	9	\N	\N	\N	f	f	\N	80	f	f	f
+1101	4164	9	\N	\N	\N	f	f	\N	100	f	f	f
+1102	4366	35	\N	\N	\N	f	f	\N	80	f	f	f
+1103	4367	35	\N	\N	\N	f	f	\N	100	f	f	f
+1104	2136	3	\N	\N	\N	f	f	\N	80	f	f	f
+1105	2137	3	\N	\N	\N	f	f	\N	100	f	f	f
+1106	2138	3	\N	\N	\N	f	f	\N	80	f	f	f
+1107	2139	3	\N	\N	\N	f	f	\N	100	f	f	f
+1108	1180	2	\N	\N	\N	f	f	\N	200	f	f	f
+1109	1579	31	\N	\N	\N	f	f	\N	200	f	f	f
+1110	1681	36	\N	\N	\N	f	f	\N	200	f	f	f
+1111	6301	37	\N	\N	\N	f	t	1	80	f	f	f
+1112	6302	37	\N	\N	\N	t	t	2	200	f	f	f
+1113	6303	37	\N	\N	\N	t	t	3	120	f	f	f
+1114	6304	37	\N	\N	\N	t	t	4	150	f	f	f
+1115	6305	37	\N	\N	\N	t	t	5	150	f	f	f
+1116	6306	37	\N	\N	\N	t	t	6	150	f	f	f
+1117	6307	37	\N	\N	\N	t	t	8	170	f	f	f
+1118	6308	37	\N	\N	\N	f	t	9	170	f	f	f
+1119	6309	37	\N	\N	\N	t	t	7	100	f	f	f
+1120	5210	18	\N	\N	\N	f	f	\N	125	f	f	f
+1121	2140	3	\N	\N	\N	f	f	\N	100	f	f	f
+1122	2141	3	\N	\N	\N	f	f	\N	100	f	f	f
+1123	2142	3	\N	\N	\N	f	f	\N	100	f	f	f
+1124	2143	3	\N	\N	\N	f	f	\N	150	f	f	f
+1125	2144	3	\N	\N	\N	f	f	\N	150	f	f	f
+1127	3217	5	\N	\N	\N	f	f	\N	140	f	f	f
+1128	3218	5	\N	\N	\N	f	f	\N	200	f	f	f
+1129	3133	4	\N	\N	\N	f	f	\N	300	f	f	f
+1130	148	1	\N	\N	\N	f	f	\N	150	f	f	f
+1197	149	1	\N	\N	\N	f	f	-1	76	f	f	f
+1204	6310	38	\N	\N	\N	f	f	-1	150	f	f	f
+1200	6311	38	\N	\N	\N	t	t	1	150	f	f	f
+1201	6312	38	\N	\N	\N	t	t	2	150	f	f	f
+1202	6313	38	\N	\N	\N	f	t	3	150	f	f	f
+1203	6314	38	\N	\N	\N	f	t	4	150	f	f	f
 \.
 
 
