@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import static org.junit.Assert.assertEquals;
-
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_ROLES;
 import static de.intevation.lada.util.auth.Authentication.HEADER_X_SHIB_USER;
 
@@ -16,12 +14,15 @@ import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.ClientBaseTest;
+import de.intevation.lada.model.master.QueryUser_;
+import de.intevation.lada.rest.QueryUserService;
 import de.intevation.lada.test.ServiceTest;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 
 /**
@@ -30,10 +31,10 @@ import jakarta.ws.rs.core.Response;
  */
 public class QueryTest extends ServiceTest {
 
-    private static final String KEY_ID = "id";
     private JsonObject createPayload;
     private JsonObject updatePayload;
-    private static final String URL = "rest/queryuser/";
+    private static final String URL =
+        UriBuilder.fromResource(QueryUserService.class).build() + "/";
 
     @Override
     public void init(WebTarget t) {
@@ -52,22 +53,20 @@ public class QueryTest extends ServiceTest {
         get(URL);
 
         JsonObject created = create(URL, createPayload);
-        int createdId = created.getInt(KEY_ID);
+        int createdId = created.getInt(QueryUser_.ID);
 
         //Update test cannot use ServiceTest functions as there is no
         //GetById interface
-        final int idToUpdate = updatePayload.getInt(KEY_ID);
+        final int idToUpdate = updatePayload.getInt(QueryUser_.ID);
         Response updated = target.path(URL + idToUpdate).request()
             .header(HEADER_X_SHIB_USER, BaseTest.testUser)
             .header(HEADER_X_SHIB_ROLES, BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
-            .put(Entity.entity(
-                updatePayload.toString(), MediaType.APPLICATION_JSON));
+            .put(Entity.entity(updatePayload, MediaType.APPLICATION_JSON));
         JsonObject updatedContent = ClientBaseTest
             .parseResponse(updated)
             .asJsonObject();
-        updatedContent.forEach((key, value) ->
-            assertEquals(updatePayload.get(key), value));
+        BaseTest.verify(updatePayload, updatedContent);
 
         delete(URL + createdId);
     }

@@ -225,8 +225,8 @@ public abstract class BaseTest {
     }
 
     /**
-     * Verify recursively that entries in expected appear also in actual and
-     * have the same values.
+     * Verify recursively that entries in {@code expected}
+     * appear also in {@code actual} and have the same values.
      *
      * Arrays of objects in {@code actual} are sorted by attribute "id"
      * before being verified, if possible. {@code expected} can be prepared
