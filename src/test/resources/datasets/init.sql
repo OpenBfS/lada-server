@@ -16,7 +16,9 @@ BEGIN
             'tag_link_sample',
             'tag_link_measm',
             'tag',
-            'site'
+            'site',
+            'query_user',
+            'grid_col_conf'
         ] LOOP
         EXECUTE format('SELECT setval(pg_get_serial_sequence(''%1$s'', ''id''), '
             '(SELECT max(id) FROM %1$I))', tab);
