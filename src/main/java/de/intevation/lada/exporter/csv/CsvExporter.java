@@ -13,6 +13,7 @@ import java.io.Writer;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -150,7 +151,6 @@ public class CsvExporter implements QueryExporter<CsvExportParameters> {
                     new ArrayList<>(columnsToInclude.size());
                 for (String key: columnsToInclude) {
                     Object value = row.get(key);
-
                     //Value is a status kombi
                     if (key.equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
@@ -163,6 +163,11 @@ public class CsvExporter implements QueryExporter<CsvExportParameters> {
                     } else if (value instanceof Float) {
                         decimalFormat.applyPattern("###0.0#");
                         rowItems.add(decimalFormat.format((Float) value));
+                    } else if (value instanceof Date
+                        && (key.equals("sollBegin")
+                            || key.equals("sollEnd"))) {
+                        rowItems.add(new SimpleDateFormat("yyyy-MM-dd")
+                            .format((Date) value));
                     } else if (value instanceof Date) {
                         //Convert to target timezone
                         Date time = (Date) value;
